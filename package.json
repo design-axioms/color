@@ -1,0 +1,24 @@
+{
+  "name": "color-system-standalone",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "solve": "tsx scripts/generate-tokens.ts",
+    "sketch": "node scripts/lightness-lut-sketch.ts",
+    "debug": "node scripts/debug-contrast.ts"
+  },
+  "dependencies": {
+    "apca-w3": "^0.1.9",
+    "culori": "^4.0.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "tsx": "^4.20.6"
+  },
+  "engines": {
+    "node": "^24.0.0"
+  }
+}

@@ -1,0 +1,25 @@
+/* ============================================
+   COLOR SYSTEM TOKENS
+   ============================================ */
+
+@import './generated-tokens.css';
+
+:root {
+  --key-brand-color: oklch(0.6027 0.302 298);
+  --key-blue-color: oklch(0.7004 0.1483 235);
+
+  --hue-brand: 298;
+  --chroma-brand: 0.21;
+  --hue-blue: 235;
+  --chroma-blue: 0.15;
+
+  /* Status colors */
+  --hue-danger: 22;
+  --chroma-danger: 0.2;
+  --hue-success: 145;
+  --chroma-success: 0.15;
+  --hue-warning: 65;
+  --chroma-warning: 0.16;
+  --hue-info: var(--hue-blue);
+  --chroma-info: 0.2;
+}

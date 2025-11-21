@@ -1,0 +1,163 @@
+/*
+   BASELINE 2025: UTILITIES
+   Configuration Providers.
+*/
+
+/* --- SURFACES --- */
+
+.surface-page {
+  --surface-lightness: var(--lightness-surface-page);
+  --surface-hue-shift: var(--hue-shift-page);
+  --surface-text-lightness: var(--lightness-text-on-page);
+
+  /* Context for children */
+  --context-text-subtle: var(--lightness-subtle-on-page);
+  --context-text-subtler: var(--lightness-subtler-on-page);
+  --context-border-decorative: var(--border-decorative-on-page);
+  --context-border-interactive: var(--border-interactive-on-page);
+}
+
+.surface-workspace {
+  --surface-lightness: var(--lightness-surface-workspace);
+  --surface-hue-shift: var(--hue-shift-workspace);
+  --surface-text-lightness: var(--lightness-text-on-workspace);
+
+  /* Context for children */
+  --context-text-subtle: var(--lightness-subtle-on-workspace);
+  --context-text-subtler: var(--lightness-subtler-on-workspace);
+  --context-border-decorative: var(--border-decorative-on-workspace);
+  --context-border-interactive: var(--border-interactive-on-workspace);
+}
+
+.surface-card {
+  --surface-lightness: var(--lightness-surface-card);
+  --surface-hue-shift: var(--hue-shift-card);
+  --surface-text-lightness: var(--lightness-text-on-card);
+
+  /* Context for children */
+  --context-text-subtle: var(--lightness-subtle-on-card);
+  --context-text-subtler: var(--lightness-subtler-on-card);
+  --context-border-decorative: var(--border-decorative-on-card);
+  --context-border-interactive: var(--border-interactive-on-card);
+}
+
+.surface-card:hover {
+  --surface-lightness: var(--lightness-surface-card-hover);
+}
+
+.surface-card:active {
+  --surface-lightness: var(--lightness-surface-card-active);
+}
+
+.surface-tinted {
+  --surface-lightness: var(--lightness-surface-tinted);
+  --surface-hue-shift: var(--hue-shift-tinted);
+  --surface-text-lightness: var(--lightness-text-on-tinted);
+
+  /* Context for children */
+  --context-text-subtle: var(--lightness-subtle-on-tinted);
+  --context-text-subtler: var(--lightness-subtler-on-tinted);
+  --context-border-decorative: var(--border-decorative-on-tinted);
+  --context-border-interactive: var(--border-interactive-on-tinted);
+}
+
+.surface-soft-spotlight {
+  --surface-lightness: var(--lightness-surface-soft-spotlight);
+  --surface-hue-shift: var(--hue-shift-soft-spotlight);
+  --surface-text-lightness: var(--lightness-text-on-soft-spotlight);
+
+  /* Context for children */
+  --context-text-subtle: var(--lightness-subtle-on-soft-spotlight);
+  --context-text-subtler: var(--lightness-subtler-on-soft-spotlight);
+  --context-border-decorative: var(--border-decorative-on-soft-spotlight);
+  --context-border-interactive: var(--border-interactive-on-soft-spotlight);
+}
+
+.surface-spotlight {
+  --surface-lightness: var(--lightness-surface-spotlight);
+  --surface-hue-shift: var(--hue-shift-spotlight);
+  --surface-text-lightness: var(--lightness-text-on-spotlight);
+
+  /* Context for children */
+  --context-text-subtle: var(--lightness-subtle-on-spotlight);
+  --context-text-subtler: var(--lightness-subtler-on-spotlight);
+  --context-border-decorative: var(--border-decorative-on-spotlight);
+  --context-border-interactive: var(--border-interactive-on-spotlight);
+}
+
+/* --- BORDERS --- */
+
+.bordered {
+  /* Default to decorative border from context */
+  --surface-border-alpha: var(--context-border-decorative);
+}
+
+.border-interactive {
+  /* Override for interactive borders from context */
+  --surface-border-alpha: var(--context-border-interactive);
+}
+
+/* --- MODIFIERS --- */
+
+/* Hue Adjustments */
+.hue-brand {
+  --base-hue: var(--hue-brand);
+  --hue-adjust: 0;
+  /* Apply a subtle tint to the surface background */
+  --base-chroma: calc(var(--chroma-brand) * 0.1);
+
+  --default-fg-hue: var(--hue-brand);
+  --override-fg-chroma: var(--chroma-brand);
+}
+
+.hue-blue {
+  --base-hue: var(--hue-blue);
+  --hue-adjust: 0;
+  /* Apply a subtle tint to the surface background */
+  --base-chroma: calc(var(--chroma-blue) * 0.1);
+
+  --default-fg-hue: var(--hue-blue);
+  --override-fg-chroma: var(--chroma-blue);
+}
+
+/* Text Lightness Overrides */
+.text-strong {
+  /* No-op, resets to default for the surface */
+}
+
+.text-subtle {
+  --surface-text-lightness: var(--context-text-subtle);
+  --computed-fg-color: oklch(
+    from var(--surface-text-lightness) l var(--computed-fg-C)
+      var(--computed-fg-H)
+  );
+  color: var(--computed-fg-color);
+}
+
+.text-subtler {
+  --surface-text-lightness: var(--context-text-subtler);
+  --computed-fg-color: oklch(
+    from var(--surface-text-lightness) l var(--computed-fg-C)
+      var(--computed-fg-H)
+  );
+  color: var(--computed-fg-color);
+}
+
+/* Surface Adjustments */
+.surface-vibrant {
+  --surface-chroma-adjust: 0.02;
+}
+
+.surface-glass {
+  --surface-transparency: 10%;
+  backdrop-filter: blur(10px);
+}
+
+.hue-monochrome {
+  --base-chroma: 0;
+}
+
+/* Content Overrides */
+.fg-vibrant {
+  --override-fg-chroma: 0.15;
+}

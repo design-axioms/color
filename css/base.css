@@ -1,0 +1,155 @@
+/*
+   BASELINE 2025: FULL ENGINE
+   The core logic for the "Reactive Pipeline".
+*/
+
+@property --base-chroma {
+  syntax: "<number>";
+  initial-value: 0.008;
+  inherits: true;
+}
+
+@property --base-hue {
+  syntax: "<number>";
+  initial-value: 0;
+  inherits: true;
+}
+
+@property --surface-transparency {
+  syntax: "<percentage>";
+  initial-value: 0%;
+  inherits: true;
+}
+
+@property --surface-chroma-adjust {
+  syntax: "<number>";
+  initial-value: 0;
+  inherits: true;
+}
+
+@property --hue-adjust {
+  syntax: "<number>";
+  initial-value: 0;
+  inherits: true;
+}
+
+@property --override-fg-chroma {
+  syntax: "<number>";
+  initial-value: initial;
+  inherits: true;
+}
+
+@property --override-border-alpha {
+  syntax: "<number>";
+  initial-value: initial;
+  inherits: true;
+}
+
+@property --computed-surface {
+  syntax: "<color>";
+  inherits: true;
+}
+
+@property --computed-fg-color {
+  syntax: "<color>";
+  inherits: true;
+}
+
+@property --computed-border-color {
+  syntax: "<color>";
+  inherits: true;
+}
+
+/*
+   THE SURFACE ENGINE
+   Matches any element with a class starting with "surface-" or containing " surface-"
+*/
+:where([class^="surface-"], [class*=" surface-"]) {
+  /* --- 1. SURFACE CALCULATION --- */
+
+  /* Calculate Chroma & Hue */
+  /* Ensure defaults are numbers, not strings with units if possible, though calc handles units. */
+  --computed-surface-C: calc(
+    var(--base-chroma, 0) + var(--surface-chroma-adjust, 0)
+  );
+
+  /* Apply Hue Shift (Warmth) */
+  /* Hue shift is now a number provided by cascade */
+  --computed-hue-shift: var(--surface-hue-shift, 0);
+  --computed-surface-H: calc(
+    var(--base-hue, 0) + var(--hue-adjust, 0) + var(--computed-hue-shift)
+  );
+
+  /* Reify Surface Color */
+  /* 
+     Note: We use `calc` inside `oklch`. 
+     Some browsers might need spaces around operators. 
+     Also, ensure transparency is a percentage or number.
+  */
+  --computed-surface: oklch(
+    from var(--surface-lightness) l var(--computed-surface-C)
+      var(--computed-surface-H) / calc(100% - var(--surface-transparency, 0%))
+  );
+
+  /* Border Alpha Calculation */
+  /* Border alpha is now a number provided by cascade */
+  --computed-border-alpha: var(--surface-border-alpha, 0);
+
+  /* --- 2. FOREGROUND CALCULATION --- */
+
+  --computed-fg-H: calc(
+    var(--default-fg-hue, var(--base-hue, 0)) + var(--computed-hue-shift)
+  );
+
+  --computed-fg-C: var(--override-fg-chroma, 0);
+
+  /* Reify Foreground Colors */
+  --fg-high: oklch(
+    from var(--surface-text-lightness) l var(--computed-fg-C)
+      var(--computed-fg-H)
+  );
+  --fg-strong: oklch(
+    from var(--surface-text-lightness) l var(--computed-fg-C)
+      var(--computed-fg-H)
+  );
+  --fg-subtle: oklch(
+    from var(--lightness-subtle-on-surface) l var(--computed-fg-C)
+      var(--computed-fg-H)
+  );
+  --fg-subtlest: oklch(
+    from var(--lightness-subtler-on-surface) l var(--computed-fg-C)
+      var(--computed-fg-H)
+  );
+
+  /* Default text color is strong */
+  --computed-fg-color: var(--fg-strong);
+
+  /* --- 3. BORDER CALCULATION --- */
+  /* 
+     We use the same hue/chroma as the foreground (strong), 
+     but with the solved alpha.
+  */
+  --border-color: oklch(
+    from var(--fg-strong) l c h / var(--computed-border-alpha)
+  );
+
+  --computed-border-color: var(--border-color);
+
+  /* --- 4. APPLY VISUAL PROPERTIES --- */
+  background-color: var(--computed-surface);
+  color: var(--computed-fg-color);
+  border-color: var(--computed-border-color);
+
+  transition: --computed-surface 0.2s ease-in-out,
+    --computed-fg-color 0.2s ease-in-out,
+    --computed-border-color 0.2s ease-in-out;
+}
+
+/* 
+   The .bordered utility applies the border.
+   It can be used as a standalone class or mixed into a surface.
+*/
+.bordered {
+  border-width: 1px;
+  border-style: solid;
+}

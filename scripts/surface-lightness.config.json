@@ -1,0 +1,216 @@
+{
+  "$schema": "./surface-lightness.schema.json",
+  "anchors": {
+    "page": {
+      "light": {
+        "start": { "background": 1 },
+        "end": {
+          "adjustable": true,
+          "background": 0.9
+        }
+      },
+      "dark": {
+        "start": { "background": 0.1 },
+        "end": {
+          "adjustable": true,
+          "background": 0.4
+        }
+      }
+    },
+    "inverted": {
+      "light": {
+        "start": {
+          "adjustable": true,
+          "background": 0.1
+        },
+        "end": { "background": 0 }
+      },
+      "dark": {
+        "start": {
+          "adjustable": true,
+          "background": 0.9
+        },
+        "end": { "background": 1 }
+      }
+    },
+    "key-colors": {
+      "brand": "#6e56cf"
+    }
+  },
+  "hueShift": {
+    "curve": { "p1": [0.5, 0], "p2": [0.5, 1] },
+    "maxRotation": 5
+  },
+  "borderTargets": {
+    "decorative": 10,
+    "interactive": 30,
+    "critical": 80
+  },
+  "groups": [
+    {
+      "name": "Base",
+      "surfaces": [
+        {
+          "slug": "page",
+          "label": "Surface Page",
+          "description": "The base background of the application.",
+          "polarity": "page",
+          "computed": {
+            "light": {
+              "background": null,
+              "fg-high": 1,
+              "fg-strong": 1,
+              "fg-baseline": 1,
+              "fg-subtle": 1,
+              "fg-subtlest": 1
+            },
+            "dark": {
+              "background": null,
+              "fg-high": 1,
+              "fg-strong": 1,
+              "fg-baseline": 1,
+              "fg-subtle": 1,
+              "fg-subtlest": 1
+            }
+          }
+        },
+        {
+          "slug": "workspace",
+          "label": "Surface Workspace",
+          "description": "A very light elevated surface, used for the main workspace area.",
+          "polarity": "page",
+          "computed": {
+            "light": {
+              "background": null,
+              "fg-high": 1,
+              "fg-strong": 1,
+              "fg-baseline": 1,
+              "fg-subtle": 1,
+              "fg-subtlest": 1
+            },
+            "dark": {
+              "background": null,
+              "fg-high": 1,
+              "fg-strong": 1,
+              "fg-baseline": 1,
+              "fg-subtle": 1,
+              "fg-subtlest": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Content",
+      "surfaces": [
+        {
+          "slug": "card",
+          "label": "Surface Card",
+          "description": "A card-like element.",
+          "polarity": "page",
+          "contrastOffset": { "light": 15, "dark": 15 },
+          "states": [
+            { "name": "hover", "offset": -5 },
+            { "name": "active", "offset": -10 }
+          ],
+          "computed": {
+            "light": {
+              "background": null,
+              "fg-high": 1,
+              "fg-strong": 1,
+              "fg-baseline": 1,
+              "fg-subtle": 1,
+              "fg-subtlest": 1
+            },
+            "dark": {
+              "background": null,
+              "fg-high": 1,
+              "fg-strong": 1,
+              "fg-baseline": 1,
+              "fg-subtle": 1,
+              "fg-subtlest": 1
+            }
+          }
+        },
+        {
+          "slug": "tinted",
+          "label": "Surface Tinted",
+          "description": "A surface with a subtle tint.",
+          "polarity": "page",
+          "contrastOffset": { "light": -0.4, "dark": -0.4 },
+          "computed": {
+            "light": {
+              "background": null,
+              "fg-high": 1,
+              "fg-strong": 1,
+              "fg-baseline": 1,
+              "fg-subtle": 1,
+              "fg-subtlest": 1
+            },
+            "dark": {
+              "background": null,
+              "fg-high": 1,
+              "fg-strong": 1,
+              "fg-baseline": 1,
+              "fg-subtle": 1,
+              "fg-subtlest": 1
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Spotlight",
+      "surfaces": [
+        {
+          "slug": "soft-spotlight",
+          "label": "Surface Soft Spotlight",
+          "description": "A dark surface for spotlighted content.",
+          "polarity": "inverted",
+          "computed": {
+            "light": {
+              "background": null,
+              "fg-high": 1,
+              "fg-strong": 1,
+              "fg-baseline": 1,
+              "fg-subtle": 1,
+              "fg-subtlest": 1
+            },
+            "dark": {
+              "background": null,
+              "fg-high": 1,
+              "fg-strong": 1,
+              "fg-baseline": 1,
+              "fg-subtle": 1,
+              "fg-subtlest": 1
+            }
+          }
+        },
+        {
+          "slug": "spotlight",
+          "label": "Surface Spotlight",
+          "description": "The darkest surface.",
+          "polarity": "inverted",
+          "computed": {
+            "light": {
+              "background": null,
+              "fg-high": 1,
+              "fg-strong": 1,
+              "fg-baseline": 1,
+              "fg-subtle": 1,
+              "fg-subtlest": 1
+            },
+            "dark": {
+              "background": null,
+              "fg-high": 1,
+              "fg-strong": 1,
+              "fg-baseline": 1,
+              "fg-subtle": 1,
+              "fg-subtlest": 1
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

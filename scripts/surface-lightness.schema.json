@@ -1,0 +1,129 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://garden.heroku.com/color-system/surface-lightness.schema.json",
+  "title": "Surface Lightness Solver Config",
+  "type": "object",
+  "required": ["anchors", "surfaces"],
+  "properties": {
+    "$schema": { "type": "string", "format": "file" },
+    "anchors": {
+      "type": "object",
+      "required": ["page", "inverted"],
+      "properties": {
+        "page": { "$ref": "#/$defs/polarityAnchors" },
+        "inverted": { "$ref": "#/$defs/polarityAnchors" },
+        "key-colors": {
+          "type": "object",
+          "description": "A list of key colors that are used to anchor the lightness value of the spotlight surface.",
+          "properties": {
+            "brand": { "type": "string", "format": "color" }
+          },
+          "additionalProperties": {
+            "type": "string",
+            "format": "color"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "surfaces": {
+      "type": "array",
+      "description": "The surfaces array is an array of surfaces, ordered by elevation. The first surface is the closest to the page, which means that its background color defines the page's background color, and the foreground color defines the baseline text and border colors for the page. Each subsequent item in the surfaces array represents a 'higher' surface: the background color gets closer to the page's baseline foreground. The last entries in the list can be 'inverted' surfaces: they have such a high elevation that the color scheme has switched polarity. The solver will ultimately define a value for fg-strong for _all elevations_ that satisfies strong APCA contrast requirements.",
+      "items": {
+        "type": "object",
+        "required": ["slug", "label", "polarity"],
+        "properties": {
+          "slug": { "type": "string", "minLength": 1 },
+          "label": { "type": "string", "minLength": 1 },
+          "description": { "type": "string" },
+          "polarity": {
+            "type": "string",
+            "description": "The 'polarity' of a surface describes the relationship between the lightness of the background and foregound colors",
+            "oneOf": [
+              {
+                "type": "string",
+                "const": "page",
+                "description": "A 'page' surface is one where the relationship between the background and foreground is the same as the page (in light mode, this means that the background is light and the foregound is dark; in dark mode, this means that the background is dark and the foreground is light).",
+                "markdownDescription": "A 'page' surface is one where the relationship between the background and foreground is the _same_ as the page\n\n_in light mode, this means that the background is light and the foregound is dark; in dark mode, this means that the background is dark and the foreground is light_."
+              },
+              {
+                "type": "string",
+                "const": "inverted",
+                "description": "An 'inverted' surface is one where the relationship between the background and foreground is the opposite of the page (in light mode, this means that the background is dark and the foregound is light; in dark mode, this means that the background is light and the foreground is dark).",
+                "markdownDescription": "An 'inverted' surface is one where the relationship between the background and foreground is the _opposite_ of the page\n\n_in light mode, this means that the background is dark and the foregound is light; in dark mode, this means that the background is light and the foreground is dark_."
+              }
+            ]
+          },
+          "contrastOffset": {
+            "type": "object",
+            "description": "Optional fractional offset applied to the evenly spaced contrast ladder for this surface. Positive numbers push the contrast target farther from the page anchor, negative numbers pull it closer.",
+            "properties": {
+              "light": { "type": "number" },
+              "dark": { "type": "number" }
+            },
+            "additionalProperties": false
+          },
+          "computed": {
+            "type": "object",
+            "description": "This property describes the lightness values for the specified surface. It is populated by the solver.",
+
+            "properties": {
+              "light": { "$ref": "#/$defs/modeSpec" },
+              "dark": { "$ref": "#/$defs/modeSpec" }
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "minItems": 1
+    }
+  },
+  "$defs": {
+    "anchorValue": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "background": { "$ref": "#/$defs/valueSpec" },
+        "adjustable": { "type": "boolean", "default": false }
+      },
+      "additionalProperties": false
+    },
+    "modeAnchors": {
+      "type": "object",
+      "required": ["start", "end"],
+      "properties": {
+        "start": { "$ref": "#/$defs/anchorValue" },
+        "end": { "$ref": "#/$defs/anchorValue" }
+      },
+      "additionalProperties": false
+    },
+    "polarityAnchors": {
+      "type": "object",
+      "required": ["light", "dark"],
+      "properties": {
+        "light": { "$ref": "#/$defs/modeAnchors" },
+        "dark": { "$ref": "#/$defs/modeAnchors" }
+      },
+      "additionalProperties": false
+    },
+    "modeSpec": {
+      "type": "object",
+      "description": "The solver computes values for background, fg-high, fg-strong and fg-subtlest. The contrast between background and fg-high must exceed an APCA target of ΔLc>90. The contrast between background and fg-strong must exceed an APCA target of ΔLc>75. The contrast between background and fg-subtlest must exceed an APCA target of ΔLc>60. The other values (fg-baseline and fg-subtle) are computed to attempt to have an equal ΔLc spread between fg-strong and fg-subtlest.",
+      "see": "https://readtech.org/ARC/tests/bronze-simple-mode/?tn=criterion",
+      "properties": {
+        "background": { "$ref": "#/$defs/valueSpec" },
+        "fg-high": { "$ref": "#/$defs/valueSpec" },
+        "fg-strong": { "$ref": "#/$defs/valueSpec" },
+        "fg-baseline": { "$ref": "#/$defs/valueSpec" },
+        "fg-subtle": { "$ref": "#/$defs/valueSpec" },
+        "fg-subtlest": { "$ref": "#/$defs/valueSpec" }
+      }
+    },
+    "valueSpec": {
+      "type": ["number", "null"],
+      "minimum": 0,
+      "maximum": 1
+    },
+    "additionalProperties": false
+  }
+}
