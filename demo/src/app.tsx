@@ -1,5 +1,7 @@
 import { useEffect, useState } from "preact/hooks";
 import { Showcase } from "./Showcase";
+import { SolverLab } from "./components/SolverLab";
+import "./app.css";
 
 /**
  * ARCHITECTURAL NOTE:
@@ -96,25 +98,7 @@ const styles = {
 } as const;
 
 export function App() {
-  const surfaces = [
-    "page",
-    "workspace",
-    "card",
-    "tinted",
-    "soft-spotlight",
-    "spotlight",
-  ];
-
-  const hues = [
-    { name: "Monochrome", class: "hue-monochrome" },
-    { name: "Brand", class: "hue-brand" },
-    { name: "Blue", class: "hue-blue" },
-  ];
-
-  const [bordered, setBordered] = useState(false);
   const [view, setView] = useState("showcase");
-
-  const borderClass = bordered ? "bordered" : "";
 
   return (
     <>
@@ -148,105 +132,7 @@ export function App() {
         <ThemeSwitcher />
       </div>
 
-      {view === "showcase" ? (
-        <Showcase />
-      ) : (
-        <div class="surface-page" style={styles.pageContainer}>
-          <header style={styles.header}>
-            <h1 class="fg-strong" style={styles.heading}>
-              Color System Demo
-            </h1>
-            {/* ThemeSwitcher moved to global controls */}
-          </header>
-
-          <div style={styles.section}>
-            {/* Interactive Playground */}
-            <label style={styles.label}>
-              <input
-                type="checkbox"
-                checked={bordered}
-                onChange={(e) => setBordered(e.currentTarget.checked)}
-              />
-              <span>Bordered</span>
-            </label>
-            <section>
-              <h2 style={styles.playgroundTitle} class="text-strong">
-                Interactive Playground
-              </h2>
-              <p class="text-subtle">
-                These elements respond to hover and active states with smooth
-                transitions.
-              </p>
-              <div style={styles.playgroundButtons}>
-                <button
-                  class={`surface-card ${borderClass}`}
-                  style={styles.interactiveButton}
-                >
-                  Interactive Card
-                </button>
-
-                <button
-                  class="surface-card hue-brand"
-                  style={styles.interactiveButton}
-                >
-                  Brand Interactive
-                </button>
-
-                <button
-                  class="surface-card hue-blue"
-                  style={styles.interactiveButton}
-                >
-                  Blue Interactive
-                </button>
-              </div>
-            </section>
-
-            {/* All Surfaces Grid */}
-            <section className="space-y-4">
-              <h2 className="fg-strong">All Surfaces</h2>
-              <div style={styles.grid2Col}>
-                {surfaces.map((surface) => (
-                  <div key={surface} style={styles.surfaceColumn}>
-                    <h3 class="fg-strong" style={styles.surfaceTitle}>
-                      {surface}
-                    </h3>
-                    <div style={styles.grid3Col}>
-                      {hues.map((hue) => (
-                        <div
-                          key={hue.name}
-                          class={`surface-${surface} bordered ${hue.class}`}
-                          style={styles.surfaceCard}
-                        >
-                          <div class="text-strong">Strong</div>
-                          <div class="text-subtle">Subtle</div>
-                          <div class="text-subtler">Subtler</div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </section>
-
-            {/* New Features Showcase */}
-            <section>
-              <h2 class="fg-strong">Interactive States (Card)</h2>
-              <div style={styles.grid3Col}>
-                {hues.map((hue) => (
-                  <div
-                    key={hue.name}
-                    class={`surface-card bordered ${hue.class}`}
-                    style={styles.surfaceCard}
-                  >
-                    <h3 class="fg-strong">{hue.name}</h3>
-                    <p class="text-subtle">Hover/Active state.</p>
-                  </div>
-                ))}
-              </div>
-            </section>
-          </div>
-        </div>
-      )}
+      {view === "showcase" ? <Showcase /> : <SolverLab />}
     </>
   );
 }

@@ -4,76 +4,7 @@
 */
 
 /* --- SURFACES --- */
-
-.surface-page {
-  --surface-token: var(--surface-page-token);
-  --text-token: var(--text-on-page-token);
-  --border-dec-token: var(--border-dec-on-page-token);
-  --border-int-token: var(--border-int-on-page-token);
-}
-
-.surface-workspace {
-  --surface-token: var(--surface-workspace-token);
-  --text-token: var(--text-on-workspace-token);
-  --border-dec-token: var(--border-dec-on-workspace-token);
-  --border-int-token: var(--border-int-on-workspace-token);
-}
-
-.surface-card {
-  --surface-token: var(--surface-card-token);
-  --text-token: var(--text-on-card-token);
-  --border-dec-token: var(--border-dec-on-card-token);
-  --border-int-token: var(--border-int-on-card-token);
-}
-
-.surface-card:hover {
-  --surface-token: var(--surface-card-hover-token);
-}
-
-.surface-card:active {
-  --surface-token: var(--surface-card-active-token);
-}
-
-.surface-action {
-  --surface-token: var(--surface-action-token);
-  --text-token: var(--text-on-action-token);
-  --border-dec-token: var(--border-dec-on-action-token);
-  --border-int-token: var(--border-int-on-action-token);
-
-  /* Layout Stability: Always reserve space for border */
-  border-width: 1px;
-  border-style: solid;
-  cursor: pointer;
-}
-
-.surface-action:hover {
-  --surface-token: var(--surface-action-hover-token);
-}
-
-.surface-action:active {
-  --surface-token: var(--surface-action-active-token);
-}
-
-.surface-tinted {
-  --surface-token: var(--surface-tinted-token);
-  --text-token: var(--text-on-tinted-token);
-  --border-dec-token: var(--border-dec-on-tinted-token);
-  --border-int-token: var(--border-int-on-tinted-token);
-}
-
-.surface-soft-spotlight {
-  --surface-token: var(--surface-soft-spotlight-token);
-  --text-token: var(--text-on-soft-spotlight-token);
-  --border-dec-token: var(--border-dec-on-soft-spotlight-token);
-  --border-int-token: var(--border-int-on-soft-spotlight-token);
-}
-
-.surface-spotlight {
-  --surface-token: var(--surface-spotlight-token);
-  --text-token: var(--text-on-spotlight-token);
-  --border-dec-token: var(--border-dec-on-spotlight-token);
-  --border-int-token: var(--border-int-on-spotlight-token);
-}
+/* Surface definitions are now auto-generated in generated-tokens.css */
 
 /* --- SEMANTIC HUES --- */
 
@@ -195,8 +126,8 @@
 }
 
 .surface-glass {
-  --surface-transparency: 10%;
   backdrop-filter: blur(10px);
+  background-color: oklch(from var(--computed-surface) l c h / 0.7) !important;
 }
 
 .hue-monochrome {

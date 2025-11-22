@@ -1,10 +1,8 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
-import {
-  generateTokensCss,
-  solve,
-  type SolverConfig,
-} from "./solver-engine.ts";
+import { generateTokensCss } from "./solver/generator.ts";
+import { solve } from "./solver/index.ts";
+import type { SolverConfig } from "./solver/types.ts";
 
 const ROOT = resolve(import.meta.dirname, "..");
 const CONFIG_PATH = join(ROOT, "scripts/surface-lightness.config.json");
