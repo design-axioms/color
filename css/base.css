@@ -45,17 +45,89 @@
   inherits: true;
 }
 
+@property --surface-lightness {
+  syntax: "<number>";
+  inherits: true;
+  /* initial-value: 1; */
+}
+
+@property --surface-text-lightness {
+  syntax: "<number>";
+  inherits: true;
+  /* initial-value: 0; */
+}
+
 @property --computed-surface {
   syntax: "<color>";
   inherits: true;
+  /* initial-value: transparent; */
 }
 
 @property --computed-fg-color {
   syntax: "<color>";
   inherits: true;
+  /* initial-value: black; */
 }
 
 @property --computed-border-color {
+  syntax: "<color>";
+  inherits: true;
+  /* initial-value: transparent; */
+}
+
+@property --computed-surface-C {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+@property --computed-surface-H {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+@property --computed-fg-C {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+@property --computed-fg-H {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+@property --computed-border-alpha {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
+
+@property --surface-border-alpha {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+/* Proxy tokens that cascade from utilities */
+@property --surface-token {
+  syntax: "<color>";
+  inherits: true;
+}
+
+@property --text-token {
+  syntax: "<color>";
+  inherits: true;
+}
+
+@property --border-dec-token {
+  syntax: "<color>";
+  inherits: true;
+}
+
+@property --border-int-token {
   syntax: "<color>";
   inherits: true;
 }
@@ -67,82 +139,92 @@
 :where([class^="surface-"], [class*=" surface-"]) {
   /* --- 1. SURFACE CALCULATION --- */
 
-  /* Calculate Chroma & Hue */
-  /* Ensure defaults are numbers, not strings with units if possible, though calc handles units. */
+  /* Calculate Chroma */
   --computed-surface-C: calc(
     var(--base-chroma, 0) + var(--surface-chroma-adjust, 0)
   );
 
-  /* Apply Hue Shift (Warmth) */
-  /* Hue shift is now a number provided by cascade */
-  --computed-hue-shift: var(--surface-hue-shift, 0);
-  --computed-surface-H: calc(
-    var(--base-hue, 0) + var(--hue-adjust, 0) + var(--computed-hue-shift)
-  );
-
   /* Reify Surface Color */
-  /* 
-     Note: We use `calc` inside `oklch`. 
-     Some browsers might need spaces around operators. 
-     Also, ensure transparency is a percentage or number.
-  */
+  /* Extract L and H (Shift) from token, combine with computed C and base hue */
   --computed-surface: oklch(
-    from var(--surface-lightness) l var(--computed-surface-C)
-      var(--computed-surface-H) / calc(100% - var(--surface-transparency, 0%))
+    from var(--surface-token) l var(--computed-surface-C)
+      calc(var(--base-hue, 0) + var(--hue-adjust, 0) + h)
   );
 
-  /* Border Alpha Calculation */
-  /* Border alpha is now a number provided by cascade */
-  --computed-border-alpha: var(--surface-border-alpha, 0);
+  /* Apply Background */
+  background-color: var(--computed-surface);
 
-  /* --- 2. FOREGROUND CALCULATION --- */
+  /* --- 2. TEXT CALCULATION --- */
 
-  --computed-fg-H: calc(
-    var(--default-fg-hue, var(--base-hue, 0)) + var(--computed-hue-shift)
+  /* Calculate Text Chroma */
+  --computed-fg-C: var(--override-fg-chroma, calc(var(--base-chroma, 0) * 0.5));
+
+  /* Calculate Text Hue */
+  --computed-fg-H: var(--default-fg-hue, var(--base-hue, 0));
+
+  /* Reify Text Color */
+  /* Extract L from text token, apply computed C and H */
+  --computed-fg-color: oklch(
+    from var(--text-token) l var(--computed-fg-C) var(--computed-fg-H)
   );
 
-  --computed-fg-C: var(--override-fg-chroma, 0);
+  /* 
+     Extract Subtle/Subtler Lightness from Text Token (oklab)
+     We swap 'a' and 'b' channels to 'l' to get the packed lightness values.
+     These are intermediate gray colors used by utilities.
+  */
+  --computed-subtle-gray: oklab(from var(--text-token) a 0 0);
+  --computed-subtler-gray: oklab(from var(--text-token) b 0 0);
 
-  /* Reify Foreground Colors */
-  --fg-high: oklch(
-    from var(--surface-text-lightness) l var(--computed-fg-C)
-      var(--computed-fg-H)
-  );
-  --fg-strong: oklch(
-    from var(--surface-text-lightness) l var(--computed-fg-C)
-      var(--computed-fg-H)
-  );
-  --fg-subtle: oklch(
-    from var(--lightness-subtle-on-surface) l var(--computed-fg-C)
-      var(--computed-fg-H)
-  );
-  --fg-subtlest: oklch(
-    from var(--lightness-subtler-on-surface) l var(--computed-fg-C)
-      var(--computed-fg-H)
-  );
-
-  /* Default text color is strong */
-  --computed-fg-color: var(--fg-strong);
+  /* Apply Text Color */
+  color: var(--computed-fg-color);
 
   /* --- 3. BORDER CALCULATION --- */
+
   /* 
-     We use the same hue/chroma as the foreground (strong), 
-     but with the solved alpha.
+     Border Tokens are already valid oklch colors with Alpha.
+     We just need to apply our Chroma and Hue to them?
+     Wait, the token has L and Alpha. It has 0 Chroma and 0 Hue.
+     We want to apply the Text Chroma and Hue to the border.
+     
+     So we extract L and Alpha, and reconstruct.
   */
-  --border-color: oklch(
-    from var(--fg-strong) l c h / var(--computed-border-alpha)
+
+  /* Decorative Border */
+  /* Extract L and alpha from border token, apply text C and H */
+  --computed-border-dec-color: oklch(
+    from var(--border-dec-token) l var(--computed-fg-C) var(--computed-fg-H) /
+      alpha
   );
 
-  --computed-border-color: var(--border-color);
+  /* Interactive Border */
+  --computed-border-int-color: oklch(
+    from var(--border-int-token) l var(--computed-fg-C) var(--computed-fg-H) /
+      alpha
+  );
 
-  /* --- 4. APPLY VISUAL PROPERTIES --- */
-  background-color: var(--computed-surface);
-  color: var(--computed-fg-color);
-  border-color: var(--computed-border-color);
+  /* Default to Decorative */
+  border-color: var(--computed-border-dec-color);
+}
 
-  transition: --computed-surface 0.2s ease-in-out,
-    --computed-fg-color 0.2s ease-in-out,
-    --computed-border-color 0.2s ease-in-out;
+/* 
+   TRANSITIONS
+   We only transition the INPUT properties.
+   The browser interpolates these numbers, and the :where rule recalculates the colors every frame.
+*/
+:where(
+    [class^="surface-"],
+    [class*=" surface-"],
+    [class^="text-"],
+    [class*=" text-"],
+    [class^="state-"],
+    [class*=" state-"]
+  ) {
+  transition: --surface-token 0.2s ease-in-out, --text-token 0.2s ease-in-out,
+    --border-dec-token 0.2s ease-in-out, --border-int-token 0.2s ease-in-out,
+    --computed-surface-C 0.2s ease-in-out, --computed-surface-H 0.2s ease-in-out,
+    --computed-fg-C 0.2s ease-in-out, --computed-fg-H 0.2s ease-in-out,
+    --computed-border-alpha 0.2s ease-in-out;
 }
 
 /* 
@@ -152,4 +234,73 @@
 .bordered {
   border-width: 1px;
   border-style: solid;
+}
+/* --- FORCED COLORS (High Contrast) --- */
+
+@media (forced-colors: active) {
+  :root {
+    /* 1. Default Mappings (The "Canvas") */
+    --computed-surface: Canvas;
+    --computed-fg-color: CanvasText;
+    --computed-border-color: CanvasText;
+  }
+
+  /* 2. Surface Mappings */
+
+  /* Cards flatten to Canvas, so we MUST enforce a border to define edges */
+  .surface-card {
+    border: 1px solid CanvasText;
+  }
+
+  /* Actions map to Buttons */
+  .surface-action {
+    background-color: ButtonFace;
+    color: ButtonText;
+    border: 1px solid ButtonText;
+    --computed-surface: ButtonFace;
+    --computed-fg-color: ButtonText;
+    --computed-border-color: ButtonText;
+  }
+
+  /* Spotlights map to Canvas (respecting user preference) */
+  .surface-spotlight,
+  .surface-soft-spotlight {
+    background-color: Canvas;
+    color: CanvasText;
+    border: 1px solid CanvasText;
+    --computed-surface: Canvas;
+    --computed-fg-color: CanvasText;
+  }
+
+  /* 3. Utility Mappings */
+
+  /* Links */
+  .text-link {
+    color: LinkText;
+  }
+
+  /* Disabled State */
+  .state-disabled,
+  [disabled] {
+    opacity: 1; /* Opacity is ignored, so we rely on color */
+    color: GrayText;
+    border-color: GrayText;
+    --computed-fg-color: GrayText;
+    --computed-border-color: GrayText;
+  }
+
+  /* Selected State */
+  .state-selected,
+  [aria-selected="true"] {
+    background-color: Highlight;
+    color: HighlightText;
+    border-color: Highlight;
+    --computed-surface: Highlight;
+    --computed-fg-color: HighlightText;
+  }
+
+  /* Interactive Borders */
+  .border-interactive {
+    --computed-border-color: Highlight;
+  }
 }

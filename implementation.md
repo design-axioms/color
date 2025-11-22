@@ -4,34 +4,57 @@ This document details the technical implementation of the color system.
 
 ## Architecture
 
-The system is built on **CSS Variables** and **OKLCH** color space.
+The system is built on **CSS Custom Properties**, **OKLCH** color space, and a **TypeScript Solver**.
 
 ### Directory Structure
 
-- **`css/`**: Contains the CSS files.
-  - `base.css`: The generated base variables.
-  - `tokens.css`: The semantic token definitions.
-  - `logic.css`: The core calculation logic.
-  - `utilities.css`: The utility classes exposed to the developer.
-- **`scripts/`**: Contains the TypeScript scripts for solving and generating colors.
+- **`scripts/`**: The "Build Time" logic.
+  - `solver-engine.ts`: The core math engine. Calculates lightness and contrast.
+  - `generate-tokens.ts`: The CLI wrapper.
+  - `surface-lightness.config.json`: The source of truth for surfaces, groups, and targets.
+- **`css/`**: The "Run Time" styles.
+  - `generated-tokens.css`: Output of the solver. Contains `light-dark()` color tokens.
+  - `base.css`: Core variables, calculations (Hue/Chroma), and System Color mappings.
+  - `utilities.css`: The public API (`.surface-*`, `.text-*`) and composition logic.
+
+## The CSS Model: Context Variables
+
+We use a **Context Provider/Consumer** pattern to handle composition and nesting.
+
+1.  **Provider (Surface):** A class like `.surface-card` sets local variables:
+    ```css
+    .surface-card {
+      --surface-lightness: ...;
+      --context-text-subtle: var(--lightness-subtle-on-card);
+      --context-border-decorative: var(--border-decorative-on-card);
+    }
+    ```
+2.  **Consumer (Utility):** A class like `.text-subtle` consumes the context:
+    ```css
+    .text-subtle {
+      --surface-text-lightness: var(--context-text-subtle);
+    }
+    ```
+
+This ensures **Orthogonality**: Adding a new surface doesn't require updating every utility class. It also handles **Nesting** naturally, as the nearest surface ancestor provides the context.
 
 ## The Solver
 
-The heart of the system is the **Surface Lightness Solver** (`scripts/surface-lightness-solver.mts`).
+The `solver-engine.ts` script automates the selection of lightness values.
 
-### How it works
+1.  **Anchors:** Defines the available dynamic range (e.g., 0.1 to 0.9) for Light and Dark modes.
+2.  **APCA Contrast:** Uses the APCA algorithm (perceptual contrast) to ensure text is legible on every surface.
+3.  **Groups & Steps:** Distributes surfaces evenly across the range, or clusters them in groups (e.g., "Content", "Spotlight").
+4.  **Hue Shift:** Applies a Bezier curve to shift hue (warmth) based on lightness.
 
-1.  **Configuration**: It reads `scripts/surface-lightness.config.json` which defines the surfaces and their desired contrast relationships.
-2.  **Anchors**: It uses "anchors" (start and end lightness values) for light and dark modes.
-3.  **Solving**: It solves for the optimal background lightness for each surface to meet the target contrast ratios.
-4.  **Output**: It writes the calculated values to `css/base.css`.
+## Accessibility Implementation
 
-## Look-Up Table (LUT)
+We achieve accessibility through **Taxonomy Alignment**.
 
-For performance and static analysis, we also generate a Look-Up Table (`css/lightness-lut.css`) using `scripts/lightness-lut-sketch.mts`. This file contains pre-calculated values for common surface/foreground combinations.
+- **Forced Colors:** We map our semantic tokens (`surface-action`, `text-link`) directly to System Colors (`ButtonFace`, `LinkText`) in `base.css`.
+- **High Contrast:** The solver can generate a parallel set of tokens with stricter contrast targets (Future Work).
 
-## Running the Scripts
+## Running the System
 
-- **Solve**: `pnpm solve` - Recalculates surface lightnesses.
-- **Sketch**: `pnpm sketch` - Regenerates the LUT.
-- **Debug**: `pnpm debug` - Checks contrast ratios and reports issues.
+- **`pnpm solve`**: Runs the solver and regenerates `css/generated-tokens.css`.
+- **`pnpm dev`**: Runs the demo app.

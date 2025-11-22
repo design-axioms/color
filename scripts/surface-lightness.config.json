@@ -133,6 +133,35 @@
           }
         },
         {
+          "slug": "action",
+          "label": "Surface Action",
+          "description": "A clickable action surface (e.g. button).",
+          "polarity": "page",
+          "contrastOffset": { "light": 25, "dark": 25 },
+          "states": [
+            { "name": "hover", "offset": -5 },
+            { "name": "active", "offset": -10 }
+          ],
+          "computed": {
+            "light": {
+              "background": null,
+              "fg-high": 1,
+              "fg-strong": 1,
+              "fg-baseline": 1,
+              "fg-subtle": 1,
+              "fg-subtlest": 1
+            },
+            "dark": {
+              "background": null,
+              "fg-high": 1,
+              "fg-strong": 1,
+              "fg-baseline": 1,
+              "fg-subtle": 1,
+              "fg-subtlest": 1
+            }
+          }
+        },
+        {
           "slug": "tinted",
           "label": "Surface Tinted",
           "description": "A surface with a subtle tint.",

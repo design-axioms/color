@@ -6,95 +6,114 @@
 /* --- SURFACES --- */
 
 .surface-page {
-  --surface-lightness: var(--lightness-surface-page);
-  --surface-hue-shift: var(--hue-shift-page);
-  --surface-text-lightness: var(--lightness-text-on-page);
-
-  /* Context for children */
-  --context-text-subtle: var(--lightness-subtle-on-page);
-  --context-text-subtler: var(--lightness-subtler-on-page);
-  --context-border-decorative: var(--border-decorative-on-page);
-  --context-border-interactive: var(--border-interactive-on-page);
+  --surface-token: var(--surface-page-token);
+  --text-token: var(--text-on-page-token);
+  --border-dec-token: var(--border-dec-on-page-token);
+  --border-int-token: var(--border-int-on-page-token);
 }
 
 .surface-workspace {
-  --surface-lightness: var(--lightness-surface-workspace);
-  --surface-hue-shift: var(--hue-shift-workspace);
-  --surface-text-lightness: var(--lightness-text-on-workspace);
-
-  /* Context for children */
-  --context-text-subtle: var(--lightness-subtle-on-workspace);
-  --context-text-subtler: var(--lightness-subtler-on-workspace);
-  --context-border-decorative: var(--border-decorative-on-workspace);
-  --context-border-interactive: var(--border-interactive-on-workspace);
+  --surface-token: var(--surface-workspace-token);
+  --text-token: var(--text-on-workspace-token);
+  --border-dec-token: var(--border-dec-on-workspace-token);
+  --border-int-token: var(--border-int-on-workspace-token);
 }
 
 .surface-card {
-  --surface-lightness: var(--lightness-surface-card);
-  --surface-hue-shift: var(--hue-shift-card);
-  --surface-text-lightness: var(--lightness-text-on-card);
-
-  /* Context for children */
-  --context-text-subtle: var(--lightness-subtle-on-card);
-  --context-text-subtler: var(--lightness-subtler-on-card);
-  --context-border-decorative: var(--border-decorative-on-card);
-  --context-border-interactive: var(--border-interactive-on-card);
+  --surface-token: var(--surface-card-token);
+  --text-token: var(--text-on-card-token);
+  --border-dec-token: var(--border-dec-on-card-token);
+  --border-int-token: var(--border-int-on-card-token);
 }
 
 .surface-card:hover {
-  --surface-lightness: var(--lightness-surface-card-hover);
+  --surface-token: var(--surface-card-hover-token);
 }
 
 .surface-card:active {
-  --surface-lightness: var(--lightness-surface-card-active);
+  --surface-token: var(--surface-card-active-token);
+}
+
+.surface-action {
+  --surface-token: var(--surface-action-token);
+  --text-token: var(--text-on-action-token);
+  --border-dec-token: var(--border-dec-on-action-token);
+  --border-int-token: var(--border-int-on-action-token);
+
+  /* Layout Stability: Always reserve space for border */
+  border-width: 1px;
+  border-style: solid;
+  cursor: pointer;
+}
+
+.surface-action:hover {
+  --surface-token: var(--surface-action-hover-token);
+}
+
+.surface-action:active {
+  --surface-token: var(--surface-action-active-token);
 }
 
 .surface-tinted {
-  --surface-lightness: var(--lightness-surface-tinted);
-  --surface-hue-shift: var(--hue-shift-tinted);
-  --surface-text-lightness: var(--lightness-text-on-tinted);
-
-  /* Context for children */
-  --context-text-subtle: var(--lightness-subtle-on-tinted);
-  --context-text-subtler: var(--lightness-subtler-on-tinted);
-  --context-border-decorative: var(--border-decorative-on-tinted);
-  --context-border-interactive: var(--border-interactive-on-tinted);
+  --surface-token: var(--surface-tinted-token);
+  --text-token: var(--text-on-tinted-token);
+  --border-dec-token: var(--border-dec-on-tinted-token);
+  --border-int-token: var(--border-int-on-tinted-token);
 }
 
 .surface-soft-spotlight {
-  --surface-lightness: var(--lightness-surface-soft-spotlight);
-  --surface-hue-shift: var(--hue-shift-soft-spotlight);
-  --surface-text-lightness: var(--lightness-text-on-soft-spotlight);
-
-  /* Context for children */
-  --context-text-subtle: var(--lightness-subtle-on-soft-spotlight);
-  --context-text-subtler: var(--lightness-subtler-on-soft-spotlight);
-  --context-border-decorative: var(--border-decorative-on-soft-spotlight);
-  --context-border-interactive: var(--border-interactive-on-soft-spotlight);
+  --surface-token: var(--surface-soft-spotlight-token);
+  --text-token: var(--text-on-soft-spotlight-token);
+  --border-dec-token: var(--border-dec-on-soft-spotlight-token);
+  --border-int-token: var(--border-int-on-soft-spotlight-token);
 }
 
 .surface-spotlight {
-  --surface-lightness: var(--lightness-surface-spotlight);
-  --surface-hue-shift: var(--hue-shift-spotlight);
-  --surface-text-lightness: var(--lightness-text-on-spotlight);
+  --surface-token: var(--surface-spotlight-token);
+  --text-token: var(--text-on-spotlight-token);
+  --border-dec-token: var(--border-dec-on-spotlight-token);
+  --border-int-token: var(--border-int-on-spotlight-token);
+}
 
-  /* Context for children */
-  --context-text-subtle: var(--lightness-subtle-on-spotlight);
-  --context-text-subtler: var(--lightness-subtler-on-spotlight);
-  --context-border-decorative: var(--border-decorative-on-spotlight);
-  --context-border-interactive: var(--border-interactive-on-spotlight);
+/* --- SEMANTIC HUES --- */
+
+.hue-success {
+  --base-hue: 140; /* Green */
+  --hue-adjust: 0;
+  --base-chroma: 0.015; /* Subtle tint */
+
+  --default-fg-hue: 140;
+  --override-fg-chroma: 0.15; /* Vibrant text */
+}
+
+.hue-warning {
+  --base-hue: 85; /* Amber */
+  --hue-adjust: 0;
+  --base-chroma: 0.015;
+
+  --default-fg-hue: 85;
+  --override-fg-chroma: 0.15;
+}
+
+.hue-error {
+  --base-hue: 25; /* Red */
+  --hue-adjust: 0;
+  --base-chroma: 0.015;
+
+  --default-fg-hue: 25;
+  --override-fg-chroma: 0.15;
 }
 
 /* --- BORDERS --- */
 
 .bordered {
   /* Default to decorative border from context */
-  --surface-border-alpha: var(--context-border-decorative);
+  --computed-border-color: var(--computed-border-dec-color);
 }
 
 .border-interactive {
   /* Override for interactive borders from context */
-  --surface-border-alpha: var(--context-border-interactive);
+  --computed-border-color: var(--computed-border-int-color);
 }
 
 /* --- MODIFIERS --- */
@@ -126,21 +145,48 @@
 }
 
 .text-subtle {
-  --surface-text-lightness: var(--context-text-subtle);
-  --computed-fg-color: oklch(
-    from var(--surface-text-lightness) l var(--computed-fg-C)
-      var(--computed-fg-H)
+  /* Apply computed chroma/hue to the extracted subtle lightness */
+  color: oklch(
+    from var(--computed-subtle-gray) l var(--computed-fg-C) var(--computed-fg-H)
   );
-  color: var(--computed-fg-color);
 }
 
 .text-subtler {
-  --surface-text-lightness: var(--context-text-subtler);
-  --computed-fg-color: oklch(
-    from var(--surface-text-lightness) l var(--computed-fg-C)
+  /* Apply computed chroma/hue to the extracted subtler lightness */
+  color: oklch(
+    from var(--computed-subtler-gray) l var(--computed-fg-C)
       var(--computed-fg-H)
   );
-  color: var(--computed-fg-color);
+}
+
+.text-link {
+  /* Links use the brand hue by default */
+  color: oklch(from var(--fg-strong) l c var(--hue-brand));
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* --- STATES --- */
+
+.state-disabled,
+[disabled] {
+  opacity: 0.5;
+  pointer-events: none;
+  /* Desaturate */
+  filter: grayscale(1);
+}
+
+.state-selected,
+[aria-selected="true"] {
+  /* Selected state uses brand background */
+  background-color: oklch(from var(--computed-surface) l c var(--hue-brand));
+  /* Ensure text contrast on brand background might need adjustment, 
+     but for now let's assume the lightness shift is handled by the surface logic 
+     if we were to make this a full surface. 
+     Since it's a modifier, we might need a specific token. 
+     For Phase 1, let's keep it simple: Brand Border + Background Tint */
+  border-color: oklch(from var(--fg-strong) l c var(--hue-brand));
+  background-color: oklch(from var(--computed-surface) l 0.05 var(--hue-brand));
 }
 
 /* Surface Adjustments */
