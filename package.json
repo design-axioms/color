@@ -6,7 +6,9 @@
   "scripts": {
     "solve": "node scripts/generate-tokens.ts",
     "sketch": "node scripts/lightness-lut-sketch.ts",
-    "debug": "node scripts/debug-contrast.ts"
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest --coverage"
   },
   "dependencies": {
     "apca-w3": "^0.1.9",
@@ -14,7 +16,10 @@
     "typescript": "^5.0.0"
   },
   "devDependencies": {
-    "@types/node": "^24.0.0"
+    "@types/node": "^24.0.0",
+    "@vitest/coverage-v8": "^4.0.13",
+    "@vitest/ui": "^4.0.13",
+    "vitest": "^4.0.13"
   },
   "engines": {
     "node": "^24.0.0"
