@@ -15,7 +15,6 @@ import {
   avg,
   backgroundBounds,
   clamp01,
-  clampContrast,
   clampToRange,
   contrastForBackground,
   roundLightness,
@@ -142,7 +141,7 @@ function solveBackgroundSequence(
         maxContrast
       );
 
-      let solvedL = solveBackgroundForContrast(
+      const solvedL = solveBackgroundForContrast(
         polarity,
         mode,
         clampedContrast,

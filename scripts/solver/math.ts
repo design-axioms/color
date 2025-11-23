@@ -4,6 +4,42 @@ import type { Mode, ModeSpec, Polarity } from "./types.ts";
 
 const toRgb = converter("rgb");
 
+// Original toRgbTriplet implementation (no memoization)
+export function toRgbTriplet(lightness: number): [number, number, number] {
+  const ok = { mode: "oklch", l: clamp01(lightness), c: 0, h: 0 } as const;
+  const rgb = toRgb(ok) as { mode: "rgb"; r: number; g: number; b: number };
+
+  if (!rgb || rgb.mode !== "rgb") {
+    throw new Error("Failed to convert OKLCH lightness to RGB.");
+  }
+
+  const clampChannel = (value: number) => {
+    const clamped = clamp01(value ?? 0);
+    return Math.round(clamped * 255);
+  };
+
+  return [clampChannel(rgb.r), clampChannel(rgb.g), clampChannel(rgb.b)];
+}
+
+// Original contrastForPair implementation (no memoization)
+export function contrastForPair(
+  foreground: number,
+  background: number
+): number {
+  const fgY = sRGBtoY(toRgbTriplet(foreground));
+  const bgY = sRGBtoY(toRgbTriplet(background));
+  const contrast = APCAcontrast(fgY, bgY);
+  const numeric = typeof contrast === "number" ? contrast : Number(contrast);
+
+  if (!Number.isFinite(numeric)) {
+    throw new Error(
+      `APCAcontrast returned a non-finite value for foreground ${foreground} and background ${background}.`
+    );
+  }
+
+  return Math.abs(numeric);
+}
+
 // --- CONSTANTS ---
 
 export const CONTRAST_EPSILON = 0.005;
@@ -84,40 +120,6 @@ export function binarySearch(
 }
 
 // --- CONTRAST ---
-
-export function toRgbTriplet(lightness: number): [number, number, number] {
-  const ok = { mode: "oklch", l: clamp01(lightness), c: 0, h: 0 } as const;
-  const rgb = toRgb(ok) as { mode: "rgb"; r: number; g: number; b: number };
-
-  if (!rgb || rgb.mode !== "rgb") {
-    throw new Error("Failed to convert OKLCH lightness to RGB.");
-  }
-
-  const clampChannel = (value: number) => {
-    const clamped = clamp01(value ?? 0);
-    return Math.round(clamped * 255);
-  };
-
-  return [clampChannel(rgb.r), clampChannel(rgb.g), clampChannel(rgb.b)];
-}
-
-export function contrastForPair(
-  foreground: number,
-  background: number
-): number {
-  const fgY = sRGBtoY(toRgbTriplet(foreground));
-  const bgY = sRGBtoY(toRgbTriplet(background));
-  const contrast = APCAcontrast(fgY, bgY);
-  const numeric = typeof contrast === "number" ? contrast : Number(contrast);
-
-  if (!Number.isFinite(numeric)) {
-    throw new Error(
-      `APCAcontrast returned a non-finite value for foreground ${foreground} and background ${background}.`
-    );
-  }
-
-  return Math.abs(numeric);
-}
 
 export function textLightness(polarity: Polarity, mode: Mode): number {
   if (polarity === "page") {

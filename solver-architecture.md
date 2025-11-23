@@ -56,6 +56,31 @@ Before solving for specific surfaces, the script checks if the defined anchors a
 - If an anchor is `adjustable` and the initial range doesn't support the target contrast (e.g., 108 APCA), the solver moves the anchor until it does.
 - _Why?_ This guarantees that our base assumptions (like "the page background") are actually accessible before we build on top of them.
 
+### Solver Pipeline Overview
+
+```mermaid
+flowchart TD
+    A[Read Config JSON] --> B[Hydrate Data Structures]
+    B --> C{Anchors Support<br/>HIGH_CONTRAST?}
+    C -->|No| D[Adjust Anchors]
+    C -->|Yes| E[Calculate Contrast Range]
+    D --> E
+    E --> F[Distribute Surfaces<br/>in Contrast Space]
+    F --> G[For Each Surface]
+    G --> H[Binary Search:<br/>Find Lightness for Target Contrast]
+    H --> I[Solve Foreground<br/>Text Colors]
+    I --> J{More Surfaces?}
+    J -->|Yes| G
+    J -->|No| K[Apply Hue Shift<br/>if configured]
+    K --> L[Generate CSS Tokens]
+    L --> M[Write to<br/>generated-tokens.css]
+
+    style A fill:#e1f5ff
+    style M fill:#c8e6c9
+    style H fill:#fff9c4
+    style I fill:#fff9c4
+```
+
 ### Step 3: Sequence Solving (The "Contrast Space" Logic)
 
 This is the most sophisticated part of the system.
