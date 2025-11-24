@@ -1,5 +1,5 @@
+import { SURFACES } from "color-system/constants";
 import { useState } from "preact/hooks";
-import { SURFACES } from "./shared";
 
 export function SolverLab() {
   const hues = [

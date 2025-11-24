@@ -47,7 +47,7 @@ The system consists of three main components:
 3. **Generate**: CSS custom properties are written with `light-dark()` functions
 4. **Apply**: Surfaces automatically adapt to system theme preferences
 
-See [concepts.md](./concepts.md) and [solver-architecture.md](./solver-architecture.md) for detailed documentation.
+See [System Intuition](./docs/intuition.md) for the mental model, and [solver-architecture.md](./docs/solver-architecture.md) for technical details.
 
 ## Development
 
@@ -77,13 +77,16 @@ node scripts/generate-tokens.ts
 
 ```
 color-system/
-├── scripts/
-│   ├── solver/
+├── src/
+│   ├── lib/
 │   │   ├── math.ts              # Core APCA & binary search utilities
 │   │   ├── generator.ts         # CSS token generation
 │   │   ├── index.ts             # Surface solving algorithm
+│   │   ├── runtime.ts           # Runtime theme generation
 │   │   └── __tests__/           # Unit tests
-│   ├── generate-tokens.ts       # Main CLI entry point
+│   └── cli/
+│       └── index.ts             # Main CLI entry point
+├── scripts/
 │   └── surface-lightness.config.json  # Surface definitions
 ├── css/
 │   ├── generated-tokens.css     # Auto-generated tokens (do not edit)

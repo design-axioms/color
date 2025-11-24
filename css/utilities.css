@@ -76,17 +76,16 @@
 }
 
 .text-subtle {
-  /* Apply computed chroma/hue to the extracted subtle lightness */
+  /* Apply computed chroma/hue to the subtle token */
   color: oklch(
-    from var(--computed-subtle-gray) l var(--computed-fg-C) var(--computed-fg-H)
+    from var(--text-subtle-token) l var(--computed-fg-C) var(--computed-fg-H)
   );
 }
 
 .text-subtler {
-  /* Apply computed chroma/hue to the extracted subtler lightness */
+  /* Apply computed chroma/hue to the subtlest token */
   color: oklch(
-    from var(--computed-subtler-gray) l var(--computed-fg-C)
-      var(--computed-fg-H)
+    from var(--text-subtlest-token) l var(--computed-fg-C) var(--computed-fg-H)
   );
 }
 

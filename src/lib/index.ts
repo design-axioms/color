@@ -25,6 +25,44 @@ export * from "./constants.ts";
 
 const toOklch = converter("oklch");
 
+export function getKeyColorStats(keyColors?: Record<string, string>): {
+  lightness?: number;
+  chroma?: number;
+  hue?: number;
+} {
+  if (!keyColors) {
+    return {};
+  }
+
+  const lightnesses: number[] = [];
+  const chromas: number[] = [];
+  const hues: number[] = [];
+
+  for (const value of Object.values(keyColors)) {
+    const entry = toOklch(value) as
+      | { l: number; c: number; h: number }
+      | undefined;
+
+    if (entry) {
+      lightnesses.push(entry.l);
+      chromas.push(entry.c);
+      if (!isNaN(entry.h)) {
+        hues.push(entry.h);
+      }
+    }
+  }
+
+  if (lightnesses.length === 0) {
+    return {};
+  }
+
+  return {
+    lightness: roundLightness(avg(lightnesses)),
+    chroma: parseFloat(avg(chromas).toFixed(4)),
+    hue: hues.length > 0 ? parseFloat(avg(hues).toFixed(4)) : undefined,
+  };
+}
+
 function computeKeyColorLightness(
   keyColors?: Record<string, string>
 ): number | undefined {

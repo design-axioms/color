@@ -6,7 +6,17 @@ exports[`generateTokensCss > generates correct CSS for a standard surface group 
   inherits: true;
   initial-value: transparent;
 }
-@property --text-token {
+@property --text-high-token {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+@property --text-subtle-token {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+@property --text-subtlest-token {
   syntax: "<color>";
   inherits: true;
   initial-value: transparent;
@@ -28,9 +38,17 @@ exports[`generateTokensCss > generates correct CSS for a standard surface group 
     oklch(0.98 0 179.7869),
     oklch(0.1 0 5.04)
   );
-  --text-token: light-dark(
-    oklab(0 0.4184 0.5085),
-    oklab(1 0.893 0.8406)
+  --text-high-token: light-dark(
+    oklch(0 0 0),
+    oklch(1 0 0)
+  );
+  --text-subtle-token: light-dark(
+    oklch(0.4184 0 0),
+    oklch(0.893 0 0)
+  );
+  --text-subtlest-token: light-dark(
+    oklch(0.5085 0 0),
+    oklch(0.8406 0 0)
   );
   --border-dec-token: light-dark(
     oklch(0 0 0 / 0.0515),
@@ -53,9 +71,17 @@ exports[`generateTokensCss > generates correct CSS for a standard surface group 
     oklch(1 0 180),
     oklch(0.2 0 18.72)
   );
-  --text-token: light-dark(
-    oklab(0 0.4586 0.54),
-    oklab(1 0.896 0.8468)
+  --text-high-token: light-dark(
+    oklch(0 0 0),
+    oklch(1 0 0)
+  );
+  --text-subtle-token: light-dark(
+    oklch(0.4586 0 0),
+    oklch(0.896 0 0)
+  );
+  --text-subtlest-token: light-dark(
+    oklch(0.54 0 0),
+    oklch(0.8468 0 0)
   );
   --border-dec-token: light-dark(
     oklch(0.1935 0 0 / 0.0612),
@@ -75,7 +101,17 @@ exports[`generateTokensCss > handles missing background values gracefully 1`] = 
   inherits: true;
   initial-value: transparent;
 }
-@property --text-token {
+@property --text-high-token {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+@property --text-subtle-token {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+@property --text-subtlest-token {
   syntax: "<color>";
   inherits: true;
   initial-value: transparent;
@@ -97,9 +133,17 @@ exports[`generateTokensCss > handles missing background values gracefully 1`] = 
     oklch(0 0 0),
     oklch(0 0 0)
   );
-  --text-token: light-dark(
-    oklab(1 0.893 0.8406),
-    oklab(1 0.893 0.8406)
+  --text-high-token: light-dark(
+    oklch(1 0 0),
+    oklch(1 0 0)
+  );
+  --text-subtle-token: light-dark(
+    oklch(0.893 0 0),
+    oklch(0.893 0 0)
+  );
+  --text-subtlest-token: light-dark(
+    oklch(0.8406 0 0),
+    oklch(0.8406 0 0)
   );
 }
 "

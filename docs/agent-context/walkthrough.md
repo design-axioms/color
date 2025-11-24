@@ -1,106 +1,76 @@
-# Color System Enhancement Walkthrough
+# Walkthrough: Consumability & Completeness Epoch
 
-We have successfully enhanced the color system codebase, transforming it from a prototype into a robust, production-ready library.
+**Status:** Complete
+**Date:** October 26, 2023
 
-## 🎯 Objectives Achieved
+## Overview
 
-| Objective      | Status | Outcome                                                                      |
-| :------------- | :----- | :--------------------------------------------------------------------------- |
-| **Cleanup**    | ✅     | Removed unused files and scripts.                                            |
-| **Testing**    | ✅     | Added Vitest with **36 tests** covering math, generator, and build pipeline. |
-| **Quality**    | ✅     | Enforced strict TypeScript & ESLint rules (0 errors).                        |
-| **Docs**       | ✅     | Comprehensive README, Architecture diagrams, and Rationale docs.             |
-| **Robustness** | ✅     | Added CI/CD workflow and E2E build verification.                             |
-| **Demo**       | ✅     | Added "Live Solver" with interactive Playground and Contrast Trap.           |
+This epoch focused on maturing the system from a "proof of concept" to a "consumable library". We addressed key issues in transparency (debugging), completeness (browser standards), portability (vanilla JS support), and education (documentation).
 
-## 🛠️ Key Improvements
+## Key Changes
 
-### 1. Testing Infrastructure
+### 1. Transparency: The Token Refactor
 
-We implemented a tiered testing strategy:
+**Problem:**
+Previously, we "packed" multiple text lightness values into a single `oklab` color token (e.g., `L` channel = high contrast, `a` channel = subtle, `b` channel = subtlest). This allowed us to use a single CSS variable for all text states but made the values impossible to read in DevTools (e.g., `oklab(0.95 0.6 0.4)` meant nothing to a human).
 
-- **Unit Tests (`math.test.ts`)**: Verify core algorithms (binary search, contrast math).
-- **Snapshot Tests (`generator.test.ts`)**: Lock in CSS output format to prevent regressions.
-- **E2E Tests (`build.test.ts`)**: Verify the full `solve` pipeline generates valid files.
+**Solution:**
+We refactored the generator to output explicit tokens:
 
-```bash
-pnpm test
-# > Test Files  3 passed (3)
-# > Tests  36 passed (36)
-```
+- `--text-high-token`
+- `--text-subtle-token`
+- `--text-subtlest-token`
 
-### 2. Documentation
+These tokens still use `light-dark()` to support native browser interpolation during mode switches, but they are now standard colors that can be inspected and understood.
 
-We added deep-dive documentation to explain the "Why" behind the system:
+### 2. Completeness: Browser Primitives
 
-- **[README.md](./README.md)**: Quick start and architecture overview.
-- **[solver-architecture.md](./solver-architecture.md)**: Detailed pipeline explanation with Mermaid diagrams.
-- **[docs/hue-shift-rationale.md](./docs/hue-shift-rationale.md)**: Explanation of the cubic Bezier curve for hue shifting.
+**Problem:**
+The system lacked standard browser behaviors, making it feel "incomplete" or "custom".
 
-### 3. CI/CD Pipeline
+**Solution:**
+We added native support for:
 
-We added a GitHub Actions workflow (`.github/workflows/ci.yml`) that automatically:
+- **Focus Rings (`:focus-visible`)**: A consistent, accessible focus ring that adapts to the brand color.
+- **Selection (`::selection`)**: A brand-aware selection style that ensures text readability on all surfaces.
 
-1. Installs dependencies
-2. Lints code
-3. Runs tests
-4. Verifies the build
+### 3. Portability: The Runtime Engine
 
-### 4. Interactive Demo
+**Problem:**
+The runtime solver was tightly coupled to the React demo, making it difficult to use in other contexts (e.g., Svelte, Vue, or vanilla JS).
 
-We transformed the demo into an educational tool by running the solver in the browser:
+**Solution:**
+We extracted the core runtime logic into `src/lib/runtime.ts`. This new entry point exports:
 
-- **Live Solver**: Imported `math.ts` directly into the frontend.
-- **Contrast Trap**: Visual proof of why standard palettes fail in dark mode.
-- **Playground**: A live environment to tweak solver parameters (Contrast Target, Hue Shift) and see the math in action via a "Code Inspector".
+- `generateTheme(config)`: Returns a CSS string based on the configuration.
+- `injectTheme(css, target)`: A helper to inject the CSS into the DOM.
 
-### Phase 8: Experience Lab (System-Native)
+The React demo was refactored to use this new API, proving its viability.
 
-We implemented the "Experience Lab" to demonstrate the emotional benefits of the system using **pure system concepts** (no hacks).
+### 4. Education: Intuition & Documentation
 
-#### 1. The Intent Playground (Intuition)
+**Problem:**
+The system's "Reactive Pipeline" (how `base.css` interacts with generated tokens) was undocumented and difficult to grasp.
 
-- **Goal**: Show how "Intent" (Hue, Elevation, Prominence) maps directly to "Implementation" (Classes).
-- **Mechanism**:
-  - Uses standard classes: `.hue-brand`, `.surface-card`, `.text-subtle`.
-  - No inline styles or manual color calculations.
-  - Proves that the system's class architecture is expressive enough for complex UI states.
+**Solution:**
+We created `docs/intuition.md`, a comprehensive guide that explains:
 
-#### 2. The Fearless Injector (Empowerment)
+- **The Reactive Pipeline**: How CSS variables flow through the system.
+- **Math vs. Magic**: The philosophy behind the solver.
+- **Surface Taxonomy**: How surfaces create context.
 
-- **Goal**: Prove the "Safety" of the system by handling _any_ brand color.
-- **Mechanism**:
-  - Runs the **Actual Solver Engine** (`solve()`) in the browser.
-  - Generates a valid CSS Token Block (`--surface-token`, etc.) for the chosen brand.
-  - Injects it into the DOM, allowing standard components (`.surface-brand-dynamic`) to render accessibly.
-  - **Chaos Mode**: Cycles through hostile colors (Neon Yellow, Pure Black) to demonstrate mathematical resilience.
+We also updated the `README.md` to provide a better "Getting Started" experience.
 
-#### 3. Context Portal (Deprecated)
+## Verification
 
-- Removed to focus on the core "System-Native" narrative.
+- **Tests**: All 36 tests passed (`pnpm test`).
+- **Lint**: No linting errors (`pnpm lint`).
+- **Visuals**: Manual verification of the demo confirmed no regressions.
 
-## 📊 Performance
+## Next Steps
 
-- **Build Time**: ~0.4s (Excellent, no optimization needed)
-- **Test Suite**: ~250ms for all 36 tests
-- **Coverage**: 91% on core math utilities
+The system is now in a stable state. Future work can focus on:
 
-## 🚀 Next Steps
-
-The system is now ready for:
-
-- **NPM Publishing**: The package structure is clean.
-- **Integration**: Can be safely consumed by other apps.
-- **Expansion**: New surfaces or features can be added with confidence.
-
-### Phase 9: System Completeness (Done)
-
-We filled the remaining gaps to ensure the system is fully robust and accessible:
-
-- **Missing Primitives**:
-  - Implemented `.text-link` using the computed foreground color and brand hue.
-  - Verified `.state-disabled` (opacity + grayscale) and `.state-selected` (brand tint).
-- **Forced Colors Support**:
-  - Added comprehensive `@media (forced-colors: active)` mappings.
-  - Mapped `.surface-workspace` and `.surface-tinted` to `Canvas` to ensure high contrast visibility.
-  - Ensured semantic tokens map correctly to System Colors (`ButtonFace`, `Highlight`, etc.).
+- Expanding the "Surface" taxonomy (e.g., "Glass" surfaces).
+- Adding more "Intent" examples (e.g., "Success", "Warning").
+- Creating a CLI for generating static themes.

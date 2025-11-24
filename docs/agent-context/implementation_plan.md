@@ -1,96 +1,94 @@
-# Enhancement Implementation Plan
+# Consumption & Packaging Implementation Plan
 
 ## Phase Status
 
-- **Current Phase:** Complete
-- **State:** Maintenance
+- **Current Phase:** Phase 1: Scoping & Brand Definition
+- **State:** In Progress
 
 ## Goal
 
-The system is feature-complete and ready for distribution.
+Clarify how the system is consumed, prevent global pollution by the runtime, and define a clean package structure.
 
 ---
 
-## Remaining Tasks
+## Phase 1: Scoping & Brand Definition
 
-None.
+**Objective:** Ensure `generateTheme` produces a "Brand Definition" (capabilities) rather than forcing a "Global State" (context), and allow it to be scoped to a specific DOM subtree.
 
----
+- [ ] **Refactor Generator (`src/lib/generator.ts`)**:
+  - Update `generateTokensCss` to accept an optional `selector` string.
+  - If `selector` is present, wrap or prefix rules:
+    - Global properties (`@property`) remain global (or use `@layer`?).
+    - Class rules (`.surface-card`) become `${selector} .surface-card`.
+- [ ] **Refactor Runtime (`src/lib/runtime.ts`)**:
+  - Update `generateTheme` to accept `selector`.
+  - Change the output of Key Color stats:
+    - Instead of `--base-hue`, output `--hue-brand`.
+    - Instead of `--base-chroma`, output `--chroma-brand`.
+  - This aligns with `utilities.css`, where `.hue-brand` maps these variables to the active context.
+- [ ] **Update Demo**:
+  - Give the "Fearless Injector" container an ID (e.g., `#fearless-demo`).
+  - Pass `#fearless-demo` to `generateTheme`.
+  - Add the class `.hue-brand` to the container to "activate" the generated brand variables.
 
-## Completed Tasks
+## Phase 2: Package Structure
 
-### Phase 10: Project Identity (Done)
+**Objective:** Define exactly what files are shipped and what they do.
 
-- [x] **Refactor Directory Structure**:
-  - Move `scripts/solver` to `src/lib` (or similar).
-  - Ensure `demo` imports from the new location.
-- [x] **Package Configuration**:
-  - Update `package.json` to export the solver as a library.
-  - Add `types` definition.
+- [ ] **File Organization**:
+  - `dist/engine.css`: The core reactive pipeline (`base.css`).
+  - `dist/utilities.css`: The standard API (`utilities.css`).
+  - `dist/theme.css`: The default generated tokens (`generated-tokens.css`).
+- [ ] **Package Exports**:
+  - Update `package.json` exports to expose these CSS files.
 
-### Phase 9: System Completeness (Done)
+## Phase 3: Documentation
 
-- [x] **Missing Primitives**:
-  - [x] Fix `.text-link` in `css/utilities.css` to use `var(--computed-fg-color)` instead of undefined `var(--fg-strong)`.
-  - [x] Verify `.state-disabled` implementation (opacity + grayscale).
-  - [x] Verify `.state-selected` implementation (brand background/border).
-- [x] **Forced Colors Support**:
-  - [x] Review and expand `@media (forced-colors: active)` in `css/base.css`.
-  - [x] Ensure all surfaces (`.surface-workspace`, `.surface-tinted`) have appropriate High Contrast mappings.
-  - [x] Verify utility mappings (`.text-link`, `.state-disabled`, `.state-selected`).
+**Objective:** Explain the consumption model.
 
-### Phase 10: Project Identity (Partial)
+- [ ] **Update README**:
+  - "Installation": Import engine + utilities + theme.
+  - "Customization": How to generate your own theme.
+  - "Runtime": How to use the scoped runtime generator.
 
-- [x] **Refactor Directory Structure**:
-  - Move `scripts/solver` to `src/lib` (or similar).
-  - Ensure `demo` imports from the new location.
-- [x] **Package Configuration**:
-  - Update `package.json` to export the solver as a library.
-  - Add `types` definition.
+**Objective:** Ensure the system handles standard browser behaviors that are currently missing.
 
-### Phase 5: Documentation (Done)
+- [ ] **Focus Rings (`:focus-visible`)**:
+  - Implement a system-wide focus ring strategy.
+  - Must be visible on all surfaces (likely using `outline` + `outline-offset` or a double-box-shadow approach).
+  - Should adapt to the brand hue or high-contrast colors.
+- [ ] **Selection (`::selection`)**:
+  - Implement `::selection` styles.
+  - Should use brand colors but ensure text readability.
+  - Must work across all surfaces.
 
-- [x] `docs/solver-architecture.md` created.
+## Phase 3: Portability (The Runtime Engine)
 
-### Phase 1: Cleanup (Done)
+**Objective:** Decouple the runtime solver from React/Preact, making it a pure vanilla JS/TS library.
 
-- [x] `css/logic.css` deleted
-- [x] `scripts/debug-contrast.ts` deleted
+- [ ] **Create Runtime Library (`src/lib/runtime.ts`)**:
+  - Export `generateTheme(config: SolverConfig): string` (returns CSS string).
+  - Export `injectTheme(css: string, target?: HTMLElement)` helper.
+- [ ] **Refactor Demo**:
+  - Update `FearlessInjector.tsx` to use the new vanilla API.
+- [ ] **Documentation**:
+  - Add a "Runtime Usage" section to the docs showing how to use it without React.
 
-### Phase 2: Testing Infrastructure (Done)
+## Phase 4: Education (Intuition & Documentation)
 
-- [x] Vitest configured (`vitest.config.ts`)
-- [x] Tests created: `math.test.ts`, `generator.test.ts`, `build.test.ts`
+**Objective:** Document the "Why" and the "Mental Model" so users learn the system as they use it.
 
-### Phase 3: TypeScript + ESLint (Done)
+- [ ] **Create `docs/intuition.md`**:
+  - Explain the "Reactive Pipeline" (how `base.css` works).
+  - Explain the "Solver" philosophy (math vs. magic).
+  - Explain the "Surface" taxonomy.
+- [ ] **Update `README.md`**:
+  - Better "Getting Started" flow.
+  - Link to the new intuition docs.
+- [ ] **Interactive Docs (Optional)**:
+  - Consider a "Why is this color here?" tooltip in the demo.
 
-- [x] `tsconfig.json` strict mode verified
-- [x] `eslint.config.js` created and configured
+## Phase 5: Verification
 
-### Phase 4: Performance Optimization (Skipped)
-
-- [~] Memoization skipped (Build time ~0.4s is sufficient)
-
-### Phase 5: Documentation (Partial)
-
-- [x] `README.md` updated
-- [x] `docs/hue-shift-rationale.md` created
-
-### Phase 6: Robustness & Integration (Done)
-
-- [x] Generator snapshot tests created
-- [x] End-to-End build test created
-- [x] CI workflow (`.github/workflows/ci.yml`) created
-
-### Phase 7: Demo Enhancements (Done)
-
-- [x] Live Solver Integration (`apca-w3`, `culori` in demo)
-- [x] `ContrastTrap` component created
-- [x] `Playground` component created
-
-### Phase 8: Experience Lab (Done)
-
-- [x] `ExperienceLab` component created
-- [x] `IntentPlayground` component created
-- [x] `FearlessInjector` component created
-- [x] `ContextPortal` deleted
+- [ ] **Visual Regression**: Ensure no visual regressions in the demo.
+- [ ] **Code Review**: Ensure generated CSS is readable.

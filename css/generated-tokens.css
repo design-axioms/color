@@ -3,7 +3,17 @@
   inherits: true;
   initial-value: transparent;
 }
-@property --text-token {
+@property --text-high-token {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+@property --text-subtle-token {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+@property --text-subtlest-token {
   syntax: "<color>";
   inherits: true;
   initial-value: transparent;
@@ -25,9 +35,17 @@
     oklch(1 0 5),
     oklch(0.1 0 0.14)
   );
-  --text-token: light-dark(
-    oklab(0 0.4586 0.54),
-    oklab(1 0.893 0.8406)
+  --text-high-token: light-dark(
+    oklch(0 0 0),
+    oklch(1 0 0)
+  );
+  --text-subtle-token: light-dark(
+    oklch(0.4586 0 0),
+    oklch(0.893 0 0)
+  );
+  --text-subtlest-token: light-dark(
+    oklch(0.54 0 0),
+    oklch(0.8406 0 0)
   );
   --border-dec-token: light-dark(
     oklch(0.1935 0 0 / 0.0799),
@@ -44,9 +62,17 @@
     oklch(0.9806 0 4.9944),
     oklch(0.2541 0 0.8044)
   );
-  --text-token: light-dark(
-    oklab(0 0.4184 0.5085),
-    oklab(1 0.9052 0.8561)
+  --text-high-token: light-dark(
+    oklch(0 0 0),
+    oklch(1 0 0)
+  );
+  --text-subtle-token: light-dark(
+    oklch(0.4184 0 0),
+    oklch(0.9052 0 0)
+  );
+  --text-subtlest-token: light-dark(
+    oklch(0.5085 0 0),
+    oklch(0.8561 0 0)
   );
   --border-dec-token: light-dark(
     oklch(0 0 0 / 0.0676),
@@ -63,9 +89,17 @@
     oklch(0.9776 0 4.9926),
     oklch(0.1 0 0.14)
   );
-  --text-token: light-dark(
-    oklab(0 0.4147 0.5015),
-    oklab(1 0.893 0.8406)
+  --text-high-token: light-dark(
+    oklch(0 0 0),
+    oklch(1 0 0)
+  );
+  --text-subtle-token: light-dark(
+    oklch(0.4147 0 0),
+    oklch(0.893 0 0)
+  );
+  --text-subtlest-token: light-dark(
+    oklch(0.5015 0 0),
+    oklch(0.8406 0 0)
   );
   --border-dec-token: light-dark(
     oklch(0 0 0 / 0.0679),
@@ -94,9 +128,17 @@
     oklch(1 0 5),
     oklch(0.1 0 0.14)
   );
-  --text-token: light-dark(
-    oklab(0 0.4586 0.54),
-    oklab(1 0.893 0.8406)
+  --text-high-token: light-dark(
+    oklch(0 0 0),
+    oklch(1 0 0)
+  );
+  --text-subtle-token: light-dark(
+    oklch(0.4586 0 0),
+    oklch(0.893 0 0)
+  );
+  --text-subtlest-token: light-dark(
+    oklch(0.54 0 0),
+    oklch(0.8406 0 0)
   );
   --border-dec-token: light-dark(
     oklch(0.1935 0 0 / 0.0799),
@@ -125,9 +167,17 @@
     oklch(0.9 0 4.86),
     oklch(0.4 0 1.76)
   );
-  --text-token: light-dark(
-    oklab(0 0.2156 0.3696),
-    oklab(1 0.9536 0.9052)
+  --text-high-token: light-dark(
+    oklch(0 0 0),
+    oklch(1 0 0)
+  );
+  --text-subtle-token: light-dark(
+    oklch(0.2156 0 0),
+    oklch(0.9536 0 0)
+  );
+  --text-subtlest-token: light-dark(
+    oklch(0.3696 0 0),
+    oklch(0.9052 0 0)
   );
   --border-dec-token: light-dark(
     oklch(0 0 0 / 0.0729),
@@ -144,9 +194,17 @@
     oklch(0.1 0 0.14),
     oklch(0.9 0 4.86)
   );
-  --text-token: light-dark(
-    oklab(1 0.893 0.8406),
-    oklab(0 0.2156 0.3696)
+  --text-high-token: light-dark(
+    oklch(1 0 0),
+    oklch(0 0 0)
+  );
+  --text-subtle-token: light-dark(
+    oklch(0.893 0 0),
+    oklch(0.2156 0 0)
+  );
+  --text-subtlest-token: light-dark(
+    oklch(0.8406 0 0),
+    oklch(0.3696 0 0)
   );
   --border-dec-token: light-dark(
     oklch(0.9866 0 0 / 0.3254),
@@ -163,9 +221,17 @@
     oklch(0.1 0 0.14),
     oklch(0.9 0 4.86)
   );
-  --text-token: light-dark(
-    oklab(1 0.893 0.8406),
-    oklab(0 0.2156 0.3696)
+  --text-high-token: light-dark(
+    oklch(1 0 0),
+    oklch(0 0 0)
+  );
+  --text-subtle-token: light-dark(
+    oklch(0.893 0 0),
+    oklch(0.2156 0 0)
+  );
+  --text-subtlest-token: light-dark(
+    oklch(0.8406 0 0),
+    oklch(0.3696 0 0)
   );
   --border-dec-token: light-dark(
     oklch(0.9866 0 0 / 0.3254),

@@ -28,7 +28,19 @@ export function generateTokensCss(
   initial-value: transparent;
 }`);
 
-  propertyLines.push(`@property --text-token {
+  propertyLines.push(`@property --text-high-token {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}`);
+
+  propertyLines.push(`@property --text-subtle-token {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}`);
+
+  propertyLines.push(`@property --text-subtlest-token {
   syntax: "<color>";
   inherits: true;
   initial-value: transparent;
@@ -70,15 +82,25 @@ export function generateTokensCss(
   );`
       );
 
-      // 2. Text Token
+      // 2. Text Tokens
       rootLines.push(
-        `  --text-token: light-dark(
-    oklab(${toNumber(lightSpec["fg-high"])} ${toNumber(
-          lightSpec["fg-subtle"]
-        )} ${toNumber(lightSpec["fg-subtlest"])}),
-    oklab(${toNumber(darkSpec["fg-high"])} ${toNumber(
-          darkSpec["fg-subtle"]
-        )} ${toNumber(darkSpec["fg-subtlest"])})
+        `  --text-high-token: light-dark(
+    oklch(${toNumber(lightSpec["fg-high"])} 0 0),
+    oklch(${toNumber(darkSpec["fg-high"])} 0 0)
+  );`
+      );
+
+      rootLines.push(
+        `  --text-subtle-token: light-dark(
+    oklch(${toNumber(lightSpec["fg-subtle"])} 0 0),
+    oklch(${toNumber(darkSpec["fg-subtle"])} 0 0)
+  );`
+      );
+
+      rootLines.push(
+        `  --text-subtlest-token: light-dark(
+    oklch(${toNumber(lightSpec["fg-subtlest"])} 0 0),
+    oklch(${toNumber(darkSpec["fg-subtlest"])} 0 0)
   );`
       );
 

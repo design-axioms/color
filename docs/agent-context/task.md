@@ -1,29 +1,34 @@
-# Enhancement Implementation Tasks
+# Current Task: Consumption & Packaging
 
-**Current Focus:** Phase 9: System Completeness
+**Focus:** Phase 1: Scoping & Brand Definition
 
-- [x] Phase 1: Cleanup
-- [x] Phase 2: Testing (Vitest)
-- [x] Phase 3: TypeScript + ESLint
-- [~] Phase 4: Performance (Skipped - already fast)
-- [x] Phase 5: Documentation
-  - [x] README.md
-  - [x] hue-shift-rationale.md
-  - [x] system_goals.md
-  - [x] solver-architecture.md
-- [x] Phase 6: Robustness & Integration
-- [x] Phase 7: Demo Enhancements
-- [x] Phase 8: Experience Lab
-- [x] Phase 9: System Completeness
-  - [x] Missing Primitives (Link, Disabled, Selected)
-  - [x] Forced Colors Support
-- [x] Phase 10: Project Identity
+## Context
 
-  - [x] Refactor Directory Structure
-  - [x] Package Configuration
+We have a robust system, but the "Consumption Story" is muddy. The runtime generator pollutes the global scope, and the package structure isn't clearly defined for consumers.
 
-- [x] Verification
-  - [x] All tests pass
-  - [x] Linting passes
-  - [x] Performance improved
-  - [x] Documentation complete
+## Active Steps
+
+- [ ] **Refactor Generator (`src/lib/generator.ts`)**:
+  - [ ] Add `selector` option to `generateTokensCss`.
+  - [ ] If `selector` is provided, prefix all rules (e.g., `.my-scope .surface-card`).
+- [ ] **Refactor Runtime (`src/lib/runtime.ts`)**:
+  - [ ] Update `generateTheme` to accept `selector`.
+  - [ ] Change `generateTheme` to output `--hue-brand` / `--chroma-brand` instead of `--base-hue` / `--base-chroma`.
+- [ ] **Update Demo**:
+  - [ ] Update `FearlessInjector` to use a scoped selector (e.g., `#fearless-demo`).
+  - [ ] Apply `.hue-brand` to the demo container to activate the generated brand variables.
+
+## Upcoming Phases
+
+### Phase 2: Package Structure
+
+- [ ] Define clear exports in `package.json`.
+- [ ] Rename/Organize CSS files for distribution:
+  - `css/base.css` -> `dist/engine.css` (The Core)
+  - `css/utilities.css` -> `dist/utilities.css` (The API)
+  - `css/generated-tokens.css` -> `dist/theme.css` (The Default Theme)
+
+### Phase 3: Documentation
+
+- [ ] Document how to consume the package (Static vs. Runtime).
+- [ ] Document how to use Scoping.

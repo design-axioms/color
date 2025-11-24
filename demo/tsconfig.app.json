@@ -9,7 +9,9 @@
     "skipLibCheck": true,
     "paths": {
       "react": ["./node_modules/preact/compat/"],
-      "react-dom": ["./node_modules/preact/compat/"]
+      "react-dom": ["./node_modules/preact/compat/"],
+      "color-system/*": ["../src/lib/*"],
+      "color-system": ["../src/lib/index.ts"]
     },
 
     /* Bundler mode */
@@ -29,5 +31,5 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src", "../scripts/solver/math.ts", "../scripts/solver/types.ts"]
+  "include": ["src"]
 }

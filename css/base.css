@@ -117,7 +117,17 @@
   inherits: true;
 }
 
-@property --text-token {
+@property --text-high-token {
+  syntax: "<color>";
+  inherits: true;
+}
+
+@property --text-subtle-token {
+  syntax: "<color>";
+  inherits: true;
+}
+
+@property --text-subtlest-token {
   syntax: "<color>";
   inherits: true;
 }
@@ -165,16 +175,8 @@
   /* Reify Text Color */
   /* Extract L from text token, apply computed C and H */
   --computed-fg-color: oklch(
-    from var(--text-token) l var(--computed-fg-C) var(--computed-fg-H)
+    from var(--text-high-token) l var(--computed-fg-C) var(--computed-fg-H)
   );
-
-  /* 
-     Extract Subtle/Subtler Lightness from Text Token (oklab)
-     We swap 'a' and 'b' channels to 'l' to get the packed lightness values.
-     These are intermediate gray colors used by utilities.
-  */
-  --computed-subtle-gray: oklab(from var(--text-token) a 0 0);
-  --computed-subtler-gray: oklab(from var(--text-token) b 0 0);
 
   /* Apply Text Color */
   color: var(--computed-fg-color);
@@ -220,11 +222,12 @@
     [class^="state-"],
     [class*=" state-"]
   ) {
-  transition: --surface-token 0.2s ease-in-out, --text-token 0.2s ease-in-out,
-    --border-dec-token 0.2s ease-in-out, --border-int-token 0.2s ease-in-out,
-    --computed-surface-C 0.2s ease-in-out, --computed-surface-H 0.2s ease-in-out,
-    --computed-fg-C 0.2s ease-in-out, --computed-fg-H 0.2s ease-in-out,
-    --computed-border-alpha 0.2s ease-in-out;
+  transition: --surface-token 0.2s ease-in-out,
+    --text-high-token 0.2s ease-in-out, --text-subtle-token 0.2s ease-in-out,
+    --text-subtlest-token 0.2s ease-in-out, --border-dec-token 0.2s ease-in-out,
+    --border-int-token 0.2s ease-in-out, --computed-surface-C 0.2s ease-in-out,
+    --computed-surface-H 0.2s ease-in-out, --computed-fg-C 0.2s ease-in-out,
+    --computed-fg-H 0.2s ease-in-out, --computed-border-alpha 0.2s ease-in-out;
 }
 
 /* 
@@ -235,6 +238,24 @@
   border-width: 1px;
   border-style: solid;
 }
+
+/* --- FOCUS RINGS --- */
+
+:focus-visible {
+  outline: 2px solid oklch(from var(--computed-fg-color) l c var(--hue-brand));
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* --- SELECTION --- */
+
+::selection {
+  background-color: oklch(
+    from var(--computed-fg-color) l c var(--hue-brand) / 0.2
+  );
+  color: inherit;
+}
+
 /* --- FORCED COLORS (High Contrast) --- */
 
 @media (forced-colors: active) {
