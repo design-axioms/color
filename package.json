@@ -18,7 +18,10 @@
     "./generator": "./src/lib/generator.ts",
     "./runtime": "./src/lib/runtime.ts",
     "./types": "./src/lib/types.ts",
-    "./constants": "./src/lib/constants.ts"
+    "./constants": "./src/lib/constants.ts",
+    "./engine.css": "./css/engine.css",
+    "./utilities.css": "./css/utilities.css",
+    "./theme.css": "./css/theme.css"
   },
   "bin": {
     "color-system": "./src/cli/index.ts"

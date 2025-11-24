@@ -329,6 +329,45 @@ export function IntentPlayground() {
           </div>
         </div>
       </div>
+
+      {/* Educational Tooltip / Context */}
+      <div
+        className="surface-tinted bordered"
+        style={{
+          marginTop: "1rem",
+          padding: "1rem",
+          borderRadius: "8px",
+          fontSize: "0.9rem",
+          display: "flex",
+          gap: "1rem",
+          alignItems: "center",
+        }}
+      >
+        <div
+          className="surface-spotlight"
+          style={{
+            width: "24px",
+            height: "24px",
+            borderRadius: "50%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontWeight: "bold",
+            flexShrink: 0,
+          }}
+        >
+          ?
+        </div>
+        <div>
+          <strong className="text-strong">Why is this color here?</strong>
+          <p className="text-subtle" style={{ margin: "0.25rem 0 0 0" }}>
+            The system combined <code>.{surfaceClass}</code> (Lightness) with{" "}
+            <code>.{hueClass}</code> (Context) to generate the result. The text
+            color <code>.{textClass}</code> automatically adjusted its contrast
+            ratio to be accessible on that specific background.
+          </p>
+        </div>
+      </div>
     </section>
   );
 }

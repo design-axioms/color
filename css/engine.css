@@ -15,6 +15,18 @@
   inherits: true;
 }
 
+@property --hue-brand {
+  syntax: "<number>";
+  initial-value: 0;
+  inherits: true;
+}
+
+@property --chroma-brand {
+  syntax: "<number>";
+  initial-value: 0;
+  inherits: true;
+}
+
 @property --surface-transparency {
   syntax: "<percentage>";
   initial-value: 0%;
@@ -242,16 +254,15 @@
 /* --- FOCUS RINGS --- */
 
 :focus-visible {
-  outline: 2px solid oklch(from var(--computed-fg-color) l c var(--hue-brand));
+  outline: 2px solid oklch(from var(--computed-fg-color) l 0.2 var(--hue-brand, var(--base-hue)));
   outline-offset: 2px;
-  border-radius: 2px;
 }
 
 /* --- SELECTION --- */
 
 ::selection {
   background-color: oklch(
-    from var(--computed-fg-color) l c var(--hue-brand) / 0.2
+    from var(--computed-fg-color) l 0.15 var(--hue-brand, var(--base-hue)) / 0.2
   );
   color: inherit;
 }

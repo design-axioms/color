@@ -7,9 +7,12 @@ import type { SolverConfig } from "./types.ts";
  * This runs the full solver engine and token generator.
  *
  * It also extracts the average Chroma and Hue from the key colors
- * and sets them as --base-chroma and --base-hue.
+ * and sets them as --chroma-brand and --hue-brand.
+ *
+ * @param config The solver configuration
+ * @param selector Optional CSS selector to scope the rules to (e.g. "#my-app")
  */
-export function generateTheme(config: SolverConfig): string {
+export function generateTheme(config: SolverConfig, selector?: string): string {
   const { backgrounds } = solve(config);
   const stats = getKeyColorStats(config.anchors.keyColors);
 
@@ -17,18 +20,20 @@ export function generateTheme(config: SolverConfig): string {
     config.groups,
     backgrounds,
     config.hueShift,
-    config.borderTargets
+    config.borderTargets,
+    selector
   );
 
-  // Prepend root variables if key colors exist
+  // Prepend variables if key colors exist
   if (stats.chroma !== undefined || stats.hue !== undefined) {
     const vars: string[] = [];
     if (stats.chroma !== undefined)
-      vars.push(`  --base-chroma: ${stats.chroma};`);
-    if (stats.hue !== undefined) vars.push(`  --base-hue: ${stats.hue};`);
+      vars.push(`  --chroma-brand: ${stats.chroma};`);
+    if (stats.hue !== undefined) vars.push(`  --hue-brand: ${stats.hue};`);
 
     if (vars.length > 0) {
-      css = `:root {\n${vars.join("\n")}\n}\n\n` + css;
+      const scope = selector || ":root";
+      css = `${scope} {\n${vars.join("\n")}\n}\n\n` + css;
     }
   }
 

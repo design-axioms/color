@@ -15,21 +15,79 @@
 
 ## Quick Start
 
+### 1. Understand the Mental Model
+
+Before diving in, read **[System Intuition](./docs/intuition.md)**. It explains why this system uses "Surfaces" instead of colors and how the "Reactive Pipeline" works.
+
+### 2. Run the Demo
+
+The best way to learn is to play with the interactive lab.
+
 ```bash
 # Install dependencies
 pnpm install
 
-# Generate CSS tokens
+# Generate CSS tokens (The Solver)
 pnpm solve
 
-# Run demo app
+# Run the Experience Lab
 cd demo && pnpm dev
+```
 
-# Run tests
-pnpm test
+### 3. Use it in your project
 
-# Lint code
-pnpm lint
+Import the core files and start using semantic classes.
+
+```css
+@import "./css/engine.css";
+@import "./css/utilities.css";
+@import "./css/theme.css";
+```
+
+```html
+<div class="surface-card bordered">
+  <h1 class="text-strong">Hello World</h1>
+  <button class="surface-action">Click Me</button>
+</div>
+```
+
+## Installation & Consumption
+
+To use the system in your project, import the three core CSS files:
+
+1. **`engine.css`**: The core reactive pipeline (must be imported first).
+2. **`utilities.css`**: The standard API for surfaces and text.
+3. **`theme.css`**: The generated tokens (or your custom theme).
+
+```css
+@import "./css/engine.css";
+@import "./css/utilities.css";
+@import "./css/theme.css";
+```
+
+## Customization
+
+You can generate a custom theme by modifying `scripts/surface-lightness.config.json` and running:
+
+```bash
+pnpm solve
+```
+
+This will regenerate `css/theme.css` with your new configuration.
+
+## Runtime API
+
+For dynamic theming or scoped applications, you can use the runtime API to generate and inject themes on the fly.
+
+```typescript
+import { generateTheme, injectTheme } from "./src/lib/runtime";
+import { config } from "./my-config";
+
+// Generate CSS for a specific scope
+const css = generateTheme(config, "#my-app");
+
+// Inject it into the page
+injectTheme(css);
 ```
 
 ## Architecture
@@ -89,9 +147,9 @@ color-system/
 ├── scripts/
 │   └── surface-lightness.config.json  # Surface definitions
 ├── css/
-│   ├── generated-tokens.css     # Auto-generated tokens (do not edit)
-│   ├── base.css                 # Base styles & transitions
-│   └── utilities.css            # Surface/text utility classes
+│   ├── engine.css               # Core reactive pipeline
+│   ├── utilities.css            # Surface/text utility classes
+│   └── theme.css                # Generated tokens (do not edit)
 └── demo/                        # React demo application
 ```
 

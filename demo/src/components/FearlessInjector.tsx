@@ -77,7 +77,7 @@ export function FearlessInjector() {
 
     try {
       // 2. Generate Theme (Solver + Generator)
-      const css = generateTheme(config);
+      const css = generateTheme(config, "#fearless-demo");
 
       // 3. Inject CSS (Update existing element if it exists)
       styleElementRef.current = injectTheme(
@@ -112,7 +112,8 @@ export function FearlessInjector() {
       </div>
 
       <div
-        className="surface-workspace bordered"
+        id="fearless-demo"
+        className="surface-workspace bordered hue-brand"
         style={{
           padding: "2rem",
           borderRadius: "16px",

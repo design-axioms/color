@@ -1,13 +1,13 @@
-import { describe, it, expect } from "vitest";
 import { execSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
+import { describe, expect, it } from "vitest";
 
 describe("End-to-End Build", () => {
   it("runs pnpm solve and generates CSS file", () => {
     // Ensure we are in the project root
     const projectRoot = path.resolve(__dirname, "../../..");
-    const cssPath = path.join(projectRoot, "css/generated-tokens.css");
+    const cssPath = path.join(projectRoot, "css/theme.css");
 
     // Delete existing file to ensure test actually generates it
     if (fs.existsSync(cssPath)) {
