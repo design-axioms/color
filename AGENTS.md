@@ -16,6 +16,17 @@ This file contains instructions for AI agents working on this repository.
 - Use `pnpm lint` to check for issues.
 - Use `pnpm lint:fix` to automatically fix fixable issues.
 
+### Chat Lifecycle
+
+A chat reflects one or more phases, but typically operates within a single phase.
+
+- Start by reviewing `docs/agent-context` files to understand project goals.
+  - Review `docs/agent-context/walkthrough.md`. It will give you a sense of the most recent completed phase.
+  - Review `docs/agent-context/task.md` and `docs/agent-context/implementation_plan.md` to discover upcoming work. Review the `#codebase` to identify a good next step.
+- If starting a new phase, update `docs/agent-context/implementation_plan.md` to be completely focused on the implementation plan for the next phase. Ask the user for feedback.
+- If continuing a phase, review `docs/agent-context/implementation_plan.md` to track progress.
+- Continue iterating with the user on the Implementation Plan until it's ready to begin.
+
 ### Phase Transitions
 
 - Before marking a phase as complete in `docs/agent-context/task.md`, ensure all related tasks are done.

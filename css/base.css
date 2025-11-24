@@ -247,29 +247,32 @@
 
   /* 2. Surface Mappings */
 
-  /* Cards flatten to Canvas, so we MUST enforce a border to define edges */
-  .surface-card {
+  /* Standard Surfaces (Canvas) */
+  .surface-card,
+  .surface-workspace,
+  .surface-tinted,
+  .surface-spotlight,
+  .surface-soft-spotlight {
+    /* Flatten to Canvas, so we enforce a border */
     border: 1px solid CanvasText;
+
+    background-color: Canvas;
+    color: CanvasText;
+
+    --computed-surface: Canvas;
+    --computed-fg-color: CanvasText;
+    --computed-border-color: CanvasText;
   }
 
-  /* Actions map to Buttons */
+  /* Actions (Buttons) */
   .surface-action {
     background-color: ButtonFace;
     color: ButtonText;
     border: 1px solid ButtonText;
+
     --computed-surface: ButtonFace;
     --computed-fg-color: ButtonText;
     --computed-border-color: ButtonText;
-  }
-
-  /* Spotlights map to Canvas (respecting user preference) */
-  .surface-spotlight,
-  .surface-soft-spotlight {
-    background-color: Canvas;
-    color: CanvasText;
-    border: 1px solid CanvasText;
-    --computed-surface: Canvas;
-    --computed-fg-color: CanvasText;
   }
 
   /* 3. Utility Mappings */

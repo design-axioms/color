@@ -92,3 +92,15 @@ The system is now ready for:
 - **NPM Publishing**: The package structure is clean.
 - **Integration**: Can be safely consumed by other apps.
 - **Expansion**: New surfaces or features can be added with confidence.
+
+### Phase 9: System Completeness (Done)
+
+We filled the remaining gaps to ensure the system is fully robust and accessible:
+
+- **Missing Primitives**:
+  - Implemented `.text-link` using the computed foreground color and brand hue.
+  - Verified `.state-disabled` (opacity + grayscale) and `.state-selected` (brand tint).
+- **Forced Colors Support**:
+  - Added comprehensive `@media (forced-colors: active)` mappings.
+  - Mapped `.surface-workspace` and `.surface-tinted` to `Canvas` to ensure high contrast visibility.
+  - Ensured semantic tokens map correctly to System Colors (`ButtonFace`, `Highlight`, etc.).

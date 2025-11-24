@@ -92,7 +92,7 @@
 
 .text-link {
   /* Links use the brand hue by default */
-  color: oklch(from var(--fg-strong) l c var(--hue-brand));
+  color: oklch(from var(--computed-fg-color) l c var(--hue-brand));
   text-decoration: underline;
   cursor: pointer;
 }
@@ -116,7 +116,7 @@
      if we were to make this a full surface. 
      Since it's a modifier, we might need a specific token. 
      For Phase 1, let's keep it simple: Brand Border + Background Tint */
-  border-color: oklch(from var(--fg-strong) l c var(--hue-brand));
+  border-color: oklch(from var(--computed-fg-color) l c var(--hue-brand));
   background-color: oklch(from var(--computed-surface) l 0.05 var(--hue-brand));
 }
 

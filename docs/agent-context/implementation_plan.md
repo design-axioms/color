@@ -1,49 +1,56 @@
 # Enhancement Implementation Plan
 
+## Phase Status
+
+- **Current Phase:** Complete
+- **State:** Maintenance
+
 ## Goal
 
-Implement recommended improvements from the post-refactor analysis.
-
-**Current Status:** Most phases are complete. Remaining work is focused on final documentation polish.
+The system is feature-complete and ready for distribution.
 
 ---
 
 ## Remaining Tasks
 
-### Phase 5: Documentation
-
-#### `docs/solver-architecture.md`
-
-**Status:** Complete.
-
-Added Mermaid diagram and pipeline explanation.
-
-### Phase 9: System Completeness (New)
-
-**Goal:** Fill the gaps identified in the "System-Native Authenticity" review.
-
-- [ ] **Missing Primitives**:
-  - Implement `.text-link` utility.
-  - Implement `.state-disabled` utility.
-  - Implement `.state-selected` utility.
-- [ ] **Forced Colors Support**:
-  - Add `@media (forced-colors: active)` blocks to `base.css`.
-  - Map semantic tokens to System Colors (`ButtonFace`, `Highlight`, etc.).
-
-### Phase 10: Project Identity (New)
-
-**Goal:** Transition from "scripts" to "library" to support the Live Solver use case.
-
-- [ ] **Refactor Directory Structure**:
-  - Move `scripts/solver` to `src/lib` (or similar).
-  - Ensure `demo` imports from the new location.
-- [ ] **Package Configuration**:
-  - Update `package.json` to export the solver as a library.
-  - Add `types` definition.
+None.
 
 ---
 
 ## Completed Tasks
+
+### Phase 10: Project Identity (Done)
+
+- [x] **Refactor Directory Structure**:
+  - Move `scripts/solver` to `src/lib` (or similar).
+  - Ensure `demo` imports from the new location.
+- [x] **Package Configuration**:
+  - Update `package.json` to export the solver as a library.
+  - Add `types` definition.
+
+### Phase 9: System Completeness (Done)
+
+- [x] **Missing Primitives**:
+  - [x] Fix `.text-link` in `css/utilities.css` to use `var(--computed-fg-color)` instead of undefined `var(--fg-strong)`.
+  - [x] Verify `.state-disabled` implementation (opacity + grayscale).
+  - [x] Verify `.state-selected` implementation (brand background/border).
+- [x] **Forced Colors Support**:
+  - [x] Review and expand `@media (forced-colors: active)` in `css/base.css`.
+  - [x] Ensure all surfaces (`.surface-workspace`, `.surface-tinted`) have appropriate High Contrast mappings.
+  - [x] Verify utility mappings (`.text-link`, `.state-disabled`, `.state-selected`).
+
+### Phase 10: Project Identity (Partial)
+
+- [x] **Refactor Directory Structure**:
+  - Move `scripts/solver` to `src/lib` (or similar).
+  - Ensure `demo` imports from the new location.
+- [x] **Package Configuration**:
+  - Update `package.json` to export the solver as a library.
+  - Add `types` definition.
+
+### Phase 5: Documentation (Done)
+
+- [x] `docs/solver-architecture.md` created.
 
 ### Phase 1: Cleanup (Done)
 
