@@ -3,7 +3,7 @@
   "$id": "https://garden.heroku.com/color-system/surface-lightness.schema.json",
   "title": "Surface Lightness Solver Config",
   "type": "object",
-  "required": ["anchors", "surfaces"],
+  "required": ["anchors", "groups"],
   "properties": {
     "$schema": { "type": "string", "format": "file" },
     "anchors": {
@@ -12,7 +12,7 @@
       "properties": {
         "page": { "$ref": "#/$defs/polarityAnchors" },
         "inverted": { "$ref": "#/$defs/polarityAnchors" },
-        "key-colors": {
+        "keyColors": {
           "type": "object",
           "description": "A list of key colors that are used to anchor the lightness value of the spotlight surface.",
           "properties": {
@@ -26,7 +26,72 @@
       },
       "additionalProperties": false
     },
-    "surfaces": {
+    "hueShift": {
+      "type": "object",
+      "description": "Configuration for the hue shift algorithm, which rotates the hue as lightness changes to create more natural color progressions.",
+      "properties": {
+        "curve": {
+          "type": "object",
+          "description": "The cubic bezier curve control points that determine the rate of hue shift across the lightness spectrum (0-1).",
+          "properties": {
+            "p1": {
+              "type": "array",
+              "description": "The first control point [x, y]. x is lightness (0-1), y is the fraction of rotation (0-1).",
+              "items": { "type": "number" },
+              "minItems": 2,
+              "maxItems": 2
+            },
+            "p2": {
+              "type": "array",
+              "description": "The second control point [x, y]. x is lightness (0-1), y is the fraction of rotation (0-1).",
+              "items": { "type": "number" },
+              "minItems": 2,
+              "maxItems": 2
+            }
+          },
+          "required": ["p1", "p2"]
+        },
+        "maxRotation": {
+          "type": "number",
+          "description": "The maximum amount of hue rotation (in degrees) applied at the extreme ends of the lightness spectrum."
+        }
+      },
+      "required": ["curve", "maxRotation"]
+    },
+    "borderTargets": {
+      "type": "object",
+      "description": "Target APCA contrast values for different types of borders.",
+      "properties": {
+        "decorative": {
+          "type": "number",
+          "description": "Contrast target for decorative borders (e.g., dividers)."
+        },
+        "interactive": {
+          "type": "number",
+          "description": "Contrast target for interactive borders (e.g., inputs, buttons)."
+        },
+        "critical": {
+          "type": "number",
+          "description": "Contrast target for critical borders (e.g., focus rings, errors)."
+        }
+      },
+      "required": ["decorative", "interactive", "critical"]
+    },
+    "groups": {
+      "type": "array",
+      "description": "Groups of surfaces organized by purpose.",
+      "items": {
+        "type": "object",
+        "required": ["name", "surfaces"],
+        "properties": {
+          "name": { "type": "string" },
+          "surfaces": { "$ref": "#/$defs/surfaceList" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "surfaceList": {
       "type": "array",
       "description": "The surfaces array is an array of surfaces, ordered by elevation. The first surface is the closest to the page, which means that its background color defines the page's background color, and the foreground color defines the baseline text and border colors for the page. Each subsequent item in the surfaces array represents a 'higher' surface: the background color gets closer to the page's baseline foreground. The last entries in the list can be 'inverted' surfaces: they have such a high elevation that the color scheme has switched polarity. The solver will ultimately define a value for fg-strong for _all elevations_ that satisfies strong APCA contrast requirements.",
       "items": {
@@ -63,6 +128,21 @@
             },
             "additionalProperties": false
           },
+          "states": {
+            "type": "array",
+            "description": "Interactive states for this surface (hover, active, etc.)",
+            "items": {
+              "type": "object",
+              "required": ["name", "offset"],
+              "properties": {
+                "name": { "type": "string" },
+                "offset": {
+                  "type": "number",
+                  "description": "Contrast offset for this state relative to the base surface."
+                }
+              }
+            }
+          },
           "computed": {
             "type": "object",
             "description": "This property describes the lightness values for the specified surface. It is populated by the solver.",
@@ -76,9 +156,7 @@
         "additionalProperties": false
       },
       "minItems": 1
-    }
-  },
-  "$defs": {
+    },
     "anchorValue": {
       "type": "object",
       "required": [],

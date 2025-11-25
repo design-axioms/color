@@ -1,11 +1,32 @@
 {
   "name": "color-system",
-  "version": "0.0.0",
-  "private": true,
+  "version": "0.1.0",
+  "description": "A semantic color system generator with automatic contrast balancing and runtime theming.",
+  "keywords": [
+    "color",
+    "design-system",
+    "theming",
+    "contrast",
+    "accessibility",
+    "oklch"
+  ],
+  "author": "Yehuda Katz",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wycats/algebraic.git"
+  },
   "type": "module",
+  "files": [
+    "dist",
+    "css",
+    "src"
+  ],
   "scripts": {
-    "solve": "node src/cli/index.ts",
+    "solve": "node src/cli/index.ts scripts/surface-lightness.config.json css/theme.css",
     "sketch": "node scripts/lightness-lut-sketch.ts",
+    "build": "tsup",
+    "prepublishOnly": "pnpm test && pnpm build",
     "test": "vitest --run",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage",
@@ -13,18 +34,18 @@
     "lint:fix": "eslint src/**/*.ts --fix"
   },
   "exports": {
-    ".": "./src/lib/index.ts",
-    "./math": "./src/lib/math.ts",
-    "./generator": "./src/lib/generator.ts",
-    "./runtime": "./src/lib/runtime.ts",
-    "./types": "./src/lib/types.ts",
-    "./constants": "./src/lib/constants.ts",
+    ".": "./dist/lib/index.js",
+    "./math": "./dist/lib/math.js",
+    "./generator": "./dist/lib/generator.js",
+    "./runtime": "./dist/lib/runtime.js",
+    "./types": "./dist/lib/types.js",
+    "./constants": "./dist/lib/constants.js",
     "./engine.css": "./css/engine.css",
     "./utilities.css": "./css/utilities.css",
     "./theme.css": "./css/theme.css"
   },
   "bin": {
-    "color-system": "./src/cli/index.ts"
+    "color-system": "./dist/cli/index.js"
   },
   "dependencies": {
     "apca-w3": "^0.1.9",
@@ -42,6 +63,7 @@
     "@vitest/ui": "^4.0.13",
     "eslint": "^9.39.1",
     "ts-node": "^10.9.2",
+    "tsup": "^8.5.1",
     "typescript-eslint": "^8.48.0",
     "vitest": "^4.0.13"
   },

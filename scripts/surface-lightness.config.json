@@ -33,7 +33,7 @@
         "end": { "background": 1 }
       }
     },
-    "key-colors": {
+    "keyColors": {
       "brand": "#6e56cf"
     }
   },

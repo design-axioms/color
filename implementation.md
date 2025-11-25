@@ -38,6 +38,37 @@ We use a **Context Provider/Consumer** pattern to handle composition and nesting
 
 This ensures **Orthogonality**: Adding a new surface doesn't require updating every utility class. It also handles **Nesting** naturally, as the nearest surface ancestor provides the context.
 
+## The Reactive Pipeline (Engine)
+
+The core logic lives in `css/engine.css`. It uses CSS `@property` to create a reactive data flow.
+
+1.  **Inputs:**
+    - **Global Config:** `--base-hue`, `--base-chroma` (set by theme/utilities).
+    - **Surface Tokens:** `--surface-token`, `--text-high-token` (set by `light-dark()` in `generated-tokens.css`).
+2.  **Computation:**
+    - The engine calculates intermediate values like `--computed-surface-C` (Chroma) and `--computed-surface-H` (Hue).
+    - It combines these with the tokens to produce **Computed Colors**: `--computed-surface`, `--computed-fg-color`.
+3.  **Output:**
+    - The computed colors are assigned to CSS properties: `background-color: var(--computed-surface)`.
+
+### Animation Strategy
+
+We support two types of state changes, which require a specific transition strategy to animate smoothly in unison:
+
+1.  **Continuous Changes (Hue/Chroma):**
+    - Example: Changing `--hue-brand` from Blue to Red.
+    - Mechanism: The browser interpolates the number. The engine recalculates the color every frame.
+2.  **Discrete Changes (Light/Dark Mode):**
+    - Example: `light-dark()` flipping from Light to Dark.
+    - Mechanism: The input token (`--surface-token`) changes _instantly_ (snaps).
+    - **The Fix:** We transition the **Computed Properties** (`--computed-surface`), _not_ the input tokens.
+    - Why? CSS Transitions do not trigger on a custom property if its value changes solely due to a dependency change. By registering `--computed-surface` with `@property` and an `initial-value`, we allow the browser to interpolate the _result_ of the snap.
+
+```css
+/* css/engine.css */
+transition: --computed-surface 0.2s, --computed-fg-color 0.2s;
+```
+
 ## The Solver
 
 The `solver-engine.ts` script automates the selection of lightness values.

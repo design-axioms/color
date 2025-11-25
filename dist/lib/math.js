@@ -1,0 +1,3 @@
+export { CONTRAST_EPSILON, LIGHTNESS_PRECISION, avg, backgroundBounds, binarySearch, calculateHueShift, clamp01, clampContrast, clampTo, contrastForBackground, contrastForPair, formatPrecision, roundLightness, solveBackgroundForContrast, solveBorderAlpha, solveForegroundLightness, solveForegroundSpec, textLightness, toRgbTriplet } from '../chunk-7LUK7J7M.js';
+//# sourceMappingURL=math.js.map
+//# sourceMappingURL=math.js.map

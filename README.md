@@ -13,36 +13,64 @@
 | 6 Hue Modifiers     | Monochrome, Brand, Blue, Success, Warning, Error                  |
 | Fully Tested        | 33 unit tests with 91% coverage on core math utilities            |
 
-## Quick Start
-
-### 1. Understand the Mental Model
-
-Before diving in, read **[System Intuition](./docs/intuition.md)**. It explains why this system uses "Surfaces" instead of colors and how the "Reactive Pipeline" works.
-
-### 2. Run the Demo
-
-The best way to learn is to play with the interactive lab.
+## Installation
 
 ```bash
-# Install dependencies
-pnpm install
-
-# Generate CSS tokens (The Solver)
-pnpm solve
-
-# Run the Experience Lab
-cd demo && pnpm dev
+npm install color-system
+# or
+pnpm add color-system
+# or
+yarn add color-system
 ```
 
-### 3. Use it in your project
+## Quick Start
 
-Import the core files and start using semantic classes.
+### 1. Initialize Configuration
+
+Run the init command to scaffold a configuration file and default theme.
+
+```bash
+pnpm exec color-system init
+```
+
+This creates a `color-config.json` in your project root.
+
+### 2. Generate CSS
+
+Add a script to your `package.json` to generate your theme tokens.
+
+```json
+{
+  "scripts": {
+    "theme": "color-system"
+  }
+}
+```
+
+Run the solver:
+
+```bash
+npm run theme
+```
+
+This generates a `theme.css` file (by default).
+
+### 3. Import CSS
+
+Import the core engine, utilities, and your generated theme into your application.
 
 ```css
-@import "./css/engine.css";
-@import "./css/utilities.css";
-@import "./css/theme.css";
+/* 1. The Core Engine (Reactive Pipeline) */
+@import "color-system/engine.css";
+
+/* 2. Your Generated Theme */
+@import "./theme.css";
+
+/* 3. Utility Classes (Optional but recommended) */
+@import "color-system/utilities.css";
 ```
+
+### 4. Use Semantic Classes
 
 ```html
 <div class="surface-card bordered">
@@ -51,36 +79,27 @@ Import the core files and start using semantic classes.
 </div>
 ```
 
-## Installation & Consumption
+## CLI Usage
 
-To use the system in your project, import the three core CSS files:
-
-1. **`engine.css`**: The core reactive pipeline (must be imported first).
-2. **`utilities.css`**: The standard API for surfaces and text.
-3. **`theme.css`**: The generated tokens (or your custom theme).
-
-```css
-@import "./css/engine.css";
-@import "./css/utilities.css";
-@import "./css/theme.css";
-```
-
-## Customization
-
-You can generate a custom theme by modifying `scripts/surface-lightness.config.json` and running:
+The `color-system` CLI is the primary tool for generating your theme.
 
 ```bash
-pnpm solve
-```
+# Initialize a new config
+pnpm exec color-system init
 
-This will regenerate `css/theme.css` with your new configuration.
+# Generate theme from default config (color-config.json) to default output (theme.css)
+pnpm exec color-system
+
+# Generate theme with custom paths
+pnpm exec color-system ./my-config.json ./dist/my-theme.css
+```
 
 ## Runtime API
 
 For dynamic theming or scoped applications, you can use the runtime API to generate and inject themes on the fly.
 
 ```typescript
-import { generateTheme, injectTheme } from "./src/lib/runtime";
+import { generateTheme, injectTheme } from "color-system/runtime";
 import { config } from "./my-config";
 
 // Generate CSS for a specific scope
@@ -109,27 +128,19 @@ See [System Intuition](./docs/intuition.md) for the mental model, and [solver-ar
 
 ## Development
 
+If you want to contribute to the library itself:
+
 ```bash
+pnpm install
 pnpm test          # Run unit tests
-pnpm test:ui       # Open Vitest UI
-pnpm test:coverage # Generate coverage report
-pnpm lint          # Check code quality
-pnpm lint:fix      # Auto-fix lint errors
-pnpm solve         # Regenerate CSS tokens
+pnpm build         # Build the package
+pnpm solve         # Regenerate internal CSS tokens
 ```
 
 ### Environment
 
 - **Runtime**: Node.js v24+ (Required for native TypeScript support)
 - **Package Manager**: pnpm
-
-### Running Scripts
-
-This project uses Node.js 24's native TypeScript support. Run scripts directly with `node`:
-
-```bash
-node scripts/generate-tokens.ts
-```
 
 ## Project Structure
 
@@ -144,17 +155,9 @@ color-system/
 │   │   └── __tests__/           # Unit tests
 │   └── cli/
 │       └── index.ts             # Main CLI entry point
-├── scripts/
-│   └── surface-lightness.config.json  # Surface definitions
 ├── css/
 │   ├── engine.css               # Core reactive pipeline
 │   ├── utilities.css            # Surface/text utility classes
 │   └── theme.css                # Generated tokens (do not edit)
 └── demo/                        # React demo application
 ```
-
-## Performance
-
-- **Build Time**: ~0.4s to solve and generate all tokens
-- **Test Suite**: 33 tests pass in ~10ms
-- **Coverage**: 91% on core math utilities (exceeds 80% target)

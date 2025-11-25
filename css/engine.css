@@ -72,13 +72,13 @@
 @property --computed-surface {
   syntax: "<color>";
   inherits: true;
-  /* initial-value: transparent; */
+  initial-value: transparent;
 }
 
 @property --computed-fg-color {
   syntax: "<color>";
   inherits: true;
-  /* initial-value: black; */
+  initial-value: transparent;
 }
 
 @property --computed-border-color {
@@ -152,6 +152,18 @@
 @property --border-int-token {
   syntax: "<color>";
   inherits: true;
+}
+
+@property --computed-border-dec-color {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --computed-border-int-color {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
 }
 
 /*
@@ -229,17 +241,15 @@
 :where(
     [class^="surface-"],
     [class*=" surface-"],
-    [class^="text-"],
-    [class*=" text-"],
     [class^="state-"],
-    [class*=" state-"]
+    [class*=" state-"],
+    [class^="text-"],
+    [class*=" text-"]
   ) {
-  transition: --surface-token 0.2s ease-in-out,
-    --text-high-token 0.2s ease-in-out, --text-subtle-token 0.2s ease-in-out,
-    --text-subtlest-token 0.2s ease-in-out, --border-dec-token 0.2s ease-in-out,
-    --border-int-token 0.2s ease-in-out, --computed-surface-C 0.2s ease-in-out,
-    --computed-surface-H 0.2s ease-in-out, --computed-fg-C 0.2s ease-in-out,
-    --computed-fg-H 0.2s ease-in-out, --computed-border-alpha 0.2s ease-in-out;
+  transition: --computed-surface 0.2s ease-in-out,
+    --computed-fg-color 0.2s ease-in-out,
+    --computed-border-dec-color 0.2s ease-in-out,
+    --computed-border-int-color 0.2s ease-in-out;
 }
 
 /* 
@@ -254,7 +264,8 @@
 /* --- FOCUS RINGS --- */
 
 :focus-visible {
-  outline: 2px solid oklch(from var(--computed-fg-color) l 0.2 var(--hue-brand, var(--base-hue)));
+  outline: 2px solid
+    oklch(from var(--computed-fg-color) l 0.2 var(--hue-brand, var(--base-hue)));
   outline-offset: 2px;
 }
 

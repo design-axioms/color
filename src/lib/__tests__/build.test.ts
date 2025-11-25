@@ -18,10 +18,13 @@ describe("End-to-End Build", () => {
     // We use 'node scripts/generate-tokens.ts' directly to avoid pnpm overhead in test
     // but simulating the 'pnpm solve' script behavior
     try {
-      execSync("node src/cli/index.ts", {
-        cwd: projectRoot,
-        stdio: "pipe", // Capture output so we don't spam test logs
-      });
+      execSync(
+        "node src/cli/index.ts scripts/surface-lightness.config.json css/theme.css",
+        {
+          cwd: projectRoot,
+          stdio: "pipe", // Capture output so we don't spam test logs
+        }
+      );
     } catch (error) {
       console.error(
         "Build failed:",
