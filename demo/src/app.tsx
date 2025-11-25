@@ -1,8 +1,11 @@
-import { useEffect, useState } from "preact/hooks";
+import { useState } from "preact/hooks";
 import { Showcase } from "./Showcase";
 import "./app.css";
 import { ExperienceLab } from "./components/ExperienceLab";
 import { SystemVerifier } from "./components/SystemVerifier";
+import { ThemeBuilder } from "./components/ThemeBuilder/ThemeBuilder";
+import { ConfigProvider } from "./context/ConfigContext";
+import { ThemeProvider, useTheme } from "./context/ThemeContext";
 
 // --- STYLE CONSTANTS ---
 const styles = {
@@ -92,17 +95,18 @@ const styles = {
 } as const;
 
 export function App() {
+  return (
+    <ThemeProvider>
+      <ConfigProvider>
+        <AppContent />
+      </ConfigProvider>
+    </ThemeProvider>
+  );
+}
+
+function AppContent() {
   const [view, setView] = useState("showcase");
-  const [theme, setTheme] = useState<"light" | "dark" | "system">("system");
-  // Handle Theme Application & Resolution
-  useEffect(() => {
-    const root = document.documentElement;
-    if (theme === "system") {
-      root.style.removeProperty("color-scheme");
-    } else {
-      root.style.setProperty("color-scheme", theme);
-    }
-  }, [theme]);
+  const { theme, setTheme } = useTheme();
 
   return (
     <>
@@ -141,6 +145,15 @@ export function App() {
           >
             Experience Lab
           </button>
+          <button
+            onClick={() => setView("builder")}
+            style={styles.viewButton}
+            class={
+              view === "builder" ? "surface-action text-strong" : "text-subtle"
+            }
+          >
+            Theme Builder
+          </button>
         </div>
 
         {/* Theme Switcher */}
@@ -151,8 +164,10 @@ export function App() {
         <Showcase />
       ) : view === "lab" ? (
         <SystemVerifier />
-      ) : (
+      ) : view === "experience" ? (
         <ExperienceLab />
+      ) : (
+        <ThemeBuilder />
       )}
     </>
   );
