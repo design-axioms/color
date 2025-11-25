@@ -51,6 +51,16 @@ When you use a utility class like `.text-strong`, it doesn't have a color of its
 }
 ```
 
+```mermaid
+sequenceDiagram
+    participant Parent as .surface-card
+    participant Child as .text-strong
+    
+    Parent->>Parent: Sets --context-text-strong: #000
+    Child->>Parent: Reads var(--context-text-strong)
+    Child->>Child: Applies color: #000
+```
+
 ## Why is this useful?
 
 1.  **Portability**: You can move a component from a Card to a Spotlight, and the text will automatically invert.

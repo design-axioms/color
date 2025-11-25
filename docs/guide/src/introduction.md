@@ -21,6 +21,12 @@ This system flips the model. You define **Constraints** and **Intent**:
 
 The system **solves** for the exact lightness value that meets that criteria.
 
+<div style="margin: 2rem 0;">
+  <a href="https://color-system-demo.netlify.app" target="_blank" style="background: var(--fg); color: var(--bg); padding: 0.75rem 1.5rem; border-radius: 6px; text-decoration: none; font-weight: bold; display: inline-block;">
+    Try the Theme Builder →
+  </a>
+</div>
+
 ## Key Features
 
 - **Automated Contrast**: Lightness values are solved mathematically to ensure APCA/WCAG compliance.

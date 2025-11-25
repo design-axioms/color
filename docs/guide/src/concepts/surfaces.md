@@ -12,6 +12,20 @@ When you apply a surface class (e.g., `.surface-card`), the system does three th
 
 ## Surface Types
 
+```mermaid
+graph TD
+    Page[surface-page] --> Workspace[surface-workspace]
+    Page --> Card[surface-card]
+    Card --> Action[surface-action]
+    Card --> Tinted[surface-tinted]
+    Page --> Spotlight[surface-spotlight]
+    
+    style Page fill:#f9f9f9,stroke:#333,stroke-width:2px
+    style Card fill:#ffffff,stroke:#333,stroke-width:2px
+    style Action fill:#333,stroke:#333,stroke-width:2px,color:#fff
+    style Spotlight fill:#000,stroke:#333,stroke-width:2px,color:#fff
+```
+
 ### 1. The Canvas (Foundations)
 
 These surfaces form the backdrop of your application.
