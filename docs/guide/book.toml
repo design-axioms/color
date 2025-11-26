@@ -3,9 +3,9 @@ authors = ["Yehuda Katz"]
 language = "en"
 src = "src"
 title = "Color System Documentation"
-site-url = "/algebraic/"
 
 [output.html]
+site-url = "/algebraic/"
 additional-js = ["src/js/mermaid.min.js", "src/js/mermaid-init.js"]
 additional-css = ["src/css/color-system.css", "src/css/docs.css"]
 
