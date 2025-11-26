@@ -1,0 +1,1162 @@
+/* ============================================
+   COLOR SYSTEM TOKENS
+   ============================================ */
+
+@import "./theme.css";
+
+:root {
+  --key-brand-color: oklch(0.6027 0.302 298);
+  --key-blue-color: oklch(0.7004 0.1483 235);
+
+  --hue-brand: 298;
+  --chroma-brand: 0.21;
+  --hue-blue: 235;
+  --chroma-blue: 0.15;
+
+  /* Status colors */
+  --hue-danger: 22;
+  --chroma-danger: 0.2;
+  --hue-success: 145;
+  --chroma-success: 0.15;
+  --hue-warning: 65;
+  --chroma-warning: 0.16;
+  --hue-info: var(--hue-blue);
+  --chroma-info: 0.2;
+}
+/*
+   BASELINE 2025: FULL ENGINE
+   The core logic for the "Reactive Pipeline".
+*/
+
+@property --base-chroma {
+  syntax: "<number>";
+  initial-value: 0.008;
+  inherits: true;
+}
+
+@property --base-hue {
+  syntax: "<number>";
+  initial-value: 0;
+  inherits: true;
+}
+
+@property --hue-brand {
+  syntax: "<number>";
+  initial-value: 0;
+  inherits: true;
+}
+
+@property --chroma-brand {
+  syntax: "<number>";
+  initial-value: 0;
+  inherits: true;
+}
+
+@property --surface-transparency {
+  syntax: "<percentage>";
+  initial-value: 0%;
+  inherits: true;
+}
+
+@property --surface-chroma-adjust {
+  syntax: "<number>";
+  initial-value: 0;
+  inherits: true;
+}
+
+@property --hue-adjust {
+  syntax: "<number>";
+  initial-value: 0;
+  inherits: true;
+}
+
+@property --override-fg-chroma {
+  syntax: "<number>";
+  initial-value: initial;
+  inherits: true;
+}
+
+@property --override-border-alpha {
+  syntax: "<number>";
+  initial-value: initial;
+  inherits: true;
+}
+
+@property --surface-lightness {
+  syntax: "<number>";
+  inherits: true;
+  /* initial-value: 1; */
+}
+
+@property --surface-text-lightness {
+  syntax: "<number>";
+  inherits: true;
+  /* initial-value: 0; */
+}
+
+@property --computed-surface {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --computed-fg-color {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --computed-border-color {
+  syntax: "<color>";
+  inherits: true;
+  /* initial-value: transparent; */
+}
+
+@property --computed-surface-C {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+@property --computed-surface-H {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+@property --computed-fg-C {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+@property --computed-fg-H {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+@property --computed-border-alpha {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
+
+@property --surface-border-alpha {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+:root {
+  color-scheme: light dark;
+}
+
+/* Proxy tokens that cascade from utilities */
+@property --surface-token {
+  syntax: "<color>";
+  inherits: true;
+}
+
+@property --text-high-token {
+  syntax: "<color>";
+  inherits: true;
+}
+
+@property --text-subtle-token {
+  syntax: "<color>";
+  inherits: true;
+}
+
+@property --text-subtlest-token {
+  syntax: "<color>";
+  inherits: true;
+}
+
+@property --border-dec-token {
+  syntax: "<color>";
+  inherits: true;
+}
+
+@property --border-int-token {
+  syntax: "<color>";
+  inherits: true;
+}
+
+@property --computed-border-dec-color {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --computed-border-int-color {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+
+/*
+   THE SURFACE ENGINE
+   Matches any element with a class starting with "surface-" or containing " surface-"
+*/
+:where([class^="surface-"], [class*=" surface-"]) {
+  /* --- 1. SURFACE CALCULATION --- */
+
+  /* Calculate Chroma */
+  --computed-surface-C: calc(
+    var(--base-chroma, 0) + var(--surface-chroma-adjust, 0)
+  );
+
+  /* Reify Surface Color */
+  /* Extract L and H (Shift) from token, combine with computed C and base hue */
+  --computed-surface: oklch(
+    from var(--surface-token) l var(--computed-surface-C)
+      calc(var(--base-hue, 0) + var(--hue-adjust, 0) + h)
+  );
+
+  /* Apply Background */
+  background-color: var(--computed-surface);
+
+  /* Apply Scrollbar */
+  scrollbar-color: var(--text-subtle-token) var(--surface-token);
+
+  /* --- 2. TEXT CALCULATION --- */
+
+  /* Calculate Text Chroma */
+  --computed-fg-C: var(--override-fg-chroma, calc(var(--base-chroma, 0) * 0.5));
+
+  /* Calculate Text Hue */
+  --computed-fg-H: var(--default-fg-hue, var(--base-hue, 0));
+
+  /* Reify Text Color */
+  /* Extract L from text token, apply computed C and H */
+  --computed-fg-color: oklch(
+    from var(--text-high-token) l var(--computed-fg-C) var(--computed-fg-H)
+  );
+
+  /* Apply Text Color */
+  color: var(--computed-fg-color);
+
+  /* --- 3. BORDER CALCULATION --- */
+
+  /* 
+     Border Tokens are already valid oklch colors with Alpha.
+     We just need to apply our Chroma and Hue to them?
+     Wait, the token has L and Alpha. It has 0 Chroma and 0 Hue.
+     We want to apply the Text Chroma and Hue to the border.
+     
+     So we extract L and Alpha, and reconstruct.
+  */
+
+  /* Decorative Border */
+  /* Extract L and alpha from border token, apply text C and H */
+  --computed-border-dec-color: oklch(
+    from var(--border-dec-token) l var(--computed-fg-C) var(--computed-fg-H) /
+      alpha
+  );
+
+  /* Interactive Border */
+  --computed-border-int-color: oklch(
+    from var(--border-int-token) l var(--computed-fg-C) var(--computed-fg-H) /
+      alpha
+  );
+
+  /* Default to Decorative */
+  border-color: var(--computed-border-dec-color);
+}
+
+/* 
+   TRANSITIONS
+   We only transition the INPUT properties.
+   The browser interpolates these numbers, and the :where rule recalculates the colors every frame.
+*/
+:where(
+    [class^="surface-"],
+    [class*=" surface-"],
+    [class^="state-"],
+    [class*=" state-"],
+    [class^="text-"],
+    [class*=" text-"]
+  ) {
+  transition: --computed-surface 0.2s ease-in-out,
+    --computed-fg-color 0.2s ease-in-out,
+    --computed-border-dec-color 0.2s ease-in-out,
+    --computed-border-int-color 0.2s ease-in-out;
+}
+
+/* 
+   The .bordered utility applies the border.
+   It can be used as a standalone class or mixed into a surface.
+*/
+.bordered {
+  border-width: 1px;
+  border-style: solid;
+}
+
+/* --- FOCUS RINGS --- */
+
+:focus-visible {
+  outline: 2px solid
+    oklch(from var(--computed-fg-color) l 0.2 var(--hue-brand, var(--base-hue)));
+  outline-offset: 2px;
+}
+
+/* --- SELECTION --- */
+
+::selection {
+  background-color: oklch(
+    from var(--computed-fg-color) l 0.15 var(--hue-brand, var(--base-hue)) / 0.2
+  );
+  color: inherit;
+}
+
+/* --- FORCED COLORS (High Contrast) --- */
+
+@media (forced-colors: active) {
+  :root {
+    /* 1. Default Mappings (The "Canvas") */
+    --computed-surface: Canvas;
+    --computed-fg-color: CanvasText;
+    --computed-border-color: CanvasText;
+  }
+
+  /* 2. Surface Mappings */
+
+  /* Standard Surfaces (Canvas) */
+  .surface-card,
+  .surface-workspace,
+  .surface-tinted,
+  .surface-spotlight,
+  .surface-soft-spotlight {
+    /* Flatten to Canvas, so we enforce a border */
+    border: 1px solid CanvasText;
+
+    background-color: Canvas;
+    color: CanvasText;
+
+    --computed-surface: Canvas;
+    --computed-fg-color: CanvasText;
+    --computed-border-color: CanvasText;
+  }
+
+  /* Actions (Buttons) */
+  .surface-action {
+    background-color: ButtonFace;
+    color: ButtonText;
+    border: 1px solid ButtonText;
+
+    --computed-surface: ButtonFace;
+    --computed-fg-color: ButtonText;
+    --computed-border-color: ButtonText;
+  }
+
+  /* 3. Utility Mappings */
+
+  /* Links */
+  .text-link {
+    color: LinkText;
+  }
+
+  /* Disabled State */
+  .state-disabled,
+  [disabled] {
+    opacity: 1; /* Opacity is ignored, so we rely on color */
+    color: GrayText;
+    border-color: GrayText;
+    --computed-fg-color: GrayText;
+    --computed-border-color: GrayText;
+  }
+
+  /* Selected State */
+  .state-selected,
+  [aria-selected="true"] {
+    background-color: Highlight;
+    color: HighlightText;
+    border-color: Highlight;
+    --computed-surface: Highlight;
+    --computed-fg-color: HighlightText;
+  }
+
+  /* Interactive Borders */
+  .border-interactive {
+    --computed-border-color: Highlight;
+  }
+
+  /* 4. Global Overrides */
+
+  /* Selection */
+  ::selection {
+    background-color: Highlight;
+    color: HighlightText;
+  }
+
+  /* Focus Rings */
+  :focus-visible {
+    outline-color: Highlight;
+  }
+}
+
+/* --- PRINT STYLES --- */
+
+@media print {
+  :root {
+    /* Force Light Mode to save ink */
+    color-scheme: light;
+
+    /* Remove Chroma to save color ink */
+    --base-chroma: 0;
+    --surface-chroma-adjust: 0;
+    --hue-adjust: 0;
+    --chroma-brand: 0;
+  }
+
+  /* Force white backgrounds for main surfaces */
+  .surface-card,
+  .surface-workspace,
+  .surface-tinted {
+    /*
+       We use white to simulate the paper color and ensure no background ink is used.
+       We do not use 'transparent' to ensure we cover any underlying elements if stacking occurs.
+       We do not use !important because the :where() block in the engine has 0 specificity.
+    */
+    background-color: white;
+    --computed-surface: white;
+
+    /* Add a subtle border to define the surface since the background is gone */
+    border: 1px solid var(--text-subtlest-token);
+  }
+
+  /* Ensure text is dark (Black ink) */
+  body {
+    color: black;
+  }
+
+  /* Hide purely interactive elements */
+  /* We assume .surface-action is a button/control */
+  .surface-action {
+    display: none;
+  }
+}
+/*
+   BASELINE 2025: UTILITIES
+   Configuration Providers.
+*/
+
+/* --- SURFACES --- */
+/* Surface definitions are now auto-generated in generated-tokens.css */
+
+/* --- SEMANTIC HUES --- */
+
+.hue-success {
+  --base-hue: 140; /* Green */
+  --hue-adjust: 0;
+  --base-chroma: 0.015; /* Subtle tint */
+
+  --default-fg-hue: 140;
+  --override-fg-chroma: 0.15; /* Vibrant text */
+}
+
+.hue-warning {
+  --base-hue: 85; /* Amber */
+  --hue-adjust: 0;
+  --base-chroma: 0.015;
+
+  --default-fg-hue: 85;
+  --override-fg-chroma: 0.15;
+}
+
+.hue-error {
+  --base-hue: 25; /* Red */
+  --hue-adjust: 0;
+  --base-chroma: 0.015;
+
+  --default-fg-hue: 25;
+  --override-fg-chroma: 0.15;
+}
+
+/* --- BORDERS --- */
+
+.bordered {
+  /* Default to decorative border from context */
+  --computed-border-color: var(--computed-border-dec-color);
+}
+
+.border-interactive {
+  /* Override for interactive borders from context */
+  --computed-border-color: var(--computed-border-int-color);
+}
+
+/* --- MODIFIERS --- */
+
+/* Elevation */
+.shadow-sm {
+  box-shadow: var(--shadow-sm);
+}
+.shadow-md {
+  box-shadow: var(--shadow-md);
+}
+.shadow-lg {
+  box-shadow: var(--shadow-lg);
+}
+.shadow-xl {
+  box-shadow: var(--shadow-xl);
+}
+
+/* Focus */
+.focus-ring:focus-visible {
+  outline: 2px solid var(--focus-ring-color);
+  outline-offset: 2px;
+}
+
+/* Hue Adjustments */
+.hue-brand {
+  --base-hue: var(--hue-brand);
+  --hue-adjust: 0;
+  /* Apply a subtle tint to the surface background */
+  --base-chroma: calc(var(--chroma-brand) * 0.1);
+
+  --default-fg-hue: var(--hue-brand);
+  --override-fg-chroma: var(--chroma-brand);
+}
+
+.hue-blue {
+  --base-hue: var(--hue-blue);
+  --hue-adjust: 0;
+  /* Apply a subtle tint to the surface background */
+  --base-chroma: calc(var(--chroma-blue) * 0.1);
+
+  --default-fg-hue: var(--hue-blue);
+  --override-fg-chroma: var(--chroma-blue);
+}
+
+/* Text Lightness Overrides */
+.text-strong {
+  /* No-op, resets to default for the surface */
+}
+
+.text-subtle {
+  /* Apply computed chroma/hue to the subtle token */
+  color: oklch(
+    from var(--text-subtle-token) l var(--computed-fg-C) var(--computed-fg-H)
+  );
+}
+
+.text-subtler {
+  /* Apply computed chroma/hue to the subtlest token */
+  color: oklch(
+    from var(--text-subtlest-token) l var(--computed-fg-C) var(--computed-fg-H)
+  );
+}
+
+.text-link {
+  /* Links use the brand hue by default */
+  color: oklch(from var(--computed-fg-color) l c var(--hue-brand));
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* --- STATES --- */
+
+.state-disabled,
+[disabled] {
+  opacity: 0.5;
+  pointer-events: none;
+  /* Desaturate */
+  filter: grayscale(1);
+}
+
+.state-selected,
+[aria-selected="true"] {
+  /* Selected state uses brand background */
+  background-color: oklch(from var(--computed-surface) l c var(--hue-brand));
+  /* Ensure text contrast on brand background might need adjustment, 
+     but for now let's assume the lightness shift is handled by the surface logic 
+     if we were to make this a full surface. 
+     Since it's a modifier, we might need a specific token. 
+     For Phase 1, let's keep it simple: Brand Border + Background Tint */
+  border-color: oklch(from var(--computed-fg-color) l c var(--hue-brand));
+  background-color: oklch(from var(--computed-surface) l 0.05 var(--hue-brand));
+}
+
+/* Surface Adjustments */
+.surface-vibrant {
+  --surface-chroma-adjust: 0.02;
+}
+
+.surface-glass {
+  backdrop-filter: blur(10px);
+  background-color: oklch(from var(--computed-surface) l c h / 0.7) !important;
+}
+
+.hue-monochrome {
+  --base-chroma: 0;
+}
+
+/* Content Overrides */
+.fg-vibrant {
+  --override-fg-chroma: 0.15;
+}
+:root {
+  --chroma-brand: 0.179;
+  --hue-brand: 288.0332;
+}
+
+
+/* AUTO-GENERATED by src/lib/generator.ts */
+:root {
+  /* Elevation */
+  --shadow-sm: 0 1px 2px 0 light-dark(oklch(0 0 0 / 0.05), oklch(1 0 0 / 0.15));
+  --shadow-md: 
+    0 4px 6px -1px light-dark(oklch(0 0 0 / 0.1), oklch(1 0 0 / 0.15)), 
+    0 2px 4px -1px light-dark(oklch(0 0 0 / 0.06), oklch(1 0 0 / 0.1));
+  --shadow-lg: 
+    0 10px 15px -3px light-dark(oklch(0 0 0 / 0.1), oklch(1 0 0 / 0.15)), 
+    0 4px 6px -2px light-dark(oklch(0 0 0 / 0.05), oklch(1 0 0 / 0.1));
+  --shadow-xl: 
+    0 20px 25px -5px light-dark(oklch(0 0 0 / 0.1), oklch(1 0 0 / 0.15)), 
+    0 10px 10px -5px light-dark(oklch(0 0 0 / 0.04), oklch(1 0 0 / 0.1));
+  /* Focus */
+  --focus-ring-color: light-dark(
+    oklch(0.45 0.2 var(--hue-brand, 250)),
+    oklch(0.75 0.2 var(--hue-brand, 250))
+  );
+  /* Data Visualization */
+  --chart-1: light-dark(
+    oklch(0.6484 0.14 25),
+    oklch(0.7588 0.14 25)
+  );
+  --chart-2: light-dark(
+    oklch(0.6484 0.14 190),
+    oklch(0.7588 0.14 190)
+  );
+  --chart-3: light-dark(
+    oklch(0.6484 0.14 45),
+    oklch(0.7588 0.14 45)
+  );
+  --chart-4: light-dark(
+    oklch(0.6484 0.14 250),
+    oklch(0.7588 0.14 250)
+  );
+  --chart-5: light-dark(
+    oklch(0.6484 0.14 85),
+    oklch(0.7588 0.14 85)
+  );
+  --chart-6: light-dark(
+    oklch(0.6484 0.14 280),
+    oklch(0.7588 0.14 280)
+  );
+  --chart-7: light-dark(
+    oklch(0.6484 0.14 125),
+    oklch(0.7588 0.14 125)
+  );
+  --chart-8: light-dark(
+    oklch(0.6484 0.14 320),
+    oklch(0.7588 0.14 320)
+  );
+  --chart-9: light-dark(
+    oklch(0.6484 0.14 150),
+    oklch(0.7588 0.14 150)
+  );
+  --chart-10: light-dark(
+    oklch(0.6484 0.14 360),
+    oklch(0.7588 0.14 360)
+  );
+}
+
+.surface-page {
+  --surface-token: light-dark(
+    oklch(1 0 293.0332),
+    oklch(0.1 0 288.1732)
+  );
+  --text-high-token: light-dark(
+    oklch(0 0 0),
+    oklch(1 0 0)
+  );
+  --text-subtle-token: light-dark(
+    oklch(0.4586 0 0),
+    oklch(0.893 0 0)
+  );
+  --text-subtlest-token: light-dark(
+    oklch(0.54 0 0),
+    oklch(0.8406 0 0)
+  );
+  --border-dec-token: light-dark(
+    oklch(0.1935 0 0 / 0.0799),
+    oklch(0.9866 0 0 / 0.3254)
+  );
+  --border-int-token: light-dark(
+    oklch(0.1935 0 0 / 0.2093),
+    oklch(0.9866 0 0 / 0.5235)
+  );
+}
+
+.surface-workspace {
+  --surface-token: light-dark(
+    oklch(0.9806 0 293.0276),
+    oklch(0.2541 0 288.8376)
+  );
+  --text-high-token: light-dark(
+    oklch(0 0 0),
+    oklch(1 0 0)
+  );
+  --text-subtle-token: light-dark(
+    oklch(0.4184 0 0),
+    oklch(0.9052 0 0)
+  );
+  --text-subtlest-token: light-dark(
+    oklch(0.5085 0 0),
+    oklch(0.8561 0 0)
+  );
+  --border-dec-token: light-dark(
+    oklch(0 0 0 / 0.0676),
+    oklch(0.9985 0 0 / 0.2157)
+  );
+  --border-int-token: light-dark(
+    oklch(0 0 0 / 0.1778),
+    oklch(0.9985 0 0 / 0.444)
+  );
+}
+
+.surface-card {
+  --surface-token: light-dark(
+    oklch(0.9776 0 293.0258),
+    oklch(0.1 0 288.1732)
+  );
+  --text-high-token: light-dark(
+    oklch(0 0 0),
+    oklch(1 0 0)
+  );
+  --text-subtle-token: light-dark(
+    oklch(0.4147 0 0),
+    oklch(0.893 0 0)
+  );
+  --text-subtlest-token: light-dark(
+    oklch(0.5015 0 0),
+    oklch(0.8406 0 0)
+  );
+  --border-dec-token: light-dark(
+    oklch(0 0 0 / 0.0679),
+    oklch(0.9866 0 0 / 0.3254)
+  );
+  --border-int-token: light-dark(
+    oklch(0 0 0 / 0.1785),
+    oklch(0.9866 0 0 / 0.5235)
+  );
+}
+.surface-card:hover {
+  --surface-token: light-dark(
+    oklch(0.9536 0 293.0019),
+    oklch(0.3072 0 289.1589)
+  );
+}
+.surface-card:active {
+  --surface-token: light-dark(
+    oklch(0.9265 0 292.9561),
+    oklch(0.3734 0 289.604)
+  );
+}
+
+.surface-action {
+  --surface-token: light-dark(
+    oklch(1 0.12 293.0332),
+    oklch(0.1 0.12 288.1732)
+  );
+  --text-high-token: light-dark(
+    oklch(0 0 0),
+    oklch(1 0 0)
+  );
+  --text-subtle-token: light-dark(
+    oklch(0.4586 0 0),
+    oklch(0.893 0 0)
+  );
+  --text-subtlest-token: light-dark(
+    oklch(0.54 0 0),
+    oklch(0.8406 0 0)
+  );
+  --border-dec-token: light-dark(
+    oklch(0.1935 0 0 / 0.0799),
+    oklch(0.9866 0 0 / 0.3254)
+  );
+  --border-int-token: light-dark(
+    oklch(0.1935 0 0 / 0.2093),
+    oklch(0.9866 0 0 / 0.5235)
+  );
+}
+.surface-action:hover {
+  --surface-token: light-dark(
+    oklch(0.9746 0.12 293.0237),
+    oklch(0.3072 0.12 289.1589)
+  );
+}
+.surface-action:active {
+  --surface-token: light-dark(
+    oklch(0.9506 0.12 292.9978),
+    oklch(0.3734 0.12 289.604)
+  );
+}
+
+.surface-tinted {
+  --surface-token: light-dark(
+    oklch(0.9 0.01 292.8932),
+    oklch(0.4 0.01 289.7932)
+  );
+  --text-high-token: light-dark(
+    oklch(0 0 0),
+    oklch(1 0 0)
+  );
+  --text-subtle-token: light-dark(
+    oklch(0.2156 0 0),
+    oklch(0.9536 0 0)
+  );
+  --text-subtlest-token: light-dark(
+    oklch(0.3696 0 0),
+    oklch(0.9052 0 0)
+  );
+  --border-dec-token: light-dark(
+    oklch(0 0 0 / 0.0729),
+    oklch(1 0 0 / 0.175)
+  );
+  --border-int-token: light-dark(
+    oklch(0 0 0 / 0.2032),
+    oklch(1 0 0 / 0.4195)
+  );
+}
+
+.surface-soft-spotlight {
+  --surface-token: light-dark(
+    oklch(0.1 0 288.1732),
+    oklch(0.9 0 292.8932)
+  );
+  --text-high-token: light-dark(
+    oklch(1 0 0),
+    oklch(0 0 0)
+  );
+  --text-subtle-token: light-dark(
+    oklch(0.893 0 0),
+    oklch(0.2156 0 0)
+  );
+  --text-subtlest-token: light-dark(
+    oklch(0.8406 0 0),
+    oklch(0.3696 0 0)
+  );
+  --border-dec-token: light-dark(
+    oklch(0.9866 0 0 / 0.3254),
+    oklch(0 0 0 / 0.0729)
+  );
+  --border-int-token: light-dark(
+    oklch(0.9866 0 0 / 0.5235),
+    oklch(0 0 0 / 0.2032)
+  );
+}
+
+.surface-spotlight {
+  --surface-token: light-dark(
+    oklch(0.1 0 288.1732),
+    oklch(0.9 0 292.8932)
+  );
+  --text-high-token: light-dark(
+    oklch(1 0 0),
+    oklch(0 0 0)
+  );
+  --text-subtle-token: light-dark(
+    oklch(0.893 0 0),
+    oklch(0.2156 0 0)
+  );
+  --text-subtlest-token: light-dark(
+    oklch(0.8406 0 0),
+    oklch(0.3696 0 0)
+  );
+  --border-dec-token: light-dark(
+    oklch(0.9866 0 0 / 0.3254),
+    oklch(0 0 0 / 0.0729)
+  );
+  --border-int-token: light-dark(
+    oklch(0.9866 0 0 / 0.5235),
+    oklch(0 0 0 / 0.2032)
+  );
+}
+
+@media (prefers-contrast: more) {
+  :root {
+    --base-chroma: 0;
+    --surface-chroma-adjust: 0;
+    --hue-adjust: 0;
+    --chroma-brand: 0;
+  }
+
+
+/* AUTO-GENERATED by src/lib/generator.ts */
+:root {
+  /* Elevation */
+  --shadow-sm: 0 1px 2px 0 light-dark(oklch(0 0 0 / 0.05), oklch(1 0 0 / 0.15));
+  --shadow-md: 
+    0 4px 6px -1px light-dark(oklch(0 0 0 / 0.1), oklch(1 0 0 / 0.15)), 
+    0 2px 4px -1px light-dark(oklch(0 0 0 / 0.06), oklch(1 0 0 / 0.1));
+  --shadow-lg: 
+    0 10px 15px -3px light-dark(oklch(0 0 0 / 0.1), oklch(1 0 0 / 0.15)), 
+    0 4px 6px -2px light-dark(oklch(0 0 0 / 0.05), oklch(1 0 0 / 0.1));
+  --shadow-xl: 
+    0 20px 25px -5px light-dark(oklch(0 0 0 / 0.1), oklch(1 0 0 / 0.15)), 
+    0 10px 10px -5px light-dark(oklch(0 0 0 / 0.04), oklch(1 0 0 / 0.1));
+  /* Focus */
+  --focus-ring-color: light-dark(
+    oklch(0.45 0.2 var(--hue-brand, 250)),
+    oklch(0.75 0.2 var(--hue-brand, 250))
+  );
+  /* Data Visualization */
+  --chart-1: light-dark(
+    oklch(0.6484 0.14 25),
+    oklch(0.7588 0.14 25)
+  );
+  --chart-2: light-dark(
+    oklch(0.6484 0.14 190),
+    oklch(0.7588 0.14 190)
+  );
+  --chart-3: light-dark(
+    oklch(0.6484 0.14 45),
+    oklch(0.7588 0.14 45)
+  );
+  --chart-4: light-dark(
+    oklch(0.6484 0.14 250),
+    oklch(0.7588 0.14 250)
+  );
+  --chart-5: light-dark(
+    oklch(0.6484 0.14 85),
+    oklch(0.7588 0.14 85)
+  );
+  --chart-6: light-dark(
+    oklch(0.6484 0.14 280),
+    oklch(0.7588 0.14 280)
+  );
+  --chart-7: light-dark(
+    oklch(0.6484 0.14 125),
+    oklch(0.7588 0.14 125)
+  );
+  --chart-8: light-dark(
+    oklch(0.6484 0.14 320),
+    oklch(0.7588 0.14 320)
+  );
+  --chart-9: light-dark(
+    oklch(0.6484 0.14 150),
+    oklch(0.7588 0.14 150)
+  );
+  --chart-10: light-dark(
+    oklch(0.6484 0.14 360),
+    oklch(0.7588 0.14 360)
+  );
+}
+
+.surface-page {
+  --surface-token: light-dark(
+    oklch(1 0 5),
+    oklch(0 0 0)
+  );
+  --text-high-token: light-dark(
+    oklch(0 0 0),
+    oklch(1 0 0)
+  );
+  --text-subtle-token: light-dark(
+    oklch(0.4586 0 0),
+    oklch(0.893 0 0)
+  );
+  --text-subtlest-token: light-dark(
+    oklch(0.54 0 0),
+    oklch(0.8406 0 0)
+  );
+  --border-dec-token: light-dark(
+    oklch(0.1935 0 0 / 0.0799),
+    oklch(0.9866 0 0 / 0.3938)
+  );
+  --border-int-token: light-dark(
+    oklch(0.1935 0 0 / 0.2093),
+    oklch(0.9866 0 0 / 0.5718)
+  );
+}
+
+.surface-workspace {
+  --surface-token: light-dark(
+    oklch(0.8899 0 4.8315),
+    oklch(0.4908 0 2.431)
+  );
+  --text-high-token: light-dark(
+    oklch(0 0 0),
+    oklch(1 0 0)
+  );
+  --text-subtle-token: light-dark(
+    oklch(0 0 0),
+    oklch(0.9926 0 0)
+  );
+  --text-subtlest-token: light-dark(
+    oklch(0.3426 0 0),
+    oklch(0.9476 0 0)
+  );
+  --border-dec-token: light-dark(
+    oklch(0 0 0 / 0.0764),
+    oklch(1 0 0 / 0.1642)
+  );
+  --border-int-token: light-dark(
+    oklch(0 0 0 / 0.2124),
+    oklch(1 0 0 / 0.4317)
+  );
+}
+
+.surface-card {
+  --surface-token: light-dark(
+    oklch(0.4221 0 1.9205),
+    oklch(0.9204 0 4.91)
+  );
+  --text-high-token: light-dark(
+    oklch(1 0 0),
+    oklch(0 0 0)
+  );
+  --text-subtle-token: light-dark(
+    oklch(0.9627 0 0),
+    oklch(0.2992 0 0)
+  );
+  --text-subtlest-token: light-dark(
+    oklch(0.9143 0 0),
+    oklch(0.4073 0 0)
+  );
+  --border-dec-token: light-dark(
+    oklch(1 0 0 / 0.1738),
+    oklch(0 0 0 / 0.0699)
+  );
+  --border-int-token: light-dark(
+    oklch(1 0 0 / 0.4201),
+    oklch(0 0 0 / 0.1964)
+  );
+}
+.surface-card:hover {
+  --surface-token: light-dark(
+    oklch(0.3734 0 1.5708),
+    oklch(0.9446 0 4.9557)
+  );
+}
+.surface-card:active {
+  --surface-token: light-dark(
+    oklch(0.3465 0 1.3849),
+    oklch(0.9566 0 4.9726)
+  );
+}
+
+.surface-action {
+  --surface-token: light-dark(
+    oklch(0.3465 0.12 1.3849),
+    oklch(0.9566 0.12 4.9726)
+  );
+  --text-high-token: light-dark(
+    oklch(1 0 0),
+    oklch(0 0 0)
+  );
+  --text-subtle-token: light-dark(
+    oklch(0.9295 0 0),
+    oklch(0.3734 0 0)
+  );
+  --text-subtlest-token: light-dark(
+    oklch(0.8807 0 0),
+    oklch(0.4658 0 0)
+  );
+  --border-dec-token: light-dark(
+    oklch(1 0 0 / 0.177),
+    oklch(0 0 0 / 0.0697)
+  );
+  --border-int-token: light-dark(
+    oklch(1 0 0 / 0.416),
+    oklch(0 0 0 / 0.1869)
+  );
+}
+.surface-action:hover {
+  --surface-token: light-dark(
+    oklch(0 0.12 0),
+    oklch(1 0.12 5)
+  );
+}
+.surface-action:active {
+  --surface-token: light-dark(
+    oklch(0 0.12 0),
+    oklch(1 0.12 5)
+  );
+}
+
+.surface-tinted {
+  --surface-token: light-dark(
+    oklch(0 0.01 0),
+    oklch(1 0.01 5)
+  );
+  --text-high-token: light-dark(
+    oklch(1 0 0),
+    oklch(0 0 0)
+  );
+  --text-subtle-token: light-dark(
+    oklch(0.893 0 0),
+    oklch(0.4586 0 0)
+  );
+  --text-subtlest-token: light-dark(
+    oklch(0.8406 0 0),
+    oklch(0.54 0 0)
+  );
+  --border-dec-token: light-dark(
+    oklch(0.9866 0 0 / 0.3938),
+    oklch(0.1935 0 0 / 0.0799)
+  );
+  --border-int-token: light-dark(
+    oklch(0.9866 0 0 / 0.5718),
+    oklch(0.1935 0 0 / 0.2093)
+  );
+}
+
+.surface-soft-spotlight {
+  --surface-token: light-dark(
+    oklch(0 0 0),
+    oklch(1 0 5)
+  );
+  --text-high-token: light-dark(
+    oklch(1 0 0),
+    oklch(0 0 0)
+  );
+  --text-subtle-token: light-dark(
+    oklch(0.893 0 0),
+    oklch(0.4586 0 0)
+  );
+  --text-subtlest-token: light-dark(
+    oklch(0.8406 0 0),
+    oklch(0.54 0 0)
+  );
+  --border-dec-token: light-dark(
+    oklch(0.9866 0 0 / 0.3938),
+    oklch(0.1935 0 0 / 0.0799)
+  );
+  --border-int-token: light-dark(
+    oklch(0.9866 0 0 / 0.5718),
+    oklch(0.1935 0 0 / 0.2093)
+  );
+}
+
+.surface-spotlight {
+  --surface-token: light-dark(
+    oklch(0 0 0),
+    oklch(1 0 5)
+  );
+  --text-high-token: light-dark(
+    oklch(1 0 0),
+    oklch(0 0 0)
+  );
+  --text-subtle-token: light-dark(
+    oklch(0.893 0 0),
+    oklch(0.4586 0 0)
+  );
+  --text-subtlest-token: light-dark(
+    oklch(0.8406 0 0),
+    oklch(0.54 0 0)
+  );
+  --border-dec-token: light-dark(
+    oklch(0.9866 0 0 / 0.3938),
+    oklch(0.1935 0 0 / 0.0799)
+  );
+  --border-int-token: light-dark(
+    oklch(0.9866 0 0 / 0.5718),
+    oklch(0.1935 0 0 / 0.2093)
+  );
+}
+
+}

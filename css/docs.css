@@ -1,0 +1,80 @@
+/* Documentation Utilities */
+
+.docs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.docs-flex {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.docs-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.docs-p-4 {
+  padding: 1rem;
+}
+.docs-p-2 {
+  padding: 0.5rem;
+}
+.docs-m-4 {
+  margin: 1rem;
+}
+.docs-mb-2 {
+  margin-bottom: 0.5rem;
+}
+.docs-mb-4 {
+  margin-bottom: 1rem;
+}
+.docs-mt-2 {
+  margin-top: 0.5rem;
+}
+.docs-mt-4 {
+  margin-top: 1rem;
+}
+
+.docs-rounded {
+  border-radius: 8px;
+}
+.docs-border {
+  border: 1px solid var(--computed-border-dec-color);
+}
+
+.docs-swatch {
+  width: 100%;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  font-weight: bold;
+}
+
+.docs-card {
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid var(--computed-border-dec-color);
+}
+
+.force-light {
+  color-scheme: light;
+}
+.force-dark {
+  color-scheme: dark;
+}
+
+.docs-chroma-0 {
+  --base-chroma: 0;
+}
+.docs-chroma-high {
+  --base-chroma: 0.05;
+}

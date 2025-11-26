@@ -1,0 +1,2287 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light sidebar-visible" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Color System Documentation</title>
+        <meta name="robots" content="noindex">
+
+
+        <!-- Custom HTML head -->
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon-de23e50b.svg">
+        <link rel="shortcut icon" href="favicon-8114d1fc.png">
+        <link rel="stylesheet" href="css/variables-0f4f7d13.css">
+        <link rel="stylesheet" href="css/general-d4e31f58.css">
+        <link rel="stylesheet" href="css/chrome-49e8d624.css">
+        <link rel="stylesheet" href="css/print-ad67d350.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="fonts/fonts-9644e21d.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" id="mdbook-highlight-css" href="highlight-493f70e1.css">
+        <link rel="stylesheet" id="mdbook-tomorrow-night-css" href="tomorrow-night-4c0ae647.css">
+        <link rel="stylesheet" id="mdbook-ayu-highlight-css" href="ayu-highlight-3fdfc3ac.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="src/css/color-system-8304ef21.css">
+        <link rel="stylesheet" href="src/css/docs-4a51eb93.css">
+
+
+        <!-- Provide site root and default themes to javascript -->
+        <script>
+            const path_to_root = "";
+            const default_light_theme = "light";
+            const default_dark_theme = "navy";
+            window.path_to_searchindex_js = "searchindex-12a2d536.js";
+        </script>
+        <!-- Start loading toc.js asap -->
+        <script src="toc-ac6a767d.js"></script>
+    </head>
+    <body>
+    <div id="mdbook-help-container">
+        <div id="mdbook-help-popup">
+            <h2 class="mdbook-help-title">Keyboard shortcuts</h2>
+            <div>
+                <p>Press <kbd>←</kbd> or <kbd>→</kbd> to navigate between chapters</p>
+                <p>Press <kbd>S</kbd> or <kbd>/</kbd> to search in the book</p>
+                <p>Press <kbd>?</kbd> to show this help</p>
+                <p>Press <kbd>Esc</kbd> to hide this help</p>
+            </div>
+        </div>
+    </div>
+    <div id="mdbook-body-container">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                let theme = localStorage.getItem('mdbook-theme');
+                let sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            const default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? default_dark_theme : default_light_theme;
+            let theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            const html = document.documentElement;
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add("js");
+        </script>
+
+        <input type="checkbox" id="mdbook-sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            let sidebar = null;
+            const sidebar_toggle = document.getElementById("mdbook-sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+                sidebar_toggle.checked = false;
+            }
+            if (sidebar === 'visible') {
+                sidebar_toggle.checked = true;
+            } else {
+                html.classList.remove('sidebar-visible');
+            }
+        </script>
+
+        <nav id="mdbook-sidebar" class="sidebar" aria-label="Table of contents">
+            <!-- populated by js -->
+            <mdbook-sidebar-scrollbox class="sidebar-scrollbox"></mdbook-sidebar-scrollbox>
+            <noscript>
+                <iframe class="sidebar-iframe-outer" src="toc.html"></iframe>
+            </noscript>
+            <div id="mdbook-sidebar-resize-handle" class="sidebar-resize-handle">
+                <div class="sidebar-resize-indicator"></div>
+            </div>
+        </nav>
+
+        <div id="mdbook-page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="mdbook-menu-bar-hover-placeholder"></div>
+                <div id="mdbook-menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="mdbook-sidebar-toggle" class="icon-button" for="mdbook-sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="mdbook-sidebar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z"/></svg></span>
+                        </label>
+                        <button id="mdbook-theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="mdbook-theme-list">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M371.3 367.1c27.3-3.9 51.9-19.4 67.2-42.9L600.2 74.1c12.6-19.5 9.4-45.3-7.6-61.2S549.7-4.4 531.1 9.6L294.4 187.2c-24 18-38.2 46.1-38.4 76.1L371.3 367.1zm-19.6 25.4l-116-104.4C175.9 290.3 128 339.6 128 400c0 3.9 .2 7.8 .6 11.6c1.8 17.5-10.2 36.4-27.8 36.4H96c-17.7 0-32 14.3-32 32s14.3 32 32 32H240c61.9 0 112-50.1 112-112c0-2.5-.1-5-.2-7.5z"/></svg></span>
+                        </button>
+                        <ul id="mdbook-theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-default_theme">Auto</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="mdbook-theme-ayu">Ayu</button></li>
+                        </ul>
+                        <button id="mdbook-search-toggle" class="icon-button" type="button" title="Search (`/`)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="/ s" aria-controls="mdbook-searchbar">
+                            <span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352c79.5 0 144-64.5 144-144s-64.5-144-144-144S64 128.5 64 208s64.5 144 144 144z"/></svg></span>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Color System Documentation</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <span class=fa-svg id="print-button"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M128 0C92.7 0 64 28.7 64 64v96h64V64H354.7L384 93.3V160h64V93.3c0-17-6.7-33.3-18.7-45.3L400 18.7C388 6.7 371.7 0 354.7 0H128zM384 352v32 64H128V384 368 352H384zm64 32h32c17.7 0 32-14.3 32-32V256c0-35.3-28.7-64-64-64H64c-35.3 0-64 28.7-64 64v96c0 17.7 14.3 32 32 32H64v64c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V384zm-16-88c-13.3 0-24-10.7-24-24s10.7-24 24-24s24 10.7 24 24s-10.7 24-24 24z"/></svg></span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="mdbook-search-wrapper" class="hidden">
+                    <form id="mdbook-searchbar-outer" class="searchbar-outer">
+                        <div class="search-wrapper">
+                            <input type="search" id="mdbook-searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="mdbook-searchresults-outer" aria-describedby="searchresults-header">
+                            <div class="spinner-wrapper">
+                                <span class=fa-svg id="fa-spin"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M304 48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zm0 416c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM48 304c26.5 0 48-21.5 48-48s-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48zm464-48c0-26.5-21.5-48-48-48s-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48zM142.9 437c18.7-18.7 18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zm0-294.2c18.7-18.7 18.7-49.1 0-67.9S93.7 56.2 75 75s-18.7 49.1 0 67.9s49.1 18.7 67.9 0zM369.1 437c18.7 18.7 49.1 18.7 67.9 0s18.7-49.1 0-67.9s-49.1-18.7-67.9 0s-18.7 49.1 0 67.9z"/></svg></span>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="mdbook-searchresults-outer" class="searchresults-outer hidden">
+                        <div id="mdbook-searchresults-header" class="searchresults-header"></div>
+                        <ul id="mdbook-searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('mdbook-sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('mdbook-sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#mdbook-sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="mdbook-content" class="content">
+                    <main>
+                        <h1 id="introduction"><a class="header" href="#introduction">Introduction</a></h1>
+<p><strong>Stop picking colors. Start defining intent.</strong></p>
+<p>The <strong>Color System</strong> is a semantic, automated palette generator designed for modern web applications. It solves the hardest parts of theming—accessibility, dark mode, and consistency—by using math instead of magic numbers.</p>
+<h2 id="the-problem"><a class="header" href="#the-problem">The Problem</a></h2>
+<p>In traditional design systems, you pick a color for “Light Mode” and a color for “Dark Mode”.</p>
+<ul>
+<li>“Light Card: <code>#ffffff</code>”</li>
+<li>“Dark Card: <code>#1a1a1a</code>”</li>
+</ul>
+<p>But what happens when you need a “High Contrast” mode? Or a “Dim” mode? Or when your brand color changes from Blue to Purple? You have to manually audit and update every single hex code to ensure text remains readable.</p>
+<h2 id="the-solution"><a class="header" href="#the-solution">The Solution</a></h2>
+<p>This system flips the model. You define <strong>Constraints</strong> and <strong>Intent</strong>:</p>
+<blockquote>
+<p>“I need a surface that guarantees APCA 60 contrast against the page background.”</p>
+</blockquote>
+<p>The system <strong>solves</strong> for the exact lightness value that meets that criteria.</p>
+<div class="surface-card docs-p-4 docs-rounded docs-my-4">
+  <strong>Wait, what is APCA?</strong>
+  
+<p class="text-subtle docs-mt-2">
+    APCA (Advanced Perceptual Contrast Algorithm) is the new standard for measuring contrast. Unlike the old WCAG 2.0 math (which was simple but often wrong), APCA models how the human eye actually perceives light and dark.
+  </p>
+
+  
+<p class="text-subtle docs-mt-2">
+    Don't worry about the math. The system handles it for you. Just know that "APCA 60" means "easy to read".
+  </p>
+
+  
+<p class="text-subtle docs-mt-2" style="font-size: 0.9em; border-top: 1px solid var(--border-subtle); padding-top: 0.5rem;">
+    <strong>New to accessibility?</strong> The system's defaults are designed to meet or exceed WCAG AA/AAA standards out of the box. You don't need to be an expert to ship an accessible app.
+  </p>
+
+</div>
+
+<div style="margin: 2rem 0;">
+  <a href="https://color-system-demo.netlify.app" target="_blank" style="background: var(--fg); color: var(--bg); padding: 0.75rem 1.5rem; border-radius: 6px; text-decoration: none; font-weight: bold; display: inline-block;">
+    Try the Theme Builder →
+  </a>
+</div>
+
+<h2 id="key-features"><a class="header" href="#key-features">Key Features</a></h2>
+<ul>
+<li><strong>Automated Contrast</strong>: Lightness values are solved mathematically to ensure APCA/WCAG compliance.</li>
+<li><strong>Themeable</strong>: Change a few “Anchors” and “Key Colors” to generate a completely new theme.</li>
+<li><strong>Platform Native</strong>: Built on modern CSS features like <code>oklch</code>, <code>@property</code>, and <code>light-dark()</code>.</li>
+<li><strong>Framework Agnostic</strong>: Core logic is pure TypeScript; output is standard CSS.</li>
+</ul>
+<h2 id="getting-started"><a class="header" href="#getting-started">Getting Started</a></h2>
+<p>Check out the <a href="#usage">Usage</a> section to learn how to install and use the system in your project.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="quick-start"><a class="header" href="#quick-start">Quick Start</a></h1>
+<p>Get up and running with the Color System in under 5 minutes.</p>
+<h2 id="1-the-setup"><a class="header" href="#1-the-setup">1. The Setup</a></h2>
+<p>For this guide, we’ll assume you have the CSS file generated (or you’re using the CLI).</p>
+<pre><code class="language-html">&lt;!-- In your HTML head --&gt;
+&lt;link rel="stylesheet" href="./theme.css" /&gt;
+</code></pre>
+<h2 id="2-your-first-surface"><a class="header" href="#2-your-first-surface">2. Your First Surface</a></h2>
+<p>The system works by placing content on <strong>Surfaces</strong>. Let’s create a simple card.</p>
+<pre><code class="language-html">&lt;body class="surface-page"&gt;
+  &lt;div class="surface-card"&gt;
+    &lt;h2 class="text-strong"&gt;Hello World&lt;/h2&gt;
+    &lt;p class="text-subtle"&gt;This is my first color system component.&lt;/p&gt;
+    &lt;button class="surface-action hue-brand"&gt;Click Me&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/body&gt;
+</code></pre>
+<p><strong>What just happened?</strong></p>
+<ul>
+<li><code>surface-page</code>: Sets the background of the body.</li>
+<li><code>surface-card</code>: Creates a distinct container with a slightly different background color.</li>
+<li><code>text-strong</code>: Automatically picks a high-contrast text color for the card.</li>
+<li><code>text-subtle</code>: Picks a lower-contrast text color.</li>
+<li><code>surface-action</code>: Creates a button background.</li>
+<li><code>hue-brand</code>: Tints the button with your brand color.</li>
+</ul>
+<h2 id="3-the-magic-switch-dark-mode"><a class="header" href="#3-the-magic-switch-dark-mode">3. The Magic Switch (Dark Mode)</a></h2>
+<p>You don’t need to write any extra CSS for dark mode. Just add the <code>force-dark</code> class to the body (or let the system detect the user’s preference).</p>
+<pre><code class="language-html">&lt;body class="surface-page force-dark"&gt;
+  &lt;!-- Everything inside here automatically inverts! --&gt;
+  &lt;div class="surface-card"&gt;...&lt;/div&gt;
+&lt;/body&gt;
+</code></pre>
+<p>The <code>surface-card</code> will become dark, the <code>text-strong</code> will become light, and the <code>hue-brand</code> button will adjust its lightness to remain accessible.</p>
+<h2 id="4-changing-the-brand"><a class="header" href="#4-changing-the-brand">4. Changing the Brand</a></h2>
+<p>Want to change your brand color? You don’t need to find-and-replace hex codes. Just update the CSS variable.</p>
+<pre><code class="language-css">:root {
+  /* Change from Blue (260) to Pink (330) */
+  --hue-brand: 330;
+}
+</code></pre>
+<p>Every element using <code>hue-brand</code> (like our button) will instantly update, maintaining perfect contrast ratios.</p>
+<h2 id="next-steps"><a class="header" href="#next-steps">Next Steps</a></h2>
+<ul>
+<li>Learn about the different <a href="#surfaces">Surfaces</a> available.</li>
+<li>Understand how <a href="#context--polarity">Context</a> works.</li>
+<li>Check out the <a href="#cli-usage">CLI</a> to generate your own theme.</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="philosophy"><a class="header" href="#philosophy">Philosophy</a></h1>
+<p>The Color System is built on three core pillars: <strong>Math</strong>, <strong>Semantics</strong>, and <strong>Adaptability</strong>.</p>
+<h2 id="math-vs-magic"><a class="header" href="#math-vs-magic">Math vs. Magic</a></h2>
+<p>Most color systems are built on <strong>Magic Numbers</strong>.</p>
+<blockquote>
+<p>“Use <code>Blue-500</code> for buttons and <code>Gray-100</code> for cards.”</p>
+</blockquote>
+<p>This forces <strong>you</strong> to be the calculator.</p>
+<ol>
+<li><strong>Is it accessible?</strong> You have to know that <code>Blue-800</code> is safe on <code>Blue-200</code>. Is <code>Blue-500</code> safe? You have to check a table.</li>
+<li><strong>What about Dark Mode?</strong> <code>Blue-800</code> on <code>Blue-200</code> might work in Light Mode, but in Dark Mode, you need to invert it. Now you’re managing two sets of magic numbers.</li>
+<li><strong>Is it consistent?</strong> The math of perception is non-linear. A step of “100” in lightness looks different in dark mode than in light mode. To make them <em>feel</em> the same, you have to manually tweak the values.</li>
+</ol>
+<p>This system is built on <strong>Math</strong>.</p>
+<blockquote>
+<p>“I need a Card.”</p>
+</blockquote>
+<p>The system translates this intent into a mathematical rule: <em>Must have APCA 60 contrast against the background.</em></p>
+<p>The <strong>Solver</strong> handles the complexity for you:</p>
+<ul>
+<li><strong>It guarantees contrast</strong>: It picks the exact lightness to hit APCA 60.</li>
+<li><strong>It handles polarity</strong>: It automatically flips for Dark Mode.</li>
+<li><strong>It balances perception</strong>: It adjusts the lightness steps so that “contrast” feels the same in both modes.</li>
+<li><strong>It shifts hue</strong>: It automatically warms up lighter colors and cools down darker colors (the “Bezold–Brücke effect”) so you don’t have to manually pick “warmer” grays.</li>
+</ul>
+<p><strong>You define the intent. The system solves the math.</strong></p>
+<h3 id="1-guarantees-contrast"><a class="header" href="#1-guarantees-contrast">1. Guarantees Contrast</a></h3>
+<div class="docs-flex surface-card docs-p-4 docs-rounded">
+  <button class="surface-action hue-brand docs-p-2 docs-rounded">Brand</button>
+  <button class="surface-action hue-blue docs-p-2 docs-rounded">Blue</button>
+  <button class="surface-action hue-success docs-p-2 docs-rounded">Success</button>
+  <button class="surface-action hue-warning docs-p-2 docs-rounded">Warning</button>
+</div>
+
+<p><em>All these buttons have different hues, but the system mathematically guarantees they meet the same contrast standard.</em></p>
+<h3 id="2-handles-polarity--perception"><a class="header" href="#2-handles-polarity--perception">2. Handles Polarity &amp; Perception</a></h3>
+<div class="docs-grid">
+  
+<div class="force-light surface-page docs-p-4 docs-rounded docs-border">
+    <strong>Light Mode</strong>
+    
+<div class="surface-card docs-p-4 docs-rounded docs-mt-4">
+      Card
+      
+<div class="text-subtle">Lc 90 vs Page</div>
+
+    </div>
+
+  </div>
+
+  
+<div class="force-dark surface-page docs-p-4 docs-rounded docs-border">
+    <strong>Dark Mode</strong>
+    
+<div class="surface-card docs-p-4 docs-rounded docs-mt-4">
+      Card
+      
+<div class="text-subtle">Lc 90 vs Page</div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<p><em>The system automatically inverts the colors. Notice how the “Card” feels equally distinct in both modes, even though the actual lightness values are different.</em></p>
+<h3 id="3-shifts-hue-bezoldbrücke-effect"><a class="header" href="#3-shifts-hue-bezoldbrücke-effect">3. Shifts Hue (Bezold–Brücke Effect)</a></h3>
+<div class="docs-grid">
+  
+<div class="surface-page docs-p-4 docs-rounded docs-border">
+    <strong>Linear (Boring)</strong>
+    
+<div class="docs-flex docs-mt-4" style="gap: 0">
+      
+<div style="background: oklch(0.2 0.1 260); height: 40px; flex: 1; border-radius: 4px 0 0 4px"></div>
+
+      
+<div style="background: oklch(0.4 0.1 260); height: 40px; flex: 1;"></div>
+
+      
+<div style="background: oklch(0.6 0.1 260); height: 40px; flex: 1;"></div>
+
+      
+<div style="background: oklch(0.8 0.1 260); height: 40px; flex: 1;"></div>
+
+      
+<div style="background: oklch(0.95 0.1 260); height: 40px; flex: 1; border-radius: 0 4px 4px 0"></div>
+
+    </div>
+
+    
+<div class="text-subtle docs-mt-2">Same hue (260) at all lightness levels.</div>
+
+  </div>
+
+  
+<div class="surface-page docs-p-4 docs-rounded docs-border">
+    <strong>Shifted (Dynamic)</strong>
+    
+<div class="docs-flex docs-mt-4" style="gap: 0">
+      
+<div style="background: oklch(0.2 0.1 260); height: 40px; flex: 1; border-radius: 4px 0 0 4px"></div>
+
+      
+<div style="background: oklch(0.4 0.1 270); height: 40px; flex: 1;"></div>
+
+      
+<div style="background: oklch(0.6 0.1 285); height: 40px; flex: 1;"></div>
+
+      
+<div style="background: oklch(0.8 0.1 305); height: 40px; flex: 1;"></div>
+
+      
+<div style="background: oklch(0.95 0.1 330); height: 40px; flex: 1; border-radius: 0 4px 4px 0"></div>
+
+    </div>
+
+    
+<div class="text-subtle docs-mt-2">Hue rotates (Blue → Purple → Pink) as lightness increases.</div>
+
+  </div>
+
+</div>
+
+<p><em>The system automatically rotates the hue as lightness changes, mimicking natural light and creating a richer, more vibrant palette.</em></p>
+<h2 id="designing-with-intent"><a class="header" href="#designing-with-intent">Designing with Intent</a></h2>
+<p>Our semantic roles (like “Surface”, “Action”, “Link”) are not arbitrary choices. They are derived directly from the <strong>fundamental semantics of the web platform</strong>.</p>
+<p>By aligning our taxonomy with these platform primitives, we ensure that accessibility is not an “add-on” or a “special case.” It is the <strong>foundation</strong> of the design. When you design with these concepts, you are designing with the grain of the web, ensuring your application feels native and works perfectly for every user, regardless of their device or settings.</p>
+<blockquote>
+<p><strong>For the curious:</strong> Under the hood, we map these roles to CSS System Colors (like <code>Canvas</code>, <code>ButtonFace</code>, <code>Highlight</code>). This is how we support Windows High Contrast mode automatically. But you don’t need to know that to use the system—just use the semantic names.</p>
+</blockquote>
+<h2 id="the-surface-model"><a class="header" href="#the-surface-model">The Surface Model</a></h2>
+<p>In this system, you don’t pick colors. You pick <strong>Surfaces</strong>.</p>
+<p>A Surface is not just a background color. It is a <strong>Context Creator</strong>. When you place an element on a surface, that surface dictates how text, borders, and other elements should behave to remain accessible.</p>
+<h3 id="polarity-the-light-switch"><a class="header" href="#polarity-the-light-switch">Polarity: The “Light Switch”</a></h3>
+<p>Before understanding specific surfaces, you must understand <strong>Polarity</strong>. Every surface has a polarity that determines how it reacts to Light and Dark mode.</p>
+<div class="docs-grid">
+  
+<div class="surface-card docs-p-4 docs-rounded">
+    <strong>Page-Aligned</strong>
+    
+<div class="text-subtle">Follows the theme (Light on Light)</div>
+
+  </div>
+
+  
+<div class="surface-spotlight docs-p-4 docs-rounded">
+    <strong>Inverted</strong>
+    
+<div class="text-subtle">Opposes the theme (Dark on Light)</div>
+
+  </div>
+
+</div>
+
+<ul>
+<li><strong>Page-Aligned</strong>: These surfaces follow the global mode. They are light in Light Mode and dark in Dark Mode. (e.g., Cards, Sidebars).</li>
+<li><strong>Inverted</strong>: These surfaces <em>flip</em> the global mode. They are dark in Light Mode and light in Dark Mode. (e.g., Tooltips, Primary Buttons).</li>
+</ul>
+<p>The Solver handles this automatically. You just ask for a <code>spotlight</code> (which is inverted), and it ensures it pops against the current theme.</p>
+<h3 id="the-categories"><a class="header" href="#the-categories">The Categories</a></h3>
+<p>The system groups surfaces into four semantic categories based on their intent:</p>
+<ol>
+<li><strong>Canvas</strong>: The foundation. The “floor” of your app.</li>
+<li><strong>Container</strong>: Objects that hold content. They sit on the canvas.</li>
+<li><strong>Action</strong>: Interactive elements. They sit on containers or the canvas.</li>
+<li><strong>Spotlight</strong>: Attention-grabbing elements. They float above everything.</li>
+</ol>
+<h2 id="the-default-hierarchy"><a class="header" href="#the-default-hierarchy">The Default Hierarchy</a></h2>
+<p>The system comes with a standard set of surfaces that map to these categories. While you can create custom surfaces in the Theme Builder, these defaults cover most UI patterns.</p>
+<div class="surface-page docs-p-4 docs-rounded docs-border">
+  <strong>Page (Canvas)</strong>
+  
+<div class="text-subtle docs-mb-4">The infinite backdrop</div>
+
+  
+<div class="surface-workspace docs-p-4 docs-rounded docs-border">
+    <strong>Workspace (Canvas)</strong>
+    
+<div class="text-subtle docs-mb-4">Elevated area</div>
+
+<pre><code>&lt;div class="surface-card docs-p-4 docs-rounded"&gt;
+  &lt;strong&gt;Card (Container)&lt;/strong&gt;
+  &lt;div class="text-subtle docs-mb-4"&gt;Contained element&lt;/div&gt;
+
+  &lt;div class="surface-tinted docs-p-4 docs-rounded"&gt;
+    &lt;strong&gt;Tinted (Container)&lt;/strong&gt;
+    &lt;div class="text-subtle"&gt;Subtle grouping&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+</code></pre>
+  </div>
+
+</div>
+
+<h3 id="interactors-actions"><a class="header" href="#interactors-actions">Interactors (Actions)</a></h3>
+<p>Actions are surfaces that invite user input. They are the “buttons” and “controls” of your interface.</p>
+<div class="docs-flex surface-card docs-p-4 docs-rounded">
+  <button class="surface-action docs-p-2 docs-rounded">Action</button>
+  <button class="surface-action hue-brand docs-p-2 docs-rounded">Brand Action</button>
+  <button class="surface-action hue-danger docs-p-2 docs-rounded">Danger Action</button>
+</div>
+
+<h3 id="spotlights-attention"><a class="header" href="#spotlights-attention">Spotlights (Attention)</a></h3>
+<p>Spotlights are used to draw immediate attention. They use <strong>Inverted Polarity</strong> to create maximum contrast and visual separation from the page.</p>
+<div class="docs-grid">
+  
+<div class="surface-spotlight docs-p-4 docs-rounded">
+    <strong>Spotlight</strong>
+    
+<div class="text-subtle">High emphasis</div>
+
+  </div>
+
+  
+<div class="surface-soft-spotlight docs-p-4 docs-rounded">
+    <strong>Soft Spotlight</strong>
+    
+<div class="text-subtle">Medium emphasis</div>
+
+  </div>
+
+</div>
+
+<h2 id="the-reactive-pipeline"><a class="header" href="#the-reactive-pipeline">The Reactive Pipeline</a></h2>
+<p>How does this actually work in the browser?</p>
+<p>We use a technique called the <strong>Reactive Pipeline</strong>. Instead of hardcoding hex values into classes, we use CSS Custom Properties (<code>var(--...)</code>) and the Relative Color Syntax (<code>oklch(from ...)</code>).</p>
+<h3 id="the-flow"><a class="header" href="#the-flow">The Flow</a></h3>
+<ol>
+<li>
+<p><strong>Input Variables</strong>: You set high-level intent variables.</p>
+<pre><code class="language-css">.hue-brand {
+  --hue-brand: 250;
+}
+</code></pre>
+</li>
+<li>
+<p><strong>The Engine (<code>engine.css</code>)</strong>: The engine listens to these variables and recalculates the colors in real-time.</p>
+<pre><code class="language-css">/* Simplified Engine Logic */
+--computed-surface: oklch(from var(--surface-token) l c var(--hue-brand));
+</code></pre>
+</li>
+<li>
+<p><strong>The Output</strong>: The browser renders the final color.</p>
+</li>
+</ol>
+<h3 id="why-is-this-powerful"><a class="header" href="#why-is-this-powerful">Why is this powerful?</a></h3>
+<ul>
+<li><strong>Instant Theming</strong>: Change <code>--hue-brand</code> on the <code>&lt;body&gt;</code>, and the entire app updates instantly. No re-compiling CSS.</li>
+<li><strong>Scoped Theming</strong>: Change <code>--hue-brand</code> on a specific <code>&lt;div&gt;</code>, and only that section changes color.</li>
+<li><strong>Animation</strong>: Because these are just numbers, you can animate them! The system handles the color interpolation for you.</li>
+</ul>
+<h2 id="context-consumers"><a class="header" href="#context-consumers">Context Consumers</a></h2>
+<p>Text and borders are <strong>Context Consumers</strong>. They don’t have their own colors; they calculate their color based on the surface they are sitting on.</p>
+<ul>
+<li><code>text-strong</code>: “I need high contrast against <em>whatever surface I am on</em>.”</li>
+<li><code>text-subtle</code>: “I need to be readable, but less prominent.”</li>
+<li><code>bordered</code>: “I need a decorative border that is visible on this surface.”</li>
+</ul>
+<p>This means you can copy-paste a component from a light card to a dark spotlight, and the text will automatically invert to remain readable.</p>
+<div class="docs-grid">
+  
+<div class="surface-card docs-p-4 docs-rounded">
+    
+<div class="text-strong">Strong Text</div>
+
+    
+<div class="text-subtle">Subtle Text</div>
+
+    
+<div class="bordered docs-p-2 docs-m-4">Bordered Element</div>
+
+  </div>
+
+  
+<div class="surface-spotlight docs-p-4 docs-rounded">
+    
+<div class="text-strong">Strong Text</div>
+
+    
+<div class="text-subtle">Subtle Text</div>
+
+    
+<div class="bordered docs-p-2 docs-m-4">Bordered Element</div>
+
+  </div>
+
+</div>
+
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="core-concepts"><a class="header" href="#core-concepts">Core Concepts</a></h1>
+<p>This section details the fundamental building blocks of the color system.</p>
+<ul>
+<li><strong><a href="#surfaces">Surfaces</a></strong>: The containers that create context.</li>
+<li><strong><a href="#context--polarity">Context</a></strong>: How polarity and mode affect color calculation.</li>
+<li><strong><a href="#accessibility">Accessibility</a></strong>: How the system handles high contrast and print.</li>
+</ul>
+<h2 id="surfaces--context"><a class="header" href="#surfaces--context">Surfaces &amp; Context</a></h2>
+<p>Everything sits on a <strong>Surface</strong>. A surface is not just a background color; it creates a <strong>Context</strong> for everything inside it.</p>
+<div class="docs-grid">
+  
+<div class="surface-page docs-p-4 docs-rounded docs-border">
+    <strong>Page</strong>
+    
+<div class="text-subtle">Background</div>
+
+  </div>
+
+  
+<div class="surface-card docs-p-4 docs-rounded">
+    <strong>Card</strong>
+    
+<div class="text-subtle">Content</div>
+
+  </div>
+
+  
+<div class="surface-action docs-p-4 docs-rounded">
+    <strong>Action</strong>
+    
+<div class="text-subtle">Interactive</div>
+
+  </div>
+
+  
+<div class="surface-spotlight docs-p-4 docs-rounded">
+    <strong>Spotlight</strong>
+    
+<div class="text-subtle">Emphasis</div>
+
+  </div>
+
+</div>
+
+<p>When you nest surfaces (e.g., a Card on a Page), the system automatically adjusts the context so that text and borders maintain perfect contrast.</p>
+<h2 id="foregrounds-text--icons"><a class="header" href="#foregrounds-text--icons">Foregrounds (Text &amp; Icons)</a></h2>
+<p>Text utilities consume the <strong>Context</strong> provided by the surface. You don’t need to know <em>which</em> surface you are on; you just declare the hierarchy.</p>
+<div class="surface-card docs-p-4 docs-rounded">
+  
+<div class="text-strong">Text Strong (Primary)</div>
+
+  
+<div class="text-subtle">Text Subtle (Secondary)</div>
+
+  
+<div class="text-subtler">Text Subtler (Meta)</div>
+
+  
+<div class="text-link">Text Link (Interactive)</div>
+
+</div>
+
+<ul>
+<li><strong><code>text-strong</code></strong> (Default): Primary content. High contrast.</li>
+<li><strong><code>text-subtle</code></strong>: Secondary content. Medium contrast.</li>
+<li><strong><code>text-subtler</code></strong>: Meta-data or low-emphasis content.</li>
+<li><strong><code>text-link</code></strong>: Interactive navigation elements. Uses the brand hue.</li>
+</ul>
+<h2 id="states"><a class="header" href="#states">States</a></h2>
+<p>Interactive elements have standard states that work across all surfaces.</p>
+<div class="docs-flex surface-card docs-p-4 docs-rounded">
+  <button class="surface-action docs-p-2 docs-rounded">Normal</button>
+  <button class="surface-action state-selected docs-p-2 docs-rounded">Selected</button>
+  <button class="surface-action state-disabled docs-p-2 docs-rounded">Disabled</button>
+</div>
+
+<ul>
+<li><strong><code>hover</code> / <code>active</code></strong>: Interaction feedback.</li>
+<li><strong><code>state-selected</code></strong>: For chosen items (e.g., a selected list option). Maps to System Highlight.</li>
+<li><strong><code>state-disabled</code></strong>: For non-interactive items. Maps to System GrayText.</li>
+</ul>
+<h2 id="borders"><a class="header" href="#borders">Borders</a></h2>
+<p>Borders also consume the surface context.</p>
+<div class="docs-grid">
+  
+<div class="surface-card docs-p-4 docs-rounded bordered">
+    <strong>Bordered</strong>
+    
+<div class="text-subtle">Decorative edge</div>
+
+  </div>
+
+  
+<div class="surface-card docs-p-4 docs-rounded bordered border-interactive">
+    <strong>Interactive</strong>
+    
+<div class="text-subtle">Input / Active edge</div>
+
+  </div>
+
+</div>
+
+<ul>
+<li><strong><code>bordered</code></strong>: Adds a decorative border (low contrast) to define the edge of a surface.</li>
+<li><strong><code>border-interactive</code></strong>: A higher contrast border for inputs or active elements.</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="surfaces"><a class="header" href="#surfaces">Surfaces</a></h1>
+<p>A <strong>Surface</strong> is the fundamental building block of the Color System. It is not just a background color; it is a semantic container that defines the context for everything inside it.</p>
+<h2 id="the-role-of-a-surface"><a class="header" href="#the-role-of-a-surface">The Role of a Surface</a></h2>
+<p>When you apply a surface class (e.g., <code>.surface-card</code>), the system does three things:</p>
+<ol>
+<li><strong>Sets the Background</strong>: It applies the calculated background color.</li>
+<li><strong>Sets the Context</strong>: It updates local CSS variables (like <code>--context-text-strong</code>) to ensure text is readable on <em>this specific surface</em>.</li>
+<li><strong>Sets the Border</strong>: It defines the default border color for elements inside it.</li>
+</ol>
+<h2 id="surface-types"><a class="header" href="#surface-types">Surface Types</a></h2>
+<div class="surface-page docs-p-4 docs-rounded docs-border">
+  <strong>Page</strong>
+  
+<div class="text-subtle docs-mb-4">The Foundation</div>
+
+  
+<div class="docs-grid">
+    
+<div class="surface-workspace docs-p-4 docs-rounded docs-border">
+      <strong>Workspace</strong>
+      
+<div class="text-subtle">Sidebar / Dashboard</div>
+
+    </div>
+
+    
+<div class="surface-card docs-p-4 docs-rounded">
+      <strong>Card</strong>
+      
+<div class="text-subtle">Content Container</div>
+
+      
+<div class="surface-tinted docs-p-4 docs-rounded docs-mt-4">
+        <strong>Tinted</strong>
+        
+<div class="text-subtle">Grouped Item</div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<h3 id="1-the-canvas-foundations"><a class="header" href="#1-the-canvas-foundations">1. The Canvas (Foundations)</a></h3>
+<p>These surfaces form the backdrop of your application.</p>
+<div class="docs-grid">
+  
+<div class="surface-page docs-p-4 docs-rounded docs-border">
+    <strong>Page</strong>
+    
+<div class="text-subtle">Infinite background</div>
+
+  </div>
+
+  
+<div class="surface-workspace docs-p-4 docs-rounded docs-border">
+    <strong>Workspace</strong>
+    
+<div class="text-subtle">Elevated area</div>
+
+  </div>
+
+</div>
+
+<ul>
+<li><strong><code>surface-page</code></strong>: The infinite background. Usually the lightest (in light mode) or darkest (in dark mode) point.</li>
+<li><strong><code>surface-workspace</code></strong>: A slightly elevated area, often used for sidebars, navigation rails, or the main content area in a dashboard.</li>
+</ul>
+<h3 id="2-the-objects-containers"><a class="header" href="#2-the-objects-containers">2. The Objects (Containers)</a></h3>
+<p>These surfaces hold content. They sit <em>on top</em> of the canvas.</p>
+<div class="docs-grid">
+  
+<div class="surface-card docs-p-4 docs-rounded">
+    <strong>Card</strong>
+    
+<div class="text-subtle">Distinct boundary</div>
+
+  </div>
+
+  
+<div class="surface-tinted docs-p-4 docs-rounded">
+    <strong>Tinted</strong>
+    
+<div class="text-subtle">Subtle grouping</div>
+
+  </div>
+
+</div>
+
+<ul>
+<li><strong><code>surface-card</code></strong>: The workhorse of UI design. Used for panels, posts, and grouped content.</li>
+<li><strong><code>surface-tinted</code></strong>: A subtle variation, often used to group related items without a hard boundary. It usually has a slight tint of the brand color.</li>
+</ul>
+<h3 id="3-the-interactors-actions"><a class="header" href="#3-the-interactors-actions">3. The Interactors (Actions)</a></h3>
+<p>These surfaces are interactive. They invite clicks and touches.</p>
+<div class="docs-flex surface-card docs-p-4 docs-rounded">
+  <button class="surface-action docs-p-2 docs-rounded">Action</button>
+  <button class="surface-action hue-brand docs-p-2 docs-rounded">Brand</button>
+  <button class="surface-action hue-danger docs-p-2 docs-rounded">Danger</button>
+</div>
+
+<ul>
+<li><strong><code>surface-action</code></strong>: Used for buttons, toggles, and active states.</li>
+<li><strong><code>surface-action-soft</code></strong>: A lower-emphasis interactive surface (e.g., a secondary button).</li>
+</ul>
+<h3 id="4-the-spotlights-attention"><a class="header" href="#4-the-spotlights-attention">4. The Spotlights (Attention)</a></h3>
+<p>These surfaces demand attention. They often invert the polarity to stand out.</p>
+<div class="docs-grid">
+  
+<div class="surface-spotlight docs-p-4 docs-rounded">
+    <strong>Spotlight</strong>
+    
+<div class="text-subtle">High Contrast</div>
+
+  </div>
+
+  
+<div class="surface-soft-spotlight docs-p-4 docs-rounded">
+    <strong>Soft Spotlight</strong>
+    
+<div class="text-subtle">Medium Contrast</div>
+
+  </div>
+
+</div>
+
+<ul>
+<li><strong><code>surface-spotlight</code></strong>: High contrast. Used for tooltips, toasts, and primary call-to-actions.</li>
+<li><strong><code>surface-soft-spotlight</code></strong>: A softer version, often used for badges or indicators.</li>
+</ul>
+<h2 id="nesting-surfaces"><a class="header" href="#nesting-surfaces">Nesting Surfaces</a></h2>
+<p>Surfaces are designed to be nested. The system automatically adapts text contrast based on the parent surface.</p>
+<div class="surface-page docs-p-4 docs-rounded docs-border">
+  
+<div class="text-strong">Text on Page</div>
+
+  
+<div class="surface-card docs-p-4 docs-rounded docs-mt-4">
+    
+<div class="text-strong">Text on Card</div>
+
+    <button class="surface-action docs-p-2 docs-rounded docs-mt-4">
+      Text on Action
+    </button>
+  </div>
+
+  
+<div class="surface-spotlight docs-p-4 docs-rounded docs-mt-4">
+    
+<div class="text-strong">Text on Spotlight</div>
+
+  </div>
+
+</div>
+
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="context--polarity"><a class="header" href="#context--polarity">Context &amp; Polarity</a></h1>
+<p><strong>Context</strong> is the mechanism that allows the color system to adapt to different environments (Light Mode, Dark Mode, High Contrast) without changing your code.</p>
+<h2 id="polarity"><a class="header" href="#polarity">Polarity</a></h2>
+<p>The system divides the world into two “polarities”:</p>
+<h3 id="1-page-polarity-page"><a class="header" href="#1-page-polarity-page">1. Page Polarity (<code>page</code>)</a></h3>
+<p>This is the standard polarity. It follows the system theme.</p>
+<ul>
+<li><strong>Light Mode</strong>: Light background, Dark text.</li>
+<li><strong>Dark Mode</strong>: Dark background, Light text.</li>
+</ul>
+<p>Most surfaces (<code>surface-page</code>, <code>surface-card</code>) use Page Polarity.</p>
+<h3 id="2-inverted-polarity-inverted"><a class="header" href="#2-inverted-polarity-inverted">2. Inverted Polarity (<code>inverted</code>)</a></h3>
+<p>This polarity flips the relationship.</p>
+<ul>
+<li><strong>Light Mode</strong>: Dark background, Light text.</li>
+<li><strong>Dark Mode</strong>: Light background, Dark text (or a lighter dark).</li>
+</ul>
+<p>Surfaces like <code>surface-spotlight</code> (Tooltips, Toasts, Primary Buttons) often use Inverted Polarity to stand out.</p>
+<h2 id="the-context-provider-pattern"><a class="header" href="#the-context-provider-pattern">The Context Provider Pattern</a></h2>
+<p>Every surface acts as a <strong>Context Provider</strong>. It sets CSS variables that tell its children how to behave.</p>
+<pre><code class="language-css">/* Simplified CSS */
+.surface-card {
+  /* I am a light surface */
+  --context-text-strong: #000000;
+  --context-border: #cccccc;
+}
+
+.surface-spotlight {
+  /* I am a dark surface */
+  --context-text-strong: #ffffff;
+  --context-border: transparent;
+}
+</code></pre>
+<p>When you use a utility class like <code>.text-strong</code>, it doesn’t have a color of its own. It simply asks the context:</p>
+<pre><code class="language-css">.text-strong {
+  color: var(--context-text-strong);
+}
+</code></pre>
+<pre><code class="language-mermaid">sequenceDiagram
+    participant Parent as .surface-card
+    participant Child as .text-strong
+
+    Parent-&gt;&gt;Parent: Sets --context-text-strong: #000
+    Child-&gt;&gt;Parent: Reads var(--context-text-strong)
+    Child-&gt;&gt;Child: Applies color: #000
+</code></pre>
+<h2 id="live-demo"><a class="header" href="#live-demo">Live Demo</a></h2>
+<p>The following example is rendered using the actual Color System CSS. Notice how the text color automatically adapts when nested inside the dark <code>surface-spotlight</code>.</p>
+<div class="surface-page bordered" style="padding: 20px; border-radius: 8px;">
+  
+<p class="text-strong" style="margin: 0 0 10px 0;">I am on the Page Surface.</p>
+
+  
+<div class="surface-card bordered" style="padding: 20px; border-radius: 8px;">
+    
+<p class="text-strong" style="margin: 0 0 10px 0;">I am on a Card Surface (Page Polarity).</p>
+
+    
+<div class="surface-spotlight bordered" style="padding: 20px; border-radius: 8px;">
+      
+<p class="text-strong" style="margin: 0;">I am on a Spotlight Surface (Inverted Polarity).</p>
+
+    </div>
+
+  </div>
+
+</div>
+
+<h2 id="why-is-this-useful"><a class="header" href="#why-is-this-useful">Why is this useful?</a></h2>
+<ol>
+<li><strong>Portability</strong>: You can move a component from a Card to a Spotlight, and the text will automatically invert.</li>
+<li><strong>Maintainability</strong>: You don’t need to write <code>.card .text</code> and <code>.spotlight .text</code> overrides.</li>
+<li><strong>Nesting</strong>: It handles infinite nesting levels automatically.</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="accessibility"><a class="header" href="#accessibility">Accessibility</a></h1>
+<p>The Color System is designed with accessibility as a first-class citizen. It automates many of the tedious aspects of compliance, ensuring your theme is inclusive by default.</p>
+<h2 id="contrast-compliance-apca"><a class="header" href="#contrast-compliance-apca">Contrast Compliance (APCA)</a></h2>
+<p>The core solver uses the <strong>APCA (Advanced Perceptual Contrast Algorithm)</strong> to calculate lightness values. APCA is the candidate method for <strong>WCAG 3.0</strong> (Silver), representing the future of web accessibility standards.</p>
+<p>Unlike WCAG 2.1, which uses simple ratios (e.g., 4.5:1) that can be inaccurate for dark modes, APCA models human visual perception. It accounts for:</p>
+<ul>
+<li><strong>Polarity</strong>: Dark text on light backgrounds is perceived differently than light text on dark backgrounds.</li>
+<li><strong>Spatial Frequency</strong>: Thinner fonts require higher contrast than bolder fonts to be equally legible.</li>
+<li><strong>Context</strong>: The surrounding luminance affects perceived contrast.</li>
+</ul>
+<p>By using APCA, the system ensures your theme is not just “compliant” with a checklist, but genuinely readable for all users in all modes.</p>
+<ul>
+<li><strong>Text</strong>: The system automatically selects text colors that meet the required Lc (Lightness Contrast) scores for their context.</li>
+<li><strong>Borders</strong>: Decorative and interactive borders are generated with specific contrast targets to ensuring visibility without clutter.</li>
+</ul>
+<h2 id="forced-colors-windows-high-contrast"><a class="header" href="#forced-colors-windows-high-contrast">Forced Colors (Windows High Contrast)</a></h2>
+<p>The system includes built-in support for <strong>Forced Colors Mode</strong> (commonly known as Windows High Contrast). This mode is used by people with low vision to strip away complex styling and enforce a limited, high-contrast palette.</p>
+<h3 id="how-it-works"><a class="header" href="#how-it-works">How it Works</a></h3>
+<p>The CSS Engine detects <code>forced-colors: active</code> and automatically maps your semantic surfaces to standard <strong>System Colors</strong>:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">Surface</th><th style="text-align: left">System Color</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>surface-card</code></td><td style="text-align: left"><code>Canvas</code> / <code>CanvasText</code></td></tr>
+<tr><td style="text-align: left"><code>surface-action</code></td><td style="text-align: left"><code>ButtonFace</code> / <code>ButtonText</code></td></tr>
+<tr><td style="text-align: left"><code>state-selected</code></td><td style="text-align: left"><code>Highlight</code> / <code>HighlightText</code></td></tr>
+<tr><td style="text-align: left"><code>text-link</code></td><td style="text-align: left"><code>LinkText</code></td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="testing"><a class="header" href="#testing">Testing</a></h3>
+<p>You can verify this behavior in Chrome/Edge DevTools:</p>
+<ol>
+<li>Open the <strong>Command Menu</strong> (<code>Ctrl+Shift+P</code> / <code>Cmd+Shift+P</code>).</li>
+<li>Type “Show Rendering” and select it.</li>
+<li>Scroll down to <strong>Emulate CSS media feature prefers-contrast</strong>.</li>
+<li>Or, look for <strong>Emulate CSS media feature forced-colors</strong> and set it to <code>active</code>.</li>
+</ol>
+<h2 id="high-contrast-preference"><a class="header" href="#high-contrast-preference">High Contrast Preference</a></h2>
+<p>The system respects the user’s operating system preference for higher contrast (<code>prefers-contrast: more</code>).</p>
+<p>When you run <code>color-system build</code> (or <code>solve</code>), the generator automatically creates a <strong>High Contrast Variant</strong> of your theme. This variant:</p>
+<ol>
+<li><strong>Widening Anchors</strong>: Pushes background and foreground anchors to pure Black (0%) and White (100%) to maximize dynamic range.</li>
+<li><strong>Desaturation</strong>: Removes chroma from text and surfaces to reduce visual noise and improve legibility.</li>
+</ol>
+<p>This variant is wrapped in a <code>@media (prefers-contrast: more)</code> block in your <code>theme.css</code>, so the browser applies it instantly with zero runtime overhead.</p>
+<h2 id="print-styles"><a class="header" href="#print-styles">Print Styles</a></h2>
+<p>The system includes a print stylesheet (<code>@media print</code>) that optimizes your theme for paper.</p>
+<h3 id="strategy-ink--paper"><a class="header" href="#strategy-ink--paper">Strategy: “Ink &amp; Paper”</a></h3>
+<p>Instead of trying to translate your digital theme directly to print, we map it to the physical constraints of ink and paper:</p>
+<ol>
+<li><strong>Force Light Mode</strong>: We explicitly set <code>color-scheme: light</code> to ensure all <code>light-dark()</code> tokens resolve to their light values. This prevents printing dark backgrounds which waste massive amounts of ink.</li>
+<li><strong>Remove Chroma</strong>: We set <code>--base-chroma: 0</code> to remove all saturation. This ensures that even if a surface has a slight tint in light mode, it prints as grayscale.</li>
+<li><strong>White Backgrounds</strong>: We explicitly set the background of main surfaces (<code>.surface-card</code>, etc.) to <code>white</code>.
+<ul>
+<li><em>Why hardcode white?</em> In the context of print, <code>white</code> represents the <strong>paper</strong>. By setting it explicitly, we ensure that no background ink is laid down, even if the user has “Background Graphics” enabled in their print settings.</li>
+<li><em>No <code>!important</code></em>: We rely on the low specificity of our CSS Engine (<code>:where(...)</code>) to allow these print overrides to apply naturally without needing <code>!important</code>.</li>
+</ul>
+</li>
+<li><strong>Borders</strong>: Since we remove background colors, we add a <code>1px solid</code> border using the <code>text-subtlest</code> token to maintain the visual structure of cards and sections.</li>
+<li><strong>Cleanup</strong>: We hide purely interactive elements (like <code>.surface-action</code>) that serve no purpose on a static page.</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="the-solver"><a class="header" href="#the-solver">The Solver</a></h1>
+<p>The <strong>Solver</strong> is the engine that powers the color system. It takes your high-level <strong>Intent</strong> and turns it into precise <strong>CSS Tokens</strong>.</p>
+<p>You can interact with the Theme Builder in two ways:</p>
+<ol>
+<li><strong>The UI</strong>: The interactive web interface (for exploration).</li>
+<li><strong>The CLI</strong>: The <code>color-system</code> command line tool (for production).</li>
+</ol>
+<p>Both use the exact same “Solver” logic under the hood.</p>
+<h2 id="the-theme-builder-model"><a class="header" href="#the-theme-builder-model">The “Theme Builder” Model</a></h2>
+<p>To understand the solver, it helps to think about the controls you see in the Theme Builder UI. The solver is simply the code that runs every time you move a slider or add a surface.</p>
+<h3 id="1-anchors-defining-the-playing-field"><a class="header" href="#1-anchors-defining-the-playing-field">1. Anchors: Defining the Playing Field</a></h3>
+<p>In the Theme Builder, you set the <strong>Anchors</strong>. These are the boundaries of your color system.</p>
+<div class="surface-workspace docs-p-4 docs-rounded docs-border">
+  
+<div class="docs-mb-4">
+    
+<h4 class="text-strong" style="margin: 0 0 0.5rem 0">Page Anchors</h4>
+
+    
+<p class="text-subtle" style="margin: 0; font-size: 0.9rem">
+      Defines the lightness range for the "Page" polarity.
+    </p>
+
+  </div>
+
+  <!-- Start Slider -->
+  
+<div class="docs-mb-4">
+    
+<div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+      <span class="text-subtle">Start (Background)</span>
+      <span class="text-strong">0.98</span>
+    </div>
+
+    
+<div style="height: 6px; background: var(--border-subtle-token); border-radius: 3px; position: relative;">
+      
+<div style="position: absolute; left: 0; top: 0; bottom: 0; width: 98%; background: var(--text-subtle-token); opacity: 0.2; border-radius: 3px;"></div>
+
+      
+<div style="position: absolute; right: 2%; top: 50%; transform: translate(50%, -50%); width: 16px; height: 16px; background: var(--text-strong-token); border-radius: 50%; border: 2px solid var(--surface-token);"></div>
+
+    </div>
+
+  </div>
+
+  <!-- End Slider -->
+  
+<div>
+    
+<div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+      <span class="text-subtle">End (Elevated)</span>
+      <span class="text-strong">0.12</span>
+    </div>
+
+    
+<div style="height: 6px; background: var(--border-subtle-token); border-radius: 3px; position: relative;">
+      
+<div style="position: absolute; left: 0; top: 0; bottom: 0; width: 12%; background: var(--text-subtle-token); opacity: 0.2; border-radius: 3px;"></div>
+
+      
+<div style="position: absolute; left: 12%; top: 50%; transform: translate(-50%, -50%); width: 16px; height: 16px; background: var(--text-strong-token); border-radius: 50%; border: 2px solid var(--surface-token);"></div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<p>The solver takes these values and asks: <strong>“Can I fit readable text inside this range?”</strong>
+If the answer is “No” (and the anchor is adjustable), the solver <strong>moves the slider for you</strong> until the text is readable.</p>
+<h3 id="2-surfaces-the-steps"><a class="header" href="#2-surfaces-the-steps">2. Surfaces: The “Steps”</a></h3>
+<p>In the Theme Builder, you add <strong>Surfaces</strong> to a list.</p>
+<div class="surface-workspace docs-p-4 docs-rounded docs-border">
+  
+<h4 class="text-strong" style="margin: 0 0 1rem 0">Surfaces</h4>
+
+  
+<div class="docs-col">
+    <!-- Surface Item 1 -->
+    
+<div class="surface-card docs-p-2 docs-rounded docs-border" style="display: flex; align-items: center; gap: 1rem;">
+      <span class="text-strong" style="flex: 1;">Page</span>
+      <code class="text-subtle">.surface-page</code>
+      <span style="font-size: 0.8em; background: #dcfce7; color: #166534; padding: 2px 6px; border-radius: 4px;">Passes</span>
+    </div>
+
+<pre><code>&lt;!-- Surface Item 2 --&gt;
+&lt;div class="surface-card docs-p-2 docs-rounded docs-border" style="display: flex; align-items: center; gap: 1rem;"&gt;
+  &lt;span class="text-strong" style="flex: 1;"&gt;Card&lt;/span&gt;
+  &lt;code class="text-subtle"&gt;.surface-card&lt;/code&gt;
+  &lt;span style="font-size: 0.8em; background: #dcfce7; color: #166534; padding: 2px 6px; border-radius: 4px;"&gt;Passes&lt;/span&gt;
+&lt;/div&gt;
+
+&lt;!-- Surface Item 3 --&gt;
+&lt;div class="surface-card docs-p-2 docs-rounded docs-border" style="display: flex; align-items: center; gap: 1rem;"&gt;
+  &lt;span class="text-strong" style="flex: 1;"&gt;Sidebar&lt;/span&gt;
+  &lt;code class="text-subtle"&gt;.surface-sidebar&lt;/code&gt;
+  &lt;span style="font-size: 0.8em; background: #dcfce7; color: #166534; padding: 2px 6px; border-radius: 4px;"&gt;Passes&lt;/span&gt;
+&lt;/div&gt;
+</code></pre>
+  </div>
+
+</div>
+
+<p>The solver’s job is to place these surfaces evenly between your Start and End anchors.
+It doesn’t just divide the lightness evenly (e.g., 10%, 20%, 30%). It divides the <strong>Contrast Space</strong> evenly. This ensures that the visual “step” from Page to Card looks the same as the step from Card to Sidebar.</p>
+<h4 id="why-contrast-space"><a class="header" href="#why-contrast-space">Why Contrast Space?</a></h4>
+<p>If we just divided the lightness values evenly (Linear Lightness), the steps would look uneven to the human eye. Dark colors bunch up, and light colors spread out. By dividing by <strong>Contrast</strong> (Linear Perception), every step feels visually consistent.</p>
+<div class="docs-grid">
+  
+<div class="docs-p-4 docs-rounded docs-border">
+    <strong class="docs-mb-2" style="display: block">Linear Lightness (Bad)</strong>
+    
+<div style="display: flex; height: 50px; border-radius: 4px; overflow: hidden;">
+      
+<div style="flex: 1; background: oklch(95% 0 0);"></div>
+
+      
+<div style="flex: 1; background: oklch(85% 0 0);"></div>
+
+      
+<div style="flex: 1; background: oklch(75% 0 0);"></div>
+
+      
+<div style="flex: 1; background: oklch(65% 0 0);"></div>
+
+      
+<div style="flex: 1; background: oklch(55% 0 0);"></div>
+
+    </div>
+
+    
+<div class="text-subtle docs-mt-2" style="font-size: 0.9em">
+      Mathematically equal steps (-10%). To the eye, the lighter steps feel too jumpy, while the darker steps blend together.
+    </div>
+
+  </div>
+
+  
+<div class="docs-p-4 docs-rounded docs-border">
+    <strong class="docs-mb-2" style="display: block">Linear Contrast (Good)</strong>
+    
+<div style="display: flex; height: 50px; border-radius: 4px; overflow: hidden;">
+      
+<div style="flex: 1; background: oklch(98% 0 0);"></div>
+
+      
+<div style="flex: 1; background: oklch(92% 0 0);"></div>
+
+      
+<div style="flex: 1; background: oklch(84% 0 0);"></div>
+
+      
+<div style="flex: 1; background: oklch(74% 0 0);"></div>
+
+      
+<div style="flex: 1; background: oklch(62% 0 0);"></div>
+
+    </div>
+
+    
+<div class="text-subtle docs-mt-2" style="font-size: 0.9em">
+      Perceptually equal steps. The solver makes larger adjustments to the darker shades to ensure every step feels distinct.
+    </div>
+
+  </div>
+
+</div>
+
+<h3 id="3-the-result-generated-tokens"><a class="header" href="#3-the-result-generated-tokens">3. The Result: Generated Tokens</a></h3>
+<p>Finally, the solver outputs the CSS tokens that the Theme Builder (and your app) uses.</p>
+<div class="surface-workspace docs-p-4 docs-rounded docs-border">
+  
+<h4 class="text-strong" style="margin: 0 0 1rem 0">Generated CSS</h4>
+
+  
+<pre style="background: var(--surface-token); padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>--lightness-surface-page: light-dark(0.98, 0.12);
+--lightness-surface-card: light-dark(0.95, 0.15);
+--lightness-surface-sidebar: light-dark(0.92, 0.18);</code></pre>
+
+</div>
+
+<h2 id="the-pipeline"><a class="header" href="#the-pipeline">The Pipeline</a></h2>
+<p>When you run <code>pnpm solve</code> (or change a setting in the Builder), this pipeline executes:</p>
+<ol>
+<li><strong>Hydrate</strong>: Read your config.</li>
+<li><strong>Adjust Anchors</strong>: Ensure the range supports High Contrast text.</li>
+<li><strong>Distribute</strong>: Calculate the target contrast for each surface.</li>
+<li><strong>Solve Lightness</strong>: Use binary search to find the exact lightness value that hits that contrast target.</li>
+<li><strong>Solve Text</strong>: Find the text colors that sit accessibly on top of those surfaces.</li>
+<li><strong>Generate</strong>: Write the CSS.</li>
+</ol>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="deep-dive"><a class="header" href="#deep-dive">Deep Dive</a></h1>
+<p>This section covers the internal mechanisms of the Color System. You don’t need to understand these to use the system, but they are helpful for advanced configuration and customization.</p>
+<ul>
+<li><strong><a href="#anchors">Anchors</a></strong>: How the system defines the lightness range for a theme.</li>
+<li><strong><a href="#hue-shifting">Hue Shifting</a></strong>: The algorithm used to simulate natural color shifts in shadows and highlights.</li>
+</ul>
+<h2 id="glossary"><a class="header" href="#glossary">Glossary</a></h2>
+<ul>
+<li><strong>Anchor</strong>: A fixed point (like “Black” or “White”) that defines the extremes of your theme.</li>
+<li><strong>APCA</strong>: The math used to calculate contrast. It’s better than the old WCAG math.</li>
+<li><strong>Context</strong>: The environment a color lives in. Is it on a dark background? Is it in light mode?</li>
+<li><strong>Hue Shift</strong>: The natural phenomenon where colors change hue as they get lighter or darker (e.g., Blue turns Purple as it gets lighter).</li>
+<li><strong>Polarity</strong>: The “direction” of contrast. “Page” polarity is Light-on-Light (standard). “Inverted” polarity is Dark-on-Light (high contrast).</li>
+<li><strong>Surface</strong>: A container that has a background color and defines the context for its children.</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="understanding-apca"><a class="header" href="#understanding-apca">Understanding APCA</a></h1>
+<p>The <strong>Advanced Perceptual Contrast Algorithm (APCA)</strong> is a new method for calculating contrast that aligns much closer to how the human eye actually perceives light and color.</p>
+<blockquote>
+<p><strong>Is this standard?</strong>
+Yes. APCA is the candidate contrast method for <strong>WCAG 3.0</strong> (the next generation of web accessibility standards). While WCAG 2.x is the current legal baseline in many places, APCA represents the future of accessibility science. By using it, you are future-proofing your design and providing a <em>better</em> experience for users today, even if the math is different.</p>
+</blockquote>
+<p>Unlike the older WCAG 2.x ratio (e.g., <code>4.5:1</code>), APCA produces a score called <strong>Lc (Lightness Contrast)</strong>.</p>
+<h2 id="why-not-wcag-2x"><a class="header" href="#why-not-wcag-2x">Why not WCAG 2.x?</a></h2>
+<p>The old math was simple, but flawed. It treated all colors equally. But your eye doesn’t.</p>
+<h3 id="the-font-weight-problem"><a class="header" href="#the-font-weight-problem">The “Font Weight” Problem</a></h3>
+<p>WCAG 2.x treats all text the same, regardless of how thin or thick it is. But your eye needs much more contrast to see a thin line than a thick block.</p>
+<div class="docs-grid">
+  
+<div class="docs-p-4 docs-rounded docs-border">
+    
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+      <strong style="color: #15803d;">WCAG Passes (4.5:1)</strong>
+      <span style="font-size: 0.8em; background: #dcfce7; color: #166534; padding: 2px 6px; border-radius: 4px;">Passes</span>
+    </div>
+
+    
+<div style="font-weight: 100; font-size: 2.5rem; color: #767676; font-family: sans-serif; margin-bottom: 1rem;">
+      Thin Text
+    </div>
+
+    
+<div class="text-subtle" style="font-size: 0.9em; line-height: 1.4;">
+      Technically passes WCAG AA. <br><strong>Hard to read.</strong>
+    </div>
+
+  </div>
+
+  
+<div class="docs-p-4 docs-rounded docs-border">
+    
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+      <strong style="color: #b45309;">WCAG Fails (3.5:1)</strong>
+      <span style="font-size: 0.8em; background: #fef3c7; color: #92400e; padding: 2px 6px; border-radius: 4px;">Fails</span>
+    </div>
+
+    
+<div style="font-weight: 900; font-size: 2.5rem; color: #888888; font-family: sans-serif; margin-bottom: 1rem;">
+      Bold Text
+    </div>
+
+    
+<div class="text-subtle" style="font-size: 0.9em; line-height: 1.4;">
+      Technically fails WCAG AA. <br><strong>Easy to read.</strong>
+    </div>
+
+  </div>
+
+</div>
+
+<p><em>APCA understands this. It would give the thin text a lower score and the bold text a higher score, matching your perception.</em></p>
+<h3 id="the-polarity-problem"><a class="header" href="#the-polarity-problem">The “Polarity” Problem</a></h3>
+<p>WCAG 2.x treats <strong>White on Black</strong> exactly the same as <strong>Black on White</strong>. But your eye doesn’t.</p>
+<div class="docs-grid">
+  
+<div class="docs-p-4 docs-rounded docs-border" style="background: white; color: black;">
+    
+<div style="margin-bottom: 1rem;">
+      <strong>Positive Polarity</strong>
+      
+<div style="font-size: 0.8em; opacity: 0.7;">Dark on Light</div>
+
+    </div>
+
+    
+<div style="font-size: 1.1em; line-height: 1.5;">
+      The eye resolves this detail very well.
+    </div>
+
+  </div>
+
+  
+<div class="docs-p-4 docs-rounded docs-border" style="background: black; color: white;">
+    
+<div style="margin-bottom: 1rem;">
+      <strong>Negative Polarity</strong>
+      
+<div style="font-size: 0.8em; opacity: 0.7;">Light on Dark</div>
+
+    </div>
+
+    
+<div style="font-size: 1.1em; line-height: 1.5;">
+      The eye needs slightly <em>more</em> contrast here to avoid "halation".
+    </div>
+
+  </div>
+
+</div>
+
+<p><em>The Solver accounts for this. It picks slightly different lightness values for Dark Mode to ensure the perceptual contrast remains constant.</em></p>
+<h2 id="the-lc-score"><a class="header" href="#the-lc-score">The Lc Score</a></h2>
+<p>APCA outputs a score from <code>Lc 0</code> (invisible) to <code>Lc 106</code> (pure black on pure white).</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th>Score</th><th>Perception</th><th>Use Case</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Lc 15</strong></td><td>Barely visible</td><td>Watermarks, decorative borders</td></tr>
+<tr><td><strong>Lc 30</strong></td><td>Subtle</td><td>Disabled text, placeholders</td></tr>
+<tr><td><strong>Lc 45</strong></td><td>Readable (Large)</td><td>Large headlines, non-critical text</td></tr>
+<tr><td><strong>Lc 60</strong></td><td><strong>Readable (Body)</strong></td><td>The gold standard for body text</td></tr>
+<tr><td><strong>Lc 75</strong></td><td>Preferred</td><td>Preferred for long-form reading</td></tr>
+<tr><td><strong>Lc 90</strong></td><td>High Contrast</td><td>Spotlights, critical actions</td></tr>
+</tbody>
+</table>
+</div>
+<h2 id="visualizing-contrast"><a class="header" href="#visualizing-contrast">Visualizing Contrast</a></h2>
+<div class="docs-grid">
+  
+<div class="surface-page docs-p-4 docs-rounded docs-border">
+    
+<div style="opacity: 0.2">Lc 15 (Decorative)</div>
+
+    
+<div style="opacity: 0.4">Lc 30 (Disabled)</div>
+
+    
+<div style="opacity: 0.6">Lc 45 (Headlines)</div>
+
+    
+<div class="text-subtle">Lc 60 (Body Text)</div>
+
+    
+<div class="text-strong">Lc 90 (High Contrast)</div>
+
+  </div>
+
+  
+<div class="surface-spotlight docs-p-4 docs-rounded">
+    
+<div style="opacity: 0.2">Lc 15 (Decorative)</div>
+
+    
+<div style="opacity: 0.4">Lc 30 (Disabled)</div>
+
+    
+<div style="opacity: 0.6">Lc 45 (Headlines)</div>
+
+    
+<div class="text-subtle">Lc 60 (Body Text)</div>
+
+    
+<div class="text-strong">Lc 90 (High Contrast)</div>
+
+  </div>
+
+</div>
+
+<p><em>Note: The opacity values above are approximations for demonstration. The actual system calculates precise lightness values.</em></p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="anchors"><a class="header" href="#anchors">Anchors</a></h1>
+<p><strong>Anchors</strong> are the fixed points that define the dynamic range of your color theme. They tell the solver where to start and where to end.</p>
+<h2 id="the-concept"><a class="header" href="#the-concept">The Concept</a></h2>
+<p>Imagine a slider that represents Lightness (0% to 100%).</p>
+<ul>
+<li>In <strong>Light Mode</strong>, your page background might be at 98% lightness.</li>
+<li>In <strong>Dark Mode</strong>, your page background might be at 10% lightness.</li>
+</ul>
+<p>These points are <strong>Anchors</strong>. The solver uses them to calculate the available space for all other surfaces.</p>
+<pre><code class="language-mermaid">graph LR
+    subgraph Light Mode
+    L_Start[Start: 0.98] --- L_Range[Dynamic Range] --- L_End[End: 0.90]
+    end
+
+    subgraph Dark Mode
+    D_Start[Start: 0.10] --- D_Range[Dynamic Range] --- D_End[End: 0.25]
+    end
+
+    style L_Start fill:#f9f9f9,stroke:#333
+    style L_End fill:#e0e0e0,stroke:#333
+    style D_Start fill:#1a1a1a,stroke:#fff,color:#fff
+    style D_End fill:#404040,stroke:#fff,color:#fff
+</code></pre>
+<h2 id="anchor-types"><a class="header" href="#anchor-types">Anchor Types</a></h2>
+<h3 id="1-start-anchor-bg-start"><a class="header" href="#1-start-anchor-bg-start">1. Start Anchor (<code>bg-start</code>)</a></h3>
+<p>This defines the background of your application (usually <code>surface-page</code>).</p>
+<ul>
+<li><strong>Light Mode</strong>: Typically high lightness (e.g., 0.98).</li>
+<li><strong>Dark Mode</strong>: Typically low lightness (e.g., 0.10).</li>
+</ul>
+<h3 id="2-end-anchor-bg-end"><a class="header" href="#2-end-anchor-bg-end">2. End Anchor (<code>bg-end</code>)</a></h3>
+<p>This defines the lightness of the most elevated or “highest” surface in the stack.</p>
+<ul>
+<li><strong>Light Mode</strong>: Usually slightly darker than the start (e.g., 0.90), creating a “layered” effect where cards are slightly darker than the page.</li>
+<li><strong>Dark Mode</strong>: Usually lighter than the start (e.g., 0.20), creating a “light-on-dark” effect.</li>
+</ul>
+<h3 id="3-foreground-anchors-fg-start-fg-end"><a class="header" href="#3-foreground-anchors-fg-start-fg-end">3. Foreground Anchors (<code>fg-start</code>, <code>fg-end</code>)</a></h3>
+<p>These define the range for text and icons.</p>
+<ul>
+<li><strong>Strong Text</strong>: Needs high contrast against the background.</li>
+<li><strong>Subtle Text</strong>: Needs lower contrast but still readable.</li>
+</ul>
+<h2 id="adjustable-anchors"><a class="header" href="#adjustable-anchors">Adjustable Anchors</a></h2>
+<p>Some anchors can be marked as <code>adjustable</code>. This gives the solver permission to move them if necessary to meet accessibility goals.</p>
+<p><strong>Example:</strong>
+If you set your Dark Mode background to <code>0.0</code> (Pitch Black), but your brand color has low luminance, the solver might not be able to find a text color that passes APCA 60. If the background anchor is <code>adjustable</code>, the solver might bump it up to <code>0.05</code> to reduce the contrast requirement or find a better middle ground.</p>
+<h2 id="configuration"><a class="header" href="#configuration">Configuration</a></h2>
+<p>Anchors are defined in <code>color-config.json</code>:</p>
+<pre><code class="language-json">{
+  "anchors": {
+    "light": {
+      "bg": { "start": 0.98, "end": 0.9 },
+      "fg": { "start": 0.1, "end": 0.5 }
+    },
+    "dark": {
+      "bg": { "start": 0.1, "end": 0.25 },
+      "fg": { "start": 0.95, "end": 0.7 }
+    }
+  }
+}
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="hue-shifting"><a class="header" href="#hue-shifting">Hue Shifting</a></h1>
+<h2 id="why-shift-hues"><a class="header" href="#why-shift-hues">Why Shift Hues?</a></h2>
+<p>In the real world, objects rarely stay the same hue as they get lighter or darker.</p>
+<ul>
+<li><strong>Natural Light</strong>: Shadows are often cooler (bluer) due to ambient skylight, while direct highlights are warmer (yellower) from the sun.</li>
+<li><strong>The Bezold–Brücke Effect</strong>: As light intensity increases, our perception of hue shifts. Reds become yellower, and violets become bluer.</li>
+</ul>
+<p>If you create a color palette by simply changing lightness (e.g., <code>oklch(0.5 0.2 260)</code> → <code>oklch(0.9 0.2 260)</code>), the result can feel “synthetic” or “flat”. The shadows might look muddy, or the highlights might look washed out.</p>
+<p><strong>Hue Shifting</strong> mimics natural light physics by rotating the hue as lightness changes. This creates palettes that feel:</p>
+<ol>
+<li><strong>More Dynamic</strong>: Colors feel alive rather than static.</li>
+<li><strong>More Natural</strong>: Mimics the way light interacts with surfaces in the real world.</li>
+<li><strong>More Distinct</strong>: Helps differentiate surfaces that are close in lightness.</li>
+</ol>
+<div class="docs-grid docs-mb-4">
+  
+<div class="docs-p-4 docs-rounded docs-border">
+    <strong class="docs-mb-2" style="display: block">Static Hue (Boring)</strong>
+    
+<div style="height: 60px; border-radius: 8px; background: linear-gradient(to right, 
+      oklch(0.2 0.1 260), 
+      oklch(0.95 0.1 260)
+    );"></div>
+
+    
+<div class="text-subtle docs-mt-2" style="font-size: 0.9em">
+      Just changing lightness. The result feels mechanical and flat.
+    </div>
+
+  </div>
+
+  
+<div class="docs-p-4 docs-rounded docs-border">
+    <strong class="docs-mb-2" style="display: block">Shifted Hue (Dynamic)</strong>
+    
+<div style="height: 60px; border-radius: 8px; background: linear-gradient(to right, 
+      oklch(0.2 0.1 260), 
+      oklch(0.95 0.1 320)
+    );"></div>
+
+    
+<div class="text-subtle docs-mt-2" style="font-size: 0.9em">
+      Rotating hue from Blue (260) to Purple (320) as lightness increases. The result feels more vibrant and natural.
+    </div>
+
+  </div>
+
+</div>
+
+<h2 id="why-non-linear-hue-shifting"><a class="header" href="#why-non-linear-hue-shifting">Why Non-Linear Hue Shifting?</a></h2>
+<p>The color system supports optional <strong>hue rotation</strong> across the lightness spectrum. This feature allows surfaces to shift from cooler tones in darker regions to warmer tones in lighter regions (or vice versa), creating a more dynamic and perceptually harmonious color palette.</p>
+<h3 id="the-problem-with-linear-shifting"><a class="header" href="#the-problem-with-linear-shifting">The Problem with Linear Shifting</a></h3>
+<p>A naive implementation might apply hue rotation linearly. However, this doesn’t match human perception. Our eyes perceive warmth and coolness non-linearly across the lightness spectrum.</p>
+<div class="docs-grid docs-mb-4">
+  
+<div class="docs-p-4 docs-rounded docs-border">
+    <strong class="docs-mb-2" style="display: block">No Shift (Static Hue)</strong>
+    
+<div style="height: 60px; border-radius: 8px; background: linear-gradient(to right, 
+      oklch(0.2 0.1 260), 
+      oklch(0.95 0.1 260)
+    );"></div>
+
+    
+<div class="text-subtle docs-mt-2" style="font-size: 0.9em">
+      Shadows can feel "muddy" or flat because they lack the natural coolness of ambient light.
+    </div>
+
+  </div>
+
+  
+<div class="docs-p-4 docs-rounded docs-border">
+    <strong class="docs-mb-2" style="display: block">Linear Shift</strong>
+    
+<div style="height: 60px; border-radius: 8px; background: linear-gradient(to right, 
+      oklch(0.2 0.1 260), 
+      oklch(0.95 0.1 320)
+    );"></div>
+
+    
+<div class="text-subtle docs-mt-2" style="font-size: 0.9em">
+      A linear shift (0° to 60°) can feel abrupt in the mid-tones, making the color change too noticeable.
+    </div>
+
+  </div>
+
+</div>
+
+<h2 id="cubic-bezier-solution"><a class="header" href="#cubic-bezier-solution">Cubic Bezier Solution</a></h2>
+<p>Instead, we use a <strong>cubic Bezier curve</strong> to map lightness values (0-1) to hue rotation factors (0-1). This allows us to keep the hue stable in the deep shadows and bright highlights, while concentrating the shift in the mid-tones where it adds the most vibrancy.</p>
+<div class="docs-grid docs-mb-4">
+  
+<div class="docs-p-4 docs-rounded docs-border">
+    <strong class="docs-mb-2" style="display: block">No Shift</strong>
+    
+<div style="height: 60px; border-radius: 8px; background: linear-gradient(to right, 
+      oklch(0.2 0.1 260), 
+      oklch(0.95 0.1 260)
+    );"></div>
+
+    
+<div class="text-subtle docs-mt-2" style="font-size: 0.9em">
+      Static hue.
+    </div>
+
+  </div>
+
+  
+<div class="docs-p-4 docs-rounded docs-border">
+    <strong class="docs-mb-2" style="display: block">Linear Shift</strong>
+    
+<div style="height: 60px; border-radius: 8px; background: linear-gradient(to right, 
+      oklch(0.2 0.1 260), 
+      oklch(0.95 0.1 320)
+    );"></div>
+
+    
+<div class="text-subtle docs-mt-2" style="font-size: 0.9em">
+      Abrupt mid-tones.
+    </div>
+
+  </div>
+
+  
+<div class="docs-p-4 docs-rounded docs-border">
+    <strong class="docs-mb-2" style="display: block">Bezier Shift</strong>
+    
+<div style="height: 60px; border-radius: 8px; background: linear-gradient(to right, 
+      oklch(0.2 0.1 260),   /* Start: Blue */
+      oklch(0.4 0.1 265),   /* Slow start */
+      oklch(0.6 0.1 290),   /* Fast middle */
+      oklch(0.8 0.1 315),   /* Slow end */
+      oklch(0.95 0.1 320)   /* End: Purple */
+    );"></div>
+
+    
+<div class="text-subtle docs-mt-2" style="font-size: 0.9em">
+      Smooth S-curve.
+    </div>
+
+  </div>
+
+</div>
+
+<pre><code class="language-typescript">function cubicBezier(t: number, p1: number, p2: number): number {
+  const oneMinusT = 1 - t;
+  return (
+    3 * oneMinusT * oneMinusT * t * p1 + 3 * oneMinusT * t * t * p2 + t * t * t
+  );
+}
+
+export function calculateHueShift(
+  lightness: number,
+  config?: HueShiftConfig
+): number {
+  if (!config) return 0;
+  const { curve, maxRotation } = config;
+  const factor = cubicBezier(lightness, curve.p1[1], curve.p2[1]);
+  return factor * maxRotation;
+}
+</code></pre>
+<h3 id="control-points"><a class="header" href="#control-points">Control Points</a></h3>
+<p>The default configuration uses control points that create an S-curve:</p>
+<pre><code class="language-json">{
+  "hueShift": {
+    "curve": {
+      "p1": [0.5, 0],
+      "p2": [0.5, 1]
+    },
+    "maxRotation": 180
+  }
+}
+</code></pre>
+<h4 id="what-these-mean"><a class="header" href="#what-these-mean">What These Mean</a></h4>
+<ul>
+<li><strong>P1: <code>[0.5, 0]</code></strong>: First control point at 50% horizontally, 0% vertically</li>
+<li><strong>P2: <code>[0.5, 1]</code></strong>: Second control point at 50% horizontally, 100% vertically</li>
+</ul>
+<p>This creates a <strong>smooth S-curve</strong> that:</p>
+<ol>
+<li><strong>Starts slowly</strong> at lightness = 0 (minimal hue shift in darks)</li>
+<li><strong>Accelerates through mid-tones</strong> (where our eyes are most sensitive)</li>
+<li><strong>Finishes smoothly</strong> at lightness = 1 (full rotation in lights)</li>
+</ol>
+<h3 id="visual-comparison"><a class="header" href="#visual-comparison">Visual Comparison</a></h3>
+<p>Here is how the hue rotation (0° to 180°) is applied across the lightness spectrum (0.1 to 0.9).</p>
+<div class="docs-grid" style="grid-template-columns: 80px 1fr; gap: 1rem; align-items: center; margin-bottom: 2rem;">
+  <!-- Linear Row -->
+  
+<div class="text-subtle text-right">Linear</div>
+
+  
+<div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; height: 50px;">
+    
+<div style="background: oklch(0.1 0.15 278); border-radius: 4px;" title="L=0.1, H=278 (+18°)"></div>
+
+    
+<div style="background: oklch(0.3 0.15 314); border-radius: 4px;" title="L=0.3, H=314 (+54°)"></div>
+
+    
+<div style="background: oklch(0.5 0.15 350); border-radius: 4px;" title="L=0.5, H=350 (+90°)"></div>
+
+    
+<div style="background: oklch(0.7 0.15 26); border-radius: 4px;" title="L=0.7, H=26 (+126°)"></div>
+
+    
+<div style="background: oklch(0.9 0.15 62); border-radius: 4px;" title="L=0.9, H=62 (+162°)"></div>
+
+  </div>
+
+  <!-- Bezier Row -->
+  
+<div class="text-subtle text-right">Bezier</div>
+
+  
+<div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; height: 50px;">
+    
+<div style="background: oklch(0.1 0.15 265); border-radius: 4px;" title="L=0.1, H=265 (+5°)"></div>
+
+    
+<div style="background: oklch(0.3 0.15 299); border-radius: 4px;" title="L=0.3, H=299 (+39°)"></div>
+
+    
+<div style="background: oklch(0.5 0.15 350); border-radius: 4px;" title="L=0.5, H=350 (+90°)"></div>
+
+    
+<div style="background: oklch(0.7 0.15 41); border-radius: 4px;" title="L=0.7, H=41 (+141°)"></div>
+
+    
+<div style="background: oklch(0.9 0.15 75); border-radius: 4px;" title="L=0.9, H=75 (+175°)"></div>
+
+  </div>
+
+  <!-- Labels -->
+  
+<div></div>
+
+  
+<div style="display: grid; grid-template-columns: repeat(5, 1fr); text-align: center; font-size: 0.8em; color: var(--text-subtle-token);">
+    
+<div>Dark</div>
+
+    
+<div></div>
+
+    
+<div>Mid</div>
+
+    
+<div></div>
+
+    
+<div>Light</div>
+
+  </div>
+
+</div>
+
+<p>Notice how the Bezier curve:</p>
+<ul>
+<li><strong>Flattens</strong> at the extremes (smoother transitions in very dark/light)</li>
+<li><strong>Steepens</strong> in the middle (more dramatic shift where it matters)</li>
+</ul>
+<h3 id="perceptual-benefits"><a class="header" href="#perceptual-benefits">Perceptual Benefits</a></h3>
+<ol>
+<li>
+<p><strong>Natural Warmth Progression</strong>: Mimics how we perceive natural lighting (cool shadows → neutral midtones → warm highlights)</p>
+</li>
+<li>
+<p><strong>Better Mid-Tone Separation</strong>: The steeper middle section ensures distinct hue differences between closely-spaced surfaces in the mid-lightness range (where most UI elements live)</p>
+</li>
+<li>
+<p><strong>Smooth Extremes</strong>: The flatter curves at 0 and 1 prevent jarring hue jumps in already-extreme lightness values</p>
+</li>
+</ol>
+<h3 id="customization"><a class="header" href="#customization">Customization</a></h3>
+<p>You can customize the curve by adjusting the control points:</p>
+<pre><code class="language-json">{
+  "hueShift": {
+    "curve": {
+      "p1": [0.3, 0], // Shift acceleration point earlier
+      "p2": [0.7, 1] // Shift deceleration point later
+    },
+    "maxRotation": 120 // Less dramatic overall shift
+  }
+}
+</code></pre>
+<p><strong>Experiment with:</strong></p>
+<ul>
+<li>Moving P1/P2 horizontally to change where the acceleration happens</li>
+<li>Moving P1/P2 vertically to create asymmetric curves</li>
+<li>Adjusting <code>maxRotation</code> for subtler or more dramatic effects</li>
+</ul>
+<p><strong>Tip:</strong> You can also adjust these settings visually in the <strong>Theme Builder</strong>. The UI provides a curve editor where you can drag the control points and see the color palette update in real-time.</p>
+<h3 id="implementation-note"><a class="header" href="#implementation-note">Implementation Note</a></h3>
+<p>The cubic Bezier implementation assumes the curve starts at <code>(0,0)</code> and ends at <code>(1,1)</code>, with only the middle two control points configurable. This constraint ensures the hue shift is always 0° at lightness 0 and <code>maxRotation</code> at lightness 1, providing predictable behavior while allowing artistic control over the interpolation.</p>
+<h2 id="related-concepts"><a class="header" href="#related-concepts">Related Concepts</a></h2>
+<ul>
+<li><strong>OKLCH Color Space</strong>: Hue rotations happen in the perceptually uniform OKLCH space, ensuring equal visual impact across the spectrum</li>
+<li><strong>Chroma Independence</strong>: Hue shifts don’t affect saturation, maintaining consistent vibrancy</li>
+<li><strong>CSS <code>@property</code></strong>: Registered custom properties allow smooth animated transitions between hue-shifted values</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="usage"><a class="header" href="#usage">Usage</a></h1>
+<p>The Color System can be used in two ways:</p>
+<ol>
+<li><strong>Build Time (CLI)</strong>: Generate a static CSS file with all your tokens. Best for performance and standard projects.</li>
+<li><strong>Run Time (Browser)</strong>: Generate tokens on the fly in the browser. Best for user-customizable themes.</li>
+</ol>
+<h2 id="quick-start-1"><a class="header" href="#quick-start-1">Quick Start</a></h2>
+<p>The fastest way to understand the system is to play with the <strong>Theme Builder</strong>.</p>
+<p><a href="https://color-system-demo.netlify.app"><strong>Open the Interactive Demo</strong></a></p>
+<p>Once you have a configuration you like, you can export the <code>color-config.json</code> and use it with the CLI.</p>
+<h2 id="installation"><a class="header" href="#installation">Installation</a></h2>
+<pre><code class="language-bash">pnpm add -D color-system
+</code></pre>
+<h2 id="next-steps-1"><a class="header" href="#next-steps-1">Next Steps</a></h2>
+<ul>
+<li><a href="#cli-usage">Using the CLI</a></li>
+<li><a href="#css-architecture">CSS Architecture</a></li>
+<li><a href="#framework-integration">Framework Integration</a></li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="cli-usage"><a class="header" href="#cli-usage">CLI Usage</a></h1>
+<p>The <code>color-system</code> CLI is the primary tool for generating your theme tokens.</p>
+<h2 id="installation-1"><a class="header" href="#installation-1">Installation</a></h2>
+<pre><code class="language-bash">pnpm add -D color-system
+# or
+npm install -D color-system
+</code></pre>
+<h2 id="commands"><a class="header" href="#commands">Commands</a></h2>
+<h3 id="init"><a class="header" href="#init"><code>init</code></a></h3>
+<p>Scaffolds a new configuration file in your project.</p>
+<pre><code class="language-bash">npx color-system init
+</code></pre>
+<p>This creates a <code>color-config.json</code> file with default settings.</p>
+<h3 id="generate"><a class="header" href="#generate">Generate</a></h3>
+<p>Generates the CSS tokens based on your configuration.</p>
+<pre><code class="language-bash">npx color-system [config-file] [output-file]
+</code></pre>
+<ul>
+<li><strong><code>config-file</code></strong>: Path to your JSON config (default: <code>./color-config.json</code>).</li>
+<li><strong><code>output-file</code></strong>: Path where the CSS will be written (default: <code>./theme.css</code>).</li>
+</ul>
+<p><strong>Example:</strong></p>
+<pre><code class="language-bash">npx color-system ./design/colors.json ./src/styles/theme.css
+</code></pre>
+<h2 id="configuration-1"><a class="header" href="#configuration-1">Configuration</a></h2>
+<p>The configuration file controls the Theme Builder. See the <a href="api/theme-builder.html">Theme Builder API</a> for details on how the math works.</p>
+<pre><code class="language-json">{
+  "anchors": { ... },
+  "groups": [ ... ],
+  "hueShift": { ... }
+}
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="css-architecture"><a class="header" href="#css-architecture">CSS Architecture</a></h1>
+<p>This document details how the generated CSS works. Whether you use the CLI or the Runtime, the underlying CSS model is the same.</p>
+<h2 id="generated-tokens"><a class="header" href="#generated-tokens">Generated Tokens</a></h2>
+<p>When you run the Theme Builder (CLI or UI), it generates a CSS rule for each surface. Inside that rule, it <strong>assigns</strong> values to a standard set of <strong>Local Tokens</strong>.</p>
+<p>For a surface named <code>card</code>, the <code>.surface-card</code> class defines:</p>
+<div class="table-wrapper">
+<table>
+<thead>
+<tr><th style="text-align: left">Token</th><th style="text-align: left">Description</th></tr>
+</thead>
+<tbody>
+<tr><td style="text-align: left"><code>--surface-token</code></td><td style="text-align: left">The background color of the surface itself.</td></tr>
+<tr><td style="text-align: left"><code>--text-high-token</code></td><td style="text-align: left">The color for high-emphasis text (e.g., headings) on this surface.</td></tr>
+<tr><td style="text-align: left"><code>--text-subtle-token</code></td><td style="text-align: left">The color for medium-emphasis text (e.g., body) on this surface.</td></tr>
+<tr><td style="text-align: left"><code>--text-subtlest-token</code></td><td style="text-align: left">The color for low-emphasis text (e.g., metadata) on this surface.</td></tr>
+<tr><td style="text-align: left"><code>--border-dec-token</code></td><td style="text-align: left">A low-contrast border color for decorative separation.</td></tr>
+<tr><td style="text-align: left"><code>--border-int-token</code></td><td style="text-align: left">A higher-contrast border color for interactive boundaries (inputs, buttons).</td></tr>
+</tbody>
+</table>
+</div>
+<h3 id="how-they-are-used"><a class="header" href="#how-they-are-used">How they are used</a></h3>
+<p>These tokens are <strong>scoped</strong> to the surface class. They reuse the same names (e.g., <code>--text-high-token</code>) but have different values depending on which surface you are inside.</p>
+<pre><code class="language-css">.surface-card {
+  /* The background uses the surface token directly */
+  --surface-token: light-dark(...);
+
+  /* The text tokens are exposed to children via Context Variables */
+  --context-text-high: var(--text-high-token);
+  --context-text-subtle: var(--text-subtle-token);
+  --context-text-subtlest: var(--text-subtlest-token);
+  --context-border-decorative: var(--border-dec-token);
+  --context-border-interactive: var(--border-int-token);
+}
+</code></pre>
+<p>This means you rarely use <code>--text-high-token</code> directly. Instead, you use the utility class <code>.text-strong</code>, which consumes <code>--context-text-high</code>.</p>
+<h2 id="the-context-model"><a class="header" href="#the-context-model">The Context Model</a></h2>
+<p>We use a <strong>Context Provider/Consumer</strong> pattern to handle composition and nesting. This allows surfaces to be nested infinitely without the child needing to know about the parent.</p>
+<h3 id="1-provider-the-surface"><a class="header" href="#1-provider-the-surface">1. Provider (The Surface)</a></h3>
+<p>A surface class (like <code>.surface-card</code>) does two things:</p>
+<ol>
+<li><strong>Sets its own background</strong>: It uses the generated token for its background color.</li>
+<li><strong>Sets the Context</strong>: It redefines the “meaning” of generic variables for its children.</li>
+</ol>
+<pre><code class="language-css">.surface-card {
+  /* 1. Set Background */
+  background-color: var(--lightness-surface-card);
+
+  /* 2. Set Context for Children */
+  /* "When inside a card, 'subtle text' should look like this..." */
+  --context-text-subtle: var(--lightness-subtle-on-card);
+  --context-border-decorative: var(--border-decorative-on-card);
+}
+</code></pre>
+<h3 id="2-consumer-the-utility"><a class="header" href="#2-consumer-the-utility">2. Consumer (The Utility)</a></h3>
+<p>A utility class (like <code>.text-subtle</code>) is “dumb”. It doesn’t know what color it is. It just asks the context.</p>
+<pre><code class="language-css">.text-subtle {
+  /* "I don't know where I am, but I'll use whatever my parent says is 'subtle'" */
+  --surface-text-lightness: var(--context-text-subtle);
+}
+</code></pre>
+<h3 id="why-this-matters"><a class="header" href="#why-this-matters">Why this matters</a></h3>
+<p>This ensures <strong>Orthogonality</strong>:</p>
+<ul>
+<li>Adding a new surface doesn’t require updating every utility class.</li>
+<li>You can nest a <code>.surface-card</code> inside a <code>.surface-sidebar</code> inside a <code>.surface-page</code>, and the text will always have the correct contrast for its <em>immediate</em> parent.</li>
+</ul>
+<h2 id="accessibility-implementation"><a class="header" href="#accessibility-implementation">Accessibility Implementation</a></h2>
+<p>The system handles accessibility automatically through <strong>Taxonomy Alignment</strong>.</p>
+<h3 id="forced-colors-windows-high-contrast-1"><a class="header" href="#forced-colors-windows-high-contrast-1">Forced Colors (Windows High Contrast)</a></h3>
+<p>We use a <strong>Variable Swap</strong> trick to support Forced Colors mode without needing manual overrides for every surface.</p>
+<ol>
+<li><strong>The Engine</strong>: All surfaces use the variable <code>--computed-surface</code> for their background.</li>
+<li><strong>The Swap</strong>: In <code>engine.css</code>, we detect Forced Colors mode and swap the <em>definition</em> of that variable globally.</li>
+</ol>
+<pre><code class="language-css">/* Normal Mode */
+:root {
+  /* Calculated from tokens */
+  --computed-surface: oklch(...);
+}
+
+/* Forced Colors Mode */
+@media (forced-colors: active) {
+  :root {
+    /* Swapped to System Color */
+    --computed-surface: Canvas;
+    --computed-fg-color: CanvasText;
+  }
+}
+</code></pre>
+<p><strong>What this means for you:</strong></p>
+<ul>
+<li><strong>Custom Surfaces</strong>: Any surface you create (e.g., <code>.surface-sidebar</code>) automatically becomes <code>Canvas</code> (Background) and <code>CanvasText</code> (Foreground) in High Contrast mode. You don’t need to do anything.</li>
+<li><strong>Semantic Overrides</strong>: If you are building a custom button surface, you may want to map it to <code>ButtonFace</code>. You can do this with a simple CSS override:</li>
+</ul>
+<pre><code class="language-css">@media (forced-colors: active) {
+  .surface-my-button {
+    --computed-surface: ButtonFace;
+    --computed-fg-color: ButtonText;
+  }
+}
+</code></pre>
+<h3 id="high-contrast-apca"><a class="header" href="#high-contrast-apca">High Contrast (APCA)</a></h3>
+<p><strong>Good News:</strong> The default themes generated by this system are already <strong>highly accessible</strong>.</p>
+<ul>
+<li>Body text targets <strong>Lc 60+</strong> (roughly WCAG AA/AAA).</li>
+<li>Headings target <strong>Lc 75+</strong>.</li>
+<li>Spotlights target <strong>Lc 90</strong>.</li>
+</ul>
+<p>For most users, the standard theme is sufficient.</p>
+<p><strong>Prefers Contrast</strong>
+Some users explicitly request even higher contrast via their OS settings (<code>prefers-contrast: more</code>). This is supported on macOS and Windows.</p>
+<p>The system automatically handles this by generating a <strong>High Contrast Variant</strong> during the build process. This variant:</p>
+<ol>
+<li><strong>Widens Anchors</strong>: Pushes background and foreground anchors to pure Black (0%) and White (100%).</li>
+<li><strong>Desaturates</strong>: Removes chroma from text and surfaces to reduce visual noise.</li>
+</ol>
+<p>This variant is automatically appended to your <code>theme.css</code> inside a <code>@media (prefers-contrast: more)</code> block.</p>
+<pre><code class="language-css">/* Standard Theme (Default) */
+.surface-card {
+  ...;
+}
+
+/* High Contrast Override (Automatic) */
+@media (prefers-contrast: more) {
+  :root {
+    --base-chroma: 0; /* Force Grayscale */
+  }
+  .surface-card {
+    /* Re-generated tokens with widened anchors */
+    --surface-token: ...;
+    --text-subtle-token: ...;
+  }
+}
+</code></pre>
+<p>This allows you to maintain your brand identity while satisfying users who need sharper edges and deeper blacks, with zero runtime cost.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="ui-primitives"><a class="header" href="#ui-primitives">UI Primitives</a></h1>
+<p>The Color System provides essential UI primitives that adapt to the current theme context.</p>
+<h2 id="elevation-shadows"><a class="header" href="#elevation-shadows">Elevation (Shadows)</a></h2>
+<p>Shadows provide depth and hierarchy. The system generates a semantic scale of shadows that are subtle in Light Mode and stronger in Dark Mode to ensure visibility.</p>
+<div class="surface-card bordered" style="padding: 2rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 2rem;">
+  
+<div class="surface-card shadow-sm bordered" style="height: 100px; display: flex; align-items: center; justify-content: center;">shadow-sm</div>
+
+  
+<div class="surface-card shadow-md bordered" style="height: 100px; display: flex; align-items: center; justify-content: center;">shadow-md</div>
+
+  
+<div class="surface-card shadow-lg bordered" style="height: 100px; display: flex; align-items: center; justify-content: center;">shadow-lg</div>
+
+  
+<div class="surface-card shadow-xl bordered" style="height: 100px; display: flex; align-items: center; justify-content: center;">shadow-xl</div>
+
+</div>
+
+<h3 id="usage-1"><a class="header" href="#usage-1">Usage</a></h3>
+<p>Use the utility classes or CSS variables:</p>
+<pre><code class="language-css">.my-card {
+  box-shadow: var(--shadow-md);
+}
+/* OR */
+&lt;div class="shadow-md"&gt;...&lt;/div&gt;
+</code></pre>
+<h2 id="focus-indicators"><a class="header" href="#focus-indicators">Focus Indicators</a></h2>
+<p>Accessible focus indicators are critical for keyboard navigation. The system provides a universal focus ring that adapts to the brand color and ensures contrast.</p>
+<div class="surface-card bordered" style="padding: 2rem; display: flex; gap: 1rem;">
+  <button class="surface-action focus-ring" style="padding: 0.5rem 1rem; border: none; border-radius: 4px;">Focus Me</button>
+  <input class="surface-workspace focus-ring bordered" placeholder="Focus Me" style="padding: 0.5rem; border-radius: 4px;">
+</div>
+
+<h3 id="usage-1-1"><a class="header" href="#usage-1-1">Usage</a></h3>
+<p>Apply the <code>.focus-ring</code> utility class to interactive elements. It applies styles on <code>:focus-visible</code>.</p>
+<pre><code class="language-html">&lt;button class="surface-action focus-ring"&gt;Click Me&lt;/button&gt;
+</code></pre>
+<p>The focus ring uses the <code>--focus-ring-color</code> variable, which is derived from your brand hue.</p>
+<pre><code class="language-css">:root {
+  --focus-ring-color: ...; /* Auto-generated */
+}
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="data-visualization"><a class="header" href="#data-visualization">Data Visualization</a></h1>
+<p>The Color System includes a built-in engine for generating categorical color palettes that harmonize with your theme. These palettes are designed for data visualization (charts, graphs, maps) where you need distinct colors to represent different categories.</p>
+<h2 id="the-problem-1"><a class="header" href="#the-problem-1">The Problem</a></h2>
+<p>Standard color palettes (like “Tableau 10” or “D3 Category 10”) are great, but they often clash with your custom theme.</p>
+<ul>
+<li>If your theme is “Soft Pastel”, a neon chart looks out of place.</li>
+<li>If your theme is “High Contrast”, a subtle chart might be illegible.</li>
+<li>In Dark Mode, standard colors often lose contrast or look muddy.</li>
+</ul>
+<h2 id="the-solution-harmonized-fixed-hues"><a class="header" href="#the-solution-harmonized-fixed-hues">The Solution: Harmonized Fixed Hues</a></h2>
+<p>Instead of using a fixed set of hex codes, we use a <strong>Harmonized Fixed Hues</strong> strategy:</p>
+<ol>
+<li><strong>Fixed Hues</strong>: We start with a curated list of distinct hues (Red, Orange, Yellow, Green, etc.) to ensure every color is nameable and distinct.</li>
+<li><strong>Solved Lightness</strong>: We <strong>solve</strong> the lightness of each color against your page background to ensure it meets accessibility targets (APCA ~105).</li>
+<li><strong>Shared Chroma</strong>: We apply a consistent chroma (vibrancy) across the palette, which you can tune to match your brand.</li>
+</ol>
+<h2 id="usage-2"><a class="header" href="#usage-2">Usage</a></h2>
+<p>The system generates CSS variables in the format <code>--chart-N</code>:</p>
+<pre><code class="language-css">.my-chart {
+  color: var(--chart-1); /* First color in the palette */
+}
+
+.my-chart-bar:nth-child(2) {
+  background-color: var(--chart-2);
+}
+</code></pre>
+<h3 id="configuration-2"><a class="header" href="#configuration-2">Configuration</a></h3>
+<p>You can customize the palette in your <code>color-config.json</code>:</p>
+<pre><code class="language-json">{
+  "palette": {
+    "targetChroma": 0.12,
+    "hues": [25, 45, 85, 125, 150, 190, 250, 280, 320, 360]
+  }
+}
+</code></pre>
+<ul>
+<li><strong>targetChroma</strong>: Controls the vibrancy. <code>0.12</code> is a safe default. Higher values (e.g., <code>0.18</code>) are more vibrant but might be harder to balance in Light Mode.</li>
+<li><strong>hues</strong>: An array of hue angles (0-360) to use for the palette.</li>
+</ul>
+<h2 id="accessibility-1"><a class="header" href="#accessibility-1">Accessibility</a></h2>
+<p>Because the lightness is <strong>solved</strong> relative to the background:</p>
+<ul>
+<li>In <strong>Light Mode</strong>, the colors will be darker (like text) to stand out against the white page.</li>
+<li>In <strong>Dark Mode</strong>, the colors will automatically flip to be lighter (pastels) to stand out against the dark page.</li>
+</ul>
+<p>This ensures your charts are always legible, regardless of the user’s theme preference.</p>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="framework-integration"><a class="header" href="#framework-integration">Framework Integration</a></h1>
+<p>The Color System is framework-agnostic because it outputs standard CSS. However, you can easily integrate it with your favorite tools.</p>
+<h2 id="react"><a class="header" href="#react">React</a></h2>
+<p>Since the system uses standard CSS classes, you can use them directly in your JSX.</p>
+<pre><code class="language-tsx">function Card({ children }) {
+  return (
+    &lt;div className="surface-card p-4 rounded-lg"&gt;
+      &lt;h2 className="text-strong text-xl"&gt;Title&lt;/h2&gt;
+      &lt;p className="text-subtle"&gt;{children}&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}
+</code></pre>
+<h3 id="dynamic-theming"><a class="header" href="#dynamic-theming">Dynamic Theming</a></h3>
+<p>To change the theme dynamically (e.g., user-selected brand color), you can use the <code>runtime</code> module.</p>
+<pre><code class="language-tsx">import { useEffect } from "react";
+import { injectTheme, generateTheme } from "color-system/runtime";
+
+function ThemeProvider({ brandColor }) {
+  useEffect(() =&gt; {
+    const css = generateTheme({
+      keyColors: { brand: brandColor },
+    });
+    const style = injectTheme(css);
+    return () =&gt; style.remove();
+  }, [brandColor]);
+
+  return &lt;slot /&gt;;
+}
+</code></pre>
+<h2 id="tailwind-css"><a class="header" href="#tailwind-css">Tailwind CSS</a></h2>
+<p>You can configure Tailwind to use the system’s CSS variables.</p>
+<pre><code class="language-js">// tailwind.config.js
+module.exports = {
+  theme: {
+    colors: {
+      // Map Tailwind utilities to System variables
+      surface: {
+        page: "var(--computed-surface-page)",
+        card: "var(--computed-surface-card)",
+      },
+      text: {
+        strong: "var(--computed-text-strong)",
+        subtle: "var(--computed-text-subtle)",
+      },
+    },
+  },
+};
+</code></pre>
+<blockquote>
+<p><strong>Note:</strong> We are working on a dedicated Tailwind plugin to automate this mapping.</p>
+</blockquote>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="api-reference"><a class="header" href="#api-reference">API Reference</a></h1>
+<p>The Color System API is divided into three parts based on where you use them.</p>
+<h2 id="1-build-pipeline"><a class="header" href="#1-build-pipeline">1. Build Pipeline</a></h2>
+<p>Tools for generating static CSS tokens as part of your build process.</p>
+<ul>
+<li><strong><a href="#cli-usage">CLI</a></strong>: The command-line interface for generating themes.</li>
+<li><strong><a href="#generator-api">Generator API</a></strong>: Node.js API for generating CSS strings programmatically.</li>
+</ul>
+<h2 id="2-universal-api"><a class="header" href="#2-universal-api">2. Universal API</a></h2>
+<p>Core logic that can be used in both Node.js (build time) and the browser (runtime).</p>
+<ul>
+<li><strong><a href="#solver-api">Solver API</a></strong>: The math engine that calculates accessible colors.</li>
+</ul>
+<h2 id="3-runtime-control"><a class="header" href="#3-runtime-control">3. Runtime Control</a></h2>
+<p>Tools for managing the theme in the browser.</p>
+<ul>
+<li><strong><a href="#runtime-api">Runtime API</a></strong>: The JavaScript controller (<code>ThemeManager</code>) and CSS Engine for dynamic theming.</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="generator-api"><a class="header" href="#generator-api">Generator API</a></h1>
+<p>The Generator API is used to create the CSS strings that power your theme. This is typically used in a build script or a server-side process.</p>
+<h2 id="generatetokenscss"><a class="header" href="#generatetokenscss"><code>generateTokensCss</code></a></h2>
+<p>Generates the CSS variables for all surfaces and their states.</p>
+<pre><code class="language-typescript">import { generateTokensCss } from "color-system/generator";
+
+const css = generateTokensCss(
+  groups, // SurfaceGroup[]
+  backgrounds, // Map&lt;string, Record&lt;Mode, number&gt;&gt; (from solver)
+  hueShiftConfig, // Optional: HueShiftConfig
+  borderTargets, // Optional: BorderTargets
+  selector // Optional: Prefix selector (e.g. ".theme-dark")
+);
+</code></pre>
+<h3 id="parameters"><a class="header" href="#parameters">Parameters</a></h3>
+<ul>
+<li><strong><code>groups</code></strong>: The configuration of your surfaces (names, polarities, states).</li>
+<li><strong><code>backgrounds</code></strong>: The solved lightness values for each surface (output from <code>solve()</code>).</li>
+<li><strong><code>hueShiftConfig</code></strong>: Configuration for hue shifting (curve, max rotation).</li>
+<li><strong><code>borderTargets</code></strong>: Target alpha values for borders.</li>
+<li><strong><code>selector</code></strong>: An optional CSS selector to prefix all rules with.</li>
+</ul>
+<h3 id="output"><a class="header" href="#output">Output</a></h3>
+<p>Returns a string containing the CSS definitions.</p>
+<pre><code class="language-css">/* Example Output */
+.surface-card {
+  --surface-token: light-dark(oklch(0.98 0 0), oklch(0.2 0 0));
+  --text-high-token: light-dark(oklch(0.1 0 0), oklch(0.9 0 0));
+  /* ... */
+}
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="solver-api"><a class="header" href="#solver-api">Solver API</a></h1>
+<p>The Solver API contains the core logic for calculating accessible colors. It is “Universal”, meaning it can be used in Node.js (for build scripts) or in the browser (for dynamic theme builders).</p>
+<h2 id="solve"><a class="header" href="#solve"><code>solve</code></a></h2>
+<p>The main entry point. Calculates the lightness values for all surfaces based on the configuration.</p>
+<pre><code class="language-typescript">import { solve } from "color-system";
+
+const result = solve({
+  anchors: { ... }, // PolarityAnchors
+  groups: [ ... ]   // SurfaceGroup[]
+});
+
+console.log(result.backgrounds); // Map&lt;string, { light: number, dark: number }&gt;
+console.log(result.surfaces);    // SurfaceConfig[] (with computed values)
+</code></pre>
+<h3 id="parameters-1"><a class="header" href="#parameters-1">Parameters</a></h3>
+<ul>
+<li><strong><code>config</code></strong>: A <code>SolverConfig</code> object containing:
+<ul>
+<li><code>anchors</code>: The start/end lightness values for each polarity and mode.</li>
+<li><code>groups</code>: The list of surfaces to solve for.</li>
+</ul>
+</li>
+</ul>
+<h3 id="return-value"><a class="header" href="#return-value">Return Value</a></h3>
+<p>Returns an object containing:</p>
+<ul>
+<li><strong><code>backgrounds</code></strong>: A Map where the key is the surface slug (e.g., “card”) and the value is an object with <code>light</code> and <code>dark</code> lightness numbers (0-1).</li>
+<li><strong><code>surfaces</code></strong>: The original surface configurations, enriched with computed text colors.</li>
+</ul>
+<h2 id="getkeycolorstats"><a class="header" href="#getkeycolorstats"><code>getKeyColorStats</code></a></h2>
+<p>Analyzes a set of key colors to determine their average lightness, chroma, and hue. Useful for aligning the theme to a brand color.</p>
+<pre><code class="language-typescript">import { getKeyColorStats } from "color-system";
+
+const stats = getKeyColorStats({
+  primary: "#3b82f6",
+  secondary: "#10b981",
+});
+
+console.log(stats);
+// { lightness: 0.5, chroma: 0.15, hue: 200 }
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div>
+<h1 id="runtime-api"><a class="header" href="#runtime-api">Runtime API</a></h1>
+<p>The Runtime API allows you to change the theme dynamically in the browser. This is useful for:</p>
+<ul>
+<li><strong>Theme Builders</strong>: Letting users customize their UI.</li>
+<li><strong>White Labeling</strong>: Loading a brand’s colors from an API at runtime.</li>
+<li><strong>User Preferences</strong>: Allowing users to tweak contrast or saturation.</li>
+</ul>
+<h2 id="the-reactive-pipeline-engine"><a class="header" href="#the-reactive-pipeline-engine">The Reactive Pipeline (Engine)</a></h2>
+<p>The core logic lives in <code>css/engine.css</code>. It uses CSS <code>@property</code> to create a reactive data flow that responds instantly to JavaScript changes.</p>
+<h3 id="1-inputs-variables"><a class="header" href="#1-inputs-variables">1. Inputs (Variables)</a></h3>
+<p>The engine listens to specific CSS variables that you can set on the <code>:root</code> or any element.</p>
+<ul>
+<li><strong><code>--base-hue</code></strong>: The primary brand hue (0-360).</li>
+<li><strong><code>--base-chroma</code></strong>: The saturation level (0-0.25).</li>
+<li><strong><code>--surface-token</code></strong>: The lightness value (usually set by the static CSS, but can be overridden).</li>
+</ul>
+<h3 id="2-computation-the-engine"><a class="header" href="#2-computation-the-engine">2. Computation (The Engine)</a></h3>
+<p>The engine calculates intermediate values and combines them into the final color.</p>
+<pre><code class="language-css">/* Simplified Engine Logic */
+.surface-card {
+  /* Calculate Chroma based on the base chroma */
+  --computed-surface-C: calc(var(--base-chroma) * 0.5);
+
+  /* Calculate Hue (potentially shifted) */
+  --computed-surface-H: var(--base-hue);
+
+  /* Combine into final color */
+  --computed-surface: oklch(
+    var(--surface-token) var(--computed-surface-C) var(--computed-surface-H)
+  );
+}
+</code></pre>
+<h3 id="3-output-properties"><a class="header" href="#3-output-properties">3. Output (Properties)</a></h3>
+<p>The computed colors are assigned to standard CSS properties.</p>
+<pre><code class="language-css">.surface-card {
+  background-color: var(--computed-surface);
+  color: var(--computed-fg-color);
+}
+</code></pre>
+<h2 id="animation-strategy"><a class="header" href="#animation-strategy">Animation Strategy</a></h2>
+<p>The runtime supports smooth animations for both continuous and discrete changes.</p>
+<h3 id="continuous-changes-huechroma"><a class="header" href="#continuous-changes-huechroma">Continuous Changes (Hue/Chroma)</a></h3>
+<p>When you animate <code>--base-hue</code> (e.g., from Blue to Red), the browser interpolates the number, and the engine recalculates the color every frame. This is “free” because of the reactive pipeline.</p>
+<h3 id="discrete-changes-lightdark-mode"><a class="header" href="#discrete-changes-lightdark-mode">Discrete Changes (Light/Dark Mode)</a></h3>
+<p>When <code>light-dark()</code> flips from Light to Dark, the input token (<code>--surface-token</code>) changes <em>instantly</em>. Normally, this would cause a harsh snap.</p>
+<p><strong>The Fix:</strong> We transition the <strong>Computed Properties</strong>, not the inputs.</p>
+<pre><code class="language-css">/* css/engine.css */
+@property --computed-surface {
+  syntax: "&lt;color&gt;";
+  inherits: true;
+  initial-value: transparent;
+}
+
+* {
+  /* The browser interpolates the RESULT of the calculation */
+  transition: --computed-surface 0.2s;
+}
+</code></pre>
+<p>By registering <code>--computed-surface</code> with <code>@property</code>, we tell the browser it’s a color. When the input snaps, the <em>result</em> changes, and the browser transitions smoothly between the old result and the new result.</p>
+<h2 id="browser-integration"><a class="header" href="#browser-integration">Browser Integration</a></h2>
+<p>The library provides a <code>ThemeManager</code> class to manage the theme mode and sync it with the browser’s native UI (Address Bar, Favicon).</p>
+<h3 id="thememanager"><a class="header" href="#thememanager"><code>ThemeManager</code></a></h3>
+<p>The <code>ThemeManager</code> handles:</p>
+<ol>
+<li><strong>Mode Switching</strong>: Toggling between <code>light</code>, <code>dark</code>, and <code>system</code> modes.</li>
+<li><strong>DOM Updates</strong>: Applying the correct classes or <code>color-scheme</code> styles to the root element.</li>
+<li><strong>Browser Sync</strong>: Automatically updating the address bar color and favicon.</li>
+</ol>
+<pre><code class="language-typescript">import { ThemeManager } from "color-system/browser";
+
+// Initialize the manager
+const themeManager = new ThemeManager({
+  // Optional: Custom classes for light/dark modes
+  lightClass: "light-theme",
+  darkClass: "dark-theme",
+
+  // Optional: Generator for dynamic favicons
+  faviconGenerator: (color) =&gt; `
+    &lt;svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"&gt;
+      &lt;circle cx="16" cy="16" r="14" fill="${color}" /&gt;
+    &lt;/svg&gt;
+  `,
+});
+
+// Set the mode
+themeManager.setMode("dark"); // Force dark mode
+themeManager.setMode("light"); // Force light mode
+themeManager.setMode("system"); // Follow system preference
+
+// Get the current resolved mode ('light' or 'dark')
+console.log(themeManager.resolvedMode);
+
+// Clean up listeners when done
+themeManager.dispose();
+</code></pre>
+<h3 id="automatic-syncing"><a class="header" href="#automatic-syncing">Automatic Syncing</a></h3>
+<p>When you call <code>setMode()</code>, the <code>ThemeManager</code> automatically:</p>
+<ol>
+<li>Updates the root element (e.g. <code>document.documentElement</code>).</li>
+<li>Waits for styles to compute.</li>
+<li>Updates <code>&lt;meta name="theme-color"&gt;</code> to match the body background.</li>
+<li>Updates the favicon (if a generator is provided) to match the body text color.</li>
+</ol>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+
+            </nav>
+
+        </div>
+
+        <template id=fa-eye><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M288 32c-80.8 0-145.5 36.8-192.6 80.6C48.6 156 17.3 208 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6C17.3 304 48.6 356 95.4 399.4C142.5 443.2 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C433.5 68.8 368.8 32 288 32zM432 256c0 79.5-64.5 144-144 144s-144-64.5-144-144s64.5-144 144-144s144 64.5 144 144zM288 192c0 35.3-28.7 64-64 64c-11.5 0-22.3-3-31.6-8.4c-.2 2.8-.4 5.5-.4 8.4c0 53 43 96 96 96s96-43 96-96s-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6z"/></svg></span></template>
+        <template id=fa-eye-slash><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M38.8 5.1C28.4-3.1 13.3-1.2 5.1 9.2S-1.2 34.7 9.2 42.9l592 464c10.4 8.2 25.5 6.3 33.7-4.1s6.3-25.5-4.1-33.7L525.6 386.7c39.6-40.6 66.4-86.1 79.9-118.4c3.3-7.9 3.3-16.7 0-24.6c-14.9-35.7-46.2-87.7-93-131.1C465.5 68.8 400.8 32 320 32c-68.2 0-125 26.3-169.3 60.8L38.8 5.1zM223.1 149.5C248.6 126.2 282.7 112 320 112c79.5 0 144 64.5 144 144c0 24.9-6.3 48.3-17.4 68.7L408 294.5c5.2-11.8 8-24.8 8-38.5c0-53-43-96-96-96c-2.8 0-5.6 .1-8.4 .4c5.3 9.3 8.4 20.1 8.4 31.6c0 10.2-2.4 19.8-6.6 28.3l-90.3-70.8zm223.1 298L373 389.9c-16.4 6.5-34.3 10.1-53 10.1c-79.5 0-144-64.5-144-144c0-6.9 .5-13.6 1.4-20.2L83.1 161.5C60.3 191.2 44 220.8 34.5 243.7c-3.3 7.9-3.3 16.7 0 24.6c14.9 35.7 46.2 87.7 93 131.1C174.5 443.2 239.2 480 320 480c47.8 0 89.9-12.9 126.2-32.5z"/></svg></span></template>
+        <template id=fa-copy><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M502.6 70.63l-61.25-61.25C435.4 3.371 427.2 0 418.7 0H255.1c-35.35 0-64 28.66-64 64l.0195 256C192 355.4 220.7 384 256 384h192c35.2 0 64-28.8 64-64V93.25C512 84.77 508.6 76.63 502.6 70.63zM464 320c0 8.836-7.164 16-16 16H255.1c-8.838 0-16-7.164-16-16L239.1 64.13c0-8.836 7.164-16 16-16h128L384 96c0 17.67 14.33 32 32 32h47.1V320zM272 448c0 8.836-7.164 16-16 16H63.1c-8.838 0-16-7.164-16-16L47.98 192.1c0-8.836 7.164-16 16-16H160V128H63.99c-35.35 0-64 28.65-64 64l.0098 256C.002 483.3 28.66 512 64 512h192c35.2 0 64-28.8 64-64v-32h-47.1L272 448z"/></svg></span></template>
+        <template id=fa-play><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z"/></svg></span></template>
+        <template id=fa-clock-rotate-left><span class=fa-svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --><path d="M75 75L41 41C25.9 25.9 0 36.6 0 57.9V168c0 13.3 10.7 24 24 24H134.1c21.4 0 32.1-25.9 17-41l-30.8-30.8C155 85.5 203 64 256 64c106 0 192 86 192 192s-86 192-192 192c-40.8 0-78.6-12.7-109.7-34.4c-14.5-10.1-34.4-6.6-44.6 7.9s-6.6 34.4 7.9 44.6C151.2 495 201.7 512 256 512c141.4 0 256-114.6 256-256S397.4 0 256 0C185.3 0 121.3 28.7 75 75zm181 53c-13.3 0-24 10.7-24 24V256c0 6.4 2.5 12.5 7 17l72 72c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-65-65V152c0-13.3-10.7-24-24-24z"/></svg></span></template>
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr-ef4e11c1.min.js"></script>
+        <script src="mark-09e88c2c.min.js"></script>
+        <script src="searcher-c2a407aa.js"></script>
+
+        <script src="clipboard-1626706a.min.js"></script>
+        <script src="highlight-abc7f01d.js"></script>
+        <script src="book-66cfebdd.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="src/js/mermaid-198b1944.min.js"></script>
+        <script src="src/js/mermaid-init-3a29f2bf.js"></script>
+
+        <script>
+        window.addEventListener('load', function() {
+            window.setTimeout(window.print, 100);
+        });
+        </script>
+
+
+    </div>
+    </body>
+</html>
