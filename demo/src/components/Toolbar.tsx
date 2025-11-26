@@ -1,8 +1,5 @@
-import { generateTheme } from "color-system/runtime";
 import { PRESETS } from "color-system";
-import { Link, useLocation } from "wouter";
-import { useConfig } from "../context/ConfigContext";
-import { useTheme } from "../context/ThemeContext";
+import { generateTheme } from "color-system/runtime";
 import {
   BarChart,
   Box,
@@ -19,6 +16,9 @@ import {
   Upload,
 } from "lucide-preact";
 import { useRef, useState } from "preact/hooks";
+import { Link, useLocation } from "wouter";
+import { useConfig } from "../context/ConfigContext";
+import { useTheme } from "../context/ThemeContext";
 import { AnchorsEditor } from "./ThemeBuilder/AnchorsEditor";
 import { HueShiftEditor } from "./ThemeBuilder/HueShiftEditor";
 import { KeyColorsEditor } from "./ThemeBuilder/KeyColorsEditor";
@@ -94,7 +94,7 @@ export function Toolbar() {
         class="surface-workspace"
       >
         {/* Navigation */}
-        <nav style={{ display: "flex", gap: "0.5rem" }}>
+        <nav style={{ display: "flex" }}>
           <NavButton
             href="/"
             icon={Layout}
@@ -133,7 +133,14 @@ export function Toolbar() {
           />
         </nav>
 
-        <div style={{ display: "flex", gap: "1rem", alignItems: "center", flexShrink: 0 }}>
+        <div
+          style={{
+            display: "flex",
+            gap: "1rem",
+            alignItems: "center",
+            flexShrink: 0,
+          }}
+        >
           {/* Presets */}
           <div
             class="surface-card bordered"

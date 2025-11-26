@@ -137,6 +137,19 @@ pnpm build         # Build the package
 pnpm solve         # Regenerate internal CSS tokens
 ```
 
+### Documentation & Demo
+
+To run the unified development server (Docs + Demo):
+
+```bash
+pnpm dev:site
+```
+
+This starts a proxy at `http://localhost:3000` where:
+
+- `/` serves the Documentation
+- `/demo/` serves the Theme Builder
+
 ### Environment
 
 - **Runtime**: Node.js v24+ (Required for native TypeScript support)

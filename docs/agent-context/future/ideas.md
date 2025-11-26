@@ -22,7 +22,7 @@ The current Theme Builder UI is functional but sparse. It lacks data density and
   - Information is packed into cryptic icons (locks, warnings).
   - The "Surface List" is just a list of boxes.
   - There is no visual connection between the "Global Settings" (Anchors, Key Colors) and the resulting surfaces.
-- **Goal**: Create a UI that *teaches* the user how the system works while they use it.
+- **Goal**: Create a UI that _teaches_ the user how the system works while they use it.
 - **Ideas**:
   - **Visualizer Graph**: A node-based or layer-based view showing how surfaces inherit and modify context.
   - **Data Density**: Show actual contrast ratios, lightness values, and hex codes inline without clutter.

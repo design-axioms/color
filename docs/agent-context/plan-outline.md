@@ -68,7 +68,7 @@
     - **Educational Components**: `ContextVisualizer`, `GamutComparator`, `LightnessScale`.
     - Simulate High Contrast in Demo.
 
-## Epoch 6: Design System Primitives (In Progress)
+## Epoch 6: Design System Primitives (Completed)
 
 - **Goal**: Complete the "System" aspect by adding missing UI primitives.
 - **Phases**:
@@ -88,7 +88,7 @@
       - **Visuals**: Lucide icons, shadow polish, compact controls.
       - **Features**: Expose Palette Config in UI.
 
-## Epoch 7: Deployment & Infrastructure (Planned)
+## Epoch 7: Deployment & Infrastructure (Completed)
 
 - **Goal**: Unify the Demo and Documentation into a single deployable site and automate the process.
 - **Key Deliverables**:

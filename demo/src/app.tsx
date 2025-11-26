@@ -1,4 +1,5 @@
-import { Route, Switch } from "wouter";
+import { Route, Router, Switch } from "wouter";
+import { useHashLocation } from "wouter/use-hash-location";
 import "./app.css";
 import { DataVizShowcase } from "./components/DataVizShowcase";
 import { ExperienceLab } from "./components/ExperienceLab";
@@ -17,7 +18,9 @@ export function App() {
     <ThemeProvider>
       <ConfigProvider>
         <LiveThemeInjector />
-        <AppContent />
+        <Router hook={useHashLocation}>
+          <AppContent />
+        </Router>
       </ConfigProvider>
     </ThemeProvider>
   );

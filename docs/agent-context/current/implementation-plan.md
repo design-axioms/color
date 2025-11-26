@@ -1,76 +1,64 @@
-# Implementation Plan - Epoch 6: Phase 3 (Theme Builder UX/UI Polish)
+# Implementation Plan - Epoch 7: Deployment & Infrastructure
 
-This phase focuses on refining the Theme Builder into a professional, ergonomic tool. We will address layout issues, improve navigation, and add visual polish.
+## Goal
 
-## Goals
+Unify the Demo and Documentation into a single, cohesive site deployed to GitHub Pages, with a streamlined development workflow.
 
-- **Layout Restructure**: Move to a "Sticky Toolbar + Sidebar" layout to maximize screen real estate and prevent scrolling issues.
-- **Navigation Fixes**: Eliminate nested scroll areas.
-- **Preset UX**: Improve the "Load Preset" experience (persistence, selection state).
-- **Visual Polish**: Use Lucide icons, add shadows to buttons, and compact the UI.
-- **Feature Parity**: Expose the new `PaletteConfig` in the UI.
+## Proposed Architecture
 
-## Proposed Changes
+### URL Structure
 
-### 1. Layout & Navigation
+- **Production**: `https://wycats.github.io/algebraic/`
+  - `/` -> Documentation (mdbook)
+  - `/demo/` -> Theme Builder (Vite App)
+- **Development**: `http://localhost:3000/`
+  - `/` -> Documentation
+  - `/demo/` -> Theme Builder
 
-- **Refactor `App.tsx`**:
-  - Move global actions (Export, Reset, Preset) to a top **Sticky Toolbar**.
-  - Move Anchors and Key Colors to the Toolbar (compact popovers or expandable sections).
-  - Keep the **Sidebar** dedicated to the Surface List.
-  - Ensure the **Main Preview** area scrolls independently but doesn't trap scroll.
-- **CSS**: Use `position: sticky` and `height: 100vh` correctly to manage scrolling.
+### Build Pipeline
 
-### 2. Preset Management
+We will create a unified build process that:
 
-- **Update `useSolvedTheme`**:
-  - Add `selectedPreset` state.
-  - Persist `selectedPreset` to `localStorage`.
-  - Default to "Default" preset on first load.
-- **Update `PresetSelector`**:
-  - Show the currently selected preset in the dropdown/button.
-- **File Loading**:
-  - Add ability to upload a JSON config file to restore a custom theme.
+1. Builds the `mdbook` to `dist/`.
+2. Builds the `demo` app to `dist/demo/`.
+3. Ensures all assets are correctly linked using the base path `/algebraic/`.
 
-### 3. Visual Polish
+### Development Server
 
-- **Icons**: Install `lucide-preact` and replace text labels with icons where appropriate (e.g., Export, Reset, GitHub).
-- **Components**:
-  - **Compact Anchors**: Redesign the Anchor sliders to be more compact (maybe inside a "Tuner" panel in the toolbar).
-  - **Button Styles**: Apply the new shadow primitives (`--shadow-sm`) to buttons and inputs.
+We will create a custom development server (`scripts/dev-site.ts`) that:
 
-### 4. Palette Configuration
+1. Spawns `mdbook serve` (e.g., port 3001).
+2. Spawns `vite` (e.g., port 3002).
+3. Runs a proxy server on port 3000 to route traffic:
+   - `/demo/*` -> `localhost:3002`
+   - `/*` -> `localhost:3001`
+     This ensures that links between the docs and demo work locally exactly as they will in production.
 
-- **New Component**: Create `PaletteConfigurator` in the Theme Builder.
-  - Allow editing `targetChroma` and `targetContrast`.
-  - (Optional) Allow reordering/editing hues? (Maybe defer to JSON for now, just show the list).
+> [!NOTE]
+>
+> The proxy server script should take a port argument, and spawn vite and mdbook on random available ports to avoid conflicts.
 
-### 5. Routing
+## Tasks
 
-- **Library**: Install `wouter` for lightweight routing.
-- **Implementation**:
-  - Sync selected demo page (Theme Builder, Showcase, etc.) to URL.
-  - Ensure reloading preserves the current view.
+### 1. Configuration Updates
 
-## Task List
+- [ ] **Demo**: Update `demo/vite.config.ts` to set `base: '/algebraic/demo/'` (prod) or `/demo/` (dev).
+- [ ] **Docs**: Update `docs/guide/book.toml` to set `site-url = "/algebraic/"`.
+- [ ] **Docs**: Ensure `mdbook` outputs to a predictable location (or we move it).
+- [ ] **Docs**: Update README.md to explain the new structure.
 
-- [x] **Setup**
-  - [x] Install `lucide-preact` and `wouter`.
-- [x] **Layout Refactor**
-  - [x] Create `Toolbar` component.
-  - [x] Move Global Actions to Toolbar.
-  - [x] Move Anchors/Key Colors to Toolbar (or a "Settings" panel).
-  - [x] Fix scrolling (remove nested scrollbars).
-- [x] **Routing**
-  - [x] Implement `wouter` in `App.tsx`.
-  - [x] Update navigation to use `Link` or `useLocation`.
-- [x] **Preset UX**
-  - [x] Update `ConfigContext` to track/persist `presetId`.
-  - [x] Update `PresetSelector` UI.
-  - [x] Add File Upload support.
-- [x] **Palette UI**
-  - [x] Add `PaletteConfigurator` to the Sidebar or Toolbar.
-- [x] **Visuals**
-  - [x] Replace text buttons with Icon Buttons (Lucide).
-  - [x] Add shadows/polish to UI elements.
-  - [x] Fix Toolbar font and duplicate settings.
+### 2. Tooling & Scripts
+
+- [ ] **Dev Proxy**: Create `scripts/dev-site.ts` using `http-proxy` and `concurrently` (or similar).
+- [ ] **Build Script**: Create `scripts/build-site.ts` to orchestrate the build.
+- [ ] **Dependencies**: Add necessary dev dependencies (`http-proxy`, `connect`, etc. if needed, or just use standard node libs).
+
+### 3. CI/CD
+
+- [ ] **Workflow**: Create `.github/workflows/deploy.yml`.
+- [ ] **Permissions**: Configure GITHUB_TOKEN permissions for Pages.
+
+### 4. Content Integration
+
+- [ ] **Cross-Linking**: Add links between the Demo and Docs.
+- [ ] **404 Handling**: Ensure SPA routing works for the demo (GitHub Pages needs a `404.html` hack or similar if we use client-side routing, but the demo is mostly single page).

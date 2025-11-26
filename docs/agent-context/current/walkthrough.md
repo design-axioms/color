@@ -1,42 +1,38 @@
-# Phase Walkthrough: UX Polish & Preset Management
+# Walkthrough - Epoch 7: Deployment & Infrastructure
 
-## Overview
-This phase focused on improving the user experience of the Theme Builder demo. We addressed layout issues, consolidated global actions into a new Toolbar, and significantly improved the workflow for managing Presets and Custom themes.
+## Goal
+Unify the Demo and Documentation into a single, cohesive site deployed to GitHub Pages, with a streamlined development workflow.
 
-## Key Changes
+## Changes
 
-### 1. Layout & Scrolling Fixes
-- **Problem**: The app had nested scrollbars (window + sidebar + main content), making navigation difficult.
-- **Solution**: Refactored `App.tsx` to use a flex-column layout with `overflow: hidden` on the main container. `ThemeBuilder.tsx` was updated to handle its own scrolling for the Sidebar and Preview areas independently.
+### 1. Unified Development Server
+We created a new script `scripts/dev-site.ts` that runs both the Documentation (`mdbook`) and the Theme Builder (`vite`) in parallel, behind a proxy.
 
-### 2. Toolbar Component
-- **Problem**: Navigation and global actions were scattered or missing.
-- **Solution**: Created a sticky `Toolbar` component at the top of the app.
-  - **Navigation**: Added links to all major views (Showcase, Builder, Verifier, etc.).
-  - **Global Actions**: Moved Theme Toggle (Light/Dark/System), Export, and Reset to the toolbar.
-  - **Settings**: Created a dropdown panel for global theme settings (Key Colors, Anchors, Hue Shift), decluttering the main workspace.
+- **Command**: `pnpm dev:site`
+- **Proxy**: `http://localhost:3000`
+- **Routing**:
+  - `/` -> Documentation (mdbook on port 3001)
+  - `/demo/` -> Theme Builder (Vite on port 3002)
 
-### 3. Preset Management & Persistence
-- **Problem**: Switching presets triggered annoying "Unsaved Changes" alerts. There was no easy way to save a "work in progress" custom theme without downloading a file.
-- **Solution**:
-  - **`presetId` State**: Added explicit tracking of whether a Preset or Custom theme is active.
-  - **Auto-Save**: "Custom" themes are now automatically saved to `localStorage` (`color-system-custom-config`). Switching to a Preset and back to Custom restores your work.
-  - **Frictionless Switching**: Removed confirmation dialogs. You can freely switch between Presets and your Custom draft.
+This ensures that the local development environment mirrors the production URL structure, allowing us to test cross-linking and asset loading reliably.
 
-### 4. File Loading
-- **Problem**: Users could download JSON configs but not load them back in.
-- **Solution**: Added an "Upload JSON" button to the Toolbar. This loads the config into the "Custom" slot and activates it.
+### 2. Unified Build Pipeline
+We created `scripts/build-site.ts` to orchestrate the production build.
 
-### 5. Modern CSS Features
-- **Popover API & Anchor Positioning**: The Settings panel in the Toolbar now uses the native Popover API (`popover`, `popovertarget`) and CSS Anchor Positioning (`anchor-name`, `position-anchor`) for a robust and accessible overlay experience without external libraries.
-- **Responsive Toolbar**: Added responsive behavior to the Toolbar to hide navigation labels on smaller screens.
-  - *Known Issue*: The toolbar layout is still crowded on some screen sizes, and the buttons may not all fit comfortably. This requires further refinement in a future UI polish phase.
+- **Command**: `pnpm build:site`
+- **Process**:
+  1. Builds the Demo App (`pnpm build` in `demo/`).
+  2. Builds the Documentation (`mdbook build`).
+  3. Copies the Demo build output (`demo/dist`) into the Documentation output (`docs/guide/book/demo`).
 
-## Technical Details
-- **`ConfigContext.tsx`**: Heavily refactored to support `presetId`, `loadConfigFromFile`, and the new persistence logic.
-- **`Toolbar.tsx`**: Implemented using `lucide-preact` icons for a cleaner look. Uses a hidden file input for the upload feature.
-- **`LiveThemeInjector`**: Moved to `App.tsx` to ensure theme variables are applied globally to the `:root` element, fixing issues where some parts of the app didn't receive theme updates.
+### 3. GitHub Pages Deployment
+We added a GitHub Actions workflow (`.github/workflows/deploy.yml`) that automatically builds and deploys the unified site to GitHub Pages on every push to `main`.
 
-## Next Steps
-- The "Settings" panel in the Toolbar is functional but could use more visual polish.
-- The `SurfaceManager` in `ThemeBuilder` is the next major area for UX improvement.
+### 4. Routing & Configuration
+- **Vite Config**: Updated `demo/vite.config.ts` to use a conditional `base` path (`/algebraic/demo/` in production, `/demo/` in dev).
+- **Hash Routing**: Switched the Demo App to use **Hash Routing** (`wouter/use-hash-location`). This solves the issue of 404s on GitHub Pages when refreshing deep links (e.g., `/demo/#/builder` works reliably).
+- **Documentation**: Updated `README.md` with instructions for the new workflow.
+
+## Verification
+- Ran `pnpm build:site` locally to verify the build pipeline succeeds and produces the expected directory structure.
+- Verified `mdbook` and `vite` integration via the proxy script logic.

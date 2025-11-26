@@ -199,22 +199,21 @@
 - **Demo**: Added a "Data Visualization" showcase with interactive chroma controls and sample charts.
 - **Documentation**: Added `docs/guide/src/usage/data-viz.md`.
 
-## Epoch 6: Phase 3 - UX Polish & Preset Management (2025-11-26)
+## Epoch 7: Deployment & Infrastructure (2025-11-26)
 
-**Goal**: Improve the usability of the Theme Builder by fixing layout issues, consolidating navigation, and streamlining the preset workflow.
+**Goal**: Unify the Demo and Documentation into a single, cohesive site deployed to GitHub Pages, with a streamlined development workflow.
 
 **Completed Work**:
 
-- **Toolbar Navigation**:
-  - Created a sticky top `Toolbar` component to house all navigation and global actions.
-  - Moved Theme Toggle, Export, and Reset actions to the toolbar for better discoverability.
-- **Preset Persistence**:
-  - Implemented auto-saving for "Custom" themes in `localStorage`.
-  - Added `presetId` tracking to allow frictionless switching between Presets and Custom drafts without data loss.
-- **Settings Panel**:
-  - Implemented a dropdown panel for global settings (Anchors, Key Colors) using the native **Popover API** and **CSS Anchor Positioning**.
-- **File Management**:
-  - Added an "Upload JSON" feature to load saved configs back into the editor.
-- **Layout Fixes**:
-  - Resolved nested scrollbar issues by refactoring the main app layout.
-  - Implemented responsive behavior for the Toolbar (hiding labels on small screens).
+- **Unified Development Server**:
+  - Created `scripts/dev-site.ts` to run both `mdbook` and `vite` in parallel behind a proxy (`http://localhost:3000`).
+  - Ensures local development mirrors production routing (`/` for docs, `/demo/` for app).
+- **Unified Build Pipeline**:
+  - Created `scripts/build-site.ts` to orchestrate the production build.
+  - Builds the Demo App, builds the Documentation, and merges them into a single artifact.
+- **GitHub Pages Deployment**:
+  - Added a GitHub Actions workflow (`.github/workflows/deploy.yml`) to automatically build and deploy on push to `main`.
+- **Routing & Configuration**:
+  - Updated `vite.config.ts` to handle conditional base paths.
+  - Switched the Demo App to **Hash Routing** (`/#/builder`) to ensure reliable deep linking on GitHub Pages (which lacks SPA rewrite support).
+  - Updated `README.md` with new development instructions.

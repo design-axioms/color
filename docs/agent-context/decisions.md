@@ -152,3 +152,12 @@ This file tracks key architectural and design decisions made throughout the proj
 - **Rationale**:
   - **Density**: Preserves the layout structure without wrapping or overlapping.
   - **Usability**: Icons are standard enough (Home, Palette, Settings) to be understood without labels in constrained spaces.
+
+### [2025-11-26] Hash Routing for Demo App
+
+- **Context**: GitHub Pages is a static file host and does not support SPA routing (rewriting unknown paths to `index.html`). This causes 404 errors when refreshing deep links (e.g., `/demo/builder`).
+- **Decision**: Use Hash Routing (`/#/builder`) via `wouter/use-hash-location`.
+- **Rationale**:
+  - **Reliability**: Guarantees that deep links work 100% of the time without server configuration.
+  - **Simplicity**: Avoids the "404.html hack" (copying index.html to 404.html), which returns incorrect HTTP status codes and requires extra build steps.
+  - **Appropriateness**: As a client-side tool/demo, "clean URLs" are less critical than functional deep linking.

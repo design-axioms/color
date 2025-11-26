@@ -1,2 +1,9 @@
 node_modules
 .agents/memory
+
+# Build artifacts
+dist/
+demo/dist/
+docs/guide/book/
+coverage/
+.DS_Store
