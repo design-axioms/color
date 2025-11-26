@@ -1,7 +1,8 @@
 import { createContext } from "preact";
-import { useContext, useEffect, useState } from "preact/hooks";
+import { useContext, useEffect, useState, useMemo } from "preact/hooks";
+import { ThemeManager, ThemeMode } from "color-system/browser";
 
-type Theme = "light" | "dark" | "system";
+type Theme = ThemeMode;
 type ResolvedTheme = "light" | "dark";
 
 interface ThemeContextType {
@@ -12,43 +13,40 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
+const getFaviconSvg = (color: string) => `
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <circle cx="16" cy="16" r="14" fill="${color}" />
+</svg>
+`;
+
 export function ThemeProvider({ children }: { children: any }) {
   const [theme, setTheme] = useState<Theme>("system");
   const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>("light");
 
+  const themeManager = useMemo(() => new ThemeManager({
+    faviconGenerator: getFaviconSvg
+  }), []);
+
   useEffect(() => {
-    const root = document.documentElement;
+    themeManager.setMode(theme);
+    setResolvedTheme(themeManager.resolvedMode);
 
-    // 1. Apply the requested theme to the root for CSS light-dark() support
-    if (theme === "system") {
-      root.style.removeProperty("color-scheme");
-    } else {
-      root.style.setProperty("color-scheme", theme);
-    }
-
-    // 2. Resolve 'system' to actual 'light' or 'dark' for JS logic
-    const updateResolved = () => {
-      if (theme === "system") {
-        const isDark = window.matchMedia(
-          "(prefers-color-scheme: dark)"
-        ).matches;
-        setResolvedTheme(isDark ? "dark" : "light");
-      } else {
-        setResolvedTheme(theme);
-      }
-    };
-
-    updateResolved();
-
-    // Listen for system changes if in system mode
+    // Listen for system changes if in system mode to update React state
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
     const handler = () => {
-      if (theme === "system") updateResolved();
+      if (theme === "system") {
+        setResolvedTheme(mediaQuery.matches ? "dark" : "light");
+      }
     };
 
     mediaQuery.addEventListener("change", handler);
     return () => mediaQuery.removeEventListener("change", handler);
-  }, [theme]);
+  }, [theme, themeManager]);
+
+  // Cleanup
+  useEffect(() => {
+    return () => themeManager.dispose();
+  }, [themeManager]);
 
   return (
     <ThemeContext.Provider value={{ theme, setTheme, resolvedTheme }}>

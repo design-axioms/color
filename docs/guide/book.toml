@@ -7,5 +7,5 @@ site-url = "/algebraic/"
 
 [output.html]
 additional-js = ["src/js/mermaid.min.js", "src/js/mermaid-init.js"]
-additional-css = ["src/css/color-system.css"]
+additional-css = ["src/css/color-system.css", "src/css/docs.css"]
 

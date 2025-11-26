@@ -1,23 +1,112 @@
 # Hue Shifting
 
+## Why Shift Hues?
+
+In the real world, objects rarely stay the same hue as they get lighter or darker.
+
+- **Natural Light**: Shadows are often cooler (bluer) due to ambient skylight, while direct highlights are warmer (yellower) from the sun.
+- **The Bezold–Brücke Effect**: As light intensity increases, our perception of hue shifts. Reds become yellower, and violets become bluer.
+
+If you create a color palette by simply changing lightness (e.g., `oklch(0.5 0.2 260)` → `oklch(0.9 0.2 260)`), the result can feel "synthetic" or "flat". The shadows might look muddy, or the highlights might look washed out.
+
+**Hue Shifting** mimics natural light physics by rotating the hue as lightness changes. This creates palettes that feel:
+1.  **More Dynamic**: Colors feel alive rather than static.
+2.  **More Natural**: Mimics the way light interacts with surfaces in the real world.
+3.  **More Distinct**: Helps differentiate surfaces that are close in lightness.
+
+<div class="docs-grid docs-mb-4">
+  <div class="docs-p-4 docs-rounded docs-border">
+    <strong class="docs-mb-2" style="display: block">Static Hue (Boring)</strong>
+    <div style="height: 60px; border-radius: 8px; background: linear-gradient(to right, 
+      oklch(0.2 0.1 260), 
+      oklch(0.95 0.1 260)
+    );"></div>
+    <div class="text-subtle docs-mt-2" style="font-size: 0.9em">
+      Just changing lightness. The result feels mechanical and flat.
+    </div>
+  </div>
+  <div class="docs-p-4 docs-rounded docs-border">
+    <strong class="docs-mb-2" style="display: block">Shifted Hue (Dynamic)</strong>
+    <div style="height: 60px; border-radius: 8px; background: linear-gradient(to right, 
+      oklch(0.2 0.1 260), 
+      oklch(0.95 0.1 320)
+    );"></div>
+    <div class="text-subtle docs-mt-2" style="font-size: 0.9em">
+      Rotating hue from Blue (260) to Purple (320) as lightness increases. The result feels more vibrant and natural.
+    </div>
+  </div>
+</div>
+
 ## Why Non-Linear Hue Shifting?
 
 The color system supports optional **hue rotation** across the lightness spectrum. This feature allows surfaces to shift from cooler tones in darker regions to warmer tones in lighter regions (or vice versa), creating a more dynamic and perceptually harmonious color palette.
 
 ### The Problem with Linear Shifting
 
-A naive implementation might apply hue rotation linearly:
+A naive implementation might apply hue rotation linearly. However, this doesn't match human perception. Our eyes perceive warmth and coolness non-linearly across the lightness spectrum.
 
-```typescript
-// Linear shift (NOT what we do)
-const hueShift = lightness * maxRotation;
-```
-
-However, this doesn't match human perception. Our eyes perceive warmth and coolness non-linearly across the lightness spectrum. A linear shift can feel abrupt or unnatural, especially in the mid-tones.
+<div class="docs-grid docs-mb-4">
+  <div class="docs-p-4 docs-rounded docs-border">
+    <strong class="docs-mb-2" style="display: block">No Shift (Static Hue)</strong>
+    <div style="height: 60px; border-radius: 8px; background: linear-gradient(to right, 
+      oklch(0.2 0.1 260), 
+      oklch(0.95 0.1 260)
+    );"></div>
+    <div class="text-subtle docs-mt-2" style="font-size: 0.9em">
+      Shadows can feel "muddy" or flat because they lack the natural coolness of ambient light.
+    </div>
+  </div>
+  <div class="docs-p-4 docs-rounded docs-border">
+    <strong class="docs-mb-2" style="display: block">Linear Shift</strong>
+    <div style="height: 60px; border-radius: 8px; background: linear-gradient(to right, 
+      oklch(0.2 0.1 260), 
+      oklch(0.95 0.1 320)
+    );"></div>
+    <div class="text-subtle docs-mt-2" style="font-size: 0.9em">
+      A linear shift (0° to 60°) can feel abrupt in the mid-tones, making the color change too noticeable.
+    </div>
+  </div>
+</div>
 
 ## Cubic Bezier Solution
 
-Instead, we use a **cubic Bezier curve** to map lightness values (0-1) to hue rotation factors (0-1):
+Instead, we use a **cubic Bezier curve** to map lightness values (0-1) to hue rotation factors (0-1). This allows us to keep the hue stable in the deep shadows and bright highlights, while concentrating the shift in the mid-tones where it adds the most vibrancy.
+
+<div class="docs-grid docs-mb-4">
+  <div class="docs-p-4 docs-rounded docs-border">
+    <strong class="docs-mb-2" style="display: block">No Shift</strong>
+    <div style="height: 60px; border-radius: 8px; background: linear-gradient(to right, 
+      oklch(0.2 0.1 260), 
+      oklch(0.95 0.1 260)
+    );"></div>
+    <div class="text-subtle docs-mt-2" style="font-size: 0.9em">
+      Static hue.
+    </div>
+  </div>
+  <div class="docs-p-4 docs-rounded docs-border">
+    <strong class="docs-mb-2" style="display: block">Linear Shift</strong>
+    <div style="height: 60px; border-radius: 8px; background: linear-gradient(to right, 
+      oklch(0.2 0.1 260), 
+      oklch(0.95 0.1 320)
+    );"></div>
+    <div class="text-subtle docs-mt-2" style="font-size: 0.9em">
+      Abrupt mid-tones.
+    </div>
+  </div>
+  <div class="docs-p-4 docs-rounded docs-border">
+    <strong class="docs-mb-2" style="display: block">Bezier Shift</strong>
+    <div style="height: 60px; border-radius: 8px; background: linear-gradient(to right, 
+      oklch(0.2 0.1 260),   /* Start: Blue */
+      oklch(0.4 0.1 265),   /* Slow start */
+      oklch(0.6 0.1 290),   /* Fast middle */
+      oklch(0.8 0.1 315),   /* Slow end */
+      oklch(0.95 0.1 320)   /* End: Purple */
+    );"></div>
+    <div class="text-subtle docs-mt-2" style="font-size: 0.9em">
+      Smooth S-curve.
+    </div>
+  </div>
+</div>
 
 ```typescript
 function cubicBezier(t: number, p1: number, p2: number): number {
@@ -67,12 +156,39 @@ This creates a **smooth S-curve** that:
 
 ### Visual Comparison
 
-```
-Lightness →  0.0    0.25   0.5    0.75   1.0
------------- ----- ------ ------ ------ ------
-Linear:        0°    45°    90°   135°   180°
-Bezier:        0°    ~15°   90°   ~165°  180°
-```
+Here is how the hue rotation (0° to 180°) is applied across the lightness spectrum (0.1 to 0.9).
+
+<div class="docs-grid" style="grid-template-columns: 80px 1fr; gap: 1rem; align-items: center; margin-bottom: 2rem;">
+  <!-- Linear Row -->
+  <div class="text-subtle text-right">Linear</div>
+  <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; height: 50px;">
+    <div style="background: oklch(0.1 0.15 278); border-radius: 4px;" title="L=0.1, H=278 (+18°)"></div>
+    <div style="background: oklch(0.3 0.15 314); border-radius: 4px;" title="L=0.3, H=314 (+54°)"></div>
+    <div style="background: oklch(0.5 0.15 350); border-radius: 4px;" title="L=0.5, H=350 (+90°)"></div>
+    <div style="background: oklch(0.7 0.15 26); border-radius: 4px;" title="L=0.7, H=26 (+126°)"></div>
+    <div style="background: oklch(0.9 0.15 62); border-radius: 4px;" title="L=0.9, H=62 (+162°)"></div>
+  </div>
+
+  <!-- Bezier Row -->
+  <div class="text-subtle text-right">Bezier</div>
+  <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; height: 50px;">
+    <div style="background: oklch(0.1 0.15 265); border-radius: 4px;" title="L=0.1, H=265 (+5°)"></div>
+    <div style="background: oklch(0.3 0.15 299); border-radius: 4px;" title="L=0.3, H=299 (+39°)"></div>
+    <div style="background: oklch(0.5 0.15 350); border-radius: 4px;" title="L=0.5, H=350 (+90°)"></div>
+    <div style="background: oklch(0.7 0.15 41); border-radius: 4px;" title="L=0.7, H=41 (+141°)"></div>
+    <div style="background: oklch(0.9 0.15 75); border-radius: 4px;" title="L=0.9, H=75 (+175°)"></div>
+  </div>
+  
+  <!-- Labels -->
+  <div></div>
+  <div style="display: grid; grid-template-columns: repeat(5, 1fr); text-align: center; font-size: 0.8em; color: var(--text-subtle-token);">
+    <div>Dark</div>
+    <div></div>
+    <div>Mid</div>
+    <div></div>
+    <div>Light</div>
+  </div>
+</div>
 
 Notice how the Bezier curve:
 
@@ -108,6 +224,8 @@ You can customize the curve by adjusting the control points:
 - Moving P1/P2 horizontally to change where the acceleration happens
 - Moving P1/P2 vertically to create asymmetric curves
 - Adjusting `maxRotation` for subtler or more dramatic effects
+
+**Tip:** You can also adjust these settings visually in the **Theme Builder**. The UI provides a curve editor where you can drag the control points and see the color palette update in real-time.
 
 ### Implementation Note
 

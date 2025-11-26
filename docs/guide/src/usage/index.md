@@ -22,5 +22,5 @@ pnpm add -D color-system
 ## Next Steps
 
 - [Using the CLI](./cli.md)
-- [Runtime API](./runtime.md)
+- [CSS Architecture](./css-architecture.md)
 - [Framework Integration](./frameworks.md)

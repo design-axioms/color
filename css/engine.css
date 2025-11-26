@@ -123,6 +123,10 @@
   initial-value: 0;
 }
 
+:root {
+  color-scheme: light dark;
+}
+
 /* Proxy tokens that cascade from utilities */
 @property --surface-token {
   syntax: "<color>";
@@ -187,6 +191,9 @@
 
   /* Apply Background */
   background-color: var(--computed-surface);
+
+  /* Apply Scrollbar */
+  scrollbar-color: var(--text-subtle-token) var(--surface-token);
 
   /* --- 2. TEXT CALCULATION --- */
 

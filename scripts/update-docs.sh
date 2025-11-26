@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# 1. Update Mermaid
 # Directory to store the mermaid script
 DEST_DIR="docs/guide/src/js"
 mkdir -p "$DEST_DIR"
@@ -14,5 +15,24 @@ if [ $? -eq 0 ]; then
   echo "Successfully updated mermaid.min.js in $DEST_DIR"
 else
   echo "Failed to download mermaid.min.js"
+  exit 1
+fi
+
+# 2. Update Color System CSS
+echo "Updating Color System CSS..."
+
+# Ensure the output directory exists
+mkdir -p docs/guide/src/css
+
+# Run the solver to ensure theme.css is up to date
+pnpm solve
+
+# Concatenate the CSS files
+cat css/tokens.css css/engine.css css/utilities.css css/theme.css > docs/guide/src/css/color-system.css
+
+if [ $? -eq 0 ]; then
+  echo "Successfully updated docs/guide/src/css/color-system.css"
+else
+  echo "Failed to update color-system.css"
   exit 1
 fi

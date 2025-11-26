@@ -31,7 +31,9 @@
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage",
     "lint": "eslint src/**/*.ts",
-    "lint:fix": "eslint src/**/*.ts --fix"
+    "lint:fix": "eslint src/**/*.ts --fix",
+    "docs:update": "./scripts/update-docs.sh",
+    "docs:dev": "pnpm docs:update && mdbook serve docs/guide"
   },
   "exports": {
     ".": "./dist/lib/index.js",
@@ -40,6 +42,7 @@
     "./runtime": "./dist/lib/runtime.js",
     "./types": "./dist/lib/types.js",
     "./constants": "./dist/lib/constants.js",
+    "./browser": "./dist/lib/browser.js",
     "./engine.css": "./css/engine.css",
     "./utilities.css": "./css/utilities.css",
     "./theme.css": "./css/theme.css"

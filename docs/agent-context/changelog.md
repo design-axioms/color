@@ -83,3 +83,35 @@
 
 - **GitHub Pages**: Configured automated deployment via GitHub Actions.
 - **Site URL**: Updated `book.toml` to serve from `/algebraic/`.
+
+## Phase 6: Iterative Refinement (Epoch 4)
+
+**Focus:** Polishing the documentation based on user feedback and aligning it with the product's mental model.
+
+### Key Changes
+
+- **Visualization Overhaul**:
+  - Replaced static diagrams with **Live HTML/CSS Visualizations** using the system's own CSS variables.
+  - Visualized core concepts: Polarity, Hue Shifting, Surface Nesting, and Contrast Perception.
+- **Documentation Restructuring**:
+  - **Renamed "Solver" to "Theme Builder"**: Aligned documentation terminology with the UI.
+  - **Split Runtime Docs**: Separated "CSS Architecture" (Static) from "Runtime API" (Dynamic) to clarify the distinction between using the CSS and controlling the engine.
+- **Accessibility Deep Dive**:
+  - **APCA Guide**: Created a dedicated chapter explaining the math behind the contrast scores.
+  - **Forced Colors**: Documented the "Variable Swap" strategy for automatic Windows High Contrast support.
+  - **Prefers Contrast**: Clarified the strategy for supporting user-requested high contrast.
+- **Onboarding Improvements**:
+  - **Quick Start**: Added a "Zero to Hero" guide.
+  - **Glossary**: Added definitions for key terms (Anchor, Polarity, Surface).
+  - **Softened Language**: Refined the introduction to reassure beginners that accessibility compliance is handled automatically.
+
+## Epoch 5: Phase 1 - Browser Integration (2025-11-25)
+
+**Goal**: Make the Color System feel "native" to the browser environment.
+
+**Completed Work**:
+- **Native UI Integration**: Added `color-scheme: light dark` and `scrollbar-color` to the CSS engine, ensuring native controls and scrollbars match the theme.
+- **Runtime Utilities**: Created `src/lib/browser.ts` with a `ThemeManager` class to handle mode switching and side effects.
+- **Meta Theme Color**: Implemented automatic syncing of `<meta name="theme-color">` with the document background.
+- **Dynamic Favicons**: Added support for generating and updating SVG favicons based on the current theme color.
+- **Demo Update**: Refactored the demo app to use `ThemeManager`, removing manual DOM manipulation and observers.

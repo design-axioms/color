@@ -164,5 +164,5 @@ function solve(config) {
 }
 
 export { getKeyColorStats, solve };
-//# sourceMappingURL=chunk-OKL7NJMK.js.map
-//# sourceMappingURL=chunk-OKL7NJMK.js.map
+//# sourceMappingURL=chunk-KW6VFTAP.js.map
+//# sourceMappingURL=chunk-KW6VFTAP.js.map

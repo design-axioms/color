@@ -41,7 +41,7 @@ npx color-system ./design/colors.json ./src/styles/theme.css
 
 ## Configuration
 
-The configuration file controls the solver. See the [Solver API](../api/solver.md) for details on how the math works.
+The configuration file controls the Theme Builder. See the [Theme Builder API](../api/theme-builder.md) for details on how the math works.
 
 ```json
 {

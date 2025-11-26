@@ -12,23 +12,40 @@ When you apply a surface class (e.g., `.surface-card`), the system does three th
 
 ## Surface Types
 
-```mermaid
-graph TD
-    Page[surface-page] --> Workspace[surface-workspace]
-    Page --> Card[surface-card]
-    Card --> Action[surface-action]
-    Card --> Tinted[surface-tinted]
-    Page --> Spotlight[surface-spotlight]
+<div class="surface-page docs-p-4 docs-rounded docs-border">
+  <strong>Page</strong>
+  <div class="text-subtle docs-mb-4">The Foundation</div>
 
-    style Page fill:#f9f9f9,stroke:#333,stroke-width:2px
-    style Card fill:#ffffff,stroke:#333,stroke-width:2px
-    style Action fill:#333,stroke:#333,stroke-width:2px,color:#fff
-    style Spotlight fill:#000,stroke:#333,stroke-width:2px,color:#fff
-```
+  <div class="docs-grid">
+    <div class="surface-workspace docs-p-4 docs-rounded docs-border">
+      <strong>Workspace</strong>
+      <div class="text-subtle">Sidebar / Dashboard</div>
+    </div>
+    <div class="surface-card docs-p-4 docs-rounded">
+      <strong>Card</strong>
+      <div class="text-subtle">Content Container</div>
+      <div class="surface-tinted docs-p-4 docs-rounded docs-mt-4">
+        <strong>Tinted</strong>
+        <div class="text-subtle">Grouped Item</div>
+      </div>
+    </div>
+  </div>
+</div>
 
 ### 1. The Canvas (Foundations)
 
 These surfaces form the backdrop of your application.
+
+<div class="docs-grid">
+  <div class="surface-page docs-p-4 docs-rounded docs-border">
+    <strong>Page</strong>
+    <div class="text-subtle">Infinite background</div>
+  </div>
+  <div class="surface-workspace docs-p-4 docs-rounded docs-border">
+    <strong>Workspace</strong>
+    <div class="text-subtle">Elevated area</div>
+  </div>
+</div>
 
 - **`surface-page`**: The infinite background. Usually the lightest (in light mode) or darkest (in dark mode) point.
 - **`surface-workspace`**: A slightly elevated area, often used for sidebars, navigation rails, or the main content area in a dashboard.
@@ -37,12 +54,29 @@ These surfaces form the backdrop of your application.
 
 These surfaces hold content. They sit _on top_ of the canvas.
 
+<div class="docs-grid">
+  <div class="surface-card docs-p-4 docs-rounded">
+    <strong>Card</strong>
+    <div class="text-subtle">Distinct boundary</div>
+  </div>
+  <div class="surface-tinted docs-p-4 docs-rounded">
+    <strong>Tinted</strong>
+    <div class="text-subtle">Subtle grouping</div>
+  </div>
+</div>
+
 - **`surface-card`**: The workhorse of UI design. Used for panels, posts, and grouped content.
 - **`surface-tinted`**: A subtle variation, often used to group related items without a hard boundary. It usually has a slight tint of the brand color.
 
 ### 3. The Interactors (Actions)
 
 These surfaces are interactive. They invite clicks and touches.
+
+<div class="docs-flex surface-card docs-p-4 docs-rounded">
+  <button class="surface-action docs-p-2 docs-rounded">Action</button>
+  <button class="surface-action hue-brand docs-p-2 docs-rounded">Brand</button>
+  <button class="surface-action hue-danger docs-p-2 docs-rounded">Danger</button>
+</div>
 
 - **`surface-action`**: Used for buttons, toggles, and active states.
 - **`surface-action-soft`**: A lower-emphasis interactive surface (e.g., a secondary button).
@@ -51,24 +85,33 @@ These surfaces are interactive. They invite clicks and touches.
 
 These surfaces demand attention. They often invert the polarity to stand out.
 
+<div class="docs-grid">
+  <div class="surface-spotlight docs-p-4 docs-rounded">
+    <strong>Spotlight</strong>
+    <div class="text-subtle">High Contrast</div>
+  </div>
+  <div class="surface-soft-spotlight docs-p-4 docs-rounded">
+    <strong>Soft Spotlight</strong>
+    <div class="text-subtle">Medium Contrast</div>
+  </div>
+</div>
+
 - **`surface-spotlight`**: High contrast. Used for tooltips, toasts, and primary call-to-actions.
 - **`surface-soft-spotlight`**: A softer version, often used for badges or indicators.
 
 ## Nesting Surfaces
 
-Surfaces are designed to be nested.
+Surfaces are designed to be nested. The system automatically adapts text contrast based on the parent surface.
 
-```html
-<div class="surface-page">
-  <!-- Text here is optimized for the page -->
-  <div class="surface-card">
-    <!-- Text here is optimized for the card -->
-    <button class="surface-action">
-      <!-- Text here is optimized for the button -->
-      Submit
+<div class="surface-page docs-p-4 docs-rounded docs-border">
+  <div class="text-strong">Text on Page</div>
+  <div class="surface-card docs-p-4 docs-rounded docs-mt-4">
+    <div class="text-strong">Text on Card</div>
+    <button class="surface-action docs-p-2 docs-rounded docs-mt-4">
+      Text on Action
     </button>
   </div>
+  <div class="surface-spotlight docs-p-4 docs-rounded docs-mt-4">
+    <div class="text-strong">Text on Spotlight</div>
+  </div>
 </div>
-```
-
-Because each surface updates the `--context-*` variables, you can use the same utility classes (like `.text-strong`) everywhere, and they will automatically adapt.

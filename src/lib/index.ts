@@ -24,6 +24,7 @@ import type {
 export * from "./constants.ts";
 export * from "./defaults.ts";
 export * from "./presets.ts";
+export * from "./browser.ts";
 
 const toOklch = converter("oklch");
 
