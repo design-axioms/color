@@ -2,7 +2,6 @@
    COLOR SYSTEM TOKENS
    ============================================ */
 
-@import "./theme.css";
 
 :root {
   --key-brand-color: oklch(0.6027 0.302 298);
