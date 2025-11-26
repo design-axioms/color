@@ -149,7 +149,14 @@ export function generateTokensCss(
 
       // Generate the Class Definition
       const prefix = selector ? `${selector} ` : "";
-      rootLines.push(`${prefix}.surface-${surface.slug} {`);
+      let classSelector = `.surface-${surface.slug}`;
+
+      // Special case: Apply 'page' surface tokens to body
+      if (surface.slug === "page") {
+        classSelector += ", body";
+      }
+
+      rootLines.push(`${prefix}${classSelector} {`);
 
       // 1. Surface Token
       rootLines.push(

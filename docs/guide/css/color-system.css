@@ -197,8 +197,9 @@
 /*
    THE SURFACE ENGINE
    Matches any element with a class starting with "surface-" or containing " surface-"
+   Also matches body to apply the page surface globally.
 */
-:where([class^="surface-"], [class*=" surface-"]) {
+:where([class^="surface-"], [class*=" surface-"], body) {
   /* --- 1. SURFACE CALCULATION --- */
 
   /* Calculate Chroma */
@@ -662,7 +663,7 @@
   );
 }
 
-.surface-page {
+.surface-page, body {
   --surface-token: light-dark(
     oklch(1 0 293.0332),
     oklch(0.1 0 288.1732)
@@ -945,7 +946,7 @@
   );
 }
 
-.surface-page {
+.surface-page, body {
   --surface-token: light-dark(
     oklch(1 0 5),
     oklch(0 0 0)
