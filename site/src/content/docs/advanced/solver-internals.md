@@ -143,11 +143,21 @@ Finally, the solver outputs the CSS tokens that the Theme Builder (and your app)
 
 ## The Pipeline
 
-When you run `pnpm solve` (or change a setting in the Builder), this pipeline executes:
+When you run `npx color-system` (or change a setting in the Builder), this pipeline executes:
 
-1.  **Hydrate**: Read your config.
+1.  **Hydrate**: Read your `color-config.json`.
 2.  **Adjust Anchors**: Ensure the range supports High Contrast text.
-3.  **Distribute**: Calculate the target contrast for each surface.
+3.  **Distribute**: Calculate the target contrast for each surface based on the available range and any `gapBefore` settings.
 4.  **Solve Lightness**: Use binary search to find the exact lightness value that hits that contrast target.
-5.  **Solve Text**: Find the text colors that sit accessibly on top of those surfaces.
-6.  **Generate**: Write the CSS.
+5.  **Solve Text**: Find the text colors that sit accessibly on top of those surfaces (APCA-compliant).
+6.  **Generate**: Write the CSS tokens.
+
+### High Contrast Generation
+
+The solver runs a second pass to generate a **High Contrast** variant (`@media (prefers-contrast: more)`).
+In this pass:
+-   **Key Colors** are removed (forced to grayscale).
+-   **Anchors** are pushed to pure Black (0) and White (1).
+-   **Chroma** is disabled.
+
+This ensures that users who need maximum legibility get a strictly accessible, high-contrast version of your theme automatically.

@@ -1,0 +1,59 @@
+---
+title: The Physics of Light
+description: How the system calculates color relationships using anchors and interpolation.
+---
+
+import { SystemDemo } from "../../../components/SystemDemo";
+import { DynamicRange } from "../../../components/DynamicRange";
+import { Diagram } from "../../../components/Diagram";
+
+<SystemDemo>
+
+If "Surfaces" are the atoms of the system, **Anchors** are the laws of physics that govern them.
+
+The Algebraic Color System doesn't store a list of colors for every surface. Instead, it calculates them dynamically based on a set of boundary conditions.
+
+## The Dynamic Range
+
+Imagine a vertical axis representing Lightness, from 0% (Absolute Black) to 100% (Absolute White). Every theme is defined by a **Dynamic Range** on this axis.
+
+### Anchors: The Boundary Conditions
+
+An **Anchor** is a fixed point on this scale. It tells the solver: *"This is where the world begins, and this is where it ends."*
+
+<Diagram>
+  <DynamicRange />
+</Diagram>
+
+## The "Rubber Band" Effect
+
+The most powerful aspect of this physics model is that surfaces are **relative**, not absolute.
+
+If you decide your Dark Mode is too dark, you don't have to manually adjust every single card, sidebar, and button. You simply move the **Start Anchor**.
+
+Imagine all your surfaces are attached to a rubber band stretched between the Start and End anchors.
+
+1.  **Move the Start Anchor up**: The entire rubber band compresses. Every surface gets lighter, but they maintain their relative order and separation.
+2.  **Move the End Anchor down**: The range compresses. Surfaces get closer together in lightness.
+
+### Why is this better?
+
+In a traditional system (Hex codes), changing the background color breaks everything.
+-   "I made the background darker, now the cards are invisible."
+-   "I made the background lighter, now the text contrast is failing."
+
+In the Algebraic System, the solver **re-runs the physics simulation** every time you change an anchor. It guarantees that:
+1.  Surfaces stay visible against the background.
+2.  Text stays readable against the surfaces (by adjusting text colors if needed).
+
+## Contrast Distribution
+
+The system doesn't just place surfaces linearly (e.g., 10%, 20%, 30%). It distributes them based on **Perceptual Contrast**.
+
+The human eye is more sensitive to changes in dark colors than light colors. A 5% change in lightness is very noticeable in dark mode, but barely visible in light mode.
+
+The solver accounts for this. It ensures that the **visual step** from Page to Card looks the same in Dark Mode as it does in Light Mode, even if the actual math values are different.
+
+
+</SystemDemo>
+

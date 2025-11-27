@@ -105,7 +105,23 @@
   - **Simplified DX**: Single Vite-based dev server (no proxying).
   - **Better Search**: Starlight's built-in search.
 
-## Epoch 9: Ecosystem & Interoperability (Planned)
+## Epoch 9: Documentation Restructure (Planned)
+
+- **Goal**: Realign the documentation structure with the "User Journey" and address "Fresh Eyes" feedback.
+- **Phases**:
+  - **Phase 1: Structural Reorganization**
+    - Implement new sidebar hierarchy in `astro.config.mjs`.
+    - Move and rename files to `concepts/`, `guides/`, `catalog/`, `advanced/`.
+  - **Phase 2: Content Rewrite (The User Journey)**
+    - **Welcome**: New `index.mdx` with "Quick Start".
+    - **Mental Model**: Merge Surfaces/Context, move Anchors to Physics.
+    - **Getting Started**: Expand Theme Builder guide, clarify Integration.
+  - **Phase 3: Persona-Driven Additions**
+    - **Compliance**: New page for WCAG/APCA analysis.
+    - **Enterprise**: New guide for Multi-Theme/Overrides.
+    - **Navigation**: Add "Launch Theme Builder" CTA.
+
+## Epoch 10: Ecosystem & Interoperability (Planned)
 
 - **Goal**: Connect the Color System with the broader design tool ecosystem.
 - **Key Deliverables**:

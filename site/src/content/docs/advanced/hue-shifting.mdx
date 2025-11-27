@@ -4,6 +4,7 @@ title: Hue Shifting
 
 import { SystemDemo } from "../../../components/SystemDemo";
 import { HueShiftVisualizer } from "@demo/components/HueShiftVisualizer";
+import { Diagram } from "../../../components/Diagram";
 
 <SystemDemo>
 
@@ -22,7 +23,7 @@ If you create a color palette by simply changing lightness (e.g., `oklch(0.5 0.2
 2.  **More Natural**: Mimics the way light interacts with surfaces in the real world.
 3.  **More Distinct**: Helps differentiate surfaces that are close in lightness.
 
-<div class="not-content">
+<Diagram>
   <div class="docs-grid docs-mb-4">
     <div class="docs-card">
       <strong class="docs-card-header">Static Hue (Boring)</strong>
@@ -50,7 +51,7 @@ If you create a color palette by simply changing lightness (e.g., `oklch(0.5 0.2
       </div>
     </div>
   </div>
-</div>
+</Diagram>
 
 ## Why Non-Linear Hue Shifting?
 
@@ -60,7 +61,7 @@ The color system supports optional **hue rotation** across the lightness spectru
 
 A naive implementation might apply hue rotation linearly. However, this doesn't match human perception. Our eyes perceive warmth and coolness non-linearly across the lightness spectrum.
 
-<div class="not-content">
+<Diagram>
   <div class="docs-grid docs-mb-4">
     <div class="docs-card">
       <strong class="docs-card-header">No Shift (Static Hue)</strong>
@@ -89,13 +90,13 @@ A naive implementation might apply hue rotation linearly. However, this doesn't 
       </div>
     </div>
   </div>
-</div>
+</Diagram>
 
 ## Cubic Bezier Solution
 
 Instead, we use a **cubic Bezier curve** to map lightness values (0-1) to hue rotation factors (0-1). This allows us to keep the hue stable in the deep shadows and bright highlights, while concentrating the shift in the mid-tones where it adds the most vibrancy.
 
-<div class="not-content">
+<Diagram>
   <div class="docs-grid docs-mb-4">
     <div class="docs-card">
       <strong class="docs-card-header">No Shift</strong>
@@ -137,7 +138,7 @@ Instead, we use a **cubic Bezier curve** to map lightness values (0-1) to hue ro
       </div>
     </div>
   </div>
-</div>
+</Diagram>
 
 ```typescript
 function cubicBezier(t: number, p1: number, p2: number): number {
@@ -189,7 +190,7 @@ This creates a **smooth S-curve** that:
 
 Here is how the hue rotation (0° to 180°) is applied across the lightness spectrum (0.1 to 0.9).
 
-<div class="not-content">
+<Diagram>
   <div class="docs-grid" style="grid-template-columns: 80px 1fr; gap: 1rem; align-items: center; margin-bottom: 2rem;">
     {/* Linear Row */}
     <div class="text-subtle text-right">Linear</div>
@@ -222,7 +223,7 @@ Here is how the hue rotation (0° to 180°) is applied across the lightness spec
     </div>
 
   </div>
-</div>
+</Diagram>
 
 Notice how the Bezier curve:
 
@@ -270,5 +271,9 @@ The cubic Bezier implementation assumes the curve starts at `(0,0)` and ends at 
 - **OKLCH Color Space**: Hue rotations happen in the perceptually uniform OKLCH space, ensuring equal visual impact across the spectrum
 - **Chroma Independence**: Hue shifts don't affect saturation, maintaining consistent vibrancy
 - **CSS `@property`**: Registered custom properties allow smooth animated transitions between hue-shifted values
+
+<Diagram>
+  <HueShiftVisualizer />
+</Diagram>
 
 </SystemDemo>

@@ -1,40 +1,42 @@
 ---
-title: Welcome to Starlight
-description: Get started building your docs site with Starlight.
-template: splash # Remove or comment out this line to display the site sidebar on this page.
+title: The Algebraic Color System
+description: A semantic, automated color system that solves for accessibility, dark mode, and consistency using math.
+template: splash
 hero:
-  tagline: Congrats on setting up a new Starlight project!
+  tagline: Stop picking colors. Start defining intent.
   image:
     file: ../../assets/houston.webp
   actions:
-    - text: Example Guide
-      link: /guides/example/
+    - text: Get Started
+      link: /guides/installation/
       icon: right-arrow
-    - text: Read the Starlight docs
-      link: https://starlight.astro.build
-      icon: external
+    - text: Read the Philosophy
+      link: /concepts/thinking-in-surfaces/
+      icon: open-book
       variant: minimal
 ---
 
 import { Card, CardGrid } from '@astrojs/starlight/components';
 
-## Next steps
+## Why Algebraic?
+
+Most color systems are just lists of hex codes. You pick a "Primary Blue" and a "Dark Gray" and hope they look good together.
+
+The **Algebraic Color System** is different. It's a **Solver**.
+
+You define the **Constraints** (e.g., "I need a surface that guarantees APCA 60 contrast"), and the system calculates the exact lightness values to meet them.
 
 <CardGrid stagger>
-	<Card title="Update content" icon="pencil">
-		Edit `src/content/docs/index.mdx` to see this page change.
+	<Card title="Automated Accessibility" icon="approve-check-circle">
+		The system uses **APCA** (the future WCAG 3.0 standard) to mathematically guarantee readability. If your background changes, your text automatically adjusts to maintain contrast.
 	</Card>
-	<Card title="Change page layout" icon="document">
-		Delete `template: splash` in `src/content/docs/index.mdx` to display a
-		sidebar on this page.
+	<Card title="True Dark Mode" icon="moon">
+		Don't maintain two separate palettes. The system understands **Polarity**. It automatically inverts your surfaces and recalculates contrast for dark mode, ensuring a perfect visual balance.
 	</Card>
-	<Card title="Add new content" icon="add-document">
-		Add Markdown or MDX files to `src/content/docs` to create new pages.
+	<Card title="Context Aware" icon="puzzle">
+		Components adapt to their environment. A "Secondary Text" class looks different on a white card than it does on a dark tooltip, but it always maintains the same *semantic weight*.
 	</Card>
-	<Card title="Configure your site" icon="setting">
-		Edit your `sidebar` and other config in `astro.config.mjs`.
-	</Card>
-	<Card title="Read the docs" icon="open-book">
-		Learn more in [the Starlight Docs](https://starlight.astro.build/).
+	<Card title="Modern CSS" icon="rocket">
+		Built on the cutting edge of the web platform: **OKLCH**, **Relative Color Syntax**, and **CSS Custom Properties**. No JavaScript runtime required for the final output.
 	</Card>
 </CardGrid>

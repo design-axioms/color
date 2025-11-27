@@ -1,0 +1,76 @@
+---
+title: Thinking in Surfaces
+description: The fundamental mental model of the Algebraic Color System.
+---
+
+import { SystemDemo } from "../../../components/SystemDemo";
+import { ContextVisualizer } from "@demo/components/ContextVisualizer";
+import { Diagram } from "../../../components/Diagram";
+
+<SystemDemo>
+
+The Algebraic Color System is not a palette generator. It is a **context engine**.
+
+Most color systems ask you to pick a "primary color" and a "secondary color." This system asks you to think about **Surfaces**.
+
+## The Core Concept
+
+A **Surface** is not just a background color. It is a semantic boundary that defines the rules for everything inside it.
+
+When you place an element on a surface, you aren't just painting pixels. You are entering a new **Context**.
+
+### 1. Surfaces Create Context
+
+Every surface acts as a "Context Provider." It automatically sets a suite of CSS variables that determine how text, borders, and other elements should look *when sitting on that specific surface*.
+
+<Diagram>
+  <ContextVisualizer />
+</Diagram>
+
+In the visualization above:
+1.  The **Page** sets the baseline context (Light Mode).
+2.  The **Card** sits on the Page. It might be slightly lighter or darker, but it maintains the same "Polarity" (Light text on Dark, or Dark text on Light).
+3.  The **Spotlight** (the dark box) *inverts* the polarity. It tells its children: "I am dark. You must be light."
+
+### 2. Content Adapts to Context
+
+Because of this architecture, your components become **portable**.
+
+You don't write CSS like `.card .text` or `.footer .text`. You just write `.text-strong`.
+
+- If `.text-strong` is on a white card, it resolves to black.
+- If `.text-strong` is on a black tooltip, it resolves to white.
+
+The component doesn't know where it is. The *Surface* tells it how to render.
+
+## The Hierarchy of Surfaces
+
+We categorize surfaces based on their physical role in the UI, not their color.
+
+### The Canvas
+These are the foundations. They recede into the background.
+- **Page**: The infinite backdrop.
+- **Workspace**: A dedicated area for tools or navigation.
+
+### The Objects
+These sit *on top* of the canvas. They hold your content.
+- **Card**: The primary container for information.
+- **Tinted**: A subtle grouping mechanism, often used to highlight a section without a hard border.
+
+### The Interactors
+These are actionable. They invite touch.
+- **Action**: Buttons, toggles, and controls.
+
+### The Spotlights
+These demand attention. They often break the current polarity to stand out.
+- **Spotlight**: Tooltips, toasts, and primary calls-to-action.
+
+## Why This Matters
+
+By thinking in surfaces, you stop fighting with contrast ratios.
+
+1.  **Guaranteed Contrast**: The system calculates the foreground colors based on the background surface. If the surface changes, the text changes.
+2.  **Automatic Dark Mode**: You don't design "Dark Mode" separately. You just define your surfaces, and the system flips the context.
+3.  **Infinite Nesting**: You can put a Card inside a Sidebar inside a Page. The system handles the math to ensure distinctness at every level.
+
+</SystemDemo>

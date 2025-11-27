@@ -1,0 +1,88 @@
+---
+title: Surfaces
+description: The structural building blocks of your interface.
+---
+
+import { SystemDemo } from "../../../components/SystemDemo";
+import { Diagram } from "../../../components/Diagram";
+
+<SystemDemo>
+
+Surfaces are the containers that hold your content. They define the background color, border color, and text context for everything inside them.
+
+## The Canvas
+
+These surfaces form the backdrop of your application.
+
+### `surface-page`
+The infinite background. This is usually applied to the `<body>` tag.
+
+<Diagram className="surface-page docs-p-4 docs-rounded docs-border">
+  This is the Page surface.
+</Diagram>
+
+### `surface-workspace`
+A slightly elevated area, often used for sidebars, navigation rails, or the main content area in a dashboard.
+
+<Diagram className="surface-page docs-p-4 docs-rounded docs-border">
+  <div class="surface-workspace docs-p-4 docs-rounded docs-border">
+    This is the Workspace surface.
+  </div>
+</Diagram>
+
+## The Containers
+
+These surfaces sit *on top* of the canvas.
+
+### `surface-card`
+The primary container for grouped content. It has a distinct background color that separates it from the canvas.
+
+<Diagram className="surface-page docs-p-4 docs-rounded docs-border">
+  <div class="surface-card docs-p-4 docs-rounded">
+    This is a Card.
+  </div>
+</Diagram>
+
+### `surface-tinted`
+A subtle grouping mechanism. It usually has a slight tint of the brand color (or another semantic color) to highlight a section without a hard boundary.
+
+<Diagram className="surface-card docs-p-4 docs-rounded">
+  <div class="surface-tinted docs-p-4 docs-rounded">
+    This is a Tinted surface inside a Card.
+  </div>
+</Diagram>
+
+## The Spotlights
+
+These surfaces demand attention. They often use **Inverted Polarity** (Dark on Light, or Light on Dark) to stand out.
+
+### `surface-spotlight`
+High contrast. Used for tooltips, toasts, and primary call-to-actions.
+
+<Diagram className="surface-page docs-p-4 docs-rounded docs-border">
+  <div class="surface-spotlight docs-p-4 docs-rounded">
+    This is a Spotlight.
+  </div>
+</Diagram>
+
+### `surface-soft-spotlight`
+A softer version of the spotlight. Useful for badges or indicators that need to be distinct but not shouting.
+
+<Diagram className="surface-page docs-p-4 docs-rounded docs-border">
+  <div class="surface-soft-spotlight docs-p-4 docs-rounded">
+    This is a Soft Spotlight.
+  </div>
+</Diagram>
+
+## Elevation (Shadows)
+
+Shadows provide depth and hierarchy. The system generates a semantic scale of shadows that are subtle in Light Mode and stronger in Dark Mode to ensure visibility.
+
+<Diagram className="surface-card bordered" style={{ padding: '2rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '2rem' }}>
+  <div class="surface-card shadow-sm bordered" style="height: 100px; display: flex; align-items: center; justify-content: center;">shadow-sm</div>
+  <div class="surface-card shadow-md bordered" style="height: 100px; display: flex; align-items: center; justify-content: center;">shadow-md</div>
+  <div class="surface-card shadow-lg bordered" style="height: 100px; display: flex; align-items: center; justify-content: center;">shadow-lg</div>
+  <div class="surface-card shadow-xl bordered" style="height: 100px; display: flex; align-items: center; justify-content: center;">shadow-xl</div>
+</Diagram>
+
+</SystemDemo>
