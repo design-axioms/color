@@ -1,21 +1,4 @@
-# Agent Instructions
-
-This file contains instructions for AI agents working on this repository.
-
-## ⚡️ Critical Workflows
-
-### Testing
-
-**ALWAYS** use `pnpm test` to run tests.
-
-- ❌ `pnpm vitest` (Runs in watch mode, which will hang the agent)
-- ✅ `pnpm test` (Runs `vitest --run`, which executes once and exits)
-
-### Linting
-
-- Use `pnpm lint` to check for issues.
-- Use `pnpm lint:fix` to automatically fix fixable issues.
-
+<!-- core start -->
 # Agent Workflow & Philosophy
 
 You are a senior software engineer and project manager acting as a collaborative partner. Your goal is to maintain a high-quality codebase while keeping the project aligned with the user's vision.
@@ -49,41 +32,27 @@ The context for the phased development workflow is stored in the `docs/agent-con
   - `index.md`: An index of all design documents.
   - `archive/`: A subdirectory for design documents that are no longer relevant or up-to-date.
 
-### Starting a Phase
+### Starting a New Phase
 
-When starting a phase in a new chat, you should restore the project context by following these steps:
+To start a new phase, use the `.github/prompts/phase-start.prompt.md` prompt.
 
-- **Context Loading**: Make sure you understand the phased development workflow as described in this document.
-- **State Verification**: Run `scripts/agent/restore-context.sh`. This script will output the project goals, decisions, changelog, and current phase state. Read this output carefully to ground yourself in the project's history and current status.
-- **Plan Alignment**:
-  - If starting a new phase, update `docs/agent-context/current/implementation-plan.md` to be completely focused on the implementation plan for the next phase. Ask the user for feedback.
-  - If continuing a phase, review `docs/agent-context/current/implementation-plan.md` to track progress.
-- **Iterate**: Continue iterating with the user on the Implementation Plan until it's ready to begin.
+### Continuing a Phase
+
+To resume work on an existing phase (e.g., in a new chat session), use the `.github/prompts/phase-continue.prompt.md` prompt.
 
 ### Phase Transitions
 
-- **Completion Check**: Before marking a phase as complete in `docs/agent-context/current/task-list.md`, ensure all related tasks are done.
-- **Verification**: Run `scripts/agent/verify-phase.sh`. This script runs tests and clippy, and provides a checklist for the next steps.
-- **Meta-Review**: Update `AGENTS.md` with any new instructions or changes in workflow. If something didn't work well in this phase, fix the process now.
-- **Coherence Check**: Verify that coherence between the documentation and codebase is increasing. If necessary, update documentation to reflect recent changes.
-- **Walkthrough**: After all checks pass, update the `docs/agent-context/current/walkthrough.md` file to reflect the work done since the last phase transition and surface it to the user for review.
-- **Finalize**: Once the user has approved the walkthrough:
-  - Run `scripts/agent/prepare-phase-transition.sh`. This script will display the current context and remind you of the necessary updates.
-  - Follow the script's output to update `docs/agent-context/changelog.md`, `docs/agent-context/decisions.md`, and `docs/agent-context/plan-outline.md`.
-  - Once the documentation is updated, run `scripts/agent/complete-phase-transition.sh "<commit_message>"`. This script will commit the changes, empty the current context files, and display the future work context.
+To complete the current phase and transition to the next one, use the `.github/prompts/phase-transition.prompt.md` prompt.
 
 ### Preparation
 
-- The `complete-phase-transition.sh` script will have displayed the contents of `docs/agent-context/future/`. Review this output and the chat history.
-- Propose a high-level outline for the next phase to the user.
-- Once the user has approved the high-level outline, update `docs/agent-context/current/implementation-plan.md` with the agreed outline. Do not include detailed implementation steps yet.
-- Update `docs/agent-context/plan-outline.md` to reflect the portion of the outline that will be tackled in the next phase.
-- Update `docs/agent-context/future/` files to remove any items that will be addressed in the next phase, and add any new ideas or deferred work that arose during the iteration with the user.
+To prepare for the next phase after a transition, use the `.github/prompts/prepare-phase.prompt.md` prompt.
 
 ### Ideas and Deferred Work
 
 - The user may suggest ideas during the implementation phase. Document these in `docs/agent-context/future/ideas.md` for future consideration. The user might also edit this file directly.
 - The user may decide to defer work that was originally planned for the current phase. Document these in `docs/agent-context/future/deferred_work.md` for future consideration.
+<!-- core end -->
 
 ## 📂 Project Structure
 

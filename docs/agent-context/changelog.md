@@ -217,3 +217,17 @@
   - Updated `vite.config.ts` to handle conditional base paths.
   - Switched the Demo App to **Hash Routing** (`/#/builder`) to ensure reliable deep linking on GitHub Pages (which lacks SPA rewrite support).
   - Updated `README.md` with new development instructions.
+
+## Phase: Dev Environment Simplification (Epoch 7)
+
+**Focus:** Simplifying the local development environment to match the production deployment structure without fragile custom scripts.
+
+### Key Changes
+
+- **Unified Dev Server**:
+  - Replaced the custom `scripts/dev-site.ts` proxy script with Vite's built-in proxy configuration.
+  - Configured `demo/vite.config.ts` to proxy non-demo requests to `mdbook` (port 3001).
+  - This resolved `EADDRINUSE` errors and zombie processes associated with the custom script.
+- **Script Updates**:
+  - Simplified `package.json` scripts to run `docs:dev` and `demo dev` concurrently.
+  - `pnpm dev:site` now reliably starts the unified environment at `http://localhost:3000`.

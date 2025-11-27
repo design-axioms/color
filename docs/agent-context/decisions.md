@@ -161,3 +161,12 @@ This file tracks key architectural and design decisions made throughout the proj
   - **Reliability**: Guarantees that deep links work 100% of the time without server configuration.
   - **Simplicity**: Avoids the "404.html hack" (copying index.html to 404.html), which returns incorrect HTTP status codes and requires extra build steps.
   - **Appropriateness**: As a client-side tool/demo, "clean URLs" are less critical than functional deep linking.
+
+### [2025-11-26] Vite Proxy for Local Dev
+
+- **Context**: We initially wrote a custom Node.js script (`scripts/dev-site.ts`) to proxy requests between the docs (mdbook) and the demo (Vite) to simulate the production URL structure. This script was fragile, causing port conflicts and zombie processes.
+- **Decision**: Use Vite's built-in `server.proxy` configuration instead of a custom script.
+- **Rationale**:
+  - **Stability**: Vite handles process management and port binding much more reliably than a custom script.
+  - **Simplicity**: Removes ~100 lines of custom code and a dev dependency.
+  - **Standardization**: Leverages standard Vite features that other developers are likely familiar with.

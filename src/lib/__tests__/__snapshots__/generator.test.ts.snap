@@ -22,7 +22,7 @@ exports[`generateTokensCss > generates correct CSS for a standard surface group 
   );
 }
 
-.surface-page {
+.surface-page, body {
   --surface-token: light-dark(
     oklch(0.98 0 0),
     oklch(0.1 0 0)

@@ -19,6 +19,7 @@ I'd like us to make a plan for this as a new Epoch before Epoch 7. I probably di
 Migrate the documentation site from `mdbook` to **Astro Starlight**.
 
 - **Why**:
+
   - **Unified Codebase**: The documentation and the demo app (React/Preact) can live in the same project.
   - **Interactive Documentation**: We can import actual components from the design system directly into the markdown (MDX) files. This allows for "Live Examples" where users can play with contrast, theme settings, or components right inside the guide.
   - **Modern Tooling**: Astro uses Vite under the hood, which aligns with our current demo app stack.
