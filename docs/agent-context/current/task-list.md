@@ -1,12 +1,3 @@
-- [x] **Configuration Updates**
-  - [x] Update `demo/vite.config.ts`
-  - [x] Update `docs/guide/book.toml`
-  - [x] Update `README.md`
-- [x] **Tooling & Scripts**
-  - [x] Create `scripts/dev-site.ts`
-  - [x] Create `scripts/build-site.ts`
-  - [x] Update `package.json`
-- [x] **CI/CD**
-  - [x] Create `.github/workflows/deploy.yml`
-- [x] **Content Integration**
-  - [x] Switch to Hash Routing in Demo
+- [x] Fix JS runtime error in deployed documentation
+- [x] Ensure CSS assets are correctly loaded and applied
+- [x] Verify global body styling

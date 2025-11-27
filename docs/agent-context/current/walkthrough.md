@@ -1,38 +1,29 @@
-# Walkthrough - Epoch 7: Deployment & Infrastructure
+# Phase Walkthrough: Documentation & Deployment Fixes
 
 ## Goal
-Unify the Demo and Documentation into a single, cohesive site deployed to GitHub Pages, with a streamlined development workflow.
+Unify the Demo and Documentation into a single deployable site and ensure it renders correctly on GitHub Pages.
 
 ## Changes
 
-### 1. Unified Development Server
-We created a new script `scripts/dev-site.ts` that runs both the Documentation (`mdbook`) and the Theme Builder (`vite`) in parallel, behind a proxy.
+### 1. Deployment Pipeline
+- Configured GitHub Actions to deploy the `docs/guide/book` directory to `gh-pages`.
+- Ensured the build process runs `scripts/update-docs.sh` and `mdbook build`.
 
-- **Command**: `pnpm dev:site`
-- **Proxy**: `http://localhost:3000`
-- **Routing**:
-  - `/` -> Documentation (mdbook on port 3001)
-  - `/demo/` -> Theme Builder (Vite on port 3002)
+### 2. CSS Asset Management
+- Updated `scripts/update-docs.sh` to:
+  - Concatenate CSS files (`tokens.css`, `engine.css`, `utilities.css`, `theme.css`) into `docs/guide/css/color-system.css`.
+  - Strip `@import` statements from the concatenated file to prevent 404 errors in production.
+- Updated `docs/guide/book.toml` to reference the correct CSS path (`css/color-system.css`).
 
-This ensures that the local development environment mirrors the production URL structure, allowing us to test cross-linking and asset loading reliably.
+### 3. Global Styling
+- Updated `css/engine.css` to target `:where(:root, .surface-page, body)` to ensure the page surface color is applied globally to the document body.
+- Updated `src/lib/generator.ts` to include `body` in the `page` surface generation logic.
 
-### 2. Unified Build Pipeline
-We created `scripts/build-site.ts` to orchestrate the production build.
-
-- **Command**: `pnpm build:site`
-- **Process**:
-  1. Builds the Demo App (`pnpm build` in `demo/`).
-  2. Builds the Documentation (`mdbook build`).
-  3. Copies the Demo build output (`demo/dist`) into the Documentation output (`docs/guide/book/demo`).
-
-### 3. GitHub Pages Deployment
-We added a GitHub Actions workflow (`.github/workflows/deploy.yml`) that automatically builds and deploys the unified site to GitHub Pages on every push to `main`.
-
-### 4. Routing & Configuration
-- **Vite Config**: Updated `demo/vite.config.ts` to use a conditional `base` path (`/algebraic/demo/` in production, `/demo/` in dev).
-- **Hash Routing**: Switched the Demo App to use **Hash Routing** (`wouter/use-hash-location`). This solves the issue of 404s on GitHub Pages when refreshing deep links (e.g., `/demo/#/builder` works reliably).
-- **Documentation**: Updated `README.md` with instructions for the new workflow.
+### 4. JavaScript Runtime Fix
+- Removed custom theme overrides in `docs/guide/theme/` (`book.js`, `highlight.js`, `css/`, `fonts/`) which were causing a runtime error (`Uncaught TypeError: Cannot read properties of null (reading 'querySelectorAll')`) due to incompatibility with the default mdbook theme.
+- Reverted to using the default mdbook theme scripts and assets, while layering the custom `color-system.css` on top.
 
 ## Verification
-- Ran `pnpm build:site` locally to verify the build pipeline succeeds and produces the expected directory structure.
-- Verified `mdbook` and `vite` integration via the proxy script logic.
+- **Build**: `scripts/update-docs.sh` runs successfully and generates `docs/guide/css/color-system.css`.
+- **Deployment**: GitHub Actions pipeline should deploy the site.
+- **Runtime**: The JS error should be resolved, and the theme switcher should work (using the default mdbook theme switcher).
