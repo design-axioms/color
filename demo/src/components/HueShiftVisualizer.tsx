@@ -394,7 +394,8 @@ export function HueShiftVisualizer() {
                 Generated CSS
               </div>
               <div>
-                <span style={{ color: "var(--chart-8)" }}>--text-token</span>: oklch(
+                <span style={{ color: "var(--chart-8)" }}>--text-token</span>:
+                oklch(
                 <span style={{ color: "var(--chart-3)", fontWeight: "bold" }}>
                   {currentFg.toFixed(4)}
                 </span>{" "}

@@ -124,7 +124,7 @@
     - **Strategy**: Define how the docs site consumes the system's own tokens.
     - **Refactor**: Replace hardcoded hex values in components (e.g., `DynamicRange`) with system tokens.
     - **Linting**: Explore tooling to forbid hardcoded colors in the `site/` directory.
-  - **Phase 5: Holistic Review & Theme Builder Polish (In Progress)**
+  - **Phase 5: Holistic Review & Theme Builder Polish (Completed)**
     - **Holistic Review**: Audit the entire site and all demos for alignment with project goals.
     - **Theme Builder**: Deep dive into the Theme Builder UI and docs to ensure they are effective.
     - **Polish**: Implement improvements based on the review.

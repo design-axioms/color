@@ -119,3 +119,47 @@ _Design system architect, thinking about scale and maintenance._
 3.  **Content**: Add a "Quick Start" code block to the Home page.
 4.  **Content**: Add a "Multi-Theme / Enterprise" guide for Marcus.
 5.  **Dev Experience**: Clarify the relationship between the CLI, the React Context, and the CSS variables in the Integration guide.
+
+---
+
+## 2025 Audit Findings
+
+This section details the observations from the "Fresh Eyes" audit conducted on November 27, 2025. The audit focused on the project's documentation, Theme Builder UI, and overall user experience for the defined personas.
+
+### 1. Navigation & Discovery
+*   **Observation**: The "Theme Builder" is a core value proposition but is buried in the sidebar under "Getting Started". The home page hero section only links to "Installation" and "Philosophy".
+*   **Impact**: Users (especially **Sarah** and **Marcus**) might miss the interactive tool that best demonstrates the system's power.
+*   **Recommendation**: Add a primary or secondary action button to the home page hero in `site/src/content/docs/index.mdx` labeled "Try the Theme Builder" linking to `/guides/theme-builder` (or directly to the builder if possible).
+
+### 2. Cohesion & Visual Consistency
+*   **Observation**: The documentation and the demo app share the same underlying design tokens (via `theme.css` and `index.css`), ensuring a consistent visual language.
+*   **Observation**: There is a layout conflict in the demo app. `demo/src/app.css` applies a `max-width: 1280px` and `text-align: center` to `#app`. This conflicts with the `ThemeBuilder` component's intent to use the full screen (`width: "100%"`), potentially causing the builder to feel constrained or misaligned.
+*   **Observation**: The Theme Builder relies heavily on inline styles (e.g., `style={{ width: "350px" }}`), whereas the documentation uses utility classes. This makes the codebase harder to maintain and less consistent.
+*   **Recommendation**:
+    *   Refactor `demo/src/app.css` to allow the Theme Builder route to occupy the full viewport width.
+    *   Gradually replace inline styles in `ThemeBuilder` components with a utility class system or a CSS-in-JS solution that aligns with the project's styling strategy.
+
+### 3. Dogfooding
+*   **Observation**: The documentation components (e.g., `DynamicRange.tsx`) correctly "dogfood" the system by using generated CSS variables like `var(--surface-token)` and `var(--text-high-token)`. This ensures that the docs always reflect the current state of the system.
+*   **Status**: **Pass**. The project is effectively using its own tools to build its documentation.
+
+### 4. Terminology
+*   **Observation**: The Theme Builder UI consistently uses the terms "Anchors" (in `AnchorsEditor.tsx`) and "Surfaces" (in `SurfaceManager.tsx`), matching the "Mental Model" documentation.
+*   **Observation**: The distinction between "Page" and "Inverted" polarity is clearly presented in the `AnchorsEditor`, reinforcing the core concepts for **Dr. Chen** and **Alex**.
+*   **Status**: **Pass**. The UI terminology reinforces the documentation.
+
+### 5. Mobile Responsiveness
+*   **Observation**: The Theme Builder is **not responsive**.
+    *   The sidebar has a fixed width of `350px`.
+    *   The main layout uses `display: flex` (row) without wrapping.
+    *   There are no media queries to handle smaller screens.
+*   **Impact**: The tool is unusable on mobile devices, which is a significant barrier for users who want to quickly explore the system on their phones (e.g., **Marcus** checking a link on the go).
+*   **Recommendation**: Implement a responsive layout for the Theme Builder.
+    *   On mobile, stack the sidebar and preview area vertically.
+    *   Consider a collapsible sidebar or a tabbed interface to switch between "Config" and "Preview" on small screens.
+
+### Summary of Action Items (2025)
+1.  **[High Priority]** Add "Try Theme Builder" link to Docs Home Page.
+2.  **[High Priority]** Fix CSS layout conflict in `demo/src/app.css` to allow full-width Theme Builder.
+3.  **[Medium Priority]** Implement mobile responsiveness for the Theme Builder.
+4.  **[Low Priority]** Refactor inline styles in Theme Builder to use shared utility classes.

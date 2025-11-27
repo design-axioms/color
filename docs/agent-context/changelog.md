@@ -270,5 +270,9 @@
 - **Phase 4: Dogfooding & Robustness**:
   - **Strategy**: Configured the docs site to generate and consume its own theme using the `color-system` CLI.
   - **Refactor**: Updated `DynamicRange`, `HueShiftVisualizer`, and other components to use generated CSS variables (`--surface-*`, `--chart-*`) instead of hardcoded values.
-  - **Linting**: Added `lint:colors` script to forbid hardcoded colors in the documentation codebase.
+  - **Phase 5: Holistic Review & Theme Builder Polish**:
+  - **Fresh Eyes Audit**: Conducted a simulated user audit to identify navigation and layout issues.
+  - **Docs Home**: Added a "Try the Theme Builder" CTA to the hero section for better discovery.
+  - **Layout Fix**: Resolved a CSS conflict in `demo/src/app.css` to allow full-width layouts.
+  - **Mobile Responsiveness**: Implemented a responsive layout for the Theme Builder (stacking sidebar on mobile).
 

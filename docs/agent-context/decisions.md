@@ -213,7 +213,7 @@ This file tracks key architectural and design decisions made throughout the proj
 - **Decision**: Implement a lightweight `DataVizDemo` component using standard HTML/CSS (conic gradients, flexbox) rather than pulling in a charting library.
 - **Rationale**:
   - **Performance**: Avoids adding heavy dependencies (like Recharts or Chart.js) to the documentation site.
-  - **Simplicity**: The goal is to show the *colors*, not to build a full charting library.
+  - **Simplicity**: The goal is to show the _colors_, not to build a full charting library.
   - **Dogfooding**: Demonstrates how to use the system's tokens (`--chart-1`) directly in CSS.
 
 ### [2025-11-27] Linting for Hardcoded Colors
@@ -223,6 +223,11 @@ This file tracks key architectural and design decisions made throughout the proj
 - **Rationale**:
   - **Automation**: Enforces the policy automatically in CI/CD.
   - **Simplicity**: A simple grep script is sufficient for this purpose without needing complex AST analysis.
-  - **Robustness**: Prevents regression over time.
+  ### [2025-11-27] Responsive Theme Builder Layout
 
+- **Context**: The Theme Builder UI was unusable on mobile devices due to a fixed-width sidebar and lack of wrapping.
+- **Decision**: Implement a responsive layout using a dedicated CSS file (`ThemeBuilder.css`) that stacks the sidebar vertically on screens smaller than 768px.
+- **Rationale**:
+  - **Usability**: Enables users to explore the system on mobile devices.
+  - **Maintainability**: Moving layout styles to a CSS file (instead of inline styles) makes it easier to manage media queries.
 

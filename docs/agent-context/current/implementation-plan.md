@@ -1,27 +1,34 @@
-# Implementation Plan - Phase 4: Dogfooding & Robustness
+# Implementation Plan - Phase 5: Holistic Review & Theme Builder Polish
 
 ## Goal
-Ensure the documentation site (`site/`) uses the system's own generated tokens (`theme.css`) for all its styling and visualizations, rather than hardcoded values. This serves as a continuous integration test for the system.
+
+Ensure the entire documentation site and the Theme Builder UI work together cohesively to teach the user the system's mental model. We want to move from "functional" to "educational and intuitive."
 
 ## Strategy
 
-1.  **Token Generation**:
-    - Ensure `site/theme.css` is generated from `site/color-config.json` during the build.
-    - Verify `astro.config.mjs` imports this CSS.
+1.  **Holistic Review (The "Fresh Eyes" Audit)**
+    - **Objective**: Re-evaluate the system from the perspective of our Personas (Sarah, Alex, Jordan, etc.) given the recent changes (Astro migration, new features).
+    - **Action**: Update `docs/design/fresh-eyes-review.md` with current findings.
+    - **Focus Areas**:
+        - **Navigation**: Is the "Theme Builder" easy to find?
+        - **Cohesion**: Do the docs and the demo app feel like one product?
+        - **Dogfooding**: Are there any hardcoded colors left in the docs?
 
-2.  **Component Refactor**:
-    - Audit `site/src/components/` for hardcoded colors (hex, rgb, hsl).
-    - Replace them with `var(--surface-*)`, `var(--text-*)`, or `var(--chart-*)`.
-    - Key components to check:
-        - `DynamicRange.tsx`
-        - `ContextVisualizer.tsx`
-        - `HueShiftVisualizer.tsx`
-        - `GamutComparator.tsx`
+2.  **Theme Builder Deep Dive**
+    - **Objective**: Ensure the Theme Builder UI is professional and ergonomic.
+    - **Action**: Audit the UI against the "Mental Model" described in the docs.
+    - **Focus Areas**:
+        - **Terminology**: Does the UI use the same terms as the docs (Anchors, Surfaces)?
+        - **Feedback**: Is the "Live Solving" obvious?
+        - **Mobile**: Does the layout work on smaller screens?
 
-3.  **Linting (Exploration)**:
-    - Investigate `stylelint` or `eslint` rules to forbid hex codes in `site/src/`.
-    - If feasible, add a `lint:colors` script.
+3.  **Execution (Polish)**
+    - **Visuals**: Create new diagrams (using HTML/CSS/SVG) if concepts are abstract.
+    - **UI Tweaks**: Rename labels, add tooltips, or rearrange controls to match the mental model.
+    - **Content Updates**: Rewrite sections of the guide that are confusing or outdated.
 
-## Verification
-- The docs site should look correct (light/dark mode) without any "flash of unstyled content" or mismatched colors.
-- Changing `site/color-config.json` and regenerating should immediately update the docs visuals.
+## Output
+
+- Updated `docs/design/fresh-eyes-review.md` with 2025 findings.
+- A list of concrete "Action Items" (PRs) to address the findings.
+- Updated documentation and UI code.

@@ -1,33 +1,14 @@
 import { useConfig } from "../../context/ConfigContext";
 import { SurfaceManager } from "./SurfaceManager";
+import "./ThemeBuilder.css";
 
 export function ThemeBuilder() {
   const { config } = useConfig();
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flex: 1,
-        overflow: "hidden",
-        height: "100%",
-        width: "100%",
-      }}
-    >
+    <div class="theme-builder-container">
       {/* Sidebar */}
-      <aside
-        style={{
-          width: "350px",
-          padding: "1.5rem",
-          borderRightWidth: "1px",
-          borderRightStyle: "solid",
-          overflowY: "auto",
-          display: "flex",
-          flexDirection: "column",
-          gap: "3rem",
-        }}
-        class="surface-workspace"
-      >
+      <aside class="theme-builder-sidebar surface-workspace">
         <div>
           <h2 class="text-strong" style={{ margin: "0 0 0.5rem 0" }}>
             Theme Builder
@@ -41,10 +22,7 @@ export function ThemeBuilder() {
       </aside>
 
       {/* Main Preview Area */}
-      <main
-        style={{ flex: 1, padding: "0", overflowY: "auto" }}
-        id="theme-builder-preview"
-      >
+      <main class="theme-builder-main" id="theme-builder-preview">
         <div
           class="surface-page"
           style={{ minHeight: "100%", padding: "2rem" }}

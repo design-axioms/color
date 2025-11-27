@@ -1,0 +1,45 @@
+.theme-builder-container {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
+}
+
+.theme-builder-sidebar {
+  width: 350px;
+  padding: 1.5rem;
+  border-right-width: 1px;
+  border-right-style: solid;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  flex-shrink: 0;
+}
+
+.theme-builder-main {
+  flex: 1;
+  padding: 0;
+  overflow-y: auto;
+}
+
+@media (max-width: 768px) {
+  .theme-builder-container {
+    flex-direction: column;
+    overflow-y: auto; /* Allow full page scroll on mobile */
+  }
+
+  .theme-builder-sidebar {
+    width: 100%;
+    height: auto;
+    border-right: none;
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+    overflow-y: visible; /* Let it grow */
+  }
+
+  .theme-builder-main {
+    overflow-y: visible; /* Let it grow */
+  }
+}

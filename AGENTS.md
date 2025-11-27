@@ -1,4 +1,5 @@
 <!-- core start -->
+
 # Agent Workflow & Philosophy
 
 You are a senior software engineer and project manager acting as a collaborative partner. Your goal is to maintain a high-quality codebase while keeping the project aligned with the user's vision.
@@ -58,20 +59,29 @@ To prepare for the next phase after a transition, use the `.github/prompts/prepa
 - The user may decide to defer work that was originally planned for the current phase. Document these in `docs/agent-context/future/deferred_work.md` for future consideration.
 <!-- core end -->
 
-## �️ Tooling & Conventions
+## Tooling & Conventions
 
 ### Package Management (`pnpm`)
+
 - **Always use `pnpm`**. Never use `npm` or `yarn`.
 - **Executables**: Use `pnpm exec <binary>` instead of `npx` or `pnpx`.
-  - *Exception*: If you have a very specific reason to use `npx` (e.g., a one-off tool not in dependencies), **ask permission first**.
+  - _Exception_: If you have a very specific reason to use `npx` (e.g., a one-off tool not in dependencies), **ask permission first**.
 - **Workspaces**: This is a monorepo. Be mindful of where you run commands. Use `pnpm --filter <package>` or run from the correct directory.
 
 ### Runtime (Node.js)
+
 - **Version**: We are using **Node 24**.
 - **TypeScript**: Run `.ts` files directly using `node path/to/file.ts`.
-  - **Do not** use `ts-node`, `tsx`, or experimental flags (`--experimental-strip-types`). Node 24 supports this natively.  - **Never install** `ts-node` or `tsx`.
+  - **Do not** use `ts-node`, `tsx`, or experimental flags (`--experimental-strip-types`). Node 24 supports this natively. - **Never install** `ts-node` or `tsx`.
   - **Troubleshooting**: If running a `.ts` file with `node` fails, **STOP**. Do not assume these instructions are outdated. Do not try to install other tools. Surface the error to the user immediately.
-## �📂 Project Structure
+
+### Directory Management
+
+- **Stay in Root**: Always execute commands from the workspace root. Do not change the global working directory.
+- **Subdirectories**: If a command must run in a subdirectory, use chaining (e.g., `cd site && pnpm build`) or the `-C` / `--filter` flags where available.
+- **Paths**: Refer to files relative to the workspace root (e.g., `docs/agent-context/task-list.md`).
+
+### Project Structure
 
 - **`src/lib/`**: Core logic for the color system (solvers, math, types).
 - **`src/cli/`**: CLI entry point (`color-system`).
