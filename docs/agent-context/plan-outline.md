@@ -96,7 +96,16 @@
   - **Routing**: Seamless linking between Docs and Demo.
   - **CI/CD**: GitHub Actions workflow for automated deployment to GitHub Pages.
 
-## Epoch 8: Ecosystem & Interoperability (Planned)
+## Epoch 8: Architecture Migration (Completed)
+
+- **Goal**: Modernize the documentation stack by migrating from `mdbook` to **Astro Starlight**.
+- **Key Deliverables**:
+  - **Unified Codebase**: React components directly in markdown (MDX).
+  - **Interactive Docs**: Replace static HTML visualizations with live system components.
+  - **Simplified DX**: Single Vite-based dev server (no proxying).
+  - **Better Search**: Starlight's built-in search.
+
+## Epoch 9: Ecosystem & Interoperability (Planned)
 
 - **Goal**: Connect the Color System with the broader design tool ecosystem.
 - **Key Deliverables**:

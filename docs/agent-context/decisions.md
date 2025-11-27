@@ -170,3 +170,30 @@ This file tracks key architectural and design decisions made throughout the proj
   - **Stability**: Vite handles process management and port binding much more reliably than a custom script.
   - **Simplicity**: Removes ~100 lines of custom code and a dev dependency.
   - **Standardization**: Leverages standard Vite features that other developers are likely familiar with.
+
+### [2025-11-26] Migrate to Astro Starlight
+
+- **Context**: `mdbook` was great for static text, but we wanted to embed live, interactive components (like the `ContextVisualizer`) directly into the documentation to better explain the system.
+- **Decision**: Migrate the documentation site to **Astro Starlight**.
+- **Rationale**:
+  - **MDX Support**: Allows importing and using React/Preact components directly in markdown.
+  - **Performance**: Astro generates static HTML by default, ensuring fast load times.
+  - **Ecosystem**: Starlight provides a robust documentation framework (sidebar, search, i18n) out of the box.
+
+### [2025-11-26] Use Preact for Documentation Components
+
+- **Context**: The Demo App is built with Preact. We wanted to reuse its components in the documentation without rewriting them.
+- **Decision**: Configure Astro to use **Preact** for interactive islands.
+- **Rationale**:
+  - **Code Reuse**: We can directly import components from `@demo/components` into our `.mdx` files.
+  - **Consistency**: The documentation demos behave exactly like the real application.
+  - **Lightweight**: Preact is smaller than React, keeping the docs site fast.
+
+### [2025-11-26] Embed Demo App in Site Build
+
+- **Context**: We have a standalone Demo App (`/demo`) and the Documentation site. We want them to feel like a single cohesive product.
+- **Decision**: Build the Demo App separately and copy it into the `dist/demo` folder of the Astro site during the build process.
+- **Rationale**:
+  - **Separation of Concerns**: The Demo App remains a standalone SPA with its own routing logic.
+  - **Unified Deployment**: We deploy a single artifact to GitHub Pages.
+  - **Deep Linking**: We use Hash Routing in the Demo App to ensure it works when hosted under a subdirectory/static host.

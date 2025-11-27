@@ -32,10 +32,10 @@
     "test:coverage": "vitest --coverage",
     "lint": "eslint src/**/*.ts",
     "lint:fix": "eslint src/**/*.ts --fix",
-    "docs:update": "./scripts/update-docs.sh",
-    "docs:dev": "pnpm docs:update && mdbook serve docs/guide -p 3001",
+    "docs:dev": "pnpm --filter site dev",
+    "docs:build": "pnpm --filter site build",
     "dev:site": "pnpm docs:dev & pnpm --filter demo dev",
-    "build:site": "ts-node scripts/build-site.ts"
+    "build:site": "node scripts/build-site.ts"
   },
   "exports": {
     ".": "./dist/lib/index.js",
@@ -68,8 +68,8 @@
     "@vitest/coverage-v8": "^4.0.14",
     "@vitest/ui": "^4.0.14",
     "eslint": "^9.39.1",
+    "glob": "^13.0.0",
     "http-proxy": "^1.18.1",
-    "ts-node": "^10.9.2",
     "tsup": "^8.5.1",
     "typescript-eslint": "^8.48.0",
     "vitest": "^4.0.14"

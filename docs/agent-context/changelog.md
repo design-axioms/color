@@ -231,3 +231,21 @@
 - **Script Updates**:
   - Simplified `package.json` scripts to run `docs:dev` and `demo dev` concurrently.
   - `pnpm dev:site` now reliably starts the unified environment at `http://localhost:3000`.
+
+## Epoch 8: Architecture Migration (Astro Starlight) (2025-11-26)
+
+**Goal**: Modernize the documentation stack to enable interactive, live components directly in the guide.
+
+**Completed Work**:
+
+- **Migration to Astro Starlight**:
+  - Replaced `mdbook` with **Astro Starlight** for a modern, component-driven documentation site.
+  - Ported all existing content (Concepts, Usage, API) to MDX.
+- **Interactive Components**:
+  - Configured **Preact** integration to share components with the Demo App.
+  - Integrated `ContextVisualizer` and `HueShiftVisualizer` directly into the documentation pages, replacing static HTML/images.
+  - Created `SystemDemo` wrapper to inject the runtime theme context into MDX pages.
+- **Infrastructure**:
+  - Updated build pipeline (`scripts/build-site.ts`) to build both the Astro site and the standalone Demo app.
+  - Updated GitHub Actions workflow to deploy the new Astro build.
+  - Deleted legacy `mdbook` source.

@@ -1,4 +1,14 @@
-- [x] Delete scripts/dev-site.ts
-- [x] Configure Vite proxy in demo/vite.config.ts
-- [x] Update package.json scripts
-- [x] Verify pnpm dev:site works
+- [x] Move `docs/guide` to `docs/legacy-guide`
+- [x] Initialize Astro Starlight project in `site/`
+- [x] Install Preact integration
+- [x] Configure `site/astro.config.mjs` (Sidebar, Title, Vite Aliases)
+- [x] Update `package.json` scripts for new docs
+- [x] Write and run `scripts/migrate-docs.ts` to port content
+- [x] Verify dev server runs with migrated content
+- [x] Create `SystemDemo` wrapper for context injection
+- [x] Fix broken internal links (Script `scripts/check-links.ts` created but missing dependencies)
+- [x] Integrate `ContextVisualizer` into `concepts/surfaces.md`
+- [x] Integrate `HueShiftVisualizer` into `concepts/hue-shifting.md`
+- [x] Update `scripts/build-site.ts` for Astro
+- [x] Update GitHub Actions workflow
+- [x] Delete `docs/legacy-guide`

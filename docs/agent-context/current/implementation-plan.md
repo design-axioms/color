@@ -1,64 +1,68 @@
-# Implementation Plan - Epoch 7: Deployment & Infrastructure
+# Implementation Plan - Epoch 8: Architecture Migration (Astro Starlight)
 
 ## Goal
 
-Unify the Demo and Documentation into a single, cohesive site deployed to GitHub Pages, with a streamlined development workflow.
+Modernize the documentation stack by migrating from `mdbook` to **Astro Starlight**. This will enable us to embed live **Preact** components (from the demo app) directly into the documentation, creating a truly interactive style guide.
 
-## Proposed Architecture
+## Strategy
 
-### URL Structure
+### 1. Directory Structure
 
-- **Production**: `https://wycats.github.io/algebraic/`
-  - `/` -> Documentation (mdbook)
-  - `/demo/` -> Theme Builder (Vite App)
-- **Development**: `http://localhost:3000/`
-  - `/` -> Documentation
-  - `/demo/` -> Theme Builder
+We will use the `site/` directory for the new Astro project, keeping the existing `docs/` folder for legacy content and agent context.
 
-### Build Pipeline
+- **Legacy**: `docs/legacy-guide/` (mdbook source), `docs/agent-context/` (AI context).
+- **New**: `site/` (Astro root), `site/src/content/docs/` (Markdown content).
 
-We will create a unified build process that:
+### 2. Component Sharing
 
-1. Builds the `mdbook` to `dist/`.
-2. Builds the `demo` app to `dist/demo/`.
-3. Ensures all assets are correctly linked using the base path `/algebraic/`.
+The system itself is framework-agnostic and does not expose UI components. However, the **Demo App** contains valuable educational components (like `ContextVisualizer`) built with **Preact**.
 
-### Development Server
+- **Decision**: We will use **Preact** for the documentation site.
+- **Rationale**: This allows us to directly import and reuse the existing visualization components from `demo/src/components` without rewriting them in another framework (like Svelte or Vue).
+- We will configure Vite (inside Astro) to alias `@demo/` to `demo/src/`.
 
-We will create a custom development server (`scripts/dev-site.ts`) that:
+### 3. Migration Process
 
-1. Spawns `mdbook serve` (e.g., port 3001).
-2. Spawns `vite` (e.g., port 3002).
-3. Runs a proxy server on port 3000 to route traffic:
-   - `/demo/*` -> `localhost:3002`
-   - `/*` -> `localhost:3001`
-     This ensures that links between the docs and demo work locally exactly as they will in production.
+1.  **Backup**: `docs/guide` has been moved to `docs/legacy-guide`.
+2.  **Scaffold**: Astro Starlight initialized in `site/`.
+3.  **Port**: Move markdown files to `site/src/content/docs`.
+4.  **Enhance**: Replace static HTML/CSS blocks with MDX components imported from the demo.
 
-> [!NOTE]
->
-> The proxy server script should take a port argument, and spawn vite and mdbook on random available ports to avoid conflicts.
+## Phases
 
-## Tasks
+### Phase 1: Setup & Scaffolding
 
-### 1. Configuration Updates
+- [x] Rename `docs/guide` to `docs/legacy-guide`.
+- [x] Initialize Astro Starlight in `site/`.
+- [x] Install dependencies: `preact`, `@astrojs/preact`.
+- [x] Configure `site/astro.config.mjs`:
+  - Enable Starlight.
+  - Enable Preact.
+  - Configure Sidebar (based on old `SUMMARY.md`).
+- [x] Configure `site/tsconfig.json` to extend root config and support Preact.
 
-- [ ] **Demo**: Update `demo/vite.config.ts` to set `base: '/algebraic/demo/'` (prod) or `/demo/` (dev).
-- [ ] **Docs**: Update `docs/guide/book.toml` to set `site-url = "/algebraic/"`.
-- [ ] **Docs**: Ensure `mdbook` outputs to a predictable location (or we move it).
-- [ ] **Docs**: Update README.md to explain the new structure.
+### Phase 2: Content Migration
 
-### 2. Tooling & Scripts
+- [x] Port `introduction.md` and `philosophy.md`.
+- [x] Port "Concepts" chapter.
+- [x] Port "Usage" chapter.
+- [x] Port "API" chapter.
+- [ ] Fix internal links and image paths.
 
-- [ ] **Dev Proxy**: Create `scripts/dev-site.ts` using `http-proxy` and `concurrently` (or similar).
-- [ ] **Build Script**: Create `scripts/build-site.ts` to orchestrate the build.
-- [ ] **Dependencies**: Add necessary dev dependencies (`http-proxy`, `connect`, etc. if needed, or just use standard node libs).
+### Phase 3: Interactive Components
 
-### 3. CI/CD
+- [x] Configure Vite aliases in `site/astro.config.mjs` to access `demo/src/`.
+- [x] Create a `SystemDemo` wrapper component in Astro to provide the `ThemeContext` (using the system's runtime).
+- [ ] Replace the "Live CSS" HTML blocks in `concepts/surfaces.md` with the `ContextVisualizer` component from the demo.
+- [ ] Replace `hue-shifting.md` diagrams with `HueShiftVisualizer`.
 
-- [ ] **Workflow**: Create `.github/workflows/deploy.yml`.
-- [ ] **Permissions**: Configure GITHUB_TOKEN permissions for Pages.
+### Phase 4: Deployment & Cleanup
 
-### 4. Content Integration
+- [ ] Update `package.json` scripts (`docs:dev`, `docs:build` to point to `site`).
+- [ ] Update GitHub Actions workflow.
+- [ ] Delete `docs/legacy-guide`.
 
-- [ ] **Cross-Linking**: Add links between the Demo and Docs.
-- [ ] **404 Handling**: Ensure SPA routing works for the demo (GitHub Pages needs a `404.html` hack or similar if we use client-side routing, but the demo is mostly single page).
+## Risks
+
+- **Broken Links**: Moving files might break relative links. Starlight warns about this, but we need to be careful.
+- **Styling**: We must ensure the System's CSS (`engine.css`) is loaded globally so the components render correctly, without conflicting with Starlight's default styles. We will **not** use Tailwind.
