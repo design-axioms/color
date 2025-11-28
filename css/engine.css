@@ -45,23 +45,10 @@
   inherits: true;
 }
 
-@property --override-fg-chroma {
-  syntax: "<number>";
-  initial-value: initial;
-  inherits: true;
-}
-
-@property --override-border-alpha {
-  syntax: "<number>";
-  initial-value: initial;
-  inherits: true;
-}
-
-@property --override-surface-lightness {
-  syntax: "<number>";
-  initial-value: initial;
-  inherits: true;
-}
+/* 
+   Overrides are NOT registered as @property because we rely on var() fallbacks.
+   If we registered them with an initial-value, the fallback would never trigger.
+*/
 
 @property --surface-lightness {
   syntax: "<number>";
