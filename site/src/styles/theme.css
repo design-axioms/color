@@ -160,6 +160,45 @@
 
 .surface-action {
   --surface-token: light-dark(
+    oklch(0.1 0 288.1732),
+    oklch(0.9 0 292.8932)
+  );
+  --text-high-token: light-dark(
+    oklch(1 0 0),
+    oklch(0 0 0)
+  );
+  --text-subtle-token: light-dark(
+    oklch(0.893 0 0),
+    oklch(0.2156 0 0)
+  );
+  --text-subtlest-token: light-dark(
+    oklch(0.8406 0 0),
+    oklch(0.3696 0 0)
+  );
+  --border-dec-token: light-dark(
+    oklch(0.9866 0 0 / 0.3254),
+    oklch(0 0 0 / 0.0729)
+  );
+  --border-int-token: light-dark(
+    oklch(0.9866 0 0 / 0.5235),
+    oklch(0 0 0 / 0.2032)
+  );
+}
+.surface-action:hover {
+  --surface-token: light-dark(
+    oklch(0.3072 0 289.1589),
+    oklch(0.8746 0 292.817)
+  );
+}
+.surface-action:active {
+  --surface-token: light-dark(
+    oklch(0.3734 0 289.604),
+    oklch(0.8468 0 292.7171)
+  );
+}
+
+.surface-action-soft {
+  --surface-token: light-dark(
     oklch(1 0 293.0332),
     oklch(0.1 0 288.1732)
   );
@@ -184,13 +223,13 @@
     oklch(0.9866 0 0 / 0.5235)
   );
 }
-.surface-action:hover {
+.surface-action-soft:hover {
   --surface-token: light-dark(
     oklch(0.9746 0 293.0237),
     oklch(0.3072 0 289.1589)
   );
 }
-.surface-action:active {
+.surface-action-soft:active {
   --surface-token: light-dark(
     oklch(0.9506 0 292.9978),
     oklch(0.3734 0 289.604)
@@ -199,28 +238,28 @@
 
 .surface-spotlight {
   --surface-token: light-dark(
-    oklch(0.1 0 288.1732),
-    oklch(0.9 0 292.8932)
+    oklch(0.5417 0 290.8452),
+    oklch(0.5417 0 290.8452)
   );
   --text-high-token: light-dark(
     oklch(1 0 0),
-    oklch(0 0 0)
+    oklch(1 0 0)
   );
   --text-subtle-token: light-dark(
-    oklch(0.893 0 0),
-    oklch(0.2156 0 0)
+    oklch(1 0 0),
+    oklch(1 0 0)
   );
   --text-subtlest-token: light-dark(
-    oklch(0.8406 0 0),
-    oklch(0.3696 0 0)
+    oklch(0.9776 0 0),
+    oklch(0.9776 0 0)
   );
   --border-dec-token: light-dark(
-    oklch(0.9866 0 0 / 0.3254),
-    oklch(0 0 0 / 0.0729)
+    oklch(1 0 0 / 0.1746),
+    oklch(1 0 0 / 0.1746)
   );
   --border-int-token: light-dark(
-    oklch(0.9866 0 0 / 0.5235),
-    oklch(0 0 0 / 0.2032)
+    oklch(1 0 0 / 0.4458),
+    oklch(1 0 0 / 0.4458)
   );
 }
 
@@ -389,6 +428,45 @@
 
 .surface-action {
   --surface-token: light-dark(
+    oklch(0 0 0),
+    oklch(1 0 5)
+  );
+  --text-high-token: light-dark(
+    oklch(1 0 0),
+    oklch(0 0 0)
+  );
+  --text-subtle-token: light-dark(
+    oklch(0.893 0 0),
+    oklch(0.4586 0 0)
+  );
+  --text-subtlest-token: light-dark(
+    oklch(0.8406 0 0),
+    oklch(0.54 0 0)
+  );
+  --border-dec-token: light-dark(
+    oklch(0.9866 0 0 / 0.3938),
+    oklch(0.1935 0 0 / 0.0799)
+  );
+  --border-int-token: light-dark(
+    oklch(0.9866 0 0 / 0.5718),
+    oklch(0.1935 0 0 / 0.2093)
+  );
+}
+.surface-action:hover {
+  --surface-token: light-dark(
+    oklch(0.3072 0 1.1257),
+    oklch(0.9746 0 4.9905)
+  );
+}
+.surface-action:active {
+  --surface-token: light-dark(
+    oklch(0.3734 0 1.5708),
+    oklch(0.9506 0 4.9646)
+  );
+}
+
+.surface-action-soft {
+  --surface-token: light-dark(
     oklch(0.3465 0 1.3849),
     oklch(0.9566 0 4.9726)
   );
@@ -413,13 +491,13 @@
     oklch(0 0 0 / 0.1869)
   );
 }
-.surface-action:hover {
+.surface-action-soft:hover {
   --surface-token: light-dark(
     oklch(0 0 0),
     oklch(1 0 5)
   );
 }
-.surface-action:active {
+.surface-action-soft:active {
   --surface-token: light-dark(
     oklch(0 0 0),
     oklch(1 0 5)
@@ -428,28 +506,28 @@
 
 .surface-spotlight {
   --surface-token: light-dark(
-    oklch(0 0 0),
-    oklch(1 0 5)
-  );
-  --text-high-token: light-dark(
-    oklch(1 0 0),
+    oklch(1 0 5),
     oklch(0 0 0)
   );
+  --text-high-token: light-dark(
+    oklch(0 0 0),
+    oklch(1 0 0)
+  );
   --text-subtle-token: light-dark(
-    oklch(0.893 0 0),
-    oklch(0.4586 0 0)
+    oklch(0.4586 0 0),
+    oklch(0.893 0 0)
   );
   --text-subtlest-token: light-dark(
-    oklch(0.8406 0 0),
-    oklch(0.54 0 0)
+    oklch(0.54 0 0),
+    oklch(0.8406 0 0)
   );
   --border-dec-token: light-dark(
-    oklch(0.9866 0 0 / 0.3938),
-    oklch(0.1935 0 0 / 0.0799)
+    oklch(0.1935 0 0 / 0.0799),
+    oklch(0.9866 0 0 / 0.3938)
   );
   --border-int-token: light-dark(
-    oklch(0.9866 0 0 / 0.5718),
-    oklch(0.1935 0 0 / 0.2093)
+    oklch(0.1935 0 0 / 0.2093),
+    oklch(0.9866 0 0 / 0.5718)
   );
 }
 

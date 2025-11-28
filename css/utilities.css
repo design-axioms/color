@@ -157,3 +157,37 @@
 .fg-vibrant {
   --override-fg-chroma: 0.15;
 }
+
+/* --- SURFACE SPECIFIC OVERRIDES --- */
+
+/* 
+   Action Surfaces (Primary Buttons)
+   When a hue is applied to an action surface, we want it to be "filled" (vibrant),
+   not just tinted.
+*/
+.surface-action.hue-brand {
+  --base-chroma: var(--chroma-brand);
+  /* Ensure text is white/light on dark brand background */
+  --override-fg-chroma: 0;
+}
+
+.surface-action.hue-success {
+  --base-chroma: 0.15;
+  --override-fg-chroma: 0;
+}
+
+.surface-action.hue-warning {
+  --base-chroma: 0.15;
+  --override-fg-chroma: 0;
+}
+
+.surface-action.hue-error {
+  --base-chroma: 0.15;
+  --override-fg-chroma: 0;
+}
+
+.surface-action.hue-blue {
+  --base-chroma: var(--chroma-blue);
+  --override-fg-chroma: 0;
+}
+
