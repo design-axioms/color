@@ -225,10 +225,18 @@ This file tracks key architectural and design decisions made throughout the proj
   - **Automation**: Enforces the policy automatically in CI/CD.
   - **Simplicity**: A simple grep script is sufficient for this purpose without needing complex AST analysis.
 
-  ### [2025-11-27] Responsive Theme Builder Layout
+### [2025-11-27] Responsive Theme Builder Layout
 
 - **Context**: The Theme Builder UI was unusable on mobile devices due to a fixed-width sidebar and lack of wrapping.
 - **Decision**: Implement a responsive layout using a dedicated CSS file (`ThemeBuilder.css`) that stacks the sidebar vertically on screens smaller than 768px.
 - **Rationale**:
   - **Usability**: Enables users to explore the system on mobile devices.
   - **Maintainability**: Moving layout styles to a CSS file (instead of inline styles) makes it easier to manage media queries.
+
+### [2025-11-27] Docs/Demo Context Integration
+
+- **Context**: Interactive components in the documentation (like `HueShiftVisualizer`) crashed because they relied on `ThemeContext` but were rendered in isolation (Astro Islands) without a Provider.
+- **Decision**: Create wrapper components (e.g., `HueShiftDemo`) that include the `ThemeProvider` and compose the visualizer within the same island.
+- **Rationale**:
+  - **Reliability**: Ensures the component tree is hydrated together with its required context.
+  - **Isolation**: Keeps the documentation page logic separate from the core component logic.

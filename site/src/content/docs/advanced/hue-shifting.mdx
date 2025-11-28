@@ -3,7 +3,7 @@ title: Hue Shifting
 ---
 
 import { SystemDemo } from "../../../components/SystemDemo";
-import { HueShiftVisualizer } from "@demo/components/HueShiftVisualizer";
+import { HueShiftDemo } from "../../../components/HueShiftDemo";
 import { Diagram } from "../../../components/Diagram";
 
 <SystemDemo>
@@ -273,7 +273,7 @@ The cubic Bezier implementation assumes the curve starts at `(0,0)` and ends at 
 - **CSS `@property`**: Registered custom properties allow smooth animated transitions between hue-shifted values
 
 <Diagram>
-  <HueShiftVisualizer />
+  <HueShiftDemo client:only="preact" />
 </Diagram>
 
 </SystemDemo>

@@ -21,7 +21,12 @@ export default defineConfig({
     preact(),
     starlight({
       title: "Algebraic Color System",
-      customCss: ["./src/styles/theme.css", "./src/styles/docs.css"],
+      customCss: [
+        "./src/styles/engine.css",
+        "./src/styles/theme.css",
+        "./src/styles/utilities.css",
+        "./src/styles/docs.css",
+      ],
       social: [
         {
           icon: "github",

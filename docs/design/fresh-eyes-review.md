@@ -177,30 +177,29 @@ This section details the observations from the "Fresh Eyes" audit conducted on N
 
 ### 1. Narrative & User Journey
 
--   **The "Welcome" Hook**: The `index.mdx` page is strong. The "Stop picking colors. Start defining intent." tagline is compelling. The "Try the Theme Builder" link correctly points to `/demo/#/builder`, keeping the user in the ecosystem.
--   **The "Philosophy" Gap**: The transition from `index.mdx` to `philosophy.md` is logical, but `philosophy.md` jumps quickly into "The Reactive Pipeline" (technical implementation) before fully establishing the "Why".
-    -   *Recommendation*: Move the "Reactive Pipeline" section to `concepts/thinking-in-surfaces.mdx` or a dedicated "Architecture" page. Keep Philosophy focused on the "Mental Model" (Math vs. Magic, Intent).
--   **The "Theme Builder" Disconnect**: The `guides/theme-builder.md` page contains a hardcoded link to `https://color-system-demo.netlify.app`. This contradicts the `index.mdx` link (`/demo/#/builder`) and likely points to an outdated or external deployment.
-    -   *Action*: Update `guides/theme-builder.md` to link to `/demo/#/builder` to ensure consistency with the unified build strategy.
+- **The "Welcome" Hook**: The `index.mdx` page is strong. The "Stop picking colors. Start defining intent." tagline is compelling. The "Try the Theme Builder" link correctly points to `/demo/#/builder`, keeping the user in the ecosystem.
+- **The "Philosophy" Gap**: The transition from `index.mdx` to `philosophy.md` is logical, but `philosophy.md` jumps quickly into "The Reactive Pipeline" (technical implementation) before fully establishing the "Why".
+  - _Recommendation_: Move the "Reactive Pipeline" section to `concepts/thinking-in-surfaces.mdx` or a dedicated "Architecture" page. Keep Philosophy focused on the "Mental Model" (Math vs. Magic, Intent).
+- **The "Theme Builder" Disconnect**: The `guides/theme-builder.md` page contains a hardcoded link to `https://color-system-demo.netlify.app`. This contradicts the `index.mdx` link (`/demo/#/builder`) and likely points to an outdated or external deployment.
+  - _Action_: Update `guides/theme-builder.md` to link to `/demo/#/builder` to ensure consistency with the unified build strategy.
 
 ### 2. Demo Integration
 
--   **Embedded Visualizations**: The use of `<SystemDemo>` and `<Diagram>` in `catalog/*.mdx` is excellent. It proves the system works by using the system's own tokens to render the documentation.
--   **Hue Shift Visualizer**: The `advanced/hue-shifting.mdx` page is a standout. The interactive comparison between "Linear" and "Bezier" effectively communicates a complex concept.
--   **Missing "Playground"**: While the Theme Builder is a full tool, the documentation lacks small, inline "playgrounds" where a user can tweak *just one* variable (like a hue) and see the result immediately without leaving the page.
-    -   *Idea*: Create a `<MiniSolver>` component for the "Thinking in Surfaces" page that lets users drag *just* the Page Anchor to see the "Rubber Band" effect in isolation.
+- **Embedded Visualizations**: The use of `<SystemDemo>` and `<Diagram>` in `catalog/*.mdx` is excellent. It proves the system works by using the system's own tokens to render the documentation.
+- **Hue Shift Visualizer**: The `advanced/hue-shifting.mdx` page is a standout. The interactive comparison between "Linear" and "Bezier" effectively communicates a complex concept.
+- **Missing "Playground"**: While the Theme Builder is a full tool, the documentation lacks small, inline "playgrounds" where a user can tweak _just one_ variable (like a hue) and see the result immediately without leaving the page.
+  - _Idea_: Create a `<MiniSolver>` component for the "Thinking in Surfaces" page that lets users drag _just_ the Page Anchor to see the "Rubber Band" effect in isolation.
 
 ### 3. System Design Observations
 
--   **Polarity Terminology**: The term "Polarity" is used heavily. While accurate, it might be intimidating. The UI uses "Page" and "Inverted" which is clearer. The docs should consistently use "Page Context" and "Inverted Context" where possible, introducing "Polarity" as the technical term.
--   **"Soft" vs "Tinted"**: The distinction between `surface-tinted` (Catalog: Surfaces) and `surface-soft-spotlight` (Catalog: Surfaces) is subtle.
-    -   `surface-tinted`: "Subtle grouping... slight tint of brand color".
-    -   `surface-soft-spotlight`: "Softer version of spotlight... badges".
-    -   *Critique*: These seem to overlap. Is a badge a "tinted surface" or a "soft spotlight"? The system might benefit from clarifying if "Tinted" is for *containers* and "Soft Spotlight" is for *elements*.
+- **Polarity Terminology**: The term "Polarity" is used heavily. While accurate, it might be intimidating. The UI uses "Page" and "Inverted" which is clearer. The docs should consistently use "Page Context" and "Inverted Context" where possible, introducing "Polarity" as the technical term.
+- **"Soft" vs "Tinted"**: The distinction between `surface-tinted` (Catalog: Surfaces) and `surface-soft-spotlight` (Catalog: Surfaces) is subtle.
+  - `surface-tinted`: "Subtle grouping... slight tint of brand color".
+  - `surface-soft-spotlight`: "Softer version of spotlight... badges".
+  - _Critique_: These seem to overlap. Is a badge a "tinted surface" or a "soft spotlight"? The system might benefit from clarifying if "Tinted" is for _containers_ and "Soft Spotlight" is for _elements_.
 
 ### 4. Action Plan
 
 1.  **Fix Broken Link**: Update `guides/theme-builder.md` to point to `/demo/#/builder`.
 2.  **Refine Philosophy**: Move technical implementation details out of `philosophy.md`.
 3.  **Clarify Semantics**: Add a "When to use what" section to `catalog/surfaces.mdx` comparing `surface-tinted` vs `surface-soft-spotlight`.
-

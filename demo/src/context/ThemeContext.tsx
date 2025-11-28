@@ -1,5 +1,5 @@
 import { ThemeManager, type ThemeMode } from "color-system/browser";
-import { createContext } from "preact";
+import { createContext, type ComponentChildren } from "preact";
 import { useContext, useEffect, useMemo, useState } from "preact/hooks";
 
 type Theme = ThemeMode;
@@ -19,7 +19,7 @@ const getFaviconSvg = (color: string) => `
 </svg>
 `;
 
-export function ThemeProvider({ children }: { children: any }) {
+export function ThemeProvider({ children }: { children: ComponentChildren }) {
   const [theme, setTheme] = useState<Theme>("system");
   const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>("light");
 

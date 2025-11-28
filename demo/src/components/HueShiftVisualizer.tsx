@@ -29,47 +29,60 @@ export function HueShiftVisualizer() {
 
     const container = previewRef.current;
 
-    // 1. Solve Foreground Text
-    // Light Mode
-    const lightTextL = solveForegroundLightness(cardLight, contrastTarget);
-    const darkTextL = solveForegroundLightness(cardDark, contrastTarget);
+    try {
+      // 1. Solve Foreground Text
+      // Light Mode
+      const lightTextL = solveForegroundLightness(cardLight, contrastTarget);
+      const darkTextL = solveForegroundLightness(cardDark, contrastTarget);
 
-    // 2. Calculate Hue Shifts
-    const hueShiftConfig = {
-      curve: {
-        p1: [0.5, 0] as [number, number],
-        p2: [0.5, 1] as [number, number],
-      },
-      maxRotation: hueShiftAmount,
-    };
+      // 2. Calculate Hue Shifts
+      const hueShiftConfig = {
+        curve: {
+          p1: [0.5, 0] as [number, number],
+          p2: [0.5, 1] as [number, number],
+        },
+        maxRotation: hueShiftAmount,
+      };
 
-    const lightShift = calculateHueShift(cardLight, hueShiftConfig);
-    const darkShift = calculateHueShift(cardDark, hueShiftConfig);
+      const lightShift = calculateHueShift(cardLight, hueShiftConfig);
+      const darkShift = calculateHueShift(cardDark, hueShiftConfig);
 
-    // 3. Apply to CSS Variables
-    const chroma = 0.05; // Moderate chroma
+      // 3. Apply to CSS Variables
+      const chroma = 0.05; // Moderate chroma
 
-    const lightSurfaceColor = `oklch(${cardLight} ${chroma} ${
-      baseHue + lightShift
-    })`;
-    const darkSurfaceColor = `oklch(${cardDark} ${chroma} ${
-      baseHue + darkShift
-    })`;
+      const lightSurfaceColor = `oklch(${cardLight} ${chroma} ${
+        baseHue + lightShift
+      })`;
+      const darkSurfaceColor = `oklch(${cardDark} ${chroma} ${
+        baseHue + darkShift
+      })`;
 
-    container.style.setProperty(
-      "--playground-surface",
-      `light-dark(${lightSurfaceColor}, ${darkSurfaceColor})`
-    );
+      container.style.setProperty(
+        "--playground-surface",
+        `light-dark(${lightSurfaceColor}, ${darkSurfaceColor})`
+      );
 
-    // Text Token
-    const textChroma = 0.01;
-    const lightTextColor = `oklch(${lightTextL} ${textChroma} ${baseHue})`;
-    const darkTextColor = `oklch(${darkTextL} ${textChroma} ${baseHue})`;
+      // Text Token
+      const textChroma = 0.01;
+      const lightTextColor = `oklch(${lightTextL} ${textChroma} ${baseHue})`;
+      const darkTextColor = `oklch(${darkTextL} ${textChroma} ${baseHue})`;
 
-    container.style.setProperty(
-      "--playground-text",
-      `light-dark(${lightTextColor}, ${darkTextColor})`
-    );
+      container.style.setProperty(
+        "--playground-text",
+        `light-dark(${lightTextColor}, ${darkTextColor})`
+      );
+    } catch (e) {
+      console.error("HueShiftVisualizer Error:", e);
+      // Fallback to safe values
+      container.style.setProperty(
+        "--playground-surface",
+        `light-dark(oklch(0.95 0 0), oklch(0.2 0 0))`
+      );
+      container.style.setProperty(
+        "--playground-text",
+        `light-dark(oklch(0 0 0), oklch(1 0 0))`
+      );
+    }
   }, [baseHue, contrastTarget, hueShiftAmount]);
 
   return (

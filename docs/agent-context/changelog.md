@@ -275,3 +275,20 @@
   - **Docs Home**: Added a "Try the Theme Builder" CTA to the hero section for better discovery.
   - **Layout Fix**: Resolved a CSS conflict in `demo/src/app.css` to allow full-width layouts.
   - **Mobile Responsiveness**: Implemented a responsive layout for the Theme Builder (stacking sidebar on mobile).
+
+## Phase 7: Theme Builder Refinement & Docs Fixes (Epoch 9)
+
+**Goal**: Polish the Theme Builder to be mobile-responsive and visually consistent, and fix critical rendering issues in the documentation.
+
+**Completed Work**:
+
+- **Documentation Fixes**:
+  - **Context Adaptation**: Fixed the "Light Context" vs "Dark Context" visualization by ensuring `engine.css` and `utilities.css` are correctly loaded in the documentation site.
+  - **Data Visualization**: Renamed `data-viz.md` to `data-viz.mdx` to enable MDX features, fixing the issue where import statements were rendered as text.
+  - **Hue Shifting**: Added error handling to the `HueShiftVisualizer` and created a `HueShiftDemo` wrapper to ensure proper context propagation in Astro islands.
+  - **Linear Contrast**: Aligned the "Linear Contrast" visualization in `solver-internals.md` to match the "Linear Lightness" example.
+- **Theme Builder Refinement**:
+  - **Refactored Inline Styles**: Moved all inline styles from `ThemeBuilder.tsx` to `ThemeBuilder.css` using semantic class names.
+  - **Mobile Responsiveness**: Added media queries to `ThemeBuilder.css` to ensure the layout adapts gracefully to smaller screens (stacking sidebar).
+- **Visual Polish**:
+  - Audited for hardcoded values and replaced them with system tokens.

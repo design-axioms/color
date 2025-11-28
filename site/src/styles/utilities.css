@@ -1,0 +1,159 @@
+/*
+   BASELINE 2025: UTILITIES
+   Configuration Providers.
+*/
+
+/* --- SURFACES --- */
+/* Surface definitions are now auto-generated in generated-tokens.css */
+
+/* --- SEMANTIC HUES --- */
+
+.hue-success {
+  --base-hue: 140; /* Green */
+  --hue-adjust: 0;
+  --base-chroma: 0.015; /* Subtle tint */
+
+  --default-fg-hue: 140;
+  --override-fg-chroma: 0.15; /* Vibrant text */
+}
+
+.hue-warning {
+  --base-hue: 85; /* Amber */
+  --hue-adjust: 0;
+  --base-chroma: 0.015;
+
+  --default-fg-hue: 85;
+  --override-fg-chroma: 0.15;
+}
+
+.hue-error {
+  --base-hue: 25; /* Red */
+  --hue-adjust: 0;
+  --base-chroma: 0.015;
+
+  --default-fg-hue: 25;
+  --override-fg-chroma: 0.15;
+}
+
+/* --- BORDERS --- */
+
+.bordered {
+  /* Default to decorative border from context */
+  --computed-border-color: var(--computed-border-dec-color);
+}
+
+.border-interactive {
+  /* Override for interactive borders from context */
+  --computed-border-color: var(--computed-border-int-color);
+}
+
+/* --- MODIFIERS --- */
+
+/* Elevation */
+.shadow-sm {
+  box-shadow: var(--shadow-sm);
+}
+.shadow-md {
+  box-shadow: var(--shadow-md);
+}
+.shadow-lg {
+  box-shadow: var(--shadow-lg);
+}
+.shadow-xl {
+  box-shadow: var(--shadow-xl);
+}
+
+/* Focus */
+.focus-ring:focus-visible {
+  outline: 2px solid var(--focus-ring-color);
+  outline-offset: 2px;
+}
+
+/* Hue Adjustments */
+.hue-brand {
+  --base-hue: var(--hue-brand);
+  --hue-adjust: 0;
+  /* Apply a subtle tint to the surface background */
+  --base-chroma: calc(var(--chroma-brand) * 0.1);
+
+  --default-fg-hue: var(--hue-brand);
+  --override-fg-chroma: var(--chroma-brand);
+}
+
+.hue-blue {
+  --base-hue: var(--hue-blue);
+  --hue-adjust: 0;
+  /* Apply a subtle tint to the surface background */
+  --base-chroma: calc(var(--chroma-blue) * 0.1);
+
+  --default-fg-hue: var(--hue-blue);
+  --override-fg-chroma: var(--chroma-blue);
+}
+
+/* Text Lightness Overrides */
+.text-strong {
+  /* No-op, resets to default for the surface */
+}
+
+.text-subtle {
+  /* Apply computed chroma/hue to the subtle token */
+  color: oklch(
+    from var(--text-subtle-token) l var(--computed-fg-C) var(--computed-fg-H)
+  );
+}
+
+.text-subtler {
+  /* Apply computed chroma/hue to the subtlest token */
+  color: oklch(
+    from var(--text-subtlest-token) l var(--computed-fg-C) var(--computed-fg-H)
+  );
+}
+
+.text-link {
+  /* Links use the brand hue by default */
+  color: oklch(from var(--computed-fg-color) l c var(--hue-brand));
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* --- STATES --- */
+
+.state-disabled,
+[disabled] {
+  opacity: 0.5;
+  pointer-events: none;
+  /* Desaturate */
+  filter: grayscale(1);
+}
+
+.state-selected,
+[aria-selected="true"] {
+  /* Selected state uses brand background */
+  background-color: oklch(from var(--computed-surface) l c var(--hue-brand));
+  /* Ensure text contrast on brand background might need adjustment, 
+     but for now let's assume the lightness shift is handled by the surface logic 
+     if we were to make this a full surface. 
+     Since it's a modifier, we might need a specific token. 
+     For Phase 1, let's keep it simple: Brand Border + Background Tint */
+  border-color: oklch(from var(--computed-fg-color) l c var(--hue-brand));
+  background-color: oklch(from var(--computed-surface) l 0.05 var(--hue-brand));
+}
+
+/* Surface Adjustments */
+.surface-vibrant {
+  --surface-chroma-adjust: 0.02;
+}
+
+.surface-glass {
+  backdrop-filter: blur(10px);
+  background-color: oklch(from var(--computed-surface) l c h / 0.7) !important;
+}
+
+.hue-monochrome {
+  --base-chroma: 0;
+}
+
+/* Content Overrides */
+.fg-vibrant {
+  --override-fg-chroma: 0.15;
+}

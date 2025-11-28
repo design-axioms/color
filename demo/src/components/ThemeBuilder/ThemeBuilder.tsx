@@ -9,13 +9,9 @@ export function ThemeBuilder() {
     <div class="theme-builder-container">
       {/* Sidebar */}
       <aside class="theme-builder-sidebar surface-workspace">
-        <div>
-          <h2 class="text-strong" style={{ margin: "0 0 0.5rem 0" }}>
-            Theme Builder
-          </h2>
-          <p class="text-subtle" style={{ margin: 0, fontSize: "0.9rem" }}>
-            Customize global system parameters.
-          </p>
+        <div class="theme-builder-header">
+          <h2 class="text-strong">Theme Builder</h2>
+          <p class="text-subtle">Customize global system parameters.</p>
         </div>
 
         <SurfaceManager />
@@ -23,116 +19,54 @@ export function ThemeBuilder() {
 
       {/* Main Preview Area */}
       <main class="theme-builder-main" id="theme-builder-preview">
-        <div
-          class="surface-page"
-          style={{ minHeight: "100%", padding: "2rem" }}
-        >
-          <div
-            class="surface-card bordered"
-            style={{
-              padding: "2rem",
-              borderRadius: "8px",
-              maxWidth: "800px",
-              margin: "0 auto",
-              display: "flex",
-              flexDirection: "column",
-              gap: "2rem",
-            }}
-          >
+        <div class="surface-page theme-builder-preview-page">
+          <div class="surface-card bordered theme-builder-preview-card">
             {/* Header */}
-            <div>
+            <div class="preview-section">
               <h1 class="text-strong" style={{ margin: "0 0 0.5rem 0" }}>
                 Preview Area
               </h1>
-              <p class="text-subtle" style={{ margin: 0 }}>
+              <p class="text-subtle">
                 This area is styled by the live config. Adjust the sliders on
                 the left to see changes in real-time.
               </p>
             </div>
 
             {/* Standard Controls */}
-            <div>
-              <h3 class="text-strong" style={{ marginBottom: "1rem" }}>
-                Standard Surfaces
-              </h3>
-              <div
-                style={{ display: "flex", gap: "1rem", alignItems: "center" }}
-              >
-                <button
-                  class="surface-action text-strong bordered"
-                  style={{
-                    padding: "0.75rem 1.5rem",
-                    borderRadius: "6px",
-                    cursor: "pointer",
-                    fontWeight: "bold",
-                  }}
-                >
+            <div class="preview-section">
+              <h3 class="text-strong">Standard Surfaces</h3>
+              <div class="preview-controls">
+                <button class="surface-action text-strong bordered preview-button">
                   Action Button
                 </button>
-                <button
-                  class="surface-workspace text-subtle bordered"
-                  style={{
-                    padding: "0.75rem 1.5rem",
-                    borderRadius: "6px",
-                    cursor: "pointer",
-                    fontWeight: "bold",
-                  }}
-                >
+                <button class="surface-workspace text-subtle bordered preview-button">
                   Secondary
                 </button>
-                <div
-                  class="surface-workspace bordered"
-                  style={{ padding: "0.5rem 1rem", borderRadius: "6px" }}
-                >
+                <div class="surface-workspace bordered preview-input">
                   <span class="text-subtle">Input Field</span>
                 </div>
               </div>
             </div>
 
             {/* Brand Controls */}
-            <div>
-              <h3 class="text-strong" style={{ marginBottom: "1rem" }}>
-                Brand Integration
-              </h3>
-              <p class="text-subtle" style={{ marginBottom: "1rem" }}>
+            <div class="preview-section">
+              <h3 class="text-strong">Brand Integration</h3>
+              <p class="text-subtle">
                 Elements using the{" "}
-                <code
-                  class="surface-workspace bordered"
-                  style={{ padding: "0.2rem 0.4rem", borderRadius: "4px" }}
-                >
+                <code class="surface-workspace bordered preview-code">
                   .hue-brand
                 </code>{" "}
                 utility.
               </p>
 
-              <div
-                class="hue-brand"
-                style={{
-                  display: "flex",
-                  gap: "1rem",
-                  alignItems: "center",
-                  flexWrap: "wrap",
-                }}
-              >
+              <div class="hue-brand preview-brand-group">
                 {/* Brand Button (Inverted) */}
-                <button
-                  class="surface-spotlight text-strong"
-                  style={{
-                    padding: "0.75rem 1.5rem",
-                    borderRadius: "6px",
-                    cursor: "pointer",
-                    fontWeight: "bold",
-                    border: "none",
-                  }}
-                >
+                <button class="surface-spotlight text-strong preview-button">
                   Brand Button
                 </button>
 
                 {/* Brand Card (Page Polarity + Tint) */}
-                <div
-                  class="surface-card bordered"
-                  style={{ padding: "1rem", borderRadius: "8px" }}
-                >
+                <div class="surface-card bordered preview-brand-card">
                   <span class="text-strong">Brand Tinted Card</span>
                 </div>
 
@@ -144,13 +78,8 @@ export function ThemeBuilder() {
             </div>
 
             {/* Typography Check */}
-            <div
-              class="surface-workspace bordered"
-              style={{ padding: "1.5rem", borderRadius: "8px" }}
-            >
-              <h3 class="text-strong" style={{ marginTop: 0 }}>
-                Typography & Contrast
-              </h3>
+            <div class="surface-workspace bordered preview-typography-card">
+              <h3 class="text-strong">Typography & Contrast</h3>
               <p class="text-high-token">This is high-emphasis text.</p>
               <p class="text-subtle">
                 This is subtle text for secondary information.
@@ -159,34 +88,18 @@ export function ThemeBuilder() {
             </div>
 
             {/* Dynamic Surface List */}
-            <div>
-              <h3 class="text-strong" style={{ marginBottom: "1rem" }}>
-                All Surfaces
-              </h3>
+            <div class="preview-section">
+              <h3 class="text-strong">All Surfaces</h3>
 
               {config.groups.length === 0 ||
               config.groups.every((g) => g.surfaces.length === 0) ? (
-                <div
-                  class="surface-workspace bordered"
-                  style={{
-                    padding: "3rem",
-                    borderRadius: "8px",
-                    textAlign: "center",
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    gap: "1rem",
-                  }}
-                >
-                  <div style={{ fontSize: "2rem", opacity: 0.5 }}>🎨</div>
+                <div class="surface-workspace bordered preview-empty-state">
+                  <div class="preview-empty-icon">🎨</div>
                   <div>
                     <h4 class="text-strong" style={{ margin: "0 0 0.5rem 0" }}>
                       No Custom Surfaces
                     </h4>
-                    <p
-                      class="text-subtle"
-                      style={{ margin: 0, maxWidth: "400px" }}
-                    >
+                    <p class="text-subtle preview-empty-text">
                       Add groups and surfaces in the sidebar to see them appear
                       here. They will be generated as CSS classes like{" "}
                       <code>.surface-card</code>.
@@ -205,47 +118,19 @@ export function ThemeBuilder() {
                     (group) =>
                       group.surfaces.length > 0 && (
                         <div key={group.name}>
-                          <h4
-                            class="text-subtle"
-                            style={{
-                              margin: "0 0 0.5rem 0",
-                              fontSize: "0.9rem",
-                              textTransform: "uppercase",
-                              letterSpacing: "0.05em",
-                            }}
-                          >
+                          <h4 class="text-subtle preview-group-title">
                             {group.name}
                           </h4>
-                          <div
-                            style={{
-                              display: "grid",
-                              gridTemplateColumns:
-                                "repeat(auto-fill, minmax(200px, 1fr))",
-                              gap: "1rem",
-                            }}
-                          >
+                          <div class="preview-surface-grid">
                             {group.surfaces.map((surface) => (
                               <div
                                 key={surface.slug}
-                                class={`surface-${surface.slug} bordered`}
-                                style={{
-                                  padding: "1.5rem",
-                                  borderRadius: "8px",
-                                  display: "flex",
-                                  flexDirection: "column",
-                                  gap: "0.5rem",
-                                }}
+                                class={`surface-${surface.slug} bordered preview-surface-card`}
                               >
-                                <span
-                                  class="text-strong"
-                                  style={{ fontWeight: "bold" }}
-                                >
+                                <span class="text-strong preview-surface-label">
                                   {surface.label}
                                 </span>
-                                <code
-                                  class="text-subtle"
-                                  style={{ fontSize: "0.8rem" }}
-                                >
+                                <code class="text-subtle preview-surface-code">
                                   .surface-{surface.slug}
                                 </code>
                               </div>

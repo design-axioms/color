@@ -105,7 +105,7 @@
   - **Simplified DX**: Single Vite-based dev server (no proxying).
   - **Better Search**: Starlight's built-in search.
 
-## Epoch 9: Documentation Restructure (In Progress)
+## Epoch 9: Documentation Restructure (Completed)
 
 - **Goal**: Realign the documentation structure with the "User Journey" and address "Fresh Eyes" feedback.
 - **Phases**:
@@ -131,14 +131,14 @@
   - **Phase 6: Deep Content & Design Audit (Completed)**
     - **Goal**: A comprehensive critique of the documentation narrative, demo integration, and system design from a "Fresh Eyes" perspective.
     - **Scope**: Review all content, interactive elements, and underlying system concepts.
-  - **Phase 7: Theme Builder Refinement (Planned)**
+  - **Phase 7: Theme Builder Refinement (Completed)**
     - **Goal**: Polish the Theme Builder to be mobile-responsive and visually consistent with the rest of the application.
     - **Key Deliverables**:
       - **Layout Fix**: Resolve CSS conflict preventing full-width usage.
       - **Mobile Responsiveness**: Implement responsive layout for sidebar/preview.
       - **Refactor**: Replace inline styles with utility classes.
 
-## Epoch 10: Ecosystem & Interoperability (Planned)
+## Epoch 10: Ecosystem & Interoperability (In Progress)
 
 - **Goal**: Connect the Color System with the broader design tool ecosystem.
 - **Key Deliverables**:

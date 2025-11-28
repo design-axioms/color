@@ -105,22 +105,22 @@ If we just divided the lightness values evenly (Linear Lightness), the steps wou
 <div class="surface-workspace docs-p-4 docs-rounded docs-border">
 <h4 class="text-strong" style="margin: 0 0 1rem 0">Linear Lightness (Bad)</h4>
 <div style="display: flex; flex-direction: column; gap: 0;">
-<div class="surface-card docs-p-2 docs-rounded docs-border" style="background: oklch(95% 0 0); color: black;">Step 1 (95%)</div>
-<div class="surface-card docs-p-2 docs-rounded docs-border" style="background: oklch(85% 0 0); color: black;">Step 2 (85%)</div>
-<div class="surface-card docs-p-2 docs-rounded docs-border" style="background: oklch(75% 0 0); color: black;">Step 3 (75%)</div>
-<div class="surface-card docs-p-2 docs-rounded docs-border" style="background: oklch(65% 0 0); color: white;">Step 4 (65%)</div>
-<div class="surface-card docs-p-2 docs-rounded docs-border" style="background: oklch(55% 0 0); color: white;">Step 5 (55%)</div>
+<div class="docs-p-2" style="background: oklch(95% 0 0); color: black;">Step 1 (95%)</div>
+<div class="docs-p-2" style="background: oklch(85% 0 0); color: black;">Step 2 (85%)</div>
+<div class="docs-p-2" style="background: oklch(75% 0 0); color: black;">Step 3 (75%)</div>
+<div class="docs-p-2" style="background: oklch(65% 0 0); color: white;">Step 4 (65%)</div>
+<div class="docs-p-2" style="background: oklch(55% 0 0); color: white;">Step 5 (55%)</div>
 </div>
 </div>
 
 <!-- Linear Contrast -->
 <div class="surface-workspace docs-p-4 docs-rounded docs-border">
 <h4 class="text-strong" style="margin: 0 0 1rem 0">Linear Contrast (Good)</h4>
-<div style="display: flex; flex-direction: column; gap: 0.5rem;">
-<div class="surface-page docs-p-2 docs-rounded docs-border">Page (Start)</div>
-<div class="surface-workspace docs-p-2 docs-rounded docs-border">Workspace</div>
-<div class="surface-card docs-p-2 docs-rounded docs-border">Card</div>
-<div class="surface-action docs-p-2 docs-rounded docs-border">Action (End)</div>
+<div style="display: flex; flex-direction: column; gap: 0;">
+<div class="surface-page docs-p-2">Page (Start)</div>
+<div class="surface-workspace docs-p-2">Workspace</div>
+<div class="surface-card docs-p-2">Card</div>
+<div class="surface-action docs-p-2">Action (End)</div>
 </div>
 </div>
 

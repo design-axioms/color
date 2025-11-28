@@ -1,38 +1,42 @@
-# Implementation Plan - Phase 7: Theme Builder Refinement
+# Implementation Plan - Phase 7: Theme Builder Refinement & Docs Fixes
 
 ## Goal
+Polish the Theme Builder to be mobile-responsive and visually consistent, and fix critical rendering issues in the documentation.
 
-Polish the Theme Builder UI to address usability issues identified in the "Fresh Eyes" audit, specifically focusing on mobile responsiveness, layout conflicts, and code maintainability.
+## Objectives
 
-## Strategy
+1.  **Documentation Fixes (Priority)**
+    - [ ] **Context Adaptation**: Fix the "Light Context" vs "Dark Context" visualization to correctly show the difference (likely missing a wrapper class or incorrect context injection).
+    - [ ] **Data Visualization**: Fix the MDX rendering issue where import statements are printed as text instead of being executed.
+    - [ ] **Hue Shifting**: Investigate and fix the runtime error in the Hue Shift visualizer.
+    - [ ] **Linear Contrast**: Fix the visual alignment and content of the "Linear Contrast" comparison (ensure boxes line up and show the correct gradient/steps).
 
-### 1. Fix Layout Conflict
+2.  **Refactor Inline Styles (Theme Builder)**
+    - [ ] Audit `ThemeBuilder.tsx` and its sub-components for inline styles.
+    - [ ] Move styles to `ThemeBuilder.css` using BEM-like class naming or semantic class names.
+    - [ ] Utilize system utility classes (e.g., `.text-strong`, `.text-subtle`, `.bordered`) where appropriate.
 
--   **Problem**: `demo/src/app.css` applies a global `max-width` and `text-align: center` to the `#app` container. This forces the Theme Builder (which wants to be a full-screen tool) into a centered, constrained box.
--   **Solution**:
-    -   Modify `demo/src/app.css` to remove the global constraints or scope them to non-builder routes.
-    -   Alternatively, apply a specific class to the body/root when the builder is active (though this is harder with hash routing).
-    -   **Preferred**: Use a CSS `:has()` selector or a route-based class on the main container to switch layouts.
+3.  **Mobile Responsiveness Polish**
+    - [ ] Verify the stacking behavior on mobile (already implemented in `ThemeBuilder.css`).
+    - [ ] Adjust padding and margins for smaller screens to maximize usable space.
+    - [ ] Ensure touch targets are large enough.
 
-### 2. Mobile Responsiveness
+4.  **Visual Consistency**
+    - [ ] Ensure all colors and spacing use system tokens.
+    - [ ] Standardize border radii and shadow usage.
 
--   **Problem**: The Theme Builder has a fixed-width sidebar (`350px`) and uses `flex-direction: row`. On mobile, this squashes the preview area or causes overflow.
--   **Solution**:
-    -   Implement a media query (breakpoint: `768px`).
-    -   Switch flex direction to `column`.
-    -   Make the sidebar width `100%` and potentially collapsible (or just stacked at the top/bottom).
-    -   Ensure the preview area takes remaining height.
+## Proposed Changes
 
-### 3. Refactor Inline Styles
+### Documentation
+- **`site/src/content/docs/concepts/thinking-in-surfaces.mdx`** (or similar): Check how the Context Adaptation example is implemented. It likely needs a `SystemDemo` wrapper or specific classes to force the context.
+- **`site/src/content/docs/usage/data-viz.mdx`**: Fix the MDX syntax for imports. Ensure there are no extra spaces or weird formatting preventing the import from being recognized.
+- **`site/src/content/docs/concepts/physics-of-light.mdx`** (or similar): Check the Linear Contrast visualization. It might be a custom component that needs CSS fixes.
+- **`demo/src/components/HueShiftVisualizer.tsx`**: Debug the error.
 
--   **Problem**: The `ThemeBuilder` components rely heavily on `style={{ ... }}` props. This makes it hard to use media queries and maintain consistency.
--   **Solution**:
-    -   Create `demo/src/components/ThemeBuilder/ThemeBuilder.css`.
-    -   Extract layout styles (flex, width, height, padding) into CSS classes.
-    -   Replace inline styles with `className` props.
+### Theme Builder
+- **`demo/src/components/ThemeBuilder/ThemeBuilder.tsx`**: Remove `style={{ ... }}` props.
+- **`demo/src/components/ThemeBuilder/ThemeBuilder.css`**: Add styles for the new classes.
 
-## Deliverables
-
--   [ ] **Full-Width Layout**: The Theme Builder should occupy 100% of the viewport width on desktop.
--   [ ] **Mobile Layout**: The Theme Builder should stack vertically on mobile devices without horizontal scroll.
--   [ ] **Clean Code**: `ThemeBuilder.tsx` and sub-components should use CSS classes instead of inline styles for layout.
+## Verification Plan
+- **Docs Review**: Manually check the affected pages in the local dev server (`pnpm dev:site`).
+- **Theme Builder Review**: Check the Theme Builder in the browser at various viewport widths.
