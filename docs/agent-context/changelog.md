@@ -303,3 +303,18 @@
 - **CLI Command**: Added `export` command to the CLI (`color-system export --format dtcg`).
 - **Type Definitions**: Formalized the `Theme` interface in `src/lib/types.ts`.
 - **Testing**: Added unit tests for the exporter and verified the CLI output.
+
+## Epoch 10: Phase 2 - Tailwind Integration & Visual Fixes (2025-11-28)
+
+**Goal**: Expand ecosystem reach with a Tailwind CSS preset and resolve critical visual regressions in the documentation.
+
+**Completed Work**:
+
+- **Tailwind Integration**:
+  - Implemented `toTailwind` exporter in `src/lib/exporters/tailwind.ts`.
+  - Updated CLI to support `--format tailwind`.
+  - Mapped surfaces to `light-dark()` and text to CSS variables for full context awareness.
+- **Visual Regression Fix (Action Surfaces)**:
+  - Resolved an issue where Brand buttons appeared black in inverted contexts.
+  - **Override Architecture**: Implemented `--override-surface-lightness` in `engine.css` to allow specific surfaces to break contrast rules when necessary (e.g., for brand identity).
+  - **Engine Fix**: Unregistered override properties to ensure `var()` fallbacks function correctly.

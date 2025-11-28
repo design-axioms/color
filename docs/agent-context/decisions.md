@@ -240,3 +240,11 @@ This file tracks key architectural and design decisions made throughout the proj
 - **Rationale**:
   - **Reliability**: Ensures the component tree is hydrated together with its required context.
   - **Isolation**: Keeps the documentation page logic separate from the core component logic.
+
+### [2025-11-28] Unregister Override Properties
+
+- **Context**: We implemented `--override-surface-lightness` to fix visual issues with Brand buttons. We initially registered this property via `@property` for type safety. However, registered properties always have an initial value, which prevents `var(--override, --fallback)` from ever using the fallback.
+- **Decision**: Explicitly **unregister** (remove) the `@property` definition for override variables.
+- **Rationale**:
+  - **Functionality**: The fallback mechanism is critical for the system's default behavior. Without it, every surface would need an explicit override value.
+  - **Trade-off**: We lose type safety and animation interpolation for the override value itself, but we gain the correct cascading behavior.

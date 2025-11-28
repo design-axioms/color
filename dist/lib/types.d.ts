@@ -123,5 +123,9 @@ type SurfaceDefinition = {
     label: string;
     lightness: Record<Mode, number>;
 };
+interface Theme {
+    surfaces: SurfaceConfig[];
+    backgrounds: Map<string, Record<Mode, ColorSpec>>;
+}
 
-export type { AnchorValue, Anchors, BezierCurve, BorderTargets, ColorSpec, Context, ContrastOffsets, HueShiftConfig, Mode, ModeAnchors, ModeSpec, Mutable, PaletteConfig, Polarity, PolarityAnchors, SolverConfig, StateDefinition, SurfaceConfig, SurfaceDefinition, SurfaceGroup };
+export type { AnchorValue, Anchors, BezierCurve, BorderTargets, ColorSpec, Context, ContrastOffsets, HueShiftConfig, Mode, ModeAnchors, ModeSpec, Mutable, PaletteConfig, Polarity, PolarityAnchors, SolverConfig, StateDefinition, SurfaceConfig, SurfaceDefinition, SurfaceGroup, Theme };

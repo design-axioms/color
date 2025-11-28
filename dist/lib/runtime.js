@@ -6,6 +6,7 @@ export { toHighContrast } from '../chunk-JBRRT2GK.js';
 import '../chunk-7LUK7J7M.js';
 import '../chunk-W5IKP2D6.js';
 import '../chunk-A2CSS6V4.js';
+import '../chunk-G3PMV62Z.js';
 
 // src/lib/runtime.ts
 function generateTheme(config, selector) {
