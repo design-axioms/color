@@ -1,11 +1,13 @@
-# Task List - Epoch 11: Phase 1 - The Constitution (Axioms)
+# Task List - Epoch 11: Phase 2 - Persona Refinement
 
-- [x] **Draft Axioms**
+- [x] **Analysis**
+  - [x] Review `docs/design/personas.md` against `docs/design/axioms.md`.
+  - [x] Identify gaps (e.g., "The System Designer" vs "The Visual Tinkerer").
+  - [x] Incorporate "Fresh Eyes" feedback (if applicable).
 
-  - [x] Read existing design docs (`system_goals.md`, `intuition.md`, `hue-shift-rationale.md`).
-  - [x] Create `docs/design/axioms.md`.
+- [x] **Refinement**
+  - [x] Update `docs/design/personas.md` with refined archetypes.
+  - [x] Ensure each persona has a clear "Relationship to Axioms" section.
 
-- [x] **Cleanup**
-  - [x] Move consolidated files to `docs/agent-context/design/archive/`.
-  - [x] Update `docs/design/index.md` (if it exists) or create one.
-  - [x] Update `concepts.md` to point to `axioms.md`.
+- [x] **Verification**
+  - [x] Verify that the new personas cover the full spectrum of users (Beginner -> Expert -> System Architect).

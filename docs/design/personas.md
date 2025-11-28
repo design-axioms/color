@@ -7,14 +7,13 @@ These personas represent the core audience for the Algebraic Color System. We us
 _A front-end developer who knows they "should" do better with colors but is drowning in requirements._
 
 - **Description**: They are building a product and just want to ship. They know hardcoding hex values is "technical debt," but the alternative (learning color theory, managing dark mode, checking contrast) feels like a massive distraction from their actual feature work.
+- **Relationship to Axioms**:
+  - **Laws of Architecture**: They rely on the system's taxonomy (`surface-card`, `text-subtle`) to make decisions for them. They don't want to think about *color*; they want to think about *structure*.
+  - **Prime Directive**: They trust the system to handle accessibility compliance so they don't have to be an expert.
 - **Needs**:
   - **Zero-Config Defaults**: A system that looks good immediately upon installation.
   - **"It Just Works" Dark Mode**: They don't want to configure it; they just want it to happen.
-  - **Simple API**: Classes like `text-subtle` that explain _what_ they are, not _what color_ they are.
-- **Frustrations**:
-  - Complex setup processes.
-  - Reading long treatises on color theory just to pick a button color.
-  - Tools that require them to make design decisions they don't feel qualified to make.
+  - **Simple API**: Classes that explain _what_ they are, not _what color_ they are.
 - **Focus**: The CLI (init command), the "Thinking in Surfaces" mental model (simplification), and copy-pasteable examples.
 
 ## 2. The Visual Tinkerer
@@ -22,28 +21,27 @@ _A front-end developer who knows they "should" do better with colors but is drow
 _Interested in design, uses tools like Culori, but stuck at the "palette generation" stage._
 
 - **Description**: They enjoy playing with colors and have likely used online generators to make nice 5-color palettes. However, they struggle to translate those static palettes into a full, accessible UI system. They often get stuck when their beautiful palette falls apart in Dark Mode.
+- **Relationship to Axioms**:
+  - **Laws of Physics**: They are constantly fighting the "Chroma is Expensive" law. The system helps them visualize *why* their vibrant colors are failing contrast checks.
+  - **No Magic Numbers**: They want to move from arbitrary hex codes to a system where they can tweak parameters (curves, anchors) to achieve their vision.
 - **Needs**:
   - **Visual Feedback**: They need to see how their choices affect the UI in real-time (The Theme Builder).
   - **Bridge to Logic**: They need to understand _how_ to take their aesthetic intent and apply it systematically.
   - **Control**: They want to tweak hues and chroma, not just accept a black-box result.
-- **Frustrations**:
-  - "Magic" tools that ruin their specific aesthetic choices.
-  - The gap between "a nice palette" and "a working UI."
 - **Focus**: The Theme Builder, Hue Shifting (aesthetic control), and the "Physics of Light" concept (explaining the system visually).
 
-## 3. The Conflicted Advocate
+## 3. The Accessibility Champion (formerly "The Conflicted Advocate")
 
-_Cares about accessibility but is burnt out by the difficulty of manual compliance._
+_Empowered by the system to prove that accessibility and beauty are compatible._
 
-- **Description**: They know accessibility is important, but they've been burned by the friction of maintaining it. They are constantly fighting with designers or their own desire for "pretty" UI vs. "accessible" UI. They are on the fence: "Is it worth the effort if it makes everything look like a government form?"
+- **Description**: They are the guardian of quality on their team. They used to be the "bad cop," constantly flagging contrast issues and fighting with designers. Now, they use the Color System as their "enforcer," allowing them to focus on higher-level UX issues.
+- **Relationship to Axioms**:
+  - **Prime Directive**: This is their manifesto. They love that the system treats accessibility as a *constraint*, not a feature.
+  - **Code is Source of Truth**: They value that the system generates tokens deterministically, preventing regression.
 - **Needs**:
   - **Proof of Robustness**: They need to trust that the system handles edge cases (High Contrast, Forced Colors) automatically.
   - **No-Compromise Solutions**: They want to see that accessible code can still be beautiful.
   - **Automation**: They want the system to be the "bad cop" so they don't have to be.
-- **Frustrations**:
-  - Manual contrast checking.
-  - False positives in linting tools.
-  - The feeling that accessibility is a tax on creativity.
 - **Focus**: The Solver's guarantee (APCA compliance), "Accessibility First" documentation, and automated contrast checking features.
 
 ## 4. The Color Scientist
@@ -51,26 +49,25 @@ _Cares about accessibility but is burnt out by the difficulty of manual complian
 _Immersed in color theory and a11y, excited for a tool that handles the math._
 
 - **Description**: They know what OKLCH is, they understand gamut clipping, and they have strong opinions on perceptual uniformity. They are tired of building their own hacky scripts to manage this and are looking for a "Pro" tool.
+- **Relationship to Axioms**:
+  - **Laws of Physics**: They deeply appreciate the "Hue Rotates" (Bezold-Brücke) implementation and the use of OKLCH.
+  - **No Magic Numbers**: They want to inspect the curves and verify the math.
 - **Needs**:
   - **Deep Control**: Access to the raw math, curves, and anchors.
   - **Advanced Features**: P3 gamut support, custom interpolation curves.
   - **Transparency**: They need to know exactly how the solver works (no black boxes).
-- **Frustrations**:
-  - Simplistic tools that hide the details ("dumbed down").
-  - Incorrect math or bad interpolation in other tools.
 - **Focus**: "Solver Internals," advanced configuration options, and the raw token API.
 
-## 5. The System Alumnus
+## 5. The System Architect (formerly "The System Alumnus")
 
-_Used to a corporate design system, now realizing how hard it is to build one from scratch._
+_Building the foundation for a team or organization._
 
-- **Description**: They previously worked at a Big Tech company where "Dark Mode" and "Theming" were solved problems provided by a platform team. Now working on a startup or side project, they are shocked by the complexity of recreating that infrastructure.
+- **Description**: They are responsible for the "Design System" of their company or project. They care about maintainability, scalability, and developer experience. They need a system that prevents "drift" and ensures consistency across a large codebase.
+- **Relationship to Axioms**:
+  - **Laws of Integration**: They are the primary beneficiary of "Code is Source of Truth". They need the system to integrate with Figma, Tailwind, and other tools.
+  - **Laws of Architecture**: They use the "Surfaces are Containers" axiom to enforce consistent nesting rules across the team.
 - **Needs**:
   - **Structure**: They miss the standardized naming conventions and reliability of their old system.
   - **Scalability**: They want a solution that feels "enterprise-grade" but fits in a side project.
   - **Documentation**: They expect high-quality docs like they had internally.
-- **Frustrations**:
-  - Reinventing the wheel.
-  - Messy, unorganized CSS variables.
-  - Lack of standardization in open-source tools.
 - **Focus**: The "Catalog" (standardized components), the token system structure, and the architectural philosophy.

@@ -1,55 +1,35 @@
-# Implementation Plan - Epoch 11: Phase 1 - The Constitution (Axioms)
+# Implementation Plan - Epoch 11: Phase 2 - Persona Refinement
 
-**Goal**: Consolidate scattered design wisdom into a single, authoritative document: `docs/design/axioms.md`.
+**Goal**: Update personas based on recent learnings and feedback to ensure we are building for the right users.
 
 ## 1. Analysis
 
-We have several design documents that overlap or contain partial truths. We need to consolidate them into a single source of truth.
+We have an existing `docs/design/personas.md`. We need to review it against the new `axioms.md` and the "Fresh Eyes" feedback to ensure the personas accurately reflect the users we are targeting.
 
-**Source Documents:**
-- `docs/agent-context/design/system_goals.md`: High-level goals and "Constitution".
-- `docs/agent-context/design/intuition.md`: The "why" behind the math.
-- `docs/agent-context/design/hue-shift-rationale.md`: Specific logic for hue shifting.
-- `concepts.md` (in root): Older conceptual overview.
-- `docs/design/fresh-eyes-review.md`: Recent audit findings (contextual).
+**Current Personas:**
+1.  The Overwhelmed Pragmatist
+2.  The Visual Tinkerer
+3.  The Conflicted Advocate
+4.  The Color Scientist
+5.  The System Alumnus
 
-**Target Document:**
-- `docs/design/axioms.md`: The new authoritative document.
+**Key Questions:**
+- Do these personas align with the "Axioms"? (e.g., Does the "Visual Tinkerer" understand that "Accessibility is the Foundation of Aesthetics"?)
+- Are we missing the "System Architect" who cares about the "Laws of Integration"?
+- How do we frame the "Conflicted Advocate" now that we have a "Prime Directive" that resolves their conflict?
 
-## 2. Proposed Structure for `axioms.md`
+## 2. Proposed Updates
 
-### The Prime Directive
-- **Accessibility is the Foundation of Aesthetics.** A design cannot be beautiful if it cannot be perceived. We reject the idea that accessibility and aesthetics are in conflict; instead, we treat accessibility as the physical medium upon which beauty is built.
-
-### The Laws of Physics (Light)
-- **Lightness is Relative**: A surface's lightness is defined by its context (Mode + Polarity).
-- **Chroma is Expensive**: High chroma reduces available lightness contrast.
-- **Hue Rotates**: Hue shifts naturally as lightness changes (Bezold-Brücke effect).
-
-### The Laws of Architecture (Surfaces)
-- **Surfaces are Containers**: Every element lives on a surface.
-- **Context Flows Down**: A surface establishes the context for its children.
-- **Text is Relative**: Text color is defined by the surface it sits on, not global variables.
-
-### The Laws of Integration
-- **The Code is the Source of Truth**: Design tools are downstream consumers.
-- **No Magic Numbers**: All values are derived from the configuration (Anchors, Curves).
+- **Refine "The Conflicted Advocate"**: Rename to **"The Accessibility Champion"** or similar. They are no longer conflicted; they are empowered by the system's axioms.
+- **Refine "The Visual Tinkerer"**: Emphasize their need to understand *why* their palette is being constrained (The Laws of Physics).
+- **Add/Refine "The System Architect"**: (Maybe replaces "System Alumnus"). Focus on the "Laws of Integration" and "Code as Source of Truth".
 
 ## 3. Execution Steps
 
-- [ ] **Draft `docs/design/axioms.md`**:
-    - Synthesize content from `system_goals.md` (The "Constitution" section).
-    - Incorporate the "Physics" from `intuition.md` and `hue-shift-rationale.md`.
-    - Integrate the "Architecture" from `concepts.md`.
-- [ ] **Review & Refine**:
-    - Ensure the tone is authoritative yet accessible.
-    - Verify that all key concepts (Context, Polarity, Anchors) are defined as axioms.
-- [ ] **Deprecate Old Files**:
-    - Move `docs/agent-context/design/intuition.md`, `docs/agent-context/design/hue-shift-rationale.md`, and `docs/agent-context/design/system_goals.md` to `docs/agent-context/design/archive/`.
-    - Update `concepts.md` to point to `axioms.md` (or decide if it should remain as a high-level summary).
-- [ ] **Update References**:
-    - Check for links to the moved files and update them to point to `axioms.md`.
+- [ ] **Review `docs/design/personas.md`**: Read through the current descriptions.
+- [ ] **Draft Updates**: Rewrite the personas to explicitly reference the Axioms where relevant.
+    - *Example*: "The Overwhelmed Pragmatist relies on the 'Laws of Architecture' to make decisions without thinking about color."
+- [ ] **Verify**: Ensure the new set covers our primary use cases (CLI user, Theme Builder user, Library author).
 
 ## 4. Verification
-- [ ] **Readability Check**: Ensure the new document flows logically.
-- [ ] **Completeness Check**: Ensure no critical "why" information is lost during consolidation.
+- [ ] **Alignment Check**: Do the personas feel like real people who would benefit from the system as defined in the Axioms?
