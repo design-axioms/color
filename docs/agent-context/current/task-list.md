@@ -1,13 +1,19 @@
-# Task List - Epoch 11: Phase 2 - Persona Refinement
+# Task List - Epoch 11: Phase 3 - Fresh Eyes Audit
 
-- [x] **Analysis**
-  - [x] Review `docs/design/personas.md` against `docs/design/axioms.md`.
-  - [x] Identify gaps (e.g., "The System Designer" vs "The Visual Tinkerer").
-  - [x] Incorporate "Fresh Eyes" feedback (if applicable).
+- [x] **Preparation**
+  - [x] Create `docs/design/fresh-eyes-audit-2.md` template.
 
-- [x] **Refinement**
-  - [x] Update `docs/design/personas.md` with refined archetypes.
-  - [x] Ensure each persona has a clear "Relationship to Axioms" section.
+- [x] **Simulation: The Overwhelmed Pragmatist**
+  - [x] Audit CLI `init` flow (mental walk-through or actual run).
+  - [x] Audit "Quick Start" docs for clarity and copy-pasteability.
 
-- [x] **Verification**
-  - [x] Verify that the new personas cover the full spectrum of users (Beginner -> Expert -> System Architect).
+- [x] **Simulation: The Visual Tinkerer**
+  - [x] Audit Theme Builder "Creative Control" (does it feel restrictive?).
+  - [x] Check "Hue Shift" visualization clarity in the docs.
+
+- [x] **Simulation: The System Architect**
+  - [x] Audit Token Export structure (DTCG, Tailwind).
+  - [x] Review "Catalog" documentation for completeness.
+
+- [x] **Synthesis**
+  - [x] Prioritize findings in `docs/design/fresh-eyes-audit-2.md`.
