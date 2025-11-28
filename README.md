@@ -16,11 +16,11 @@
 ## Installation
 
 ```bash
-npm install color-system
+npm install @algebraic-systems/color-system
 # or
-pnpm add color-system
+pnpm add @algebraic-systems/color-system
 # or
-yarn add color-system
+yarn add @algebraic-systems/color-system
 ```
 
 ## Quick Start
@@ -60,14 +60,12 @@ This generates a `theme.css` file (by default).
 Import the core engine, utilities, and your generated theme into your application.
 
 ```css
-/* 1. The Core Engine (Reactive Pipeline) */
-@import "color-system/engine.css";
+/* In your main CSS file */
+@import "@algebraic-systems/color-system/engine.css";
+@import "./theme.css"; /* Your generated theme */
 
-/* 2. Your Generated Theme */
-@import "./theme.css";
-
-/* 3. Utility Classes (Optional but recommended) */
-@import "color-system/utilities.css";
+/* Optional utilities */
+@import "@algebraic-systems/color-system/utilities.css";
 ```
 
 ### 4. Use Semantic Classes
@@ -99,7 +97,10 @@ pnpm exec color-system ./my-config.json ./dist/my-theme.css
 For dynamic theming or scoped applications, you can use the runtime API to generate and inject themes on the fly.
 
 ```typescript
-import { generateTheme, injectTheme } from "color-system/runtime";
+import {
+  generateTheme,
+  injectTheme,
+} from "@algebraic-systems/color-system/runtime";
 import { config } from "./my-config";
 
 // Generate CSS for a specific scope

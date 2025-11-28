@@ -248,3 +248,22 @@ This file tracks key architectural and design decisions made throughout the proj
 - **Rationale**:
   - **Functionality**: The fallback mechanism is critical for the system's default behavior. Without it, every surface would need an explicit override value.
   - **Trade-off**: We lose type safety and animation interpolation for the override value itself, but we gain the correct cascading behavior.
+
+### [2025-11-28] Full Screen Container for Theme Builder
+
+- **Context**: Starlight's default layout adds significant padding and constrains content width, which is ideal for reading documentation but breaks the application-like experience required for the Theme Builder.
+- **Decision**: Implement a `FullScreenContainer` component that uses `position: fixed` to overlay the entire viewport, effectively breaking out of the Starlight layout flow.
+- **Rationale**:
+  - **Immersiveness**: Provides the full canvas needed for the complex Theme Builder UI.
+  - **Isolation**: Prevents Starlight's global styles (like max-width) from interfering with the builder's internal layout.
+  - **Simplicity**: Avoids needing to create a completely separate Astro layout or route just for one page.
+
+### [2025-11-28] Layout Primitives (Stack & Cluster)
+
+- **Context**: The Theme Builder UI relied on ad-hoc CSS and fragile flexbox hacks for alignment, leading to visual regressions (e.g., misaligned buttons and inputs).
+- **Decision**: Introduce reusable layout primitives (`Stack` for vertical rhythm, `Cluster` for horizontal grouping) based on the "Every Layout" methodology.
+- **Rationale**:
+  - **Robustness**: Structural components enforce alignment rules more reliably than utility classes scattered across elements.
+  - **Maintainability**: Centralizes layout logic, making it easier to update spacing or alignment globally.
+  - **Consistency**: Ensures a uniform rhythm across the UI.
+

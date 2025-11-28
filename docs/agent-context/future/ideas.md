@@ -19,3 +19,7 @@ The current Theme Builder UI is functional but sparse. It lacks data density and
   - **Visualizer Graph**: A node-based or layer-based view showing how surfaces inherit and modify context.
   - **Data Density**: Show actual contrast ratios, lightness values, and hex codes inline without clutter.
   - **Intuitive Controls**: Instead of just sliders, use visual histograms or gradients to show where a surface sits in the gamut.
+
+## Ecosystem
+
+- **`@algebraic-systems/layout`**: A companion layout system to complement the color system. This should likely follow similar principles (semantic, constraint-based, runtime-aware).

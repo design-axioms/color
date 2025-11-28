@@ -8,7 +8,7 @@ _A front-end developer who knows they "should" do better with colors but is drow
 
 - **Description**: They are building a product and just want to ship. They know hardcoding hex values is "technical debt," but the alternative (learning color theory, managing dark mode, checking contrast) feels like a massive distraction from their actual feature work.
 - **Relationship to Axioms**:
-  - **Laws of Architecture**: They rely on the system's taxonomy (`surface-card`, `text-subtle`) to make decisions for them. They don't want to think about *color*; they want to think about *structure*.
+  - **Laws of Architecture**: They rely on the system's taxonomy (`surface-card`, `text-subtle`) to make decisions for them. They don't want to think about _color_; they want to think about _structure_.
   - **Prime Directive**: They trust the system to handle accessibility compliance so they don't have to be an expert.
 - **Needs**:
   - **Zero-Config Defaults**: A system that looks good immediately upon installation.
@@ -22,7 +22,7 @@ _Interested in design, uses tools like Culori, but stuck at the "palette generat
 
 - **Description**: They enjoy playing with colors and have likely used online generators to make nice 5-color palettes. However, they struggle to translate those static palettes into a full, accessible UI system. They often get stuck when their beautiful palette falls apart in Dark Mode.
 - **Relationship to Axioms**:
-  - **Laws of Physics**: They are constantly fighting the "Chroma is Expensive" law. The system helps them visualize *why* their vibrant colors are failing contrast checks.
+  - **Laws of Physics**: They are constantly fighting the "Chroma is Expensive" law. The system helps them visualize _why_ their vibrant colors are failing contrast checks.
   - **No Magic Numbers**: They want to move from arbitrary hex codes to a system where they can tweak parameters (curves, anchors) to achieve their vision.
 - **Needs**:
   - **Visual Feedback**: They need to see how their choices affect the UI in real-time (The Theme Builder).
@@ -36,7 +36,7 @@ _Empowered by the system to prove that accessibility and beauty are compatible._
 
 - **Description**: They are the guardian of quality on their team. They used to be the "bad cop," constantly flagging contrast issues and fighting with designers. Now, they use the Color System as their "enforcer," allowing them to focus on higher-level UX issues.
 - **Relationship to Axioms**:
-  - **Prime Directive**: This is their manifesto. They love that the system treats accessibility as a *constraint*, not a feature.
+  - **Prime Directive**: This is their manifesto. They love that the system treats accessibility as a _constraint_, not a feature.
   - **Code is Source of Truth**: They value that the system generates tokens deterministically, preventing regression.
 - **Needs**:
   - **Proof of Robustness**: They need to trust that the system handles edge cases (High Contrast, Forced Colors) automatically.

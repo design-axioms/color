@@ -1,5 +1,5 @@
 {
-  "name": "color-system",
+  "name": "@algebraic-systems/color-system",
   "version": "0.1.0",
   "description": "A semantic color system generator with automatic contrast balancing and runtime theming.",
   "keywords": [

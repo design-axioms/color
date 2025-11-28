@@ -59,7 +59,8 @@ describe("DTCG Exporter", () => {
     expect(cardBg).toHaveProperty("$type", "color");
     expect(cardBg).toHaveProperty("$value");
     expect(typeof cardBg.$value).toBe("string");
-    expect(cardBg.$value).toMatch(/^#[0-9a-fA-F]{6}$/);
+    // Expect OKLCH string format
+    expect(cardBg.$value).toMatch(/^oklch\(/);
 
     // Check Foreground Tokens
     const onSurfaceGroup = light["on-surface"] as any;

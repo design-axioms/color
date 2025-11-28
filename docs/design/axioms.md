@@ -19,17 +19,23 @@ A design cannot be beautiful if it cannot be perceived. We reject the idea that 
 These axioms describe how the system models light and color perception.
 
 ### 1. Lightness is Relative
+
 A surface's lightness is never absolute; it is defined by its **Context**.
+
 - **Polarity**: A "light" surface in a dark mode context is actually dark. A "dark" surface in a light mode context is actually light.
-- **Adaptation**: The system solves for *contrast ratios*, not hex codes. `Surface-100` might be white in one theme and black in another, but its relationship to its content remains constant.
+- **Adaptation**: The system solves for _contrast ratios_, not hex codes. `Surface-100` might be white in one theme and black in another, but its relationship to its content remains constant.
 
 ### 2. Chroma is Expensive
+
 High chroma (saturation) reduces available lightness contrast.
+
 - **The Trade-off**: You cannot have a color that is both extremely vibrant and extremely accessible against all backgrounds.
 - **Budgeting**: Every surface has a "chroma budget". Spending it on vibrancy means you have less room for lightness variation.
 
 ### 3. Hue Rotates (The Bezold-Brücke Effect)
+
 Hue is not static across the lightness spectrum.
+
 - **Natural Shift**: As colors get lighter or darker, our perception of their hue shifts. A linear ramp of "Blue" often looks purple in the darks or teal in the lights.
 - **Non-Linear Correction**: The system uses cubic Bezier curves to rotate hue non-linearly, mimicking natural light physics (cool shadows → warm highlights) to maintain perceptual harmony.
 
@@ -38,21 +44,27 @@ Hue is not static across the lightness spectrum.
 These axioms describe how the system organizes UI elements.
 
 ### 4. Surfaces are Containers
+
 Every visible element lives on a **Surface**.
+
 - **No Floating Content**: Text, icons, and borders never exist in a vacuum. They are always "on" something.
 - **Taxonomy**:
-    - **Canvas**: The infinite backdrop (`page`, `workspace`).
-    - **Object**: A contained element (`card`, `tinted`).
-    - **Action**: An interactive element (`action`).
-    - **Spotlight**: A high-emphasis element (`spotlight`).
+  - **Canvas**: The infinite backdrop (`page`, `workspace`).
+  - **Object**: A contained element (`card`, `tinted`).
+  - **Action**: An interactive element (`action`).
+  - **Spotlight**: A high-emphasis element (`spotlight`).
 
 ### 5. Context Flows Down
+
 A surface establishes the **Context** for its children.
+
 - **Inheritance**: When you nest a Card on a Page, the Card consumes the Page's context and creates a new context for its contents.
 - **Automatic Adjustment**: The system automatically adjusts contrast and polarity based on the nesting level. You don't manually pick "Dark Card" or "Light Card"; you just pick "Card".
 
 ### 6. Text is Relative
+
 Text color is defined by the surface it sits on, not by global variables.
+
 - **Context Consumers**: Text tokens (`text-strong`, `text-subtle`) are abstract requests for contrast.
 - **Inversion**: `text-strong` on a light surface is dark. `text-strong` on a dark surface is light. The component doesn't know or care; it just asks for "Strong Text".
 
@@ -61,11 +73,15 @@ Text color is defined by the surface it sits on, not by global variables.
 These axioms describe how the system interacts with the world.
 
 ### 7. The Code is the Source of Truth
+
 Design tools (Figma, Sketch) are downstream consumers of the code, not the other way around.
+
 - **Generation**: Tokens are generated from the configuration code.
-- **No Manual Tweaks**: We do not manually tweak individual hex codes in the output. If a color looks wrong, we adjust the *algorithm* or the *configuration constraints*.
+- **No Manual Tweaks**: We do not manually tweak individual hex codes in the output. If a color looks wrong, we adjust the _algorithm_ or the _configuration constraints_.
 
 ### 8. No Magic Numbers
+
 All values are derived from the configuration (Anchors, Curves).
+
 - **Math vs. Magic**: We reject arbitrary values like "Blue-500".
 - **Derivation**: Every color is the result of a solver function: `f(Context, Intent) = Color`.

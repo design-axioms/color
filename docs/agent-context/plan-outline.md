@@ -164,7 +164,23 @@
     - **Deliverables**: Updated `docs/design/personas.md`.
   - **Phase 3: Fresh Eyes Audit**
     - **Goal**: Comprehensive review of the system using new personas and axioms.
-    - **Deliverables**: Prioritized list of friction points.
+    - **Deliverables**: Prioritized list of friction points. - **Phase 3.5: Critical Fixes (Completed)**
+    - **Goal**: Address critical friction points identified in the audit (CLI, Docs, Export).
+    - **Deliverables**:
+      - Updated CLI with `build` command and flags.
+      - Corrected package name and installation docs.
+      - Enhanced DTCG exporter (P3 support).
+      - Restored Hue Shift documentation.
   - **Phase 4: Unification (Theme Builder Integration)**
     - **Goal**: Move the Theme Builder from the standalone `demo` app into the Astro site.
     - **Deliverables**: `site/src/pages/builder`, integrated navigation.
+
+## Epoch 12: Framework Migration (Future)
+
+- **Goal**: Migrate interactive components to Svelte to align with other projects and improve developer experience.
+- **Scope**: Use Svelte components within the existing Astro Starlight architecture (not SvelteKit).
+- **Key Deliverables**:
+  - **Svelte Integration**: Configure Astro to support Svelte.
+  - **Component Migration**: Port existing Preact/React components (Theme Builder, Visualizers) to Svelte.
+  - **State Management**: Refactor context-based state (ConfigContext, ThemeContext) to Svelte stores.
+

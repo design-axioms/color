@@ -333,3 +333,41 @@
   - Documented the workflow for **Tokens Studio** and Figma Variables.
 - **Documentation**:
   - Added a new "Ecosystem" section to the sidebar.
+
+## Epoch 11: Phase 3.5 - Critical Fixes (2025-11-28)
+
+**Goal**: Address critical friction points identified in the "Fresh Eyes Audit" to ensure the system is usable and consistent with its documentation.
+
+**Completed Work**:
+
+- **CLI Refactor**:
+  - Implemented the `build` command with `--watch` support, matching the documentation.
+  - Updated `src/cli/index.ts` to correctly route commands (`init`, `build`, `export`) and handle legacy arguments.
+  - Fixed `package.json` bin entry and scripts.
+- **Package Identity**:
+  - Renamed package to `@algebraic-systems/color-system` to reflect its new home and scope.
+- **DTCG Export Upgrade**:
+  - Updated the DTCG exporter to output `oklch(L C H)` values for full P3 gamut support.
+  - Ensured all semantic foreground tokens (`fg-high`, `fg-strong`, etc.) are exported.
+- **Documentation Restoration**:
+  - Restored the missing `Hue Shift Rationale` document to `docs/design/hue-shift.md`.
+
+## Epoch 11: Phase 4 - Unification (Theme Builder Integration) (2025-11-28)
+
+**Goal**: Move the Theme Builder from the standalone `demo` app into the Astro site (`site/`) to create a unified experience.
+
+**Completed Work**:
+
+- **Migration**:
+  - Moved all Theme Builder components from `demo/src` to `site/src/components/builder`.
+  - Migrated `ConfigContext` and created a new `ThemeContext` bridge for Starlight integration.
+- **Integration**:
+  - Created `site/src/content/docs/builder.mdx` as the new home for the builder.
+  - Implemented `FullScreenContainer` to allow the builder to break out of Starlight's layout constraints.
+- **Refinement**:
+  - **Layout Primitives**: Introduced `Stack` and `Cluster` components for robust layout management.
+  - **Visual Fixes**: Resolved CSS box-model issues causing misalignment in the preview area.
+  - **Reset Functionality**: Added a "Reset to Default" button to the sidebar.
+- **Cleanup**:
+  - Removed the legacy `demo` directory.
+

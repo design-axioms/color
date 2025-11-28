@@ -1,23 +1,16 @@
-# Implementation Plan - Epoch 11: Phase 3 - Fresh Eyes Audit
+# Implementation Plan: Phase 4 (Unification)
 
-**Goal**: Conduct a comprehensive review of the system using the new Personas and Axioms as a lens to identify friction points.
+## Overview
 
-## 1. Analysis
+We are merging the standalone `demo` application (Theme Builder) into the main documentation site (`site`). This will create a unified experience where users can learn about the system and then immediately build a theme in the same interface.
 
-Now that we have clear Axioms ("The Laws") and Personas ("The Users"), we can simulate a user journey for each persona and see where the system breaks the laws or fails the user.
+## Strategy
 
-**The Lens:**
-- **Axioms**: Are we violating "Accessibility is the Foundation"? Are we hiding "Magic Numbers"?
-- **Personas**: Does the "Pragmatist" get stuck? Does the "Tinkerer" feel limited?
+1.  **Lift and Shift**: Move the React components from `demo/src` to `site/src`.
+2.  **Hydration**: Use Astro's `client:only="react"` directive to render the Theme Builder, as it relies heavily on browser APIs (`localStorage`, `window.matchMedia`).
+3.  **Context Sharing**: Ensure the `ThemeContext` used by the docs (for live demos) is compatible with or the same as the one used by the Builder.
 
-## 2. Execution Steps
+## Risks
 
-- [ ] **Create Audit Document**: Initialize `docs/design/fresh-eyes-audit-2.md` to capture findings.
-- [ ] **Simulate User Journeys**:
-    - **Pragmatist**: Focus on *Getting Started*. Is it zero-config?
-    - **Tinkerer**: Focus on *Customization*. Can I make it look "Cyberpunk"?
-    - **Architect**: Focus on *Integration*. Is the output clean?
-- [ ] **Prioritize**: Rank issues by impact on the core personas.
-
-## 3. Verification
-- [ ] **Actionable Output**: The audit should result in a list of concrete tasks for future phases (e.g., "Fix CLI prompt", "Add visualizer to Builder").
+- **CSS Conflicts**: The `demo` app uses global CSS that might conflict with Starlight's styles.
+- **Routing**: The `demo` app uses Hash Routing. We need to decide if we keep that or switch to standard URL routing within Astro.

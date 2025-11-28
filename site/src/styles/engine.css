@@ -3,6 +3,11 @@
    The core logic for the "Reactive Pipeline".
 */
 
+/* Global Reset */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 @property --base-chroma {
   syntax: "<number>";
   initial-value: 0.008;
