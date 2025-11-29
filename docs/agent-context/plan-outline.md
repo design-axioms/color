@@ -182,6 +182,6 @@
   - **Phase 1: Infrastructure & Proof of Concept (Completed)**
     - **Goal**: Initialize Svelte 5 and port foundational components.
     - **Deliverables**: Svelte integration in Astro, `Stack.svelte`, `Cluster.svelte`, `ContrastBadge.svelte`.
-  - **Phase 2: Visualizations (Planned)**
+  - **Phase 2: Visualizations (In Progress)**
     - **Goal**: Port stateless visualization components to Svelte.
     - **Deliverables**: `ContextVisualizer.svelte`, `DynamicRange.svelte`, `HueShiftVisualizer.svelte`.

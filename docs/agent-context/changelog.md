@@ -387,3 +387,18 @@
   - Restored missing visualization components (`ContextVisualizer`, `HueShiftVisualizer`).
   - Fixed broken imports in `SystemDemo.tsx` and `HueShiftDemo.tsx`.
   - Fixed Theme Builder layout regression in documentation using `.not-content` wrapper.
+
+## Epoch 12: Phase 2 - Framework Migration (Visualizations) (2025-11-28)
+
+**Goal**: Port stateless visualization components used in documentation to Svelte 5 to validate the component architecture and reduce Preact usage.
+
+**Completed Work**:
+
+- **Component Porting**:
+  - Ported `ContextVisualizer`, `DynamicRange`, `HueShiftVisualizer`, and `DataVizDemo` to Svelte 5.
+  - Implemented `Diagram.svelte` wrapper for MDX integration.
+  - Adopted a "Pure Component" strategy, relying on CSS variables and props instead of React Context.
+- **MDX Integration**:
+  - Updated `physics-of-light.mdx`, `data-viz.mdx`, `thinking-in-surfaces.mdx`, and `hue-shifting.mdx` to use the new Svelte components.
+- **Verification**:
+  - Verified the build (`pnpm docs:build`) passes with the new Svelte components.

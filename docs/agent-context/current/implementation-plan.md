@@ -1,29 +1,36 @@
-# Implementation Plan - Epoch 12: Framework Migration (Phase 1)
+# Implementation Plan - Epoch 12: Framework Migration (Phase 2)
 
 ## Goal
 
-Initialize the Svelte 5 environment within the Astro project and validate the migration path by porting foundational components.
+Port stateless visualization components used in documentation to Svelte 5 to validate the component architecture and reduce Preact usage.
+
+## Strategy
+
+- **Pure Components**: Port components as "pure" Svelte components that accept data via props (`$props()`).
+- **Context Isolation**: Avoid porting the complex `ThemeContext` to Svelte stores in this phase. Instead, pass the necessary theme data (colors, config) from the parent Astro/MDX context or existing React wrappers into the Svelte components.
+- **Direct Import**: Update MDX files to import Svelte components directly where possible.
 
 ## Proposed Changes
 
-### 1. Infrastructure Setup
+### 1. Visualization Components
 
-- [ ] Install `@astrojs/svelte` and `svelte` (v5).
-- [ ] Update `astro.config.mjs` to include the Svelte integration.
-- [ ] Verify `tsconfig.json` settings for Svelte support.
+- [ ] Port `ContextVisualizer` to `site/src/components/ContextVisualizer.svelte`.
+  - *Note*: Currently uses `ThemeContext`. Will need to accept `theme` or `surfaces` as props.
+- [ ] Port `DynamicRange` to `site/src/components/DynamicRange.svelte`.
+- [ ] Port `HueShiftVisualizer` to `site/src/components/HueShiftVisualizer.svelte`.
+- [ ] Port `DataVizDemo` to `site/src/components/DataVizDemo.svelte`.
 
-### 2. Layout Primitives Port
+### 2. Wrapper Components
 
-- [ ] Create `site/src/components/layout/Stack.svelte`.
-- [ ] Create `site/src/components/layout/Cluster.svelte`.
-- [ ] Ensure they match the API and behavior of the React versions.
+- [ ] Port `Diagram` to `site/src/components/Diagram.svelte`.
 
-### 3. Simple Component Port
+### 3. Integration
 
-- [ ] Port `ContrastBadge` to `site/src/components/builder/ContrastBadge.svelte`.
-- [ ] Use this to test prop passing and basic logic in Svelte 5.
+- [ ] Update MDX files to import the new Svelte components.
+- [ ] Verify that `SystemDemo` (React) or other wrappers can pass data to these Svelte components if they are nested.
 
 ### 4. Verification
 
-- [ ] Create a temporary test page (or use an existing one) to render the Svelte components.
-- [ ] Verify that Svelte and Preact components coexist without issues in the Astro build.
+- [ ] Check "Thinking in Surfaces" page (`docs/concepts/thinking-in-surfaces`).
+- [ ] Check "Hue Shifting" page (`docs/design/hue-shift`).
+- [ ] Check "Data Visualization" page (`docs/usage/data-viz`).
