@@ -152,11 +152,11 @@
     - JSON Schema for config validation and Intellisense.
     - **Figma Sync**: Guide for using exported tokens with Figma plugins.
 
-## Epoch 11: Refinement & Consolidation (Planned)
+## Epoch 11: Refinement & Consolidation (In Progress)
 
 - **Goal**: Solidify the project's foundation by consolidating design wisdom, refining personas, and unifying the product experience.
 - **Phases**:
-  - **Phase 1: The Constitution (Axioms)**
+  - **Phase 1: The Constitution (Axioms) (Completed)**
     - **Goal**: Consolidate scattered design docs into a single authoritative `axioms.md`.
     - **Deliverables**: `docs/design/axioms.md`.
   - **Phase 2: Persona Refinement**

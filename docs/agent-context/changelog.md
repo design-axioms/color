@@ -444,3 +444,13 @@
   - Unified the documentation demo architecture by replacing legacy React wrappers (`SystemDemo`) with Svelte (`DemoWrapper`).
   - Migrated all MDX files to use Svelte components, eliminating the "split-brain" state management issue.
   - Deleted legacy React components and context files.
+
+## Epoch 11: Phase 1 - The Constitution (Axioms) (2025-11-29)
+
+**Goal**: Consolidate scattered design wisdom and architectural decisions into a single authoritative document: `docs/design/axioms.md`.
+
+**Completed Work**:
+
+- **The Constitution**: Updated `docs/design/axioms.md` to include new axioms for State Management (Runes), Isomorphism, and Browser Support.
+- **Documentation Structure**: Updated `docs/design/index.md` to organize design docs into Core, Deep Dives, and Audits.
+- **Consolidation**: Verified that `axioms.md` aligns with the current codebase and architecture.

@@ -1,7 +1,7 @@
 # The Constitution (Axioms)
 
 > **Status**: Living Document
-> **Version**: 1.0 (Epoch 11)
+> **Version**: 1.1 (Epoch 11)
 
 This document serves as the "Constitution" for the Color System. It consolidates the core philosophy, physical laws, and architectural rules that govern the system. All design decisions and code changes must align with these axioms.
 
@@ -38,6 +38,7 @@ Hue is not static across the lightness spectrum.
 
 - **Natural Shift**: As colors get lighter or darker, our perception of their hue shifts. A linear ramp of "Blue" often looks purple in the darks or teal in the lights.
 - **Non-Linear Correction**: The system uses cubic Bezier curves to rotate hue non-linearly, mimicking natural light physics (cool shadows → warm highlights) to maintain perceptual harmony.
+- **Reference**: See [Hue Shift Rationale](hue-shift.md) for the mathematical implementation.
 
 ## III. The Laws of Architecture (Surfaces)
 
@@ -78,6 +79,7 @@ Design tools (Figma, Sketch) are downstream consumers of the code, not the other
 
 - **Generation**: Tokens are generated from the configuration code.
 - **No Manual Tweaks**: We do not manually tweak individual hex codes in the output. If a color looks wrong, we adjust the _algorithm_ or the _configuration constraints_.
+- **Isomorphism**: The core logic (`src/lib`) is isomorphic. It runs identically in Node.js (CLI) and the Browser (Theme Builder), ensuring the preview always matches the build output.
 
 ### 8. No Magic Numbers
 
@@ -85,3 +87,23 @@ All values are derived from the configuration (Anchors, Curves).
 
 - **Math vs. Magic**: We reject arbitrary values like "Blue-500".
 - **Derivation**: Every color is the result of a solver function: `f(Context, Intent) = Color`.
+
+### 9. Baseline Newly Available
+
+We build for the modern web, not the legacy web.
+
+- **Policy**: We adopt features that are "Newly Available" in major browsers (last 2 versions). We do not burden the codebase with polyfills or fallbacks for obsolete browsers unless strictly necessary.
+- **Examples**: `oklch()`, `light-dark()`, `@property`, `popover`.
+
+## V. The Laws of Engineering
+
+These axioms describe how we build the software itself.
+
+### 10. State is a Domain Model
+
+We model application state using plain classes and Runes, not framework-specific boilerplate.
+
+- **Encapsulation**: Logic lives in `*.svelte.ts` classes, not in UI components.
+- **Reactivity**: We use fine-grained reactivity (`$state`, `$derived`) to track changes automatically.
+- **Injection**: State is injected via Context, avoiding global singletons and ensuring testability.
+- **Reference**: See [State Architecture](state-architecture.md).

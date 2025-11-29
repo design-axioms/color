@@ -292,3 +292,12 @@ This file tracks key architectural and design decisions made throughout the proj
   - **Consistency**: Ensures a single source of truth for application state (`ThemeState`, `ConfigState`) across the entire site.
   - **Maintainability**: Removes the need to maintain parallel component libraries (React vs Svelte) and context providers.
   - **Performance**: Reduces bundle size by removing React/Preact dependencies from the critical path of documentation pages (once fully migrated).
+
+### [2025-11-29] Formalize Axioms as Constitution
+
+- **Context**: Design wisdom was scattered across multiple documents (`concepts.md`, `implementation.md`, `hue-shift.md`), making it hard to maintain consistency as the project evolved.
+- **Decision**: Consolidate all core principles into a single authoritative document: `docs/design/axioms.md`.
+- **Rationale**:
+  - **Single Source of Truth**: Provides a clear reference for both human developers and AI agents.
+  - **Alignment**: Ensures that new features (like Svelte migration) are checked against established principles.
+  - **Clarity**: Explicitly defining "Laws" (Physics, Architecture, Integration) helps resolve conflicts during decision making.

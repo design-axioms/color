@@ -1,43 +1,30 @@
-# Implementation Plan - Epoch 12: Framework Migration (Phase 4)
+# Implementation Plan - Epoch 11: Phase 1 - The Constitution (Axioms)
 
-**Goal**: Migrate the `ThemeBuilder` and its sub-components to Svelte 5, leveraging the `ConfigState` and `ThemeState` classes established in Phase 3.
+**Goal**: Consolidate scattered design wisdom and architectural decisions into a single authoritative document: `docs/design/axioms.md`. This document will serve as the "Constitution" for the system, guiding future decisions and ensuring consistency.
 
-## 1. Component Migration Strategy
+## Context
+The project has evolved significantly (Svelte migration, new features). We need to ensure our core design principles ("Axioms") are up-to-date and accurately reflect the current system. Although `axioms.md` exists, we need to verify its completeness against other design documents and the current codebase.
 
-We will migrate components bottom-up where possible, but the `ThemeBuilder` container itself might need to be established early to provide the layout context.
+## Proposed Changes
 
-### Target Components
+### 1. Review and Refine `axioms.md`
+- **Audit**: Compare `axioms.md` against:
+    - `concepts.md` (The public-facing mental model)
+    - `implementation.md` (The technical details)
+    - `docs/design/hue-shift.md` (Specific physics)
+    - `docs/design/state-architecture.md` (New Svelte architecture)
+- **Update**: Add or refine axioms to cover:
+    - **State Management**: The "Classes with Runes" architecture.
+    - **Isomorphism**: The "Code is Source of Truth" principle extending to the runtime engine.
+    - **Ecosystem**: The "Baseline Newly Available" browser support policy.
 
-- **`ThemeBuilder.svelte`**: The main container. Will consume `configState` and `themeState`.
-- **`AnchorsEditor.svelte`**: Controls for Anchor points.
-- **`HueShiftEditor.svelte`**: Controls for Hue Shifting algorithm.
-- **`KeyColorsEditor.svelte`**: Controls for Key Colors.
-- **`SurfaceManager.svelte`**: CRUD interface for Surfaces.
-- **`LiveThemeInjector.svelte`**: (Optional) Might be replaced by a `$effect` in `ThemeBuilder` or `ThemeState`.
+### 2. Consolidate Design Docs
+- **Deprecate**: Identify if any older design docs in `docs/design/` should be archived or merged into `axioms.md`.
+- **Link**: Ensure `axioms.md` links to deep-dive documents where appropriate (e.g., linking to `hue-shift.md` for the "Bezold-Brücke" axiom).
 
-## 2. State Integration
+### 3. Update Project Plan
+- Mark Epoch 11, Phase 1 as "In Progress" in `docs/agent-context/plan-outline.md`.
 
-- **Read**: Components will read directly from `configState.config` (e.g., `configState.config.anchors`).
-- **Write**: Components will call methods on `configState` (e.g., `configState.updateAnchor(...)`).
-- **Reactivity**: Since `configState.config` is a `$state` proxy, fine-grained reactivity should work out of the box.
-
-## 3. Layout & Styling
-
-- Reuse `Stack.svelte` and `Cluster.svelte` primitives.
-- Migrate `ThemeBuilder.css` to scoped `<style>` blocks where appropriate, or keep as a shared CSS file if it's used by multiple components (though Svelte prefers scoped styles).
-- Ensure mobile responsiveness is preserved.
-
-## 4. Execution Steps
-
-1.  **`ThemeBuilder` Shell**: Create the main `ThemeBuilder.svelte` shell that sets up the layout and imports the (yet to be migrated) or placeholder components.
-2.  **`AnchorsEditor`**: Migrate the sliders. This is a good test for the `DualRangeSlider` (which needs to be migrated or wrapped).
-    - *Note*: We need to check if `DualRangeSlider` is a custom component or a library.
-3.  **`KeyColorsEditor`**: Migrate the color pickers.
-4.  **`HueShiftEditor`**: Migrate the hue shift controls.
-5.  **`SurfaceManager`**: Migrate the complex CRUD logic.
-6.  **Integration**: Replace the React `ThemeBuilder` in `site/src/content/docs/builder.mdx` with the new Svelte version.
-
-## 5. Risks & Unknowns
-
-- **`DualRangeSlider`**: If this is a React component, it needs to be rewritten in Svelte.
-- **Drag and Drop**: `SurfaceManager` likely uses drag-and-drop. We need to see what library (if any) is used and find a Svelte equivalent or use native HTML5 DnD.
+## Verification Plan
+- **Manual Review**: Read the updated `axioms.md` to ensure it flows logically and covers all key aspects of the system.
+- **Cross-Check**: Verify that the "Laws" in `axioms.md` are not contradicted by the code or other documentation.
