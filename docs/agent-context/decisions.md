@@ -283,3 +283,12 @@ This file tracks key architectural and design decisions made throughout the proj
 - **Rationale**:
   - **Isolation**: Allows testing components in isolation without mocking complex context providers.
   - **Incremental Adoption**: We can use these components within the existing React app (via islands or wrappers) or in new Svelte pages without a full rewrite of the state management layer upfront.
+
+### [2025-11-28] Unify Demo Architecture (Fresh Eyes)
+
+- **Context**: After migrating the Theme Builder to Svelte, the documentation demos were still using legacy React wrappers (`SystemDemo`), creating a "split-brain" state management issue where two different contexts (React vs Svelte) were active simultaneously.
+- **Decision**: Replace `SystemDemo` with a Svelte-based `DemoWrapper` and migrate all documentation MDX files to use Svelte components exclusively.
+- **Rationale**:
+  - **Consistency**: Ensures a single source of truth for application state (`ThemeState`, `ConfigState`) across the entire site.
+  - **Maintainability**: Removes the need to maintain parallel component libraries (React vs Svelte) and context providers.
+  - **Performance**: Reduces bundle size by removing React/Preact dependencies from the critical path of documentation pages (once fully migrated).

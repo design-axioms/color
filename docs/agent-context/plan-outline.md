@@ -182,6 +182,12 @@
   - **Phase 1: Infrastructure & Proof of Concept (Completed)**
     - **Goal**: Initialize Svelte 5 and port foundational components.
     - **Deliverables**: Svelte integration in Astro, `Stack.svelte`, `Cluster.svelte`, `ContrastBadge.svelte`.
-  - **Phase 2: Visualizations (In Progress)**
+  - **Phase 2: Visualizations (Completed)**
     - **Goal**: Port stateless visualization components to Svelte.
     - **Deliverables**: `ContextVisualizer.svelte`, `DynamicRange.svelte`, `HueShiftVisualizer.svelte`.
+  - **Phase 3: State Architecture (Completed)**
+    - **Goal**: Establish a robust state management pattern using Svelte 5 Runes and Context Injection.
+    - **Deliverables**: `ThemeState.svelte.ts`, `ConfigState.svelte.ts`, `ThemeContext` migration.
+  - **Phase 4: Theme Builder Migration (Completed)**
+    - **Goal**: Migrate the core `ThemeBuilder` application to Svelte 5.
+    - **Deliverables**: `ThemeBuilder.svelte`, `AnchorsEditor.svelte`, `SurfaceManager.svelte`, Live Injection.

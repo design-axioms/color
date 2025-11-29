@@ -402,3 +402,45 @@
   - Updated `physics-of-light.mdx`, `data-viz.mdx`, `thinking-in-surfaces.mdx`, and `hue-shifting.mdx` to use the new Svelte components.
 - **Verification**:
   - Verified the build (`pnpm docs:build`) passes with the new Svelte components.
+
+## Epoch 12: Phase 3 - Framework Migration (State Architecture) (2025-11-28)
+
+**Goal**: Establish a robust state management pattern for the Svelte 5 migration, replacing legacy React Context with a "Classes with Runes" architecture.
+
+**Completed Work**:
+
+- **Architecture**:
+  - Adopted a "Classes with Runes + Context Injection" pattern (inspired by Ember/Glimmer).
+  - Implemented **Module Singletons** (`themeState`, `configState`) to solve Astro's cross-island state sharing challenge.
+- **Implementation**:
+  - Created `ThemeState.svelte.ts`: Manages light/dark mode and DOM synchronization.
+  - Created `ConfigState.svelte.ts`: Manages `SolverConfig`, persistence, and CRUD operations.
+  - Created `StateProvider.svelte`: Provides dependency injection for components within large islands.
+  - Created `ThemeToggle.svelte`: A test component to verify the architecture.
+- **Verification**:
+  - Created `DemoComposition.svelte` and `demo-test.mdx` to verify the state architecture in a live environment.
+  - Confirmed that the build passes and the architecture is SSR-safe.
+  - **Hydration Fix**: Resolved a critical hydration error (`TypeError: Cannot read properties of undefined (reading 'call')`) by reordering Astro integrations (`svelte` before `preact`).
+
+## Epoch 12: Phase 4 - Framework Migration (Theme Builder) (2025-11-28)
+
+**Goal**: Migrate the core `ThemeBuilder` application to Svelte 5, leveraging the new state architecture to create a highly performant and reactive editor.
+
+**Completed Work**:
+
+- **Core Migration**:
+  - Migrated `ThemeBuilder.svelte` (Main Container) with live theme injection via `$effect`.
+  - Migrated `AnchorsEditor.svelte` with complex dual-thumb slider logic and APCA contrast validation.
+  - Migrated `SurfaceManager.svelte` with CRUD operations and expandable rows.
+  - Migrated `KeyColorsEditor.svelte` and `HueShiftEditor.svelte`.
+- **Integration**:
+  - Created `BuilderWrapper.svelte` to bridge the `StateProvider` and the `ThemeBuilder`.
+  - Updated `builder.mdx` to use the new Svelte implementation.
+- **Features**:
+  - **Live Preview**: Implemented scoped CSS injection for real-time feedback.
+  - **Persistence**: Connected `ConfigState` for automatic `localStorage` saving.
+  - **Accessibility**: Integrated `ContrastBadge` and warning indicators for failing contrast.
+- **Fresh Eyes Cleanup**:
+  - Unified the documentation demo architecture by replacing legacy React wrappers (`SystemDemo`) with Svelte (`DemoWrapper`).
+  - Migrated all MDX files to use Svelte components, eliminating the "split-brain" state management issue.
+  - Deleted legacy React components and context files.

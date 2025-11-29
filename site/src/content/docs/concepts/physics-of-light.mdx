@@ -3,9 +3,9 @@ title: The Physics of Light
 description: How the system calculates color relationships using anchors and interpolation.
 ---
 
-import { SystemDemo } from "../../../components/SystemDemo";
+import DemoWrapper from "../../../components/DemoWrapper.svelte";
 
-<SystemDemo>
+<DemoWrapper>
 
 If "Surfaces" are the atoms of the system, **Anchors** are the laws of physics that govern them.
 
@@ -57,4 +57,4 @@ The human eye is more sensitive to changes in dark colors than light colors. A 5
 
 The solver accounts for this. It ensures that the **visual step** from Page to Card looks the same in Dark Mode as it does in Light Mode, even if the actual math values are different.
 
-</SystemDemo>
+</DemoWrapper>

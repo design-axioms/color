@@ -1,39 +1,63 @@
-# Walkthrough - Epoch 12: Framework Migration (Phase 2)
+# Phase 4: Theme Builder Migration Walkthrough
 
-## Goal
+## Overview
 
-The goal of this phase was to port the stateless visualization components used in the documentation from Preact to Svelte 5. This serves as a validation of the Svelte component architecture and reduces the reliance on Preact for simple, presentational components.
+In this phase, we successfully migrated the core `ThemeBuilder` application from React (Preact) to Svelte 5. This involved rewriting the main container and all sub-editors (`AnchorsEditor`, `KeyColorsEditor`, `HueShiftEditor`, `SurfaceManager`) to use the new `ConfigState` and `ThemeState` classes established in Phase 3.
 
-## Changes
+## Key Components Migrated
 
-### 1. Svelte Component Porting
+### 1. `ThemeBuilder.svelte`
 
-We ported the following components to Svelte 5, using the new "Runes" syntax where applicable (though most were simple enough to be stateless or use basic props):
+The main container that orchestrates the layout. It sets up the sidebar for editors and the main preview area.
 
-- **`ContextVisualizer.svelte`**: A static component demonstrating surface nesting and context inversion. It was ported as a pure HTML/CSS component.
-- **`DynamicRange.svelte`**: Visualizes the "Rubber Band" effect of anchors. It uses a snippet (`#snippet rangeCard`) to reuse markup for Light and Dark modes, demonstrating Svelte 5's powerful composition features.
-- **`HueShiftVisualizer.svelte`**: A placeholder component for the Hue Shift visualization. Ported as static HTML.
-- **`DataVizDemo.svelte`**: Visualizes the generated chart palettes. It uses `{#each}` blocks to render swatches and charts based on CSS variables (`var(--chart-n)`).
-- **`Diagram.svelte`**: A wrapper component that applies the `.not-content` class to prevent Starlight's prose styles from interfering with the visualizations. It uses `{@render children?.()}` to render passed content.
+- **Live Injection**: We implemented a `$effect` that calls `generateTheme` and `injectTheme` whenever the `config` changes. This ensures the preview area always reflects the current configuration in real-time.
+- **Scoped Injection**: The generated CSS is scoped to `#theme-builder-preview` to prevent it from affecting the editor UI itself.
 
-### 2. MDX Integration
+### 2. `AnchorsEditor.svelte` & `DualRangeSlider.svelte`
 
-We updated the following MDX files to import and use the new Svelte components directly:
+- Migrated the complex dual-thumb slider logic to Svelte 5.
+- Implemented `getFailingSurfaces` logic using `contrastForPair` (APCA) to warn users about accessibility issues.
+- Added `LightnessScale.svelte` visualization.
 
-- `docs/concepts/physics-of-light.mdx`: Switched to `DynamicRange.svelte` and `Diagram.svelte`.
-- `docs/catalog/data-viz.mdx`: Switched to `DataVizDemo.svelte`.
-- `docs/concepts/thinking-in-surfaces.mdx`: Switched to `ContextVisualizer.svelte` and `Diagram.svelte`.
-- `docs/advanced/hue-shifting.mdx`: Switched to `HueShiftVisualizer.svelte` and `Diagram.svelte`.
+### 3. `SurfaceManager.svelte`
 
-### 3. Context Strategy
+- Migrated the CRUD interface for managing surface groups and surfaces.
+- Implemented `SurfaceRow.svelte` with expandable details for editing surface properties.
+- Integrated `ContrastBadge.svelte` to show real-time contrast scores.
 
-We adopted a "Pure Component" strategy for this phase. Instead of porting the complex React Context (`ThemeContext`, `ConfigContext`) to Svelte stores immediately, we ensured that these visualization components rely solely on:
+### 4. `KeyColorsEditor.svelte` & `HueShiftEditor.svelte`
 
-1.  **CSS Variables**: The system's core engine (`engine.css`, `theme.css`) provides all the necessary styling hooks (`--surface-token`, `--chart-1`, etc.).
-2.  **Props**: Where dynamic data is needed (like in `DynamicRange`), it is passed via props or derived internally.
+- Straightforward migration of form controls binding directly to `configState` methods.
 
-This allowed us to decouple the visualizations from the React state management, making them lighter and easier to maintain.
+## Integration
 
-## Verification
+We created a `BuilderWrapper.svelte` to wrap the `ThemeBuilder` with the `StateProvider`. This wrapper was then imported into `site/src/content/docs/builder.mdx` with `client:only="svelte"`, replacing the old React version.
 
-We verified the changes by running `pnpm docs:build`, which successfully compiled the Astro site with the new Svelte components. The build process confirmed that all imports are correct and the components are valid.
+## Challenges & Solutions
+
+- **Type Safety**: We encountered some linting issues with `Theme` type imports in `ConfigState`, which were resolved by ensuring correct imports and return types.
+- **Live Injection**: We had to ensure the `injectTheme` function was called correctly within a Svelte `$effect` to handle updates and cleanup properly.
+- **Infinite Loop**: We encountered an infinite loop where `injectTheme` was triggering re-renders. This was fixed by ensuring the effect dependencies were stable and passing correct arguments.
+- **State Mutation**: We encountered a `state_unsafe_mutation` error because the `solve()` function mutated the reactive config object. We fixed this by passing a deep clone of the config to `solve()`.
+
+## Conclusion
+
+The `ThemeBuilder` is now fully functional in Svelte 5, offering:
+
+- **Better Performance**: Fine-grained reactivity via Runes.
+- **Cleaner Code**: Simplified state management without complex Context providers.
+- **Live Preview**: Instant feedback on theme changes.
+- **Drag and Drop**: Full support for reordering groups and surfaces.
+
+The system is now ready for further enhancements and more advanced visualizations.
+
+## Fresh Eyes Cleanup
+
+After the main migration, we performed a "Fresh Eyes" review and identified a "split-brain" architecture where documentation demos were still using legacy React wrappers (`SystemDemo`) while the Builder used Svelte.
+
+We unified the architecture by:
+1.  **Creating `DemoWrapper.svelte`**: A Svelte replacement for `SystemDemo` that uses `StateProvider` to inject the same context as the Builder.
+2.  **Migrating MDX**: Updated all documentation pages (`physics-of-light.mdx`, `data-viz.mdx`, etc.) to use `DemoWrapper` and Svelte components (`Diagram.svelte`, `ContextVisualizer.svelte`).
+3.  **Deleting Legacy Code**: Removed `SystemDemo.tsx`, `ConfigContext.tsx`, `ThemeContext.tsx`, and unused React components (`Cluster.tsx`, `Stack.tsx`, etc.).
+
+This ensures a consistent, single-source-of-truth state management system across the entire site.

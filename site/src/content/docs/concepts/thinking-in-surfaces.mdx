@@ -3,11 +3,11 @@ title: Thinking in Surfaces
 description: The fundamental mental model of the Algebraic Color System.
 ---
 
-import { SystemDemo } from "../../../components/SystemDemo";
+import DemoWrapper from "../../../components/DemoWrapper.svelte";
 import ContextVisualizer from "../../../components/ContextVisualizer.svelte";
 import Diagram from "../../../components/Diagram.svelte";
 
-<SystemDemo>
+<DemoWrapper>
 
 The Algebraic Color System is not a palette generator. It is a **context engine**.
 
@@ -82,4 +82,4 @@ By thinking in surfaces, you stop fighting with contrast ratios.
 2.  **Automatic Dark Mode**: You don't design "Dark Mode" separately. You just define your surfaces, and the system flips the context.
 3.  **Infinite Nesting**: You can put a Card inside a Sidebar inside a Page. The system handles the math to ensure distinctness at every level.
 
-</SystemDemo>
+</DemoWrapper>
