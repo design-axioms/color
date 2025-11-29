@@ -5,36 +5,38 @@
    CRITICAL: Force color-scheme based on data-theme attribute.
    This ensures light-dark() works correctly when Starlight toggles the theme.
 */
-:root[data-theme='light'] {
+:root[data-theme="light"] {
   color-scheme: light;
 }
 
-:root[data-theme='dark'] {
+:root[data-theme="dark"] {
   color-scheme: dark;
 }
 
 /* We use :root[data-theme] to ensure we override Starlight's specific selectors */
-:root, :root[data-theme='light'], :root[data-theme='dark'] {
+:root,
+:root[data-theme="light"],
+:root[data-theme="dark"] {
   /* --- Brand Colors --- */
   /* Starlight uses --sl-color-accent-* for links and highlights */
   --sl-color-accent-low: oklch(0.4 0.1 var(--hue-brand));
   --sl-color-accent: oklch(0.6 0.15 var(--hue-brand));
   --sl-color-accent-high: oklch(0.8 0.1 var(--hue-brand));
-  
+
   /* --- Backgrounds --- */
   /* We use light-dark() to map our Page Surface to Starlight's BG */
   /* Note: These values match the "Page" surface in theme.css */
   --sl-color-bg: light-dark(oklch(1 0 5), oklch(0 0 0));
-  
+
   /* Sidebar/Nav often use a slightly different shade in Starlight. 
      We can map them to our "Workspace" surface or keep them same as Page. */
   --sl-color-bg-nav: light-dark(oklch(1 0 5), oklch(0 0 0));
   --sl-color-bg-sidebar: light-dark(oklch(0.98 0 5), oklch(0.02 0 0));
-  
+
   /* --- Text --- */
   --sl-color-text: light-dark(oklch(0 0 0), oklch(1 0 0));
   --sl-color-text-invert: light-dark(oklch(1 0 0), oklch(0 0 0));
-  
+
   /* --- Borders --- */
   --sl-color-hairline: light-dark(oklch(0 0 0 / 0.1), oklch(1 0 0 / 0.1));
   --sl-color-border: light-dark(oklch(0 0 0 / 0.15), oklch(1 0 0 / 0.15));
@@ -42,5 +44,6 @@
 
 /* Force Starlight to use our font settings if needed */
 :root {
-  --sl-font-system: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --sl-font-system: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
