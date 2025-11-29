@@ -2,9 +2,6 @@
 title: Demo Test
 ---
 
-import { SystemDemo } from "../../components/SystemDemo";
-import { ContextVisualizer } from "../../components/ContextVisualizer";
+import DemoComposition from "../../components/DemoComposition.svelte";
 
-<SystemDemo client:only="preact">
-  <ContextVisualizer />
-</SystemDemo>
+<DemoComposition client:load />

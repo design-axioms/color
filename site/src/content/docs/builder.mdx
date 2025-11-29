@@ -3,8 +3,8 @@ title: Theme Builder
 template: splash
 ---
 
-import { BuilderWrapper } from "../../components/BuilderWrapper";
+import BuilderWrapper from "../../components/BuilderWrapper.svelte";
 
 <div class="not-content">
-  <BuilderWrapper client:only="preact" />
+  <BuilderWrapper client:only="svelte" />
 </div>
