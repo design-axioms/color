@@ -44,11 +44,23 @@ describe("generateTokensCss", () => {
       critical: 0.8,
     };
 
+    const primitives = {
+      shadows: {
+        sm: { light: "oklch(0 0 0 / 0.05)", dark: "oklch(1 0 0 / 0.15)" },
+        md: { light: "oklch(0 0 0 / 0.1)", dark: "oklch(1 0 0 / 0.15)" },
+        lg: { light: "oklch(0 0 0 / 0.1)", dark: "oklch(1 0 0 / 0.15)" },
+        xl: { light: "oklch(0 0 0 / 0.1)", dark: "oklch(1 0 0 / 0.15)" },
+      },
+      focus: {
+        ring: { light: "oklch(0.45 0.2 250)", dark: "oklch(0.75 0.2 250)" },
+      },
+    };
+
     const theme = {
       surfaces: [],
       backgrounds,
       charts: [],
-      primitives: undefined,
+      primitives,
     } as unknown as Theme;
 
     const css = generateTokensCss(groups, theme, borderTargets);
@@ -73,11 +85,23 @@ describe("generateTokensCss", () => {
     const backgrounds = new Map<string, Record<Mode, ColorSpec>>();
     // "unknown" is missing
 
+    const primitives = {
+      shadows: {
+        sm: { light: "oklch(0 0 0 / 0.05)", dark: "oklch(1 0 0 / 0.15)" },
+        md: { light: "oklch(0 0 0 / 0.1)", dark: "oklch(1 0 0 / 0.15)" },
+        lg: { light: "oklch(0 0 0 / 0.1)", dark: "oklch(1 0 0 / 0.15)" },
+        xl: { light: "oklch(0 0 0 / 0.1)", dark: "oklch(1 0 0 / 0.15)" },
+      },
+      focus: {
+        ring: { light: "oklch(0.45 0.2 250)", dark: "oklch(0.75 0.2 250)" },
+      },
+    };
+
     const theme = {
       surfaces: [],
       backgrounds,
       charts: [],
-      primitives: undefined,
+      primitives,
     } as unknown as Theme;
 
     const css = generateTokensCss(groups, theme);
@@ -107,11 +131,23 @@ describe("generateTokensCss", () => {
       },
     ];
 
+    const primitives = {
+      shadows: {
+        sm: { light: "oklch(0 0 0 / 0.05)", dark: "oklch(1 0 0 / 0.15)" },
+        md: { light: "oklch(0 0 0 / 0.1)", dark: "oklch(1 0 0 / 0.15)" },
+        lg: { light: "oklch(0 0 0 / 0.1)", dark: "oklch(1 0 0 / 0.15)" },
+        xl: { light: "oklch(0 0 0 / 0.1)", dark: "oklch(1 0 0 / 0.15)" },
+      },
+      focus: {
+        ring: { light: "oklch(0.45 0.2 250)", dark: "oklch(0.75 0.2 250)" },
+      },
+    };
+
     const theme = {
       surfaces: [],
       backgrounds,
       charts,
-      primitives: undefined,
+      primitives,
     } as unknown as Theme;
 
     const css = generateTokensCss(groups, theme, undefined, undefined);

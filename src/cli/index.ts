@@ -27,7 +27,7 @@ if (isMain) {
     };
     writeFileSync(targetPath, JSON.stringify(configWithSchema, null, 2));
     console.log("Created color-config.json");
-    
+
     if (!existsSync(join(CWD, "node_modules"))) {
       console.warn(
         "Note: node_modules not found in current directory. You may need to adjust the $schema path."

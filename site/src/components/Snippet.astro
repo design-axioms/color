@@ -1,0 +1,62 @@
+---
+import { Code } from '@astrojs/starlight/components';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+
+interface Props {
+  name: string;
+}
+
+const { name } = Astro.props;
+
+// Read the snippet file. 
+// Note: In dev, process.cwd() is the project root? Or site root?
+// Usually in Astro monorepo, it's the package root (site).
+// So we go up one level to find snippets.
+const snippetPath = path.join(process.cwd(), '../snippets', `${name}.html`);
+let code = '';
+
+try {
+  code = await fs.readFile(snippetPath, 'utf-8');
+} catch (e) {
+  code = `Error loading snippet: ${name} from ${snippetPath}`;
+  console.error(e);
+}
+---
+
+<div class="snippet-container not-content">
+  <div class="preview-header">
+    <span class="label">Preview</span>
+  </div>
+  <div class="preview-area surface-workspace">
+    <Fragment set:html={code} />
+  </div>
+  <div class="code-area">
+    <Code code={code} lang="html" title={`${name}.html`} />
+  </div>
+</div>
+
+<style>
+  .snippet-container {
+    margin: 2rem 0;
+    border: 1px solid var(--sl-color-gray-5);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .preview-header {
+    background-color: var(--sl-color-gray-6);
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid var(--sl-color-gray-5);
+    font-size: 0.875rem;
+    font-weight: bold;
+    color: var(--sl-color-white);
+  }
+
+  .preview-area {
+    padding: 2rem;
+    /* Use a neutral background for the preview area to let surfaces stand out */
+    background-color: var(--sl-color-bg-nav); 
+    border-bottom: 1px solid var(--sl-color-gray-5);
+  }
+</style>

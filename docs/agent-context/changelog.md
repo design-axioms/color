@@ -483,3 +483,21 @@
 - **Deliverables**:
   - Created `docs/design/fresh-eyes-audit-3.md` with detailed findings.
   - Prioritized a list of critical fixes for the next phase.
+
+## Epoch 13: Phase 1 - The Golden Path (2025-11-29)
+
+**Goal**: Create a zero-friction onboarding experience that guides users from "What is this?" to "I have a running app" with minimal effort.
+
+**Completed Work**:
+
+- **Quick Start Overhaul**:
+  - Rewrote `site/src/content/docs/index.mdx` to feature a step-by-step "Hello World" tutorial.
+  - Replaced generic marketing copy with a practical guide to building a "Profile Card".
+- **Snippet Library**:
+  - Created a `snippets/` directory with raw HTML examples (`card.html`, `button.html`, etc.).
+  - Implemented `<Snippet>` component in Astro to render live previews and source code from these files.
+- **Interactive "Try It"**:
+  - Added an "Open in StackBlitz" button to the hero section, linking to the repository for instant experimentation.
+- **Verification**:
+  - Verified the documentation build passes with the new components.
+  - Fixed lint errors and updated snapshots in the core library (`generator.ts`).

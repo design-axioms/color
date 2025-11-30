@@ -309,3 +309,12 @@ This file tracks key architectural and design decisions made throughout the proj
 - **Rationale**:
   - **Realism**: Personas should reflect reality, not just an ideal state. By documenting the friction, we prioritize fixing it.
   - **Alignment**: Ensures that future work (like Phase 3.5 fixes) is directly traceable to a user need.
+
+### [2025-11-29] Raw HTML Snippets for Documentation
+
+- **Context**: We wanted to show "Hello World" examples in the documentation that were easy to copy-paste but also rendered live previews. We considered using MDX code blocks or Svelte components.
+- **Decision**: Store snippets as raw HTML files in a `snippets/` directory and use a custom `<Snippet>` component to fetch and render them.
+- **Rationale**:
+  - **Authenticity**: The source code shown to the user is exactly what is being rendered in the preview. No "hidden magic" or framework abstractions.
+  - **Simplicity**: Users can copy the HTML directly into their projects without needing to strip out React/Svelte specific syntax.
+  - **Maintainability**: Snippets are just files. They can be linted, formatted, and tested independently of the documentation content.

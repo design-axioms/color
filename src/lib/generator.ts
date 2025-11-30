@@ -1,7 +1,4 @@
-import {
-  solveBorderAlpha,
-  solveForegroundSpec,
-} from "./math.ts";
+import { solveBorderAlpha, solveForegroundSpec } from "./math.ts";
 import type {
   BorderTargets,
   SolverConfig,
@@ -67,26 +64,24 @@ export function generateTokensCss(
   const rootSelector = selector || ":root";
   rootLines.push(`${rootSelector} {`);
 
-  if (theme.primitives) {
-    rootLines.push(`  /* Elevation */`);
-    const { shadows, focus } = theme.primitives;
+  rootLines.push(`  /* Elevation */`);
+  const { shadows, focus } = theme.primitives;
 
-    // Shadows
-    for (const [size, token] of Object.entries(shadows)) {
-      rootLines.push(
-        `  --shadow-${size}: light-dark(${token.light}, ${token.dark});`
-      );
-    }
-
-    // Focus
-    rootLines.push(`  /* Focus */`);
+  // Shadows
+  for (const [size, token] of Object.entries(shadows)) {
     rootLines.push(
-      `  --focus-ring-color: light-dark(${focus.ring.light}, ${focus.ring.dark});`
+      `  --shadow-${size}: light-dark(${token.light}, ${token.dark});`
     );
   }
 
+  // Focus
+  rootLines.push(`  /* Focus */`);
+  rootLines.push(
+    `  --focus-ring-color: light-dark(${focus.ring.light}, ${focus.ring.dark});`
+  );
+
   // Data Visualization Palette
-  if (theme.charts && theme.charts.length > 0) {
+  if (theme.charts.length > 0) {
     rootLines.push(`  /* Data Visualization */`);
     theme.charts.forEach((chart, index) => {
       rootLines.push(

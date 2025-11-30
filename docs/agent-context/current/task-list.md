@@ -1,28 +1,24 @@
-# Task List - Epoch 11: Phase 4 - Audit Fixes
+# Task List - Epoch 13: Phase 1 - The Golden Path
 
-- [x] **Documentation Fixes**
+- [x] **Quick Start Overhaul**
 
-  - [x] Update package name in `installation.md` <!-- id: 0 -->
-  - [x] Update `package.json` engines <!-- id: 1 -->
-  - [x] Update Node version in `installation.md` <!-- id: 2 -->
+  - [x] Draft new "Hello World" tutorial content <!-- id: 0 -->
+  - [x] Update `site/src/content/docs/index.mdx` <!-- id: 1 -->
 
-- [x] **Core Solver Refactor**
+- [x] **Snippet Library**
 
-  - [x] Move Chart Color calculation to `src/lib/index.ts` <!-- id: 3 -->
-  - [x] Move Primitive calculation to `src/lib/index.ts` <!-- id: 4 -->
-  - [x] Update `Theme` interface <!-- id: 5 -->
-  - [x] Update `solve()` <!-- id: 6 -->
+  - [x] Create `snippets/` directory <!-- id: 2 -->
+  - [x] Create `card.html` snippet <!-- id: 3 -->
+  - [x] Create `button.html` snippet <!-- id: 4 -->
+  - [x] Create `input.html` snippet <!-- id: 5 -->
+  - [x] Implement `<Snippet>` component in Astro <!-- id: 6 -->
+  - [ ] Integrate snippets into "Catalog" docs <!-- id: 7 -->
 
-- [x] **Exporter Updates**
+- [x] **Interactive "Try It"**
 
-  - [x] Update `toDTCG` <!-- id: 7 -->
-  - [x] Update `toTailwind` <!-- id: 8 -->
-  - [x] Verify exports <!-- id: 9 -->
-
-- [x] **CLI Improvements**
-
-  - [x] Robust `$schema` path in `init` <!-- id: 10 -->
+  - [x] Create StackBlitz starter template <!-- id: 8 -->
+  - [x] Add "Open in StackBlitz" button to docs <!-- id: 9 -->
 
 - [x] **Verification**
-  - [x] Run `pnpm build` <!-- id: 11 -->
-  - [x] Verify docs build <!-- id: 12 -->
+  - [x] Verify docs build <!-- id: 10 -->
+  - [ ] Manual walkthrough of Quick Start <!-- id: 11 -->

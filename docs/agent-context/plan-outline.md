@@ -182,7 +182,7 @@
     - **Goal**: Move the Theme Builder from the standalone `demo` app into the Astro site.
     - **Deliverables**: `site/src/pages/builder`, integrated navigation.
 
-## Epoch 12: Framework Migration (In Progress)
+## Epoch 12: Framework Migration (Completed)
 
 - **Goal**: Migrate interactive components to Svelte 5 to align with other projects and improve developer experience.
 - **Phases**:
@@ -198,3 +198,32 @@
   - **Phase 4: Theme Builder Migration (Completed)**
     - **Goal**: Migrate the core `ThemeBuilder` application to Svelte 5.
     - **Deliverables**: `ThemeBuilder.svelte`, `AnchorsEditor.svelte`, `SurfaceManager.svelte`, Live Injection.
+
+## Epoch 13: User Experience & Integration (In Progress)
+
+- **Goal**: Address the "Missing Features" identified in Fresh Eyes Audit 4 by restructuring the documentation and tooling to create a seamless "Golden Path" for adoption.
+- **Phases**:
+  - **Phase 1: The Golden Path (Onboarding) (In Progress)**
+    - **Goal**: Create a zero-friction path from "What is this?" to "I have a running app".
+    - **Deliverables**:
+      - **Quick Start Overhaul**: Rewrite the "Quick Start" as a step-by-step tutorial (HTML & React) rather than just installation instructions.
+      - **Embedded Snippets**: Integrate the "Snippet Library" directly into the documentation flow, allowing users to copy-paste "Card", "Button", and "Layout" patterns immediately.
+      - **Interactive "Try It"**: Add a "Open in StackBlitz/CodeSandbox" button to the docs that pre-loads the system.
+  - **Phase 2: The Concept-to-Code Bridge (Mental Model)**
+    - **Goal**: Connect abstract concepts (Surfaces, Context) directly to implementation details within the docs.
+    - **Deliverables**:
+      - **Inline Token Inspector**: A documentation component that allows users to click on a surface in a diagram and see the exact CSS variables and values being applied.
+      - **Deep Linking**: Update the Theme Builder to link back to specific documentation sections (e.g., "Why is this locked?" -> "Contrast Constraints" doc).
+      - **Visual Debugger**: Add a `--debug` flag to the build that outputs comments in CSS, helping users map the generated code back to the concepts they read about.
+  - **Phase 3: Framework-Specific Integration (Implementation)**
+    - **Goal**: Provide specific, copy-pasteable implementation guides for major frameworks, removing the guesswork.
+    - **Deliverables**:
+      - **Framework Guides**: Dedicated pages for **React**, **Svelte**, and **Plain HTML**.
+      - **Theme Toggle Component**: A drop-in component/script for each framework to handle Dark Mode (addressing Sarah's gap).
+      - **TypeScript Export**: Implement `color-system export --format typescript` to support the "Typed CSS" workflow in React/Svelte.
+  - **Phase 4: Advanced Customization (Mastery)**
+    - **Goal**: Remove friction for advanced users integrating into complex environments.
+    - **Deliverables**:
+      - **Configuration Options**: Add `prefix` and `selector` options to support existing codebases (Marcus's gap).
+      - **Audit Command**: Implement `color-system audit` as a "Verify" step in the documentation flow.
+      - **Override Capability**: Allow "breaking the rules" in the Theme Builder with appropriate warnings (Alex's gap).

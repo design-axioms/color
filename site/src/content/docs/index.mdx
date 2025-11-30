@@ -11,9 +11,9 @@ hero:
       link: /builder/
       icon: external
       variant: primary
-    - text: Get Started
-      link: /guides/installation/
-      icon: right-arrow
+    - text: Open in StackBlitz
+      link: https://stackblitz.com/github/wycats/algebraic
+      icon: rocket
       variant: secondary
     - text: Read the Philosophy
       link: /concepts/thinking-in-surfaces/
@@ -22,14 +22,37 @@ hero:
 ---
 
 import { Card, CardGrid } from "@astrojs/starlight/components";
+import Snippet from '../../components/Snippet.astro';
 
-## Why Algebraic?
+## Quick Start: Build a Profile Card
 
-Most color systems are just lists of hex codes. You pick a "Primary Blue" and a "Dark Gray" and hope they look good together.
+In this 5-minute tutorial, you'll build a fully accessible, dark-mode ready UI component without picking a single hex code.
 
-The **Algebraic Color System** is different. It's a **Solver**.
+### Step 1: The Page Surface
 
-You define the **Constraints** (e.g., "I need a surface that guarantees APCA 60 contrast"), and the system calculates the exact lightness values to meet them.
+Everything starts with a **Surface**. Surfaces provide context for the content inside them. The `surface-page` is your canvas.
+
+<Snippet name="layout-stack" />
+
+### Step 2: Adding a Card
+
+Nest a `surface-card` inside the page. The system automatically adjusts the contrast and borders to ensure it stands out.
+
+<Snippet name="card" />
+
+### Step 3: Adding Interactivity
+
+Add a button using `surface-action`. Notice how we use `hue-brand` to apply your brand color, while the system handles the text contrast automatically.
+
+<Snippet name="button" />
+
+### Step 4: Inputs
+
+Form elements are surfaces too.
+
+<Snippet name="input" />
+
+## Why This Matters
 
 <CardGrid stagger>
   <Card title="Automated Accessibility" icon="approve-check-circle">
