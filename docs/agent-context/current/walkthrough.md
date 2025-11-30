@@ -1,28 +1,30 @@
-# Walkthrough: Epoch 14 - Phase 2 (Reproduction via Isolation)
+# Walkthrough - Epoch 15: Concept-to-Code Bridge (Phase 1)
 
-## Goal
+## Overview
+In this phase, we implemented the **Inline Token Inspector**, a tool that bridges the gap between abstract concepts (Surfaces) and implementation details (CSS Variables). This allows users to click on surfaces in the documentation diagrams and see exactly which tokens are active and what their resolved values are.
 
-Address the Svelte 5 hydration issues and get the `HueShiftVisualizer` working in the documentation.
+## Key Changes
 
-## Steps Taken
+### 1. Token Inspector Components
+We created a set of Svelte 5 components in `site/src/components/inspector/`:
 
-1.  **Initial Reproduction Attempts**: We planned to isolate the hydration error by creating minimal reproduction pages (`repro-mdx.mdx`, `repro-doc.mdx`).
-2.  **Direct Fix**: We discovered that the `HueShiftVisualizer` was actually working (hydrating), but was visually broken due to:
-    - **Missing CSS Variables**: The curve stroke color was using a variable that wasn't defined in the isolated context.
-    - **SVG Rendering**: The previous polyline implementation was suboptimal.
-3.  **Implementation**:
-    - Refactored `HueShiftVisualizer` to use native SVG Cubic Bezier paths (`<path d="M... C...">`).
-    - Fixed the visibility bug by using safe CSS tokens (`--text-high-token`).
-    - Added UI controls (toggle handles, side-by-side layout).
-4.  **Integration**:
-    - Removed the broken "Static (SSR)" version from `hue-shifting.mdx`.
-    - Integrated the interactive playground directly into the documentation flow.
+- **`TokenInspector.svelte`**: The main container that manages the selection state using Svelte Context. It renders the `InspectorPanel` when an element is selected.
+- **`InspectorSurface.svelte`**: A wrapper component that makes any element interactive. It handles click events and registers the element with the inspector. It supports all standard HTML attributes and props.
+- **`InspectorPanel.svelte`**: The UI that displays the tokens. It uses `getComputedStyle` to fetch the resolved values of key system tokens (Surface, Text, Border) and groups them logically.
 
-## Findings
+### 2. Integration with Documentation
+We integrated the inspector into the "Thinking in Surfaces" guide (`thinking-in-surfaces.mdx`).
 
-- The "Hydration Error" previously reported may have been resolved by inlining the math utilities or was a red herring for this specific component.
-- The primary issue blocking the "Hue Shift" feature was visual (CSS) and UX, not architectural.
+- We wrapped the existing `ContextVisualizer` with `<TokenInspector client:load>`.
+- We updated `ContextVisualizer.svelte` to use `InspectorSurface` internally, making the "Page", "Card", and "Spotlight" elements interactive.
+- We added a helper text to guide users to click on the surfaces.
 
-## Next Steps
+### 3. Visual Refinement
+The `InspectorPanel` was designed to look like a mini DevTools panel:
+- **Grouped Tokens**: Tokens are organized into "Surface", "Text", and "Border & UI" categories.
+- **Color Previews**: Each color token shows a small swatch of the resolved color.
+- **Responsive**: The panel slides up from the bottom and is scrollable if content overflows.
 
-- Transition to the next phase or close the Epoch if all goals are met.
+## Verification
+- **Static Analysis**: Ran `astro check` to ensure type safety and component correctness.
+- **Design Review**: The panel uses system tokens (`--surface-token`, `--text-subtle-token`) ensuring it adapts to Light/Dark mode automatically.

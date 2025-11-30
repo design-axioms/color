@@ -250,6 +250,13 @@
     - **Goal**: Fix the production components (`HueShiftVisualizer`, etc.).
     - **Deliverables**: Working visualizers.
 
-## Epoch 15: Future Work (Planned)
+## Epoch 15: Concept-to-Code Bridge (Phase 1) (Completed)
 
-- **Goal**: Continue with the deferred tasks from Epoch 13 (Concept-to-Code Bridge, Framework Integration).
+- **Goal**: Connect abstract concepts (Surfaces, Context) directly to implementation details within the documentation.
+- **Key Deliverables**:
+  - **Inline Token Inspector**: Interactive tool to inspect CSS variables on surfaces.
+  - **Documentation Integration**: Integrated into `thinking-in-surfaces.mdx`.
+
+## Epoch 16: Future Work (Planned)
+
+- **Goal**: Continue with the deferred tasks from Epoch 13 (Framework Integration, Advanced Customization).

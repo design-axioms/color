@@ -1,9 +1,16 @@
-# Task List: Epoch 14 - Phase 2 (Reproduction via Isolation)
+# Task List - Epoch 15: Concept-to-Code Bridge (Phase 1)
 
-- [x] Create `site/src/pages/repro-mdx.mdx` (Standalone MDX) <!-- id: 0 -->
-- [x] Create `site/src/content/docs/repro-doc.mdx` (Starlight MDX) <!-- id: 1 -->
-- [x] Compare `HueShiftVisualizer` behavior in both <!-- id: 2 -->
-- [x] Isolate specific Starlight/MDX factor causing hydration failure <!-- id: 3 -->
-- [x] Document findings in `walkthrough.md` <!-- id: 4 -->
-- [x] Fix `HueShiftVisualizer` visibility issues (CSS Variables) <!-- id: 5 -->
-- [x] Integrate `HueShiftVisualizer` into `hue-shifting.mdx` <!-- id: 6 -->
+## Implementation
+- [x] **Scaffold Components**: Create `TokenInspector`, `InspectorSurface`, `InspectorPanel`.
+- [x] **Integration**: Add `TokenInspector` to `thinking-in-surfaces.mdx`.
+- [x] **Refinement**:
+  - [x] Improve visual design of the panel.
+  - [x] Handle "not set" tokens gracefully.
+  - [x] Add more relevant tokens (e.g. `border-radius`, `box-shadow`).
+- [x] **Verification**:
+  - [x] Verify interaction in Light Mode.
+  - [x] Verify interaction in Dark Mode.
+  - [x] Verify mobile responsiveness.
+
+## Documentation
+- [x] Update `thinking-in-surfaces.mdx` with instructions on how to use the inspector.

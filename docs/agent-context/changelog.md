@@ -549,3 +549,20 @@
 - **Documentation Enhancements**:
   - Added WCAG contrast mappings to `tokens.json`.
   - Integrated dynamic token tables into documentation pages.
+
+## Epoch 15: Concept-to-Code Bridge (Phase 1)
+
+**Goal**: Connect abstract concepts (Surfaces, Context) directly to implementation details within the documentation.
+
+**Completed Work**:
+
+- **Inline Token Inspector**:
+  - Created `TokenInspector`, `InspectorSurface`, and `InspectorPanel` components in Svelte 5.
+  - Implemented a "DevTools-like" panel that displays resolved CSS variables for selected surfaces.
+- **Documentation Integration**:
+  - Integrated the inspector into `thinking-in-surfaces.mdx`.
+  - Updated `ContextVisualizer` to be interactive, allowing users to click and inspect tokens.
+- **Visual Refinement**:
+  - Designed the panel to group tokens by category (Surface, Text, Border).
+  - Added color previews and responsive layout.
+

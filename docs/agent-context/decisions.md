@@ -352,3 +352,13 @@ This file tracks key architectural and design decisions made throughout the proj
   - **Clarity**: Users should only see the tool when it is fully functional.
   - **Simplicity**: Removes the need to maintain a separate "static" implementation that inevitably drifts from the interactive one.
   - **Reality**: These are "apps" embedded in docs, not just content. They require JS to be useful.
+
+### [2025-11-30] Inline Token Inspector
+
+- **Context**: Users struggled to map abstract concepts (Surfaces) to concrete implementation details (CSS Variables) in the documentation.
+- **Decision**: Implement an "Inline Token Inspector" that allows users to click on documentation diagrams to see the active CSS variables.
+- **Rationale**:
+  - **Discovery**: Makes the system self-documenting. Users can "ask" the documentation what a surface is made of.
+  - **Transparency**: Demystifies the "magic" of the context engine by showing the raw values.
+  - **Interactivity**: Encourages exploration and reinforces the mental model that "surfaces create context".
+

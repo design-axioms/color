@@ -173,7 +173,7 @@
     const startY = toSvgY(0);
     const endX = toSvgX(1);
     const endY = toSvgY(1);
-    
+
     const cp1x = toSvgX(p1x);
     const cp1y = toSvgY(p1y);
     const cp2x = toSvgX(p2x);
@@ -390,76 +390,78 @@
       </div>
     </div>
 
-  <!-- Controls Section -->
-  <div class="controls-section">
-    <div class="control-group">
-      <h4 class="control-title">Global Parameters</h4>
+    <!-- Controls Section -->
+    <div class="controls-section">
+      <div class="control-group">
+        <h4 class="control-title">Global Parameters</h4>
 
-      <div class="control-item">
-        <label class="checkbox-label">
-          <input type="checkbox" bind:checked={showControls} />
-          Show Control Points
-        </label>
+        <div class="control-item">
+          <label class="checkbox-label">
+            <input type="checkbox" bind:checked={showControls} />
+            Show Control Points
+          </label>
+        </div>
+
+        <div class="control-item">
+          <div class="control-header">
+            <label for="maxRotation-{uid}">Max Rotation</label>
+            <span class="control-value">{maxRotation}°</span>
+          </div>
+          <div class="slider-container">
+            <div class="slider-track"></div>
+            <input
+              type="range"
+              id="maxRotation-{uid}"
+              min="-180"
+              max="180"
+              step="1"
+              bind:value={maxRotation}
+              class="styled-slider"
+            />
+          </div>
+        </div>
+
+        <div class="control-item">
+          <div class="control-header">
+            <label for="baseHue-{uid}">Base Hue</label>
+            <span class="control-value">{baseHue}°</span>
+          </div>
+          <div class="slider-container">
+            <div
+              class="slider-track"
+              style:background={`linear-gradient(to right, oklch(0.6 0.2 0), oklch(0.6 0.2 90), oklch(0.6 0.2 180), oklch(0.6 0.2 270), oklch(0.6 0.2 360))`}
+            ></div>
+            <input
+              type="range"
+              id="baseHue-{uid}"
+              min="0"
+              max="360"
+              step="1"
+              bind:value={baseHue}
+              class="styled-slider"
+            />
+          </div>
+        </div>
       </div>
 
-      <div class="control-item">
-        <div class="control-header">
-          <label for="maxRotation-{uid}">Max Rotation</label>
-          <span class="control-value">{maxRotation}°</span>
+      <!-- Bezier Sliders Removed in favor of direct manipulation -->
+      <div class="control-group">
+        <h4 class="control-title">Curve Values</h4>
+        <div class="values-grid">
+          <div class="value-item">
+            <span class="label">P1</span>
+            <span class="value">({p1x.toFixed(2)}, {p1y.toFixed(2)})</span>
+          </div>
+          <div class="value-item">
+            <span class="label">P2</span>
+            <span class="value">({p2x.toFixed(2)}, {p2y.toFixed(2)})</span>
+          </div>
         </div>
-        <div class="slider-container">
-          <div class="slider-track"></div>
-          <input
-            type="range"
-            id="maxRotation-{uid}"
-            min="-180"
-            max="180"
-            step="1"
-            bind:value={maxRotation}
-            class="styled-slider"
-          />
-        </div>
-      </div>
-
-      <div class="control-item">
-        <div class="control-header">
-          <label for="baseHue-{uid}">Base Hue</label>
-          <span class="control-value">{baseHue}°</span>
-        </div>
-        <div class="slider-container">
-          <div
-            class="slider-track"
-            style:background={`linear-gradient(to right, oklch(0.6 0.2 0), oklch(0.6 0.2 90), oklch(0.6 0.2 180), oklch(0.6 0.2 270), oklch(0.6 0.2 360))`}
-          ></div>
-          <input
-            type="range"
-            id="baseHue-{uid}"
-            min="0"
-            max="360"
-            step="1"
-            bind:value={baseHue}
-            class="styled-slider"
-          />
-        </div>
+        <p class="hint-text">
+          Drag the points on the graph to adjust the curve.
+        </p>
       </div>
     </div>
-
-    <!-- Bezier Sliders Removed in favor of direct manipulation -->
-    <div class="control-group">
-      <h4 class="control-title">Curve Values</h4>
-      <div class="values-grid">
-        <div class="value-item">
-          <span class="label">P1</span>
-          <span class="value">({p1x.toFixed(2)}, {p1y.toFixed(2)})</span>
-        </div>
-        <div class="value-item">
-          <span class="label">P2</span>
-          <span class="value">({p2x.toFixed(2)}, {p2y.toFixed(2)})</span>
-        </div>
-      </div>
-      <p class="hint-text">Drag the points on the graph to adjust the curve.</p>
-    </div>
-  </div>
   </div>
 </div>
 
