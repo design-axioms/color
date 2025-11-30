@@ -29,6 +29,21 @@ APCA models **human perception**. It understands that:
 
 By using APCA, the system ensures your text is _actually_ readable, not just technically compliant.
 
+### Mapping APCA to WCAG 2.1
+
+While APCA is the future, we understand that many teams are legally required to meet WCAG 2.1 standards (AA or AAA).
+
+The Algebraic Color System targets APCA values that **exceed** standard WCAG requirements. Here is a rough equivalence guide for compliance auditing:
+
+| Token Level     | APCA Target ($L^c$) | WCAG 2.1 Equivalence            | Usage                   |
+| :-------------- | :------------------ | :------------------------------ | :---------------------- |
+| `text-high`     | **~108**            | **AAA+**                        | Headings, Critical Data |
+| `text-strong`   | **~105**            | **AAA**                         | Body Text, Labels       |
+| `text-subtle`   | **~85**             | **AAA**                         | Secondary Text, Icons   |
+| `text-subtlest` | **~75**             | **AA** (Large) / **AAA** (Body) | Placeholders, Disabled  |
+
+> **Note:** Because APCA is context-aware, these mappings are approximations. However, our baseline target of $L^c 75$ for even the subtlest text ensures that you are safely within the "accessible" range for almost all use cases.
+
 ## Automated High Contrast
 
 Some users need more than just "good" contrast. They need **High Contrast**.

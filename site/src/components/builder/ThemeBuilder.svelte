@@ -126,7 +126,7 @@
               </div>
 
               <!-- Brand Link -->
-              <a href="#" class="text-link">
+              <a href="#_top" class="text-link">
                 Brand Link
               </a>
             </Cluster>

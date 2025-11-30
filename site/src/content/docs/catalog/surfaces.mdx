@@ -117,4 +117,17 @@ Shadows provide depth and hierarchy. The system generates a semantic scale of sh
   </div>
 </Diagram>
 
+## Token Reference
+
+Every surface exposes a standard set of CSS variables (tokens) that adapt to the surface's background.
+
+| Token Variable          | Description                                 | Usage                                   |
+| :---------------------- | :------------------------------------------ | :-------------------------------------- |
+| `--surface-token`       | The background color of the surface.        | `background: var(--surface-token)`      |
+| `--text-high-token`     | High contrast text color.                   | `color: var(--text-high-token)`         |
+| `--text-subtle-token`   | Medium contrast text color.                 | `color: var(--text-subtle-token)`       |
+| `--text-subtlest-token` | Low contrast text color.                    | `color: var(--text-subtlest-token)`     |
+| `--border-dec-token`    | Decorative border color (low contrast).     | `border-color: var(--border-dec-token)` |
+| `--border-int-token`    | Interactive border color (higher contrast). | `border-color: var(--border-int-token)` |
+
 </DemoWrapper>

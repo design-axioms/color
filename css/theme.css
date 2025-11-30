@@ -60,7 +60,7 @@
 .surface-page, body {
   --surface-token: light-dark(
     oklch(1 0 293.0332),
-    oklch(0.1 0 288.1732)
+    oklch(0.1 0 288.1078)
   );
   --text-high-token: light-dark(
     oklch(0 0 0),
@@ -86,8 +86,8 @@
 
 .surface-workspace {
   --surface-token: light-dark(
-    oklch(0.9806 0 293.0276),
-    oklch(0.2541 0 288.8376)
+    oklch(0.9806 0 293.0304),
+    oklch(0.2541 0 288.5778)
   );
   --text-high-token: light-dark(
     oklch(0 0 0),
@@ -113,8 +113,8 @@
 
 .surface-card {
   --surface-token: light-dark(
-    oklch(0.9776 0 293.0258),
-    oklch(0.1 0 288.1732)
+    oklch(0.9776 0 293.0296),
+    oklch(0.1 0 288.1078)
   );
   --text-high-token: light-dark(
     oklch(0 0 0),
@@ -139,21 +139,21 @@
 }
 .surface-card:hover {
   --surface-token: light-dark(
-    oklch(0.9536 0 293.0019),
-    oklch(0.3072 0 289.1589)
+    oklch(0.9536 0 293.0189),
+    oklch(0.3072 0 288.8814)
   );
 }
 .surface-card:active {
   --surface-token: light-dark(
-    oklch(0.9265 0 292.9561),
-    oklch(0.3734 0 289.604)
+    oklch(0.9265 0 292.9944),
+    oklch(0.3734 0 289.3469)
   );
 }
 
 .surface-action {
   --surface-token: light-dark(
     oklch(1 0.12 293.0332),
-    oklch(0.1 0.12 288.1732)
+    oklch(0.1 0.12 288.1078)
   );
   --text-high-token: light-dark(
     oklch(0 0 0),
@@ -178,21 +178,21 @@
 }
 .surface-action:hover {
   --surface-token: light-dark(
-    oklch(0.9746 0.12 293.0237),
-    oklch(0.3072 0.12 289.1589)
+    oklch(0.9746 0.12 293.0286),
+    oklch(0.3072 0.12 288.8814)
   );
 }
 .surface-action:active {
   --surface-token: light-dark(
-    oklch(0.9506 0.12 292.9978),
-    oklch(0.3734 0.12 289.604)
+    oklch(0.9506 0.12 293.0161),
+    oklch(0.3734 0.12 289.3469)
   );
 }
 
 .surface-tinted {
   --surface-token: light-dark(
-    oklch(0.9 0.01 292.8932),
-    oklch(0.4 0.01 289.7932)
+    oklch(0.9 0.01 292.9586),
+    oklch(0.4 0.01 289.5742)
   );
   --text-high-token: light-dark(
     oklch(0 0 0),
@@ -218,8 +218,8 @@
 
 .surface-soft-spotlight {
   --surface-token: light-dark(
-    oklch(0.1 0 288.1732),
-    oklch(0.9 0 292.8932)
+    oklch(0.1 0 288.1078),
+    oklch(0.9 0 292.9586)
   );
   --text-high-token: light-dark(
     oklch(1 0 0),
@@ -245,8 +245,8 @@
 
 .surface-spotlight {
   --surface-token: light-dark(
-    oklch(0.1 0 288.1732),
-    oklch(0.9 0 292.8932)
+    oklch(0.1 0 288.1078),
+    oklch(0.9 0 292.9586)
   );
   --text-high-token: light-dark(
     oklch(1 0 0),
@@ -360,8 +360,8 @@
 
 .surface-workspace {
   --surface-token: light-dark(
-    oklch(0.8899 0 4.8315),
-    oklch(0.4908 0 2.431)
+    oklch(0.8899 0 4.9089),
+    oklch(0.4908 0 2.4121)
   );
   --text-high-token: light-dark(
     oklch(0 0 0),
@@ -387,8 +387,8 @@
 
 .surface-card {
   --surface-token: light-dark(
-    oklch(0.4221 0 1.9205),
-    oklch(0.9204 0 4.91)
+    oklch(0.4221 0 1.7488),
+    oklch(0.9204 0 4.9537)
   );
   --text-high-token: light-dark(
     oklch(1 0 0),
@@ -413,21 +413,21 @@
 }
 .surface-card:hover {
   --surface-token: light-dark(
-    oklch(0.3734 0 1.5708),
-    oklch(0.9446 0 4.9557)
+    oklch(0.3734 0 1.3137),
+    oklch(0.9446 0 4.9777)
   );
 }
 .surface-card:active {
   --surface-token: light-dark(
-    oklch(0.3465 0 1.3849),
-    oklch(0.9566 0 4.9726)
+    oklch(0.3465 0 1.1097),
+    oklch(0.9566 0 4.9874)
   );
 }
 
 .surface-action {
   --surface-token: light-dark(
-    oklch(0.3465 0.12 1.3849),
-    oklch(0.9566 0.12 4.9726)
+    oklch(0.3465 0.12 1.1097),
+    oklch(0.9566 0.12 4.9874)
   );
   --text-high-token: light-dark(
     oklch(1 0 0),

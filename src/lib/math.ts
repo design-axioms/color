@@ -221,7 +221,20 @@ export function calculateHueShift(
 ): number {
   if (!config) return 0;
   const { curve, maxRotation } = config;
-  const factor = cubicBezier(lightness, curve.p1[1], curve.p2[1]);
+
+  // Solve for t given x (lightness)
+  // x(t) = cubicBezier(t, p1x, p2x)
+  // We need to find t such that x(t) === lightness
+  const t = binarySearch(
+    0,
+    1,
+    (val) => cubicBezier(val, curve.p1[0], curve.p2[0]),
+    lightness,
+    0.001
+  );
+
+  // Calculate y (hue shift factor) given t
+  const factor = cubicBezier(t, curve.p1[1], curve.p2[1]);
   return factor * maxRotation;
 }
 

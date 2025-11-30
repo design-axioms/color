@@ -318,3 +318,12 @@ This file tracks key architectural and design decisions made throughout the proj
   - **Authenticity**: The source code shown to the user is exactly what is being rendered in the preview. No "hidden magic" or framework abstractions.
   - **Simplicity**: Users can copy the HTML directly into their projects without needing to strip out React/Svelte specific syntax.
   - **Maintainability**: Snippets are just files. They can be linted, formatted, and tested independently of the documentation content.
+
+### [2025-11-30] Client-Only Hydration for Visualizers
+
+- **Context**: The `HueShiftVisualizer` component (Svelte 5) was causing hydration errors (`TypeError: Cannot read properties of undefined`) when rendered with `client:load` in Astro.
+- **Decision**: Use `client:only="svelte"` for complex, interactive visualization components.
+- **Rationale**:
+  - **Stability**: Avoids hydration mismatches where the server-rendered HTML differs slightly from the client's initial state (common with SVG math or browser-specific inputs).
+  - **Performance**: These components are "app-like" tools, not content. They don't need to be SEO-indexed or rendered on the server.
+  - **Simplicity**: Bypasses the complexity of debugging Svelte 5 hydration edge cases in Astro islands.

@@ -501,3 +501,34 @@
 - **Verification**:
   - Verified the documentation build passes with the new components.
   - Fixed lint errors and updated snapshots in the core library (`generator.ts`).
+
+## Epoch 11: Phase 4 - Audit Fixes (2025-11-30)
+
+**Goal**: Address critical gaps identified in the "Fresh Eyes Audit" to ensure the documentation meets the needs of all personas.
+
+**Completed Work**:
+
+- **Alex (Visual Tinkerer)**:
+  - Implemented `HueShiftVisualizer.svelte` to replace the placeholder in the "Hue Shifting" documentation.
+  - Created an interactive playground for visualizing the non-linear hue rotation curve.
+- **Jordan (Accessibility Champion)**:
+  - Added a "Mapping APCA to WCAG 2.1" section to `concepts/accessibility-first.md`.
+  - Included a compliance table mapping system tokens (`text-subtlest`, etc.) to WCAG AA/AAA levels.
+- **Marcus (System Architect)**:
+  - Added "Token Reference" tables to `catalog/surfaces.mdx` and `catalog/actions.mdx`.
+  - Documented the standard CSS variables exposed by each surface type.
+
+## Phase: Fresh Eyes Audit & Polish (Epoch 11)
+
+**Focus**: Addressing visual and interactive gaps identified in the "Fresh Eyes" audit, specifically polishing the Hue Shift Visualizer.
+
+### Key Changes
+
+- **Hue Shift Visualizer Polish**:
+  - Refactored `HueShiftVisualizer.svelte` to align with the system's design language (Theme Builder aesthetic).
+  - Implemented custom sliders and SVG graphing using system tokens.
+  - **Hydration Strategy**: Adopted `client:only="svelte"` to avoid hydration mismatches with Svelte 5 in Astro islands.
+- **Documentation Enhancements**:
+  - Added WCAG contrast mappings to `tokens.json`.
+  - Integrated dynamic token tables into documentation pages.
+

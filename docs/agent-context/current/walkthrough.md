@@ -1,38 +1,36 @@
-# Walkthrough - Epoch 13: Phase 1 - The Golden Path
+# Phase Walkthrough: Fresh Eyes Audit & Polish
 
-## Goal
-Create a zero-friction onboarding experience that guides users from "What is this?" to "I have a running app" with minimal effort.
+## Overview
 
-## Changes
+This phase focused on addressing the "Fresh Eyes" audit findings, specifically targeting gaps in documentation interactivity and visual quality. The primary deliverable was a polished, system-aligned `HueShiftVisualizer` component.
 
-### 1. Quick Start Overhaul
-I completely rewrote `site/src/content/docs/index.mdx` to feature a step-by-step "Hello World" tutorial. Instead of generic marketing copy, the user now immediately builds a "Profile Card" using the system's core concepts:
-- **Surfaces**: `surface-page`, `surface-card`
-- **Interactivity**: `surface-action`
-- **Inputs**: `surface-input` (implied)
+## Key Changes
 
-### 2. Snippet Library
-I created a `snippets/` directory in the project root to house raw HTML examples. This ensures that the code shown in the documentation is:
-- **Real**: It's actual HTML files, not markdown strings.
-- **Reusable**: These snippets can be used by other parts of the docs or even tested.
+### 1. Hue Shift Visualizer Polish
 
-**Snippets Created:**
-- `snippets/card.html`: A basic card with padding and border.
-- `snippets/button.html`: A brand-colored action button.
-- `snippets/input.html`: A text input.
-- `snippets/layout-stack.html`: A flexbox stack layout.
+- **Problem**: The initial implementation of `HueShiftVisualizer` was functional but visually "terrible" and "out of step" with the rest of the site (e.g., Theme Builder).
+- **Solution**: Refactored the component to use:
+  - **System Tokens**: `--surface-token`, `--text-high-token`, `--border-subtle-token` for consistent theming.
+  - **Custom Sliders**: Ported the custom range input styling from `DualRangeSlider` to ensure UI consistency.
+  - **SVG Graph**: Implemented a reactive SVG graph to visualize the Bezier curve and hue rotation.
+  - **Astro Integration**: Used the `.not-content` class to isolate the component from markdown prose styling.
 
-### 3. `<Snippet>` Component
-I implemented a new Astro component `site/src/components/Snippet.astro` that:
-- Reads the raw HTML from the `snippets/` directory at build time.
-- Renders a **Live Preview** of the snippet (using `Fragment set:html`).
-- Renders the **Source Code** using Starlight's `<Code>` component.
+### 2. Documentation Enhancements
 
-This "Show, Don't Tell" approach allows users to see exactly what the code produces without leaving the docs.
+- **WCAG Mappings**: Added WCAG contrast ratio mappings to `tokens.json` to support accessibility documentation.
+- **Token Tables**: Added dynamic token tables to the documentation to provide a clear reference for available system tokens.
 
-### 4. Interactive "Try It"
-I added an "Open in StackBlitz" button to the hero section, linking to the repository. This allows users to instantly fork the project and start experimenting in a cloud environment.
+### 3. Audit & QA
 
-## Verification
-- Ran `pnpm docs:build` to ensure the new component and snippets render correctly.
-- Verified that the build passes with no errors.
+- **Playwright Audit**: Conducted a comprehensive audit using Playwright to identify visual and functional gaps across different personas (Alex, Jordan, Marcus).
+- **Findings**: Identified the need for better interactive tools in the "Advanced" documentation sections.
+
+## Technical Details
+
+- **Svelte 5**: All new components use Svelte 5 Runes (`$state`, `$derived`) for reactivity.
+- **CSS Variables**: The system relies heavily on CSS variables for theming, which are now correctly integrated into the interactive components.
+
+## Next Steps
+
+- **Phase Transition**: Move to Epoch 13 (User Experience & Integration) to address the remaining "Missing Features" from the audit (Prefix, Audit Command, TypeScript Export).
+- **Verification**: Confirmed that the `HueShiftVisualizer` renders correctly and matches the system design language.
