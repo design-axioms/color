@@ -39,6 +39,9 @@ jobs:
       - name: Install Dependencies
         run: pnpm install
 
+      - name: Audit Theme
+        run: pnpm audit:theme
+
       - name: Build Site
         run: pnpm build:site
 

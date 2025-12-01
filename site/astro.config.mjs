@@ -13,7 +13,6 @@ export default defineConfig({
   vite: {
     resolve: {
       alias: {
-        "@demo": path.resolve(__dirname, "../demo/src"),
         "@lib": path.resolve(__dirname, "../src/lib"),
       },
     },

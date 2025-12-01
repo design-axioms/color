@@ -254,6 +254,14 @@
   - **Inline Token Inspector**: Interactive tool to inspect CSS variables on surfaces.
   - **Documentation Integration**: Integrated into `thinking-in-surfaces.mdx`.
 
-## Epoch 16: Future Work (Planned)
+## Epoch 16: Visual Polish & Refinement (In Progress)
 
-- **Goal**: Continue with the deferred tasks from Epoch 13 (Framework Integration, Advanced Customization).
+- **Goal**: Elevate the visual quality of the documentation and enforce accessibility standards automatically.
+- **Phases**:
+  - **Phase 1: Documentation Styling & CI Integration (In Progress)**
+    - **Goal**: Refactor ad-hoc styles and ensure accessibility compliance in CI.
+    - **Key Deliverables**:
+      - Refactored MDX styles (utility classes).
+      - Polished Concept diagrams.
+      - CI workflow with `color-system audit`.
+

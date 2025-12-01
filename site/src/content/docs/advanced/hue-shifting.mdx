@@ -27,24 +27,26 @@ If you create a color palette by simply changing lightness (e.g., `oklch(0.5 0.2
     <div class="docs-card">
       <strong class="docs-card-header">Static Hue (Boring)</strong>
       <div
-        style="height: 60px; border-radius: 8px; background: linear-gradient(to right, 
+        class="docs-gradient-bar"
+        style="background: linear-gradient(to right, 
         oklch(0.2 0.1 260), 
         oklch(0.95 0.1 260)
       );"
       ></div>
-      <div class="text-subtle docs-mt-2" style="font-size: 0.9em">
+      <div class="text-subtle docs-mt-2 docs-text-sm">
         Just changing lightness. The result feels mechanical and flat.
       </div>
     </div>
     <div class="docs-card">
       <strong class="docs-card-header">Shifted Hue (Dynamic)</strong>
       <div
-        style="height: 60px; border-radius: 8px; background: linear-gradient(to right, 
+        class="docs-gradient-bar"
+        style="background: linear-gradient(to right, 
         oklch(0.2 0.1 260), 
         oklch(0.95 0.1 320)
       );"
       ></div>
-      <div class="text-subtle docs-mt-2" style="font-size: 0.9em">
+      <div class="text-subtle docs-mt-2 docs-text-sm">
         Rotating hue from Blue (260) to Purple (320) as lightness increases. The
         result feels more vibrant and natural.
       </div>
@@ -65,12 +67,13 @@ A naive implementation might apply hue rotation linearly. However, this doesn't 
     <div class="docs-card">
       <strong class="docs-card-header">No Shift (Static Hue)</strong>
       <div
-        style="height: 60px; border-radius: 8px; background: linear-gradient(to right, 
+        class="docs-gradient-bar"
+        style="background: linear-gradient(to right, 
         oklch(0.2 0.1 260), 
         oklch(0.95 0.1 260)
       );"
       ></div>
-      <div class="text-subtle docs-mt-2" style="font-size: 0.9em">
+      <div class="text-subtle docs-mt-2 docs-text-sm">
         Shadows can feel "muddy" or flat because they lack the natural coolness
         of ambient light.
       </div>
@@ -78,12 +81,13 @@ A naive implementation might apply hue rotation linearly. However, this doesn't 
     <div class="docs-card">
       <strong class="docs-card-header">Linear Shift</strong>
       <div
-        style="height: 60px; border-radius: 8px; background: linear-gradient(to right, 
+        class="docs-gradient-bar"
+        style="background: linear-gradient(to right, 
         oklch(0.2 0.1 260), 
         oklch(0.95 0.1 320)
       );"
       ></div>
-      <div class="text-subtle docs-mt-2" style="font-size: 0.9em">
+      <div class="text-subtle docs-mt-2 docs-text-sm">
         A linear shift (0° to 60°) can feel abrupt in the mid-tones, making the
         color change too noticeable.
       </div>
@@ -100,31 +104,34 @@ Instead, we use a **cubic Bezier curve** to map lightness values (0-1) to hue ro
     <div class="docs-card">
       <strong class="docs-card-header">No Shift</strong>
       <div
-        style="height: 60px; border-radius: 8px; background: linear-gradient(to right, 
+        class="docs-gradient-bar"
+        style="background: linear-gradient(to right, 
         oklch(0.2 0.1 260), 
         oklch(0.95 0.1 260)
       );"
       ></div>
-      <div class="text-subtle docs-mt-2" style="font-size: 0.9em">
+      <div class="text-subtle docs-mt-2 docs-text-sm">
         Static hue.
       </div>
     </div>
     <div class="docs-card">
       <strong class="docs-card-header">Linear Shift</strong>
       <div
-        style="height: 60px; border-radius: 8px; background: linear-gradient(to right, 
+        class="docs-gradient-bar"
+        style="background: linear-gradient(to right, 
         oklch(0.2 0.1 260), 
         oklch(0.95 0.1 320)
       );"
       ></div>
-      <div class="text-subtle docs-mt-2" style="font-size: 0.9em">
+      <div class="text-subtle docs-mt-2 docs-text-sm">
         Abrupt mid-tones.
       </div>
     </div>
     <div class="docs-card">
       <strong class="docs-card-header">Bezier Shift</strong>
       <div
-        style="height: 60px; border-radius: 8px; background: linear-gradient(to right, 
+        class="docs-gradient-bar"
+        style="background: linear-gradient(to right, 
         oklch(0.2 0.1 260),   /* Start: Blue */
         oklch(0.4 0.1 265),   /* Slow start */
         oklch(0.6 0.1 290),   /* Fast middle */
@@ -132,7 +139,7 @@ Instead, we use a **cubic Bezier curve** to map lightness values (0-1) to hue ro
         oklch(0.95 0.1 320)   /* End: Purple */
       );"
       ></div>
-      <div class="text-subtle docs-mt-2" style="font-size: 0.9em">
+      <div class="text-subtle docs-mt-2 docs-text-sm">
         Smooth S-curve.
       </div>
     </div>
@@ -196,30 +203,30 @@ This creates a **smooth S-curve** that:
 Here is how the hue rotation (0° to 180°) is applied across the lightness spectrum (0.1 to 0.9).
 
 <Diagram>
-  <div class="docs-grid" style="grid-template-columns: 80px 1fr; gap: 1rem; align-items: center; margin-bottom: 2rem;">
+  <div class="docs-grid-comparison">
     {/* Linear Row */}
     <div class="text-subtle text-right">Linear</div>
-    <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; height: 50px;">
-      <div style="background: oklch(0.1 0.15 278); border-radius: 4px;" title="L=0.1, H=278 (+18°)"></div>
-      <div style="background: oklch(0.3 0.15 314); border-radius: 4px;" title="L=0.3, H=314 (+54°)"></div>
-      <div style="background: oklch(0.5 0.15 350); border-radius: 4px;" title="L=0.5, H=350 (+90°)"></div>
-      <div style="background: oklch(0.7 0.15 26); border-radius: 4px;" title="L=0.7, H=26 (+126°)"></div>
-      <div style="background: oklch(0.9 0.15 62); border-radius: 4px;" title="L=0.9, H=62 (+162°)"></div>
+    <div class="docs-swatch-grid">
+      <div class="docs-swatch" style="background: oklch(0.1 0.15 278);" title="L=0.1, H=278 (+18°)"></div>
+      <div class="docs-swatch" style="background: oklch(0.3 0.15 314);" title="L=0.3, H=314 (+54°)"></div>
+      <div class="docs-swatch" style="background: oklch(0.5 0.15 350);" title="L=0.5, H=350 (+90°)"></div>
+      <div class="docs-swatch" style="background: oklch(0.7 0.15 26);" title="L=0.7, H=26 (+126°)"></div>
+      <div class="docs-swatch" style="background: oklch(0.9 0.15 62);" title="L=0.9, H=62 (+162°)"></div>
     </div>
 
     {/* Bezier Row */}
     <div class="text-subtle text-right">Bezier</div>
-    <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; height: 50px;">
-      <div style="background: oklch(0.1 0.15 265); border-radius: 4px;" title="L=0.1, H=265 (+5°)"></div>
-      <div style="background: oklch(0.3 0.15 299); border-radius: 4px;" title="L=0.3, H=299 (+39°)"></div>
-      <div style="background: oklch(0.5 0.15 350); border-radius: 4px;" title="L=0.5, H=350 (+90°)"></div>
-      <div style="background: oklch(0.7 0.15 41); border-radius: 4px;" title="L=0.7, H=41 (+141°)"></div>
-      <div style="background: oklch(0.9 0.15 75); border-radius: 4px;" title="L=0.9, H=75 (+175°)"></div>
+    <div class="docs-swatch-grid">
+      <div class="docs-swatch" style="background: oklch(0.1 0.15 265);" title="L=0.1, H=265 (+5°)"></div>
+      <div class="docs-swatch" style="background: oklch(0.3 0.15 299);" title="L=0.3, H=299 (+39°)"></div>
+      <div class="docs-swatch" style="background: oklch(0.5 0.15 350);" title="L=0.5, H=350 (+90°)"></div>
+      <div class="docs-swatch" style="background: oklch(0.7 0.15 41);" title="L=0.7, H=41 (+141°)"></div>
+      <div class="docs-swatch" style="background: oklch(0.9 0.15 75);" title="L=0.9, H=75 (+175°)"></div>
     </div>
 
     {/* Labels */}
     <div></div>
-    <div style="display: grid; grid-template-columns: repeat(5, 1fr); text-align: center; font-size: 0.8em; color: var(--text-subtle-token);">
+    <div class="docs-grid-labels">
       <div>Dark</div>
       <div></div>
       <div>Mid</div>

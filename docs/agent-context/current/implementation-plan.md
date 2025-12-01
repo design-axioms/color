@@ -1,49 +1,31 @@
-# Implementation Plan - Epoch 13 Phase 4: Advanced Customization (Mastery)
+# Implementation Plan - Epoch 16 Phase 1: Documentation Styling & CI Integration
 
 ## Goal
+Elevate the visual quality of the documentation by removing technical debt (inline styles) and enforcing accessibility standards automatically via CI.
 
-Remove friction for advanced users integrating the color system into complex environments (e.g., existing codebases, specific naming conventions).
+## Proposed Changes
 
-## Scope
+### 1. Documentation Styling Refactor
+- **Target**: `site/src/content/docs/**/*.mdx`
+- **Action**:
+    - Identify components or HTML elements using `style="..."`.
+    - Replace with Tailwind-like utility classes (if available) or standard CSS classes defined in `site/src/styles/custom.css` (or similar).
+    - Ensure consistent use of design tokens (e.g., `var(--color-surface-base)` instead of hardcoded hex).
 
-1.  **Configuration Options**: Add `prefix` and `selector` options to `color-config.json`.
-2.  **Audit Command**: Implement `color-system audit` to verify token validity.
-3.  **Override Capability**: Allow "breaking the rules" in the Theme Builder (with warnings).
+### 2. Diagram Polish
+- **Target**: Concept diagrams in `concepts/`.
+- **Action**:
+    - Improve contrast and spacing.
+    - Ensure diagrams look good in both Light and Dark modes.
+    - Use the "Inline Token Inspector" pattern where applicable.
 
-## Detailed Design
+### 3. CI Integration
+- **Target**: `.github/workflows/`
+- **Action**:
+    - Add a step to run `pnpm exec color-system audit` (or the package script) during the build process.
+    - Fail the build if the audit finds violations.
 
-### 1. Configuration Options
-
-- **File**: `src/lib/types.ts` (Config interface), `src/lib/generator.ts` (CSS generation).
-- **Changes**:
-  - Add `options` object to `ColorConfig`.
-  - `options.prefix`: Defaults to `color-sys`. Allows users to change the CSS variable prefix (e.g., `--my-app-surface-1`).
-  - `options.selector`: Defaults to `:root`. Allows users to scope the variables to a specific selector (e.g., `.theme-provider`).
-- **Impact**:
-  - All CSS generation logic needs to use these config values instead of hardcoded strings.
-  - The `typescript` exporter needs to respect the prefix.
-
-### 2. Audit Command
-
-- **File**: `src/cli/commands/audit.ts` (New).
-- **Functionality**:
-  - Load `color-config.json`.
-  - Check for common errors:
-    - Missing keys.
-    - Invalid contrast ratios (if we have a standard).
-    - Surfaces that are too dark/light for their context.
-  - Output a report.
-
-### 3. Override Capability (Theme Builder)
-
-- **File**: `site/src/components/ThemeBuilder.svelte` (and related components).
-- **Functionality**:
-  - Allow users to manually set a hex code for a surface, bypassing the solver.
-  - Display a "Warning" icon if the manual color violates contrast rules.
-  - Store overrides in the config (likely a new `overrides` map or a property on the Surface definition).
-
-## Phasing
-
-1.  **Config Options**: Implement `prefix` and `selector` support in the core library and CLI.
-2.  **Audit Command**: Create the basic audit command.
-3.  **Theme Builder Overrides**: Add UI for overrides.
+## Verification Plan
+- **Visual Check**: Manually verify the documentation site (`pnpm dev`) to ensure no visual regressions.
+- **Automated Check**: Run `color-system audit` locally and verify it passes.
+- **CI Check**: Push changes and verify GitHub Actions success.

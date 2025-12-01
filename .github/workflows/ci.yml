@@ -38,3 +38,7 @@ jobs:
 
       - name: Build (Solve)
         run: pnpm solve
+
+      - name: Audit Theme
+        run: pnpm audit:theme
+

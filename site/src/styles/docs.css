@@ -73,3 +73,77 @@
 [class*="surface-"] {
   position: relative;
 }
+
+/* Visualization Utilities */
+
+.docs-gradient-bar {
+  height: 60px;
+  border-radius: 0.5rem;
+  width: 100%;
+  /* background is set inline */
+}
+
+.docs-swatch-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 4px;
+  height: 50px;
+}
+
+.docs-swatch {
+  border-radius: 4px;
+  width: 100%;
+  height: 100%;
+  /* background is set inline */
+}
+
+.docs-grid-labels {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  text-align: center;
+  font-size: 0.8em;
+  color: var(--text-subtle-token);
+}
+
+.docs-text-sm {
+  font-size: 0.9em;
+}
+
+.docs-grid-comparison {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.docs-shadow-grid {
+  padding: 2rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 2rem;
+}
+
+.docs-shadow-box {
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.docs-flex-demo {
+  padding: 2rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.docs-btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+}
+
+.docs-input {
+  padding: 0.5rem;
+  border-radius: 4px;
+}
