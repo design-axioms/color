@@ -337,6 +337,21 @@ export function solve(config: SolverConfig): Theme {
         hue += shift;
 
         entry[mode] = { l: lightness, c: chroma, h: hue };
+
+        if (surface && surface.override && surface.override[mode]) {
+          const hex = surface.override[mode];
+          const oklch = toOklch(hex) as
+            | { l: number; c: number; h: number }
+            | undefined;
+          if (oklch) {
+            entry[mode] = {
+              l: oklch.l,
+              c: oklch.c,
+              h: isNaN(oklch.h) ? 0 : oklch.h,
+            };
+          }
+        }
+
         backgrounds.set(slug, entry);
       }
     }

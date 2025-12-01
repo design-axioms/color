@@ -565,3 +565,21 @@
 - **Visual Refinement**:
   - Designed the panel to group tokens by category (Surface, Text, Border).
   - Added color previews and responsive layout.
+
+## Epoch 13: Phase 4 - Advanced Customization (Mastery) (2025-12-01)
+
+**Goal**: Remove friction for advanced users integrating the color system into complex environments.
+
+**Completed Work**:
+
+- **Configuration Options**:
+  - Added `prefix` and `selector` options to `SolverConfig`.
+  - Updated `generateTokensCss` and `generateTheme` to respect these options, allowing custom CSS variable prefixes (e.g., `--my-app-surface-1`) and scoping selectors.
+  - Updated TypeScript exporter to use the custom prefix.
+- **Audit Command**:
+  - Implemented `color-system audit` CLI command.
+  - Validates themes against accessibility rules (APCA contrast < 60) and polarity logic (e.g., ensuring 'page' surfaces are light in light mode).
+- **Theme Builder Overrides**:
+  - Added support for manual hex overrides in `SurfaceConfig`.
+  - Updated the `solve` engine to respect overrides, bypassing contrast calculations.
+  - Added UI controls in the Theme Builder for setting Light/Dark mode overrides, with visual warning indicators.

@@ -79,6 +79,20 @@
       ],
       "type": "object"
     },
+    "ConfigOptions": {
+      "additionalProperties": false,
+      "properties": {
+        "prefix": {
+          "description": "The prefix to use for CSS variables. Defaults to \"color-sys\".",
+          "type": "string"
+        },
+        "selector": {
+          "description": "The CSS selector to scope the variables to. Defaults to \":root\".",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
     "ContrastOffsets": {
       "additionalProperties": false,
       "properties": {
@@ -225,6 +239,9 @@
         "hueShift": {
           "$ref": "#/definitions/HueShiftConfig"
         },
+        "options": {
+          "$ref": "#/definitions/ConfigOptions"
+        },
         "palette": {
           "$ref": "#/definitions/PaletteConfig"
         }
@@ -280,6 +297,19 @@
         },
         "label": {
           "type": "string"
+        },
+        "override": {
+          "additionalProperties": false,
+          "description": "Manual hex override for the surface background color. If set, the solver will use this color instead of the calculated one.",
+          "properties": {
+            "dark": {
+              "type": "string"
+            },
+            "light": {
+              "type": "string"
+            }
+          },
+          "type": "object"
         },
         "polarity": {
           "$ref": "#/definitions/Polarity"

@@ -72,7 +72,7 @@ export function exportCommand(args: string[], cwd: string): void {
     // Output as CommonJS module
     outputContent = `module.exports = ${JSON.stringify(preset, null, 2)};`;
   } else if (format === "typescript") {
-    outputContent = toTypeScript(theme);
+    outputContent = toTypeScript(theme, config.options);
   }
 
   console.log(`Writing to: ${absOutPath}`);

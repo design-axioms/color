@@ -67,6 +67,11 @@ export type SurfaceConfig = {
    */
   contrastOffset?: ContrastOffsets;
   /**
+   * Manual hex override for the surface background color.
+   * If set, the solver will use this color instead of the calculated one.
+   */
+  override?: Partial<Record<Mode, string>>;
+  /**
    * Target chroma for this surface.
    * If set, the solver will adjust Lightness to compensate for the HK effect.
    */
@@ -128,6 +133,19 @@ export interface PaletteConfig {
   hues?: number[];
 }
 
+export interface ConfigOptions {
+  /**
+   * The prefix to use for CSS variables.
+   * Defaults to "color-sys".
+   */
+  prefix?: string;
+  /**
+   * The CSS selector to scope the variables to.
+   * Defaults to ":root".
+   */
+  selector?: string;
+}
+
 export interface ColorSpec {
   l: number;
   c: number;
@@ -140,6 +158,7 @@ export type SolverConfig = {
   hueShift?: HueShiftConfig;
   borderTargets?: BorderTargets;
   palette?: PaletteConfig;
+  options?: ConfigOptions;
 };
 
 export type SurfaceDefinition = {

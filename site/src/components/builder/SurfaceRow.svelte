@@ -1,9 +1,9 @@
 <script lang="ts">
   import type { SurfaceConfig } from "@algebraic-systems/color-system/types";
-  import { getContext } from 'svelte';
-  import type { ThemeState } from '../../lib/state/ThemeState.svelte';
-  import type { ConfigState } from '../../lib/state/ConfigState.svelte';
-  import ContrastBadge from './ContrastBadge.svelte';
+  import { getContext } from "svelte";
+  import type { ConfigState } from "../../lib/state/ConfigState.svelte";
+  import type { ThemeState } from "../../lib/state/ThemeState.svelte";
+  import ContrastBadge from "./ContrastBadge.svelte";
 
   interface Props {
     surface: SurfaceConfig;
@@ -13,8 +13,8 @@
 
   let { surface, groupIndex, surfaceIndex }: Props = $props();
 
-  const themeState = getContext<ThemeState>('theme');
-  const configState = getContext<ConfigState>('config');
+  const themeState = getContext<ThemeState>("theme");
+  const configState = getContext<ConfigState>("config");
 
   let isExpanded = $state(false);
   let resolvedTheme = $derived(themeState.mode);
@@ -109,6 +109,12 @@
     <span class="text-strong" style="flex: 1;">
       {surface.label}
     </span>
+    {#if surface.override?.light || surface.override?.dark}
+      <span
+        title="Has manual overrides"
+        style="font-size: 0.8rem; cursor: help;">⚠️</span
+      >
+    {/if}
     <ContrastBadge slug={surface.slug} mode={resolvedTheme} {solved} />
     <span class="text-subtle" style="font-size: 0.8rem;">
       {surface.slug}
@@ -169,10 +175,101 @@
           max="0.4"
           step="0.01"
           value={surface.targetChroma ?? 0}
-          oninput={(e) => update({ targetChroma: Number(e.currentTarget.value) })}
+          oninput={(e) =>
+            update({ targetChroma: Number(e.currentTarget.value) })}
           style="width: 100%;"
         />
       </label>
+
+      <!-- Overrides -->
+      <div
+        style="border-top: 1px solid var(--border-subtle-token); padding-top: 0.75rem; margin-top: 0.5rem;"
+      >
+        <span
+          class="text-strong"
+          style="font-size: 0.9rem; display: block; margin-bottom: 0.5rem;"
+          >Overrides</span
+        >
+        <div
+          style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;"
+        >
+          <label
+            class="text-subtle"
+            style="display: flex; flex-direction: column; gap: 0.25rem;"
+          >
+            Light Mode
+            <div style="display: flex; gap: 0.25rem;">
+              <input
+                type="color"
+                value={surface.override?.light ?? "#ffffff"}
+                oninput={(e) =>
+                  update({
+                    override: {
+                      ...(surface.override ?? {}),
+                      light: e.currentTarget.value,
+                    },
+                  })}
+                style="height: 30px; width: 30px; padding: 0; border: none; background: none; cursor: pointer;"
+              />
+              <input
+                type="text"
+                placeholder="#RRGGBB"
+                value={surface.override?.light ?? ""}
+                oninput={(e) =>
+                  update({
+                    override: {
+                      ...(surface.override ?? {}),
+                      light: e.currentTarget.value,
+                    },
+                  })}
+                style="flex: 1; padding: 0.4rem; border-radius: 4px; border: 1px solid var(--border-subtle-token); background: transparent; color: var(--text-high-token); font-family: monospace;"
+              />
+            </div>
+          </label>
+          <label
+            class="text-subtle"
+            style="display: flex; flex-direction: column; gap: 0.25rem;"
+          >
+            Dark Mode
+            <div style="display: flex; gap: 0.25rem;">
+              <input
+                type="color"
+                value={surface.override?.dark ?? "#000000"}
+                oninput={(e) =>
+                  update({
+                    override: {
+                      ...(surface.override ?? {}),
+                      dark: e.currentTarget.value,
+                    },
+                  })}
+                style="height: 30px; width: 30px; padding: 0; border: none; background: none; cursor: pointer;"
+              />
+              <input
+                type="text"
+                placeholder="#RRGGBB"
+                value={surface.override?.dark ?? ""}
+                oninput={(e) =>
+                  update({
+                    override: {
+                      ...(surface.override ?? {}),
+                      dark: e.currentTarget.value,
+                    },
+                  })}
+                style="flex: 1; padding: 0.4rem; border-radius: 4px; border: 1px solid var(--border-subtle-token); background: transparent; color: var(--text-high-token); font-family: monospace;"
+              />
+            </div>
+          </label>
+        </div>
+        {#if surface.override?.light || surface.override?.dark}
+          <button
+            onclick={() => update({ override: undefined })}
+            class="text-subtle"
+            style="margin-top: 0.5rem; font-size: 0.8rem; text-decoration: underline; background: none; border: none; cursor: pointer;"
+          >
+            Clear Overrides
+          </button>
+        {/if}
+      </div>
 
       <div
         style="display: flex; justify-content: flex-end; margin-top: 0.5rem;"

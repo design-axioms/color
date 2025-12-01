@@ -20,6 +20,10 @@ The current Theme Builder UI is functional but sparse. It lacks data density and
   - **Data Density**: Show actual contrast ratios, lightness values, and hex codes inline without clutter.
   - **Intuitive Controls**: Instead of just sliders, use visual histograms or gradients to show where a surface sits in the gamut.
 
+## UI/UX
+
+- **Density Setting**: A "density" setting (similar to Gmail's comfort settings) that adjusts spacing scales. This would allow for a more compact UI without breaking the relative scaling of the system.
+
 ## Ecosystem
 
 - **`@algebraic-systems/layout`**: A companion layout system to complement the color system. This should likely follow similar principles (semantic, constraint-based, runtime-aware).

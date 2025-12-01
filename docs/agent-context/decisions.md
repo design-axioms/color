@@ -361,3 +361,27 @@ This file tracks key architectural and design decisions made throughout the proj
   - **Discovery**: Makes the system self-documenting. Users can "ask" the documentation what a surface is made of.
   - **Transparency**: Demystifies the "magic" of the context engine by showing the raw values.
   - **Interactivity**: Encourages exploration and reinforces the mental model that "surfaces create context".
+
+### [2025-12-01] Configuration Options (Prefix/Selector)
+
+- **Context**: Users needed to integrate the color system into existing applications that might have naming conflicts or require scoped styles.
+- **Decision**: Add an `options` object to `SolverConfig` supporting `prefix` (for CSS variables) and `selector` (for the root rule).
+- **Rationale**:
+  - **Flexibility**: Allows the system to coexist with other libraries (e.g., Tailwind, Bootstrap) or legacy code.
+  - **Scoping**: Enables generating multiple themes that live side-by-side on the same page (e.g., a "preview" area with a different theme).
+
+### [2025-12-01] Audit Command Logic
+
+- **Context**: We needed a way to verify that generated themes meet accessibility standards programmatically.
+- **Decision**: Implement a `color-system audit` command that checks for APCA contrast < 60 and Polarity violations (e.g., dark text on dark background).
+- **Rationale**:
+  - **Automation**: Enables CI/CD pipelines to reject themes that break accessibility rules.
+  - **Quality Assurance**: Provides a "safety net" for users customizing their themes, warning them if they break the system's guarantees.
+
+### [2025-12-01] Manual Overrides in Solver
+
+- **Context**: Some brand colors or specific UI elements (like "Delete" buttons) require exact hex values that might slightly violate the strict contrast curve but are intentional.
+- **Decision**: Add an `override` property to `SurfaceConfig` that allows users to force a specific hex value, bypassing the solver's contrast logic.
+- **Rationale**:
+  - **Pragmatism**: Acknowledges that "perfect" math sometimes conflicts with brand guidelines or design intent.
+  - **Control**: Gives power users an escape hatch while keeping the default path safe and automated.

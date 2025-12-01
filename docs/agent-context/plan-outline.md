@@ -201,10 +201,10 @@
     - **Goal**: Migrate the core `ThemeBuilder` application to Svelte 5.
     - **Deliverables**: `ThemeBuilder.svelte`, `AnchorsEditor.svelte`, `SurfaceManager.svelte`, Live Injection.
 
-## Epoch 13: User Experience & Integration (In Progress)
+## Epoch 13: User Experience & Integration (Completed)
 
 - **Goal**: Address the "Missing Features" identified in Fresh Eyes Audit 4 by restructuring the documentation and tooling to create a seamless "Golden Path" for adoption.
-- **Status**: In Progress. Phase 1 (Onboarding) was partially completed but lacked framework specifics. Phase 3 is now active to fill that gap.
+- **Status**: Completed.
 - **Phases**:
   - **Phase 1: The Golden Path (Onboarding) (Completed)**
     - **Goal**: Create a zero-friction path from "What is this?" to "I have a running app".
@@ -214,14 +214,14 @@
       - **Interactive "Try It"**: Add a "Open in StackBlitz/CodeSandbox" button to the docs that pre-loads the system.
   - **Phase 2: The Concept-to-Code Bridge (Mental Model) (Completed in Epoch 15)**
     - **Note**: This work was moved to Epoch 15 and completed there.
-  - **Phase 3: Framework-Specific Integration (Implementation) (Active)**
+  - **Phase 3: Framework-Specific Integration (Implementation) (Completed)**
     - **Goal**: Provide specific, copy-pasteable implementation guides for major frameworks, removing the guesswork.
     - **Deliverables**:
       - **Framework Guides**: Dedicated pages for **React**, **Svelte**, and **Plain HTML**.
       - **Theme Toggle Component**: A drop-in component/script for each framework to handle Dark Mode (addressing Sarah's gap).
       - **TypeScript Export**: Implement `color-system export --format typescript` to support the "Typed CSS" workflow in React/Svelte.
       - **Real Quick Start**: A true "Zero to UI" tutorial that leads to a rendered component, not just a CSS file.
-  - **Phase 4: Advanced Customization (Mastery) (Deferred)**
+  - **Phase 4: Advanced Customization (Mastery) (Completed)**
     - **Goal**: Remove friction for advanced users integrating into complex environments.
     - **Deliverables**:
       - **Configuration Options**: Add `prefix` and `selector` options to support existing codebases (Marcus's gap).

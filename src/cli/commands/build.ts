@@ -44,7 +44,7 @@ export function buildCommand(args: string[], cwd: string): void {
       config.groups,
       theme,
       config.borderTargets,
-      undefined
+      config.options
     );
 
     const stats = getKeyColorStats(config.anchors.keyColors);
@@ -73,7 +73,7 @@ export function buildCommand(args: string[], cwd: string): void {
       hcConfig.groups,
       hcTheme,
       hcConfig.borderTargets,
-      undefined
+      config.options
     );
 
     // Wrap in media query and add overrides

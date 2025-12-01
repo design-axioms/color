@@ -18,12 +18,9 @@ export function generateTheme(config: SolverConfig, selector?: string): string {
   const theme = solve(config);
   const stats = getKeyColorStats(config.anchors.keyColors);
 
-  let css = generateTokensCss(
-    config.groups,
-    theme,
-    config.borderTargets,
-    selector
-  );
+  let css = generateTokensCss(config.groups, theme, config.borderTargets, {
+    selector,
+  });
 
   // Prepend variables if key colors exist
   if (stats.chroma !== undefined || stats.hue !== undefined) {

@@ -42,6 +42,10 @@ export const DEFAULT_CONFIG: SolverConfig = {
     // Shuffled to maximize distinctiveness between adjacent colors
     hues: [25, 190, 45, 250, 85, 280, 125, 320, 150, 360],
   },
+  options: {
+    prefix: "color-sys",
+    selector: ":root",
+  },
   groups: [
     {
       name: "Base",

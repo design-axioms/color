@@ -2,6 +2,7 @@
 import { existsSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { auditCommand } from "./commands/audit.ts";
 import { buildCommand } from "./commands/build.ts";
 import { exportCommand } from "./commands/export.ts";
 import { DEFAULT_CONFIG } from "./default-config.ts";
@@ -38,6 +39,9 @@ if (isMain) {
     process.exit(0);
   } else if (command === "export") {
     exportCommand(args.slice(1), CWD);
+    process.exit(0);
+  } else if (command === "audit") {
+    auditCommand(args.slice(1), CWD);
     process.exit(0);
   } else if (command === "build") {
     buildCommand(args.slice(1), CWD);

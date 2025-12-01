@@ -51,6 +51,11 @@ type SurfaceConfig = {
      */
     contrastOffset?: ContrastOffsets;
     /**
+     * Manual hex override for the surface background color.
+     * If set, the solver will use this color instead of the calculated one.
+     */
+    override?: Partial<Record<Mode, string>>;
+    /**
      * Target chroma for this surface.
      * If set, the solver will adjust Lightness to compensate for the HK effect.
      */
@@ -106,6 +111,18 @@ interface PaletteConfig {
      */
     hues?: number[];
 }
+interface ConfigOptions {
+    /**
+     * The prefix to use for CSS variables.
+     * Defaults to "color-sys".
+     */
+    prefix?: string;
+    /**
+     * The CSS selector to scope the variables to.
+     * Defaults to ":root".
+     */
+    selector?: string;
+}
 interface ColorSpec {
     l: number;
     c: number;
@@ -117,6 +134,7 @@ type SolverConfig = {
     hueShift?: HueShiftConfig;
     borderTargets?: BorderTargets;
     palette?: PaletteConfig;
+    options?: ConfigOptions;
 };
 type SurfaceDefinition = {
     slug: string;
@@ -160,4 +178,4 @@ interface Theme {
     primitives: Primitives;
 }
 
-export type { AnchorValue, Anchors, BezierCurve, BorderTargets, ChartColor, ColorSpec, Context, ContrastOffsets, HueShiftConfig, Mode, ModeAnchors, ModeSpec, Mutable, PaletteConfig, Polarity, PolarityAnchors, Primitives, SolverConfig, StateDefinition, SurfaceConfig, SurfaceDefinition, SurfaceGroup, Theme };
+export type { AnchorValue, Anchors, BezierCurve, BorderTargets, ChartColor, ColorSpec, ConfigOptions, Context, ContrastOffsets, HueShiftConfig, Mode, ModeAnchors, ModeSpec, Mutable, PaletteConfig, Polarity, PolarityAnchors, Primitives, SolverConfig, StateDefinition, SurfaceConfig, SurfaceDefinition, SurfaceGroup, Theme };
