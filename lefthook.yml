@@ -21,3 +21,5 @@ pre-push:
       run: pnpm check:exports
     knip:
       run: pnpm knip
+    security:
+      run: pnpm lint:security
