@@ -3,7 +3,7 @@
 @import "@fontsource-variable/jetbrains-mono";
 @import "@fontsource-variable/space-grotesk";
 
-/* Mapping the Algebraic Color System to Starlight's variables */
+/* Mapping the Axiomatic Color System to Starlight's variables */
 
 /* 
    CRITICAL: Force color-scheme based on data-theme attribute.
@@ -48,11 +48,13 @@
 
 /* Force Starlight to use our font settings if needed */
 :root {
-  --sl-font-system: "Inter Variable", ui-sans-serif, system-ui, -apple-system,
+  --sl-font-system:
+    "Inter Variable", ui-sans-serif, system-ui, -apple-system,
     BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --sl-font-heading: "Space Grotesk Variable", var(--sl-font-system);
-  --sl-font-mono: "JetBrains Mono Variable", ui-monospace, SFMono-Regular, Menlo,
-    Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --sl-font-mono:
+    "JetBrains Mono Variable", ui-monospace, SFMono-Regular, Menlo, Monaco,
+    Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
 /* Typography Improvements */

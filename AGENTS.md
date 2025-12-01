@@ -84,7 +84,7 @@ To prepare for the next phase after a transition, use the `.github/prompts/prepa
 ### Project Structure
 
 - **`src/lib/`**: Core logic for the color system (solvers, math, types).
-- **`src/cli/`**: CLI entry point (`color-system`).
+- **`src/cli/`**: CLI entry point (`axiomatic`).
 - **`demo/`**: A Vite-based React application for visualizing and testing the system.
 - **`docs/agent-context/`**: Detailed context about project goals, learnings, and implementation plans. **Read these if you need to understand the "why" behind the code.**
 

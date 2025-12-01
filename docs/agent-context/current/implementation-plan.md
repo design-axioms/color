@@ -1,44 +1,38 @@
-# Implementation Plan: Epoch 19 - Rebranding to Axiomatic Color
+# Implementation Plan - Epoch 19: Phase 2 - Documentation & Site Updates
 
-**Goal:** Update the codebase, configuration, and documentation to reflect the new identity: **Axiomatic Color**.
+**Goal**: Update all documentation, branding, and site content to reflect the new project name: **Axiomatic Color**.
 
-## The New Identity
+## 1. README & Metadata Updates
 
-- **Product Name:** Axiomatic Color
-- **Design System Name:** Axiomatic Design (or just "Axiomatic")
-- **NPM Package:** `@axiomatic-design/color`
-- **CLI Command:** `axiomatic`
+- [ ] **Update Root README.md**
+  - Change title to "Axiomatic Color".
+  - Update description to reflect the "axiomatic" philosophy.
+  - Update installation instructions (`pnpm add @axiomatic-design/color`).
+  - Update CLI usage (`pnpm exec axiomatic init`).
+- [ ] **Update Site Metadata**
+  - Update `site/astro.config.mjs` (site title).
+  - Update `site/package.json` (if applicable).
 
-## Scope of Work
+## 2. Documentation Content Updates
 
-### 1. Configuration & Code (`package.json`, `src/cli`)
+- [ ] **Global Find & Replace**
+  - Search for "Algebraic Color System" -> "Axiomatic Color".
+  - Search for "Algebraic Color" -> "Axiomatic Color".
+  - Search for `color-system` (CLI command) -> `axiomatic`.
+- [ ] **Specific File Updates**
+  - `docs/design/personas.md`: Update personas to reference the new name.
+  - `docs/design/axioms.md`: Ensure axioms align with the new branding.
+  - `site/src/content/docs/index.mdx`: Update hero title and tagline.
+  - `site/src/content/docs/introduction.mdx`: Update introduction text.
 
-- [ ] Update `package.json` name to `@axiomatic-design/color`.
-- [ ] Update the `bin` entry to `axiomatic`.
-- [ ] Update `src/cli/index.ts` help text and headers.
-- [ ] Ensure the executable works with the new command name.
+## 3. Site Branding
 
-### 2. Documentation (`README.md`, `docs/`)
+- [ ] **Visual Branding**
+  - Check for any logos or images that contain the old name (if any).
+  - Update page titles and meta tags.
 
-- [ ] **README:**
-  - Update title to "Axiomatic Color".
-  - Update installation instructions (`npm install @axiomatic-design/color`).
-  - Update tagline: "An Axiomatic approach to color. Automated contrast, platform-native adaptation, and mathematically guaranteed accessibility."
-- [ ] **Personas (`docs/design/personas.md`):**
-  - Replace "Algebraic Color System" with "Axiomatic Color".
-  - Refine descriptions to align with the new name.
-- [ ] **Concepts/Axioms (`concepts.md`, `docs/design/axioms.md`):**
-  - Shift terminology from "The System" to "The Axioms".
-  - Ensure "Algebraic" is reserved for internal math/solver context.
+## 4. Verification
 
-### 3. Site & Demo
-
-- [ ] Update `site/astro.config.mjs` title.
-- [ ] Update the header in the Theme Builder (`site/src/components/builder/`) to display "Axiomatic Color".
-- [ ] Update any hardcoded package references in the site content.
-
-## Constraints
-
-- "Algebraic" is acceptable for internal solver math/implementation details.
-- **Product** is always "Axiomatic Color".
-- "Axiomatic" refers to the color system in this context.
+- [ ] **Local Preview**
+  - Run `pnpm docs:dev` and verify the site loads correctly with the new branding.
+  - Check the "Getting Started" guide to ensure commands are correct.

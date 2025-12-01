@@ -1,24 +1,25 @@
-# Walkthrough: Epoch 19 - Rebranding
+# Walkthrough - Epoch 19: Phase 2
 
-## Phase 1: Package & CLI Updates
+**Goal**: Update all documentation, branding, and site content to reflect the new project name: **Axiomatic Color**.
 
-We have successfully initiated the rebranding from "Algebraic Color" to "Axiomatic Color".
+## Changes
 
-### Key Changes
+### 1. Branding Updates
 
-1.  **Package Renaming**:
-    - Updated `package.json` name to `@axiomatic-design/color`.
-    - This aligns with the broader "Axiomatic Design" system.
+We have officially renamed the project from "Algebraic Color System" to "**Axiomatic Color**". This change reflects the shift in philosophy from "math-first" to "rules-first" (axioms).
 
-2.  **CLI Command Update**:
-    - The CLI binary has been renamed from `color-system` (or implicit) to `axiomatic`.
-    - Users can now run `pnpm exec axiomatic` or `npx axiomatic`.
-    - Updated the CLI help text in `src/cli/index.ts` to reflect the new name and usage.
+- **Site Title**: Updated `site/astro.config.mjs` to "Axiomatic Color".
+- **Homepage**: Updated `site/src/content/docs/index.mdx` with the new title and tagline.
+- **Philosophy**: Updated `site/src/content/docs/philosophy.md` to reflect the new name and core pillars.
 
-3.  **Verification**:
-    - Verified that `pnpm exec axiomatic --help` returns the correct branding and usage information.
-    - Verified that the build process (`pnpm build`) correctly generates the artifacts with the new metadata.
+### 2. Documentation Consistency
 
-### Next Steps
+We performed a global audit and update of all documentation files to ensure consistent terminology.
 
-The codebase now reflects the new identity, but the documentation and site content are still using the old terminology. The next phase will focus on updating `README.md`, design documents, and the Astro site to match the new branding.
+- **Concepts**: Updated `thinking-in-surfaces.mdx` to refer to "Axiomatic Color".
+- **CLI**: Updated `src/cli/commands/export.ts` usage examples to use `axiomatic` instead of `color-system`.
+- **Internal Docs**: Updated `AGENTS.md` to reference the correct CLI binary name.
+
+### 3. Verification
+
+We verified the changes by running a full documentation build (`pnpm docs:build`), which passed successfully.

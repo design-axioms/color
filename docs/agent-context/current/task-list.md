@@ -1,26 +1,20 @@
-# Task List: Epoch 19 - Rebranding
+# Task List - Epoch 19: Phase 2
 
-## Phase 1: Package & CLI Updates
-
-- [x] Update `package.json` (name: `@axiomatic-design/color`, bin: `axiomatic`) <!-- id: 0 -->
-- [x] Update `src/cli/index.ts` (Help text, headers) <!-- id: 1 -->
-- [x] Verify CLI works with `pnpm exec axiomatic` <!-- id: 2 -->
-
-## Phase 2: Documentation Updates
-
-- [ ] Update `README.md` (Title, Install, Tagline) <!-- id: 3 -->
-- [ ] Update `docs/design/personas.md` (Name change) <!-- id: 4 -->
-- [ ] Update `concepts.md` and `docs/design/axioms.md` (Terminology shift) <!-- id: 5 -->
-- [ ] Search and replace `@axiomatic-design/color` with `@axiomatic-design/color` in all docs <!-- id: 6 -->
-- [ ] Search and replace `color-system` command with `axiomatic` in all docs <!-- id: 7 -->
-
-## Phase 3: Site & Demo Updates
-
-- [ ] Update `site/astro.config.mjs` (Title) <!-- id: 8 -->
-- [ ] Update Theme Builder Header <!-- id: 9 -->
-- [ ] Verify Site Build <!-- id: 10 -->
-
-## Phase 4: Verification
-
-- [ ] Run full test suite <!-- id: 11 -->
-- [ ] Run `publint` <!-- id: 12 -->
+- [x] **Update Root README.md**
+  - [x] Change title to "Axiomatic Color".
+  - [x] Update description.
+  - [x] Update installation instructions.
+  - [x] Update CLI usage.
+- [x] **Update Site Metadata**
+  - [x] Update `site/astro.config.mjs` (site title).
+  - [x] Update `site/package.json` (verified).
+- [x] **Documentation Content Updates**
+  - [x] Global Find & Replace ("Algebraic Color System" -> "Axiomatic Color").
+  - [x] Update `site/src/styles/starlight-overrides.css`.
+  - [x] Update `AGENTS.md`.
+  - [x] Update `src/cli/commands/export.ts`.
+  - [x] Update `site/src/content/docs/index.mdx`.
+  - [x] Update `site/src/content/docs/philosophy.md`.
+  - [x] Update `site/src/content/docs/concepts/thinking-in-surfaces.mdx`.
+- [x] **Verification**
+  - [x] Run `pnpm docs:build` and verify success.

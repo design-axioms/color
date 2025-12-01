@@ -8,7 +8,7 @@ import type { SolverConfig } from "../../lib/types.ts";
 
 export function exportCommand(args: string[], cwd: string): void {
   // Simple arg parsing
-  // color-system export --config <file> --out <file> --format <format>
+  // axiomatic export --config <file> --out <file> --format <format>
 
   let configPath = "color-config.json";
   let outPath = ""; // Will be set based on format if not provided
@@ -44,7 +44,7 @@ export function exportCommand(args: string[], cwd: string): void {
 
   if (format !== "dtcg" && format !== "tailwind" && format !== "typescript") {
     console.error(
-      `Error: Unsupported format '${format}'. Supported formats: 'dtcg', 'tailwind', 'typescript'.`
+      `Error: Unsupported format '${format}'. Supported formats: 'dtcg', 'tailwind', 'typescript'.`,
     );
     process.exit(1);
   }
@@ -71,7 +71,7 @@ export function exportCommand(args: string[], cwd: string): void {
     const preset = toTailwind(theme);
     // Output as CommonJS module
     outputContent = `module.exports = ${JSON.stringify(preset, null, 2)};`;
-  } else if (format === "typescript") {
+  } else {
     outputContent = toTypeScript(theme, config.options);
   }
 

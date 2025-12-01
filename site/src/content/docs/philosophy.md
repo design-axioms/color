@@ -1,9 +1,9 @@
 ---
 title: Philosophy
-description: The core principles behind the Axiomatic Color.
+description: The core principles behind Axiomatic Color.
 ---
 
-The Axiomatic Color is built on three core pillars: **Math**, **Semantics**, and **Adaptability**.
+Axiomatic Color is built on three core pillars: **Math**, **Semantics**, and **Adaptability**.
 
 ## Math vs. Magic
 
