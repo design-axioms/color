@@ -3,10 +3,15 @@ pre-commit:
   commands:
     sync-lockfile:
       run: pnpm install && git add pnpm-lock.yaml
+    format:
+      glob: "*.{ts,js,json,md,yml,css,svelte,astro}"
+      run: pnpm format {staged_files} && git add {staged_files}
     lint:
-      run: pnpm lint
+      glob: "*.{ts,js}"
+      run: pnpm eslint {staged_files}
     security:
-      run: pnpm lint:security
+      glob: "*"
+      run: pnpm lint:security {staged_files}
     knip:
       run: pnpm knip
     test:
@@ -23,3 +28,7 @@ pre-push:
       run: pnpm build
     publint:
       run: pnpm check:exports
+    lint-all:
+      run: pnpm lint
+    security-all:
+      run: pnpm lint:security

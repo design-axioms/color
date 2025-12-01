@@ -1,12 +1,12 @@
-import { readFile } from "node:fs/promises";
 import { glob } from "glob";
+import { readFile } from "node:fs/promises";
 
 const WHITELIST = [
   "http://www.w3.org",
   "http://json-schema.org",
   "http://localhost",
   "http://127.0.0.1",
-  "http://schemas.microsoft.com" // Common in XML/SVG
+  "http://schemas.microsoft.com", // Common in XML/SVG
 ];
 
 const IGNORE_PATTERNS = [
@@ -31,16 +31,23 @@ const IGNORE_PATTERNS = [
   "**/*.ttf",
   "**/*.eot",
   "**/*.mp4",
-  "**/*.webm"
+  "**/*.webm",
 ];
 
-async function checkSecurity() {
-  console.log("Scanning for insecure HTTP URLs...");
-  
-  const files = await glob("**/*", {
-    ignore: IGNORE_PATTERNS,
-    nodir: true,
-  });
+async function checkSecurity(): Promise<void> {
+  const args = process.argv.slice(2);
+  let files: string[] = [];
+
+  if (args.length > 0) {
+    console.log("Scanning specific files for insecure HTTP URLs...");
+    files = args;
+  } else {
+    console.log("Scanning all files for insecure HTTP URLs...");
+    files = await glob("**/*", {
+      ignore: IGNORE_PATTERNS,
+      nodir: true,
+    });
+  }
 
   let hasError = false;
   let checkedCount = 0;
@@ -49,10 +56,10 @@ async function checkSecurity() {
     try {
       // Skip if it looks like a binary file based on extension (simple check)
       // The glob ignore handles most, but just in case
-      
+
       const content = await readFile(file, "utf-8");
       checkedCount++;
-      
+
       // Match http:// followed by non-whitespace and non-quote characters
       const httpMatches = content.matchAll(/http:\/\/[^\s"'`)<>]+/g);
 
@@ -66,7 +73,7 @@ async function checkSecurity() {
           hasError = true;
         }
       }
-    } catch (e) {
+    } catch {
       // Ignore read errors (e.g. directories or binary files that slipped through)
       continue;
     }
@@ -82,4 +89,4 @@ async function checkSecurity() {
   }
 }
 
-checkSecurity();
+void checkSecurity();
