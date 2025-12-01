@@ -1,16 +1,7 @@
-# Task List - Epoch 15: Concept-to-Code Bridge (Phase 1)
-
-## Implementation
-- [x] **Scaffold Components**: Create `TokenInspector`, `InspectorSurface`, `InspectorPanel`.
-- [x] **Integration**: Add `TokenInspector` to `thinking-in-surfaces.mdx`.
-- [x] **Refinement**:
-  - [x] Improve visual design of the panel.
-  - [x] Handle "not set" tokens gracefully.
-  - [x] Add more relevant tokens (e.g. `border-radius`, `box-shadow`).
-- [x] **Verification**:
-  - [x] Verify interaction in Light Mode.
-  - [x] Verify interaction in Dark Mode.
-  - [x] Verify mobile responsiveness.
-
-## Documentation
-- [x] Update `thinking-in-surfaces.mdx` with instructions on how to use the inspector.
+- [ ] **CLI**: Implement `typescript` exporter in `src/lib/exporters/typescript.ts` <!-- id: 0 -->
+- [ ] **CLI**: Register `typescript` format in `src/cli/commands/export.ts` <!-- id: 1 -->
+- [ ] **Docs**: Create `docs/guides/frameworks/react.mdx` with `Surface` and `ThemeToggle` examples <!-- id: 2 -->
+- [ ] **Docs**: Create `docs/guides/frameworks/svelte.mdx` with `Surface` and `ThemeToggle` examples <!-- id: 3 -->
+- [ ] **Docs**: Create `docs/guides/frameworks/html.mdx` with vanilla JS toggle example <!-- id: 4 -->
+- [ ] **Docs**: Rewrite `docs/guides/installation.mdx` or create `docs/guides/quick-start.mdx` to be a true "Zero to UI" guide <!-- id: 5 -->
+- [ ] **Verification**: Test the generated TypeScript definitions in a sample file <!-- id: 6 -->

@@ -1,38 +1,53 @@
-# Implementation Plan - Epoch 15: Concept-to-Code Bridge (Phase 1)
+# Implementation Plan - Epoch 13 Phase 3: Framework-Specific Integration
 
 ## Goal
-Connect abstract concepts (Surfaces, Context) directly to implementation details within the documentation by creating an "Inline Token Inspector". This will allow users to inspect the exact CSS variables and values applied to surfaces in our diagrams.
+Provide specific, copy-pasteable implementation guides for major frameworks (React, Svelte, HTML) and a true "Zero to UI" Quick Start experience. This addresses the "Golden Path" gap identified in the Fresh Eyes review.
 
-## Context
-In Epoch 13, we identified a gap between the high-level concepts (Surfaces, Context) and the low-level implementation (CSS Variables). Users understand *that* surfaces exist, but they struggle to know *which* variables to use in their code. This phase aims to bridge that gap.
+## User Stories
+- **Sarah (The Overwhelmed Pragmatist)**: "I want to copy-paste a code snippet into my React app and have a working, accessible card component immediately."
+- **Marcus (The System Architect)**: "I want TypeScript types for my tokens so my team doesn't have to guess string literals."
 
-## Proposed Solution
-We will build a `TokenInspector` component that can be embedded in MDX. This component will:
-1.  Render a visual representation of a surface (or set of surfaces).
-2.  Allow users to click/hover on these surfaces.
-3.  Display a "Inspector Panel" showing the computed CSS variables for that element (e.g., `--surface-token`, `--text-high-token`).
-4.  Show the resolved values (e.g., `oklch(...)`) to demystify the system.
+## Key Deliverables
 
-## Detailed Plan
+### 1. TypeScript Export (`color-system export --format typescript`)
+- **Why**: Enables type-safe usage of tokens in JS/TS files.
+- **What**: A new exporter in the CLI that generates a `.ts` or `.d.ts` file containing the token names as a union type or object.
+- **Usage**: `import { tokens } from './theme.ts'` or `type Token = keyof typeof tokens`.
 
-### 1. Component Architecture
-- **`TokenInspector.svelte`**: The main container.
-- **`InspectorSurface.svelte`**: A wrapper for elements that can be inspected. It will register itself with the parent inspector.
-- **`InspectorPanel.svelte`**: The UI that displays the tokens.
+### 2. Framework Guides
+- **React Guide**:
+  - Setup (CLI + CSS import).
+  - `Surface` component (Context provider wrapper).
+  - `ThemeToggle` component.
+  - Example: Building a Card.
+- **Svelte Guide**:
+  - Setup.
+  - `Surface` component.
+  - `ThemeToggle` component.
+  - Example: Building a Card.
+- **HTML Guide**:
+  - Setup.
+  - Utility classes vs. CSS Variables.
+  - Script for Theme Toggling.
 
-### 2. Implementation Steps
-- [ ] **Scaffold Components**: Create the basic Svelte components in `site/src/components/inspector/`.
-- [ ] **State Management**: Use Svelte 5 Runes to manage the "selected" surface state.
-- [ ] **Token Extraction**: Implement logic to read `getComputedStyle` for relevant system tokens.
-  - We need a list of "interesting" tokens to show (e.g., `bg`, `text`, `border`).
-- [ ] **Visual Design**: Design the inspector panel to look like a mini DevTools or an overlay.
-- [ ] **Integration**: Add the `TokenInspector` to `site/src/content/docs/concepts/thinking-in-surfaces.mdx`.
+### 3. "Real" Quick Start
+- **Why**: The current Quick Start ends at `theme.css`.
+- **What**: A new `docs/guides/quick-start.mdx` that:
+  1.  Installs the tool.
+  2.  Generates the theme.
+  3.  **Shows the code** to render a UI element (using the HTML approach for universality, with tabs for React/Svelte).
 
-### 3. Verification
-- Verify that clicking a surface updates the panel.
-- Verify that the values change when switching themes (Light/Dark).
-- Verify that it works within the Astro/Starlight environment.
+## Execution Steps
 
-## Questions for User
-- Should the inspector be a floating overlay or a fixed panel next to the diagram?
-- Which specific tokens are most important to show? (Just surface/text, or also borders/focus?)
+1.  **CLI Update**: Implement `typescript` format in `src/cli/commands/export.ts`.
+2.  **Documentation**:
+    - Create `docs/guides/frameworks/react.mdx`.
+    - Create `docs/guides/frameworks/svelte.mdx`.
+    - Create `docs/guides/frameworks/html.mdx`.
+    - Update `docs/guides/quick-start.mdx` (or `index.mdx`).
+3.  **Verification**:
+    - Verify the TypeScript export works in a real file.
+    - Verify the code snippets in the docs are copy-pasteable and working.
+
+## Risks
+- **Scope Creep**: Trying to build a full component library. **Mitigation**: Focus only on the *primitives* (`Surface`, `Text`) needed to use the system, not a full UI kit.
