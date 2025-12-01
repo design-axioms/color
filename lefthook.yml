@@ -19,3 +19,5 @@ pre-push:
       run: pnpm build
     publint:
       run: pnpm check:exports
+    knip:
+      run: pnpm knip
