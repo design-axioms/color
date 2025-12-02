@@ -76,7 +76,7 @@ importers:
         specifier: ^0.3.15
         version: 0.3.15
       release-plan:
-        specifier: ^0.17.2
+        specifier: ^0.17.0
         version: 0.17.2
       ts-json-schema-generator:
         specifier: ^2.4.0
