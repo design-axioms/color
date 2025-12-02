@@ -2,6 +2,25 @@
 
 ## Release (2025-12-02)
 
+* @axiomatic-design/color 0.1.0 (minor)
+
+#### :rocket: Enhancement
+* `@axiomatic-design/color`
+  * [#6](https://github.com/design-axioms/color/pull/6) docs: update readme title ([@wycats](https://github.com/wycats))
+* Other
+  * [#4](https://github.com/design-axioms/color/pull/4) docs: update readme ([@wycats](https://github.com/wycats))
+  * [#3](https://github.com/design-axioms/color/pull/3) chore: force v0.1.0 release ([@wycats](https://github.com/wycats))
+
+#### :house: Internal
+* `@axiomatic-design/color`
+  * [#5](https://github.com/design-axioms/color/pull/5) Prepare Release vnull ([@github-actions[bot]](https://github.com/apps/github-actions))
+
+#### Committers: 2
+- Yehuda Katz ([@wycats](https://github.com/wycats))
+- [@github-actions[bot]](https://github.com/apps/github-actions)
+
+## Release (2025-12-02)
+
 
 
 #### :rocket: Enhancement
