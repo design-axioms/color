@@ -29,7 +29,10 @@ export class BuilderState {
   isInspectorOpen = $state<boolean>(true);
 
   constructor() {
-    if (typeof localStorage !== "undefined") {
+    if (
+      typeof localStorage !== "undefined" &&
+      typeof localStorage.getItem === "function"
+    ) {
       this.loadFromStorage();
     }
 
@@ -62,7 +65,11 @@ export class BuilderState {
   }
 
   private saveToStorage(): void {
-    if (typeof localStorage === "undefined") return;
+    if (
+      typeof localStorage === "undefined" ||
+      typeof localStorage.setItem !== "function"
+    )
+      return;
     const data: StoredBuilderState = {
       viewMode: this.viewMode,
       inspectorMode: this.inspectorMode,

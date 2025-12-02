@@ -1,5 +1,6 @@
 <script lang="ts">
   import { configState } from "../../../lib/state/ConfigState.svelte";
+  import VibeControls from "./VibeControls.svelte";
 
   // Global Inspector: Controls for system-wide parameters (Anchors, Key Colors).
 
@@ -10,6 +11,11 @@
     return val / 100;
   }
 </script>
+
+<div class="inspector-section">
+  <h3>Vibe</h3>
+  <VibeControls />
+</div>
 
 <div class="inspector-section">
   <h3>Page Anchors</h3>

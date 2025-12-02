@@ -1,21 +1,50 @@
-# Phase 3 Walkthrough: Design & Concept
+# Walkthrough: Epoch 21, Phase 4 - V2 Implementation
 
-In this phase, we conducted a comprehensive design audit of the Theme Builder V1 to identify why it wasn't meeting our aspirational goals.
+**Date**: 2025-12-02
+**Goal**: Transform the Theme Builder from a configuration form into a "System Modeling" tool.
 
-## Key Activities
+## Key Deliverables
 
-1.  **Design Audit**: We analyzed the current UI against our core axioms ("Context is King", "Physics of Light").
-    - _Finding_: The UI was a "Form Filler", not a "System Modeler".
-    - _Finding_: The hierarchy of context was invisible.
-    - _Finding_: Users were "flying blind" regarding gamut clipping.
+### 1. Context Tree Integration
 
-2.  **Concept Definition**: We defined the requirements for V2.
-    - **Context Tree**: A hierarchical view of the system.
-    - **Gamut Visualization**: A visual guide to color space constraints.
-    - **Direct Manipulation**: Interactive graphs instead of abstract sliders.
+- **Component**: `ContextTree.svelte`
+- **Change**: Replaced mock data with a live transformation of `ConfigState`.
+- **Feature**: Users can now navigate the actual configuration hierarchy (Groups -> Surfaces). Selection is synced with `BuilderState`.
 
-3.  **Linting & Cleanup**: We resolved strict linting issues to ensure a clean codebase for the upcoming implementation phase.
+### 2. Gamut Visualization
 
-## Outcome
+- **Component**: `GamutSlice.svelte` (integrated into `AuditView`)
+- **Feature**: Visualizes the P3 and sRGB gamut boundaries for the selected surface's hue.
+- **Benefit**: Helps users understand why a color might be clipping or looking dull (if it's out of gamut).
 
-We have a clear roadmap for **Phase 4: V2 Implementation**, which will focus on building the components defined in the audit.
+### 3. Interactive Graph
+
+- **Component**: `AbstractView.svelte` (repurposed)
+- **Feature**: A draggable Lightness Graph. Users can drag the "Start" and "End" anchor points directly on the graph to adjust the contrast range.
+- **Benefit**: Provides "Direct Manipulation" of the physics of light, rather than just abstract sliders.
+
+### 4. Educational Overlays
+
+- **Component**: `ContextTrace.svelte`
+- **Feature**: A floating overlay that appears when hovering over a surface in the tree or stage.
+- **Content**: Shows the "Context Path" (System -> Group -> Surface) and the resolved LCH values.
+- **Benefit**: Teaches the user about the hierarchical nature of the system.
+
+### 5. Vibe Controls
+
+- **Engine**: `VibeEngine.ts`
+- **Component**: `VibeControls.svelte`
+- **Feature**: High-level sliders for "Contrast" and "Vibrancy".
+- **Logic**:
+  - **Contrast**: Interpolates between "Low Contrast" (narrow anchor spread) and "High Contrast" (wide anchor spread).
+  - **Vibrancy**: Scales the chroma of Key Colors.
+
+## Technical Notes
+
+- **State Management**: Leveraged `BuilderState` to coordinate selection and hover states across components without prop drilling.
+- **Gamut Math**: Implemented binary search in `gamut.ts` using `culori` to find the max chroma for a given lightness/hue.
+- **Build Fixes**: Resolved several Vite/Rollup import issues related to `$lib` aliases in `.svelte.ts` files by switching to relative imports in the new components.
+
+## Next Steps
+
+- **Epoch 22**: Developer Tooling (VS Code Extension).

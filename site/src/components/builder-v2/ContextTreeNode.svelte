@@ -5,7 +5,7 @@
   interface TreeNode {
     id: string;
     label: string;
-    type: "surface" | "action" | "text";
+    type: "group" | "surface" | "action" | "text";
     children?: TreeNode[];
   }
 
@@ -23,6 +23,14 @@
   function selectNode(): void {
     builder.selectSurface(node.id);
   }
+
+  function handleMouseEnter(): void {
+    builder.hoverSurface(node.id);
+  }
+
+  function handleMouseLeave(): void {
+    builder.hoverSurface(null);
+  }
 </script>
 
 <div class="tree-node">
@@ -30,6 +38,8 @@
     class="node-row"
     class:selected={isSelected}
     onclick={selectNode}
+    onmouseenter={handleMouseEnter}
+    onmouseleave={handleMouseLeave}
     style="padding-left: {level * 1.5}rem"
     role="button"
     tabindex="0"
@@ -102,6 +112,11 @@
 
   .icon.surface {
     background: var(--text-high-token);
+  }
+  .icon.group {
+    background: transparent;
+    border: 1px dashed currentColor;
+    border-radius: 2px;
   }
   .icon.action {
     background: var(--text-link); /* Or brand hue */

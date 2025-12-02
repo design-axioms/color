@@ -51,11 +51,11 @@
   .studio-layout {
     display: flex;
     /* Respect Starlight's navbar height */
-    height: calc(100vh - var(--sl-nav-height, 3.5rem));
+    height: calc(100vh - 3.5rem);
     width: 100vw;
     overflow: hidden;
     position: fixed;
-    top: var(--sl-nav-height, 3.5rem);
+    top: 3.5rem;
     left: 0;
     z-index: 10; /* Lower than Starlight nav (usually 1000) but high enough for content */
   }

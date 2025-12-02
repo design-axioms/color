@@ -1,82 +1,154 @@
 <script lang="ts">
-  // Abstract View: A block diagram of the surface hierarchy.
+  import { configState } from "../../../lib/state/ConfigState.svelte";
+  import { themeState } from "../../../lib/state/ThemeState.svelte";
+  import type { Polarity } from "@axiomatic-design/color/types";
+
+  let mode = $derived(themeState.mode);
+  // Default to 'page' polarity for the main graph
+  let polarity: Polarity = "page";
+
+  let anchors = $derived(configState.config.anchors[polarity][mode]);
+  let start = $derived(anchors.start.background);
+  let end = $derived(anchors.end.background);
+
+  let width = 600;
+  let height = 300;
+  let padding = 40;
+
+  function yScale(l: number): number {
+    return height - padding - l * (height - 2 * padding);
+  }
+
+  function yToLightness(y: number): number {
+    const range = height - 2 * padding;
+    const val = (height - padding - y) / range;
+    return Math.max(0, Math.min(1, val));
+  }
+
+  let isDragging = $state<"start" | "end" | null>(null);
+
+  function handleMouseDown(type: "start" | "end"): void {
+    isDragging = type;
+  }
+
+  function handleMouseMove(e: MouseEvent): void {
+    if (!isDragging) return;
+
+    // Calculate new lightness from Y position
+    // We need the SVG's bounding rect to get relative Y
+    const svg = e.currentTarget as SVGSVGElement;
+    const rect = svg.getBoundingClientRect();
+    const y = e.clientY - rect.top;
+    const l = yToLightness(y);
+
+    configState.updateAnchor(polarity, mode, isDragging, l);
+  }
+
+  function handleMouseUp(): void {
+    isDragging = null;
+  }
 </script>
 
 <div class="abstract-view">
-  <div class="block root">
-    <span class="label">Root (Page)</span>
+  <h3>Interactive Lightness Graph ({mode})</h3>
 
-    <div class="block card">
-      <span class="label">Surface: Card</span>
+  <svg
+    {width}
+    {height}
+    viewBox="0 0 {width} {height}"
+    onmousemove={handleMouseMove}
+    onmouseup={handleMouseUp}
+    onmouseleave={handleMouseUp}
+    role="application"
+  >
+    <!-- Grid -->
+    <line
+      x1={padding}
+      y1={padding}
+      x2={padding}
+      y2={height - padding}
+      stroke="var(--surface-bordered)"
+    />
+    <line
+      x1={padding}
+      y1={height - padding}
+      x2={width - padding}
+      y2={height - padding}
+      stroke="var(--surface-bordered)"
+    />
 
-      <div class="row">
-        <div class="block sunken">
-          <span class="label">Surface: Sunken</span>
-        </div>
-        <div class="block input">
-          <span class="label">Surface: Input</span>
-        </div>
-      </div>
+    <!-- Curve (Linear for now) -->
+    <line
+      x1={padding}
+      y1={yScale(start)}
+      x2={width - padding}
+      y2={yScale(end)}
+      stroke="var(--text-subtle-token)"
+      stroke-width="2"
+      stroke-dasharray="4"
+    />
 
-      <div class="block action">
-        <span class="label">Surface: Action</span>
-      </div>
-    </div>
-  </div>
+    <!-- Start Handle -->
+    <circle
+      cx={padding}
+      cy={yScale(start)}
+      r="8"
+      fill="var(--text-high-token)"
+      cursor="ns-resize"
+      onmousedown={() => {
+        handleMouseDown("start");
+      }}
+    />
+    <text
+      x={padding + 15}
+      y={yScale(start)}
+      dominant-baseline="middle"
+      font-size="12"
+      fill="currentColor">Start: {start.toFixed(2)}</text
+    >
+
+    <!-- End Handle -->
+    <circle
+      cx={width - padding}
+      cy={yScale(end)}
+      r="8"
+      fill="var(--text-high-token)"
+      cursor="ns-resize"
+      onmousedown={() => {
+        handleMouseDown("end");
+      }}
+    />
+    <text
+      x={width - padding - 15}
+      y={yScale(end)}
+      text-anchor="end"
+      dominant-baseline="middle"
+      font-size="12"
+      fill="currentColor">End: {end.toFixed(2)}</text
+    >
+  </svg>
+
+  <p class="hint">Drag the points to adjust the anchor lightness.</p>
 </div>
 
 <style>
   .abstract-view {
-    padding: 2rem;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .block {
-    border: 1px dashed currentColor;
-    padding: 1rem;
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-    position: relative;
+    align-items: center;
+    padding: 2rem;
+    color: var(--text-subtle-token);
   }
 
-  .label {
-    font-size: 0.75rem;
-    font-family: monospace;
+  svg {
+    background: var(--surface-sunken);
+    border-radius: 8px;
+    margin: 1rem 0;
+    user-select: none;
+  }
+
+  .hint {
+    font-size: 0.8rem;
     opacity: 0.7;
-    background: var(--surface-1); /* Just to clear lines if needed */
-    padding: 0.25rem;
-  }
-
-  .row {
-    display: flex;
-    gap: 1rem;
-  }
-
-  /* Simulate the hierarchy visually */
-  .root {
-    width: 400px;
-    height: 400px;
-    border-color: var(--color-gray-500);
-  }
-  .card {
-    flex: 1;
-    border-color: var(--color-blue-500);
-  }
-  .sunken {
-    flex: 1;
-    border-color: var(--color-gray-400);
-  }
-  .input {
-    flex: 1;
-    border-color: var(--color-green-500);
-  }
-  .action {
-    height: 40px;
-    border-color: var(--color-purple-500);
   }
 </style>

@@ -4,6 +4,7 @@
   import AbstractView from "./stage/AbstractView.svelte";
   import AuditView from "./stage/AuditView.svelte";
   import ComponentView from "./stage/ComponentView.svelte";
+  import ContextTrace from "./stage/ContextTrace.svelte";
 
   const builder = getContext<BuilderState>("builder");
 </script>
@@ -110,6 +111,7 @@
     {:else if builder.viewMode === "audit"}
       <AuditView />
     {/if}
+    <ContextTrace />
   </div>
 </div>
 

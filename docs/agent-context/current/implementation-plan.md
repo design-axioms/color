@@ -1,40 +1,59 @@
-# Implementation Plan: Theme Builder V2 (Phase 4)
+# Implementation Plan - Epoch 21, Phase 4: V2 Implementation
 
-**Goal**: Transform the Theme Builder from a configuration utility into a "System Modeling" tool.
+**Goal**: Transform the Theme Builder from a configuration form into a "System Modeling" tool that visualizes context, gamut, and relationships.
 
-## 1. Context Tree Visualization
+## 1. Context Tree Integration
 
-- **Objective**: Replace the flat list of surfaces with a hierarchical view.
-- **Tasks**:
-  - [ ] Refactor `ConfigState` to support hierarchical traversal (if not already implicit in groups).
-  - [ ] Create `ContextTree` component to visualize `Page -> Group -> Surface`.
-  - [ ] Connect selection state so clicking a node in the tree selects it in the Inspector.
+**Objective**: Replace the mock data in `ContextTree.svelte` with the live `ConfigState` and `BuilderState`.
 
-## 2. Gamut Visualization
+- [ ] **State Connection**:
+  - Import `configState` from `$lib/state/ConfigState.svelte`.
+  - Import `builderState` from `$lib/state/BuilderState.svelte`.
+- [ ] **Tree Transformation**:
+  - Create a utility to transform the flat `SurfaceConfig` list into a hierarchical tree structure for rendering.
+  - Handle "Page" as the implicit root.
+  - Handle nesting based on `parentId` (if we have that concept) or just visual grouping for now. _Note: The current system is flat, but the design audit calls for a tree. We may need to infer hierarchy or add `parentId` to `SurfaceConfig`._
+- [ ] **Interaction**:
+  - Bind `onclick` to `builderState.selectSurface(id)`.
+  - Bind `onmouseenter` to `builderState.hoverSurface(id)`.
 
-- **Objective**: Show where colors sit relative to the P3/sRGB boundary.
-- **Tasks**:
-  - [ ] Create `GamutSlice` component (Canvas or SVG).
-  - [ ] Plot the P3 and sRGB boundaries on an L-C plane (for a given Hue).
-  - [ ] Plot the current surface's position on this graph.
+## 2. Gamut Visualization (`GamutSlice`)
 
-## 3. Direct Manipulation
+**Objective**: Visualize where surfaces sit within the P3/sRGB color space to prevent "flying blind".
 
-- **Objective**: Allow users to drag curves/anchors directly.
-- **Tasks**:
-  - [ ] Update `AnchorGraph` to support dragging the curve control points (if we move to bezier) or the anchor handles (already partially done, need to refine).
-  - [ ] Ensure updates reflect immediately in the preview.
+- [ ] **Component Structure**:
+  - Create `site/src/components/builder-v2/stage/GamutSlice.svelte`.
+  - Use SVG for rendering.
+- [ ] **Math & Logic**:
+  - Use `d3-shape` or manual SVG paths to draw the gamut boundary for the current Hue.
+  - Plot the current surface's position (L, C).
+  - Show the "Safe Zone" (sRGB) vs "P3 Zone".
+
+## 3. Interactive Graph (`AbstractView`)
+
+**Objective**: Allow direct manipulation of the lightness curve.
+
+- [ ] **Interactivity**:
+  - Add drag handlers to the anchor points on the graph.
+  - Update `configState` in real-time as the user drags.
+- [ ] **Visual Feedback**:
+  - Show "Ghost" lines for the original position during drag.
+  - Snap to grid or meaningful values (optional).
 
 ## 4. Educational Overlays
 
-- **Objective**: Explain _why_ a color is what it is.
-- **Tasks**:
-  - [ ] Implement a "Context Trace" tooltip.
-  - [ ] When hovering a surface, show: `Base Lightness (Anchor) + Offset (Step) + Mode Adjustment`.
+**Objective**: Explain _why_ a surface looks the way it does.
 
-## 5. Vibe Controls (High Level)
+- [ ] **Context Trace**:
+  - When hovering a surface in the tree or stage, show a tooltip or panel explaining its resolved values.
+  - "Light Mode (Page) -> Surface 1 (Card) -> Text High".
 
-- **Objective**: Provide "Sarah" (the pragmatist) with easy controls.
-- **Tasks**:
-  - [ ] Create a `VibeEngine` helper that maps high-level parameters (Contrast, Warmth) to low-level config (Anchors, Hue Shifts).
-  - [ ] Add a "Vibe" panel to the UI.
+## 5. Vibe Controls
+
+**Objective**: High-level controls for "Soft", "Vibrant", "High Contrast".
+
+- [ ] **VibeEngine**:
+  - Create `site/src/lib/engine/VibeEngine.ts`.
+  - Implement logic to map `contrast`, `vibrancy`, `warmth` (0-100) to `SolverConfig` values.
+- [ ] **UI**:
+  - Add a "Vibe" panel to the Global Inspector.

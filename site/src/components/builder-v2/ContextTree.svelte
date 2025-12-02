@@ -1,50 +1,49 @@
 <script lang="ts">
+  import { configState } from "../../lib/state/ConfigState.svelte";
   import ContextTreeNode from "./ContextTreeNode.svelte";
 
-  // Mock Data for Prototype
-  const treeData = {
-    id: "page",
-    label: "Page (Root)",
-    type: "surface" as const,
-    children: [
-      {
-        id: "sidebar",
-        label: "Sidebar",
-        type: "surface" as const,
-        children: [
-          {
-            id: "nav-item-1",
-            label: "Nav Item (Active)",
-            type: "surface" as const,
-          },
-          { id: "nav-item-2", label: "Nav Item", type: "surface" as const },
-        ],
-      },
-      {
-        id: "card-1",
-        label: "Card",
-        type: "surface" as const,
-        children: [
-          { id: "card-title", label: "Title", type: "text" as const },
-          {
-            id: "btn-primary",
-            label: "Primary Action",
-            type: "action" as const,
-          },
-          { id: "input-1", label: "Input Field", type: "surface" as const },
-        ],
-      },
-    ],
-  };
+  // Define the TreeNode interface locally to match ContextTreeNode
+  interface TreeNode {
+    id: string;
+    label: string;
+    type: "group" | "surface" | "action" | "text";
+    children?: TreeNode[];
+  }
+
+  // Transform ConfigState into Tree Data
+  let treeData = $derived.by(() => {
+    const root: TreeNode = {
+      id: "root",
+      label: "System",
+      type: "group",
+      children: configState.config.groups.map((group, gIdx) => ({
+        id: `group-${gIdx}`,
+        label: group.name,
+        type: "group",
+        children: group.surfaces.map((surface) => ({
+          id: surface.slug,
+          label: surface.label,
+          type: "surface",
+          children: [], // Surfaces are leaves in this view for now
+        })),
+      })),
+    };
+    return root;
+  });
 </script>
 
 <div class="context-tree">
-  <ContextTreeNode node={treeData} />
+  {#if treeData.children}
+    {#each treeData.children as group (group.id)}
+      <ContextTreeNode node={group} />
+    {/each}
+  {/if}
 </div>
 
 <style>
   .context-tree {
-    font-family: monospace;
-    font-size: 0.9rem;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    padding: 0.5rem;
   }
 </style>
