@@ -662,3 +662,46 @@
 - **Infrastructure**:
   - Updated `package.json` metadata.
   - Verified build pipeline.
+
+## Epoch 19: Rebranding to Axiomatic Color (2025-12-02)
+
+**Goal**: Establish a distinct identity for the project by renaming it from "Algebraic Color System" to "Axiomatic Color" and automating the release process.
+
+**Completed Work**:
+
+- **Package Renaming**:
+  - Renamed NPM package to `@axiomatic-design/color`.
+  - Renamed CLI binary to `axiomatic`.
+- **Release Automation**:
+  - Implemented `release-plan` for automated versioning and changelog management.
+  - Configured GitHub Actions (`publish.yml`) for secure, automated publishing.
+- **Publishing**:
+  - **Manual Bootstrap**: Manually published `v0.1.0` to overcome initial "chicken-and-egg" authentication issues.
+  - **OIDC Trusted Publishing**: Configured OpenID Connect (OIDC) for future releases, removing the need for long-lived `NPM_TOKEN` secrets.
+- **Documentation Overhaul**:
+  - Updated all documentation content to reflect the new name and CLI commands.
+  - Replaced "Algebraic Color System" with "Axiomatic Color" throughout the site.
+- **Infrastructure**:
+  - Updated `package.json` metadata (description, keywords).
+  - Fixed Vite alias configuration in `astro.config.mjs` to support the new package name during development.
+
+## Epoch 20: Phase 2 - Fix Issues (2025-12-02)
+
+**Goal**: Resolve all linting errors and warnings identified in Phase 1 to achieve a clean, zero-error codebase.
+
+**Completed Work**:
+
+- **Svelte Component Fixes**:
+  - Systematically resolved ~130 linting errors across `site/src/components`.
+  - Fixed `svelte/require-each-key` by adding unique keys to loops.
+  - Fixed `@typescript-eslint/no-confusing-void-expression` by wrapping void returns in block bodies.
+  - Fixed `@typescript-eslint/no-unnecessary-condition` by removing redundant checks.
+  - Fixed `svelte/no-useless-mustaches` by cleaning up string literals.
+  - Improved type safety by removing `any` usage and adding explicit return types.
+- **Script Fixes**:
+  - Fixed floating promises and return types in `scripts/check-links.ts`.
+- **Library Fixes**:
+  - Removed unnecessary conditional checks for mandatory properties (`charts`, `primitives`) in `dtcg.ts` and `tailwind.ts` exporters.
+- **Verification**:
+  - Achieved 0 errors in `pnpm lint`.
+  - Verified successful build with `pnpm build`.

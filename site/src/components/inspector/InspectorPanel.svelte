@@ -50,7 +50,7 @@
   }
 
   function parseLightDark(
-    value: string
+    value: string,
   ): { light: string; dark: string } | null {
     if (!value.startsWith("light-dark(")) return null;
     // Simple parser for light-dark(light, dark)
@@ -65,8 +65,6 @@
   }
 
   $effect(() => {
-    if (!element) return;
-
     const computed = getComputedStyle(element);
 
     groups = GROUPS.map((group) => ({
@@ -88,9 +86,7 @@
       }),
     }));
 
-    if (dialog) {
-      dialog.showPopover();
-    }
+    dialog.showPopover();
   });
 </script>
 
@@ -108,11 +104,11 @@
   </div>
 
   <div class="tokens-container">
-    {#each groups as group}
+    {#each groups as group (group.title)}
       <div class="group-section">
         <div class="group-title">{group.title}</div>
         <div class="tokens-list">
-          {#each group.tokens as token}
+          {#each group.tokens as token (token.name)}
             <div class="token-row">
               <div class="swatch-container">
                 {#if token.isLightDark && token.lightValue && token.darkValue}

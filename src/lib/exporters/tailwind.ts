@@ -35,28 +35,24 @@ export function toTailwind(theme: Theme): Record<string, unknown> {
 
     if (bgLight && bgDark) {
       surfaceColors[surface.slug] = `light-dark(${formatOklch(
-        bgLight
+        bgLight,
       )}, ${formatOklch(bgDark)})`;
     }
   }
 
   // 2. Generate Chart Colors (1-10)
   const chartColors = colors.chart as Record<string, string>;
-  if (theme.charts) {
-    theme.charts.forEach((chart, index) => {
-      chartColors[(index + 1).toString()] = `light-dark(${formatOklch(
-        chart.light
-      )}, ${formatOklch(chart.dark)})`;
-    });
-  }
+  theme.charts.forEach((chart, index) => {
+    chartColors[(index + 1).toString()] = `light-dark(${formatOklch(
+      chart.light,
+    )}, ${formatOklch(chart.dark)})`;
+  });
 
   const boxShadow: Record<string, string> = {};
-  if (theme.primitives) {
-    for (const [size, token] of Object.entries(theme.primitives.shadows)) {
-      boxShadow[size] = `light-dark(${token.light}, ${token.dark})`;
-    }
-    colors.focus = `light-dark(${theme.primitives.focus.ring.light}, ${theme.primitives.focus.ring.dark})`;
+  for (const [size, token] of Object.entries(theme.primitives.shadows)) {
+    boxShadow[size] = `light-dark(${token.light}, ${token.dark})`;
   }
+  colors.focus = `light-dark(${theme.primitives.focus.ring.light}, ${theme.primitives.focus.ring.dark})`;
 
   return {
     theme: {

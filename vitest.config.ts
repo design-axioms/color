@@ -8,8 +8,18 @@ export default defineConfig({
     coverage: {
       provider: "v8",
       reporter: ["text", "json", "html"],
-      include: ["src/lib/**/*.ts"],
-      exclude: ["src/lib/**/*.test.ts", "src/lib/__tests__/**"],
+      include: ["src/lib/**/*.ts", "src/cli/**/*.ts"],
+      exclude: [
+        "src/lib/**/*.test.ts",
+        "src/lib/__tests__/**",
+        "src/cli/__tests__/**",
+      ],
+      thresholds: {
+        statements: 60,
+        branches: 40,
+        functions: 80,
+        lines: 60,
+      },
     },
   },
 });

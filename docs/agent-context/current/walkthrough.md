@@ -1,37 +1,46 @@
-# Phase 3 Walkthrough: Release Automation & Rebranding
+# Phase 2: Fix Issues (Walkthrough)
 
-## Rebranding
+## Goal
 
-- Renamed package to `@axiomatic-design/color`.
-- Updated `bin` entry to `axiomatic`.
-- Updated `CHANGELOG.md` to reflect the new name and version `0.1.0`.
+Resolve all linting errors and warnings identified in Phase 1.
 
-## Release Automation
+## Changes
 
-We have transitioned to an automated release process using `release-plan`.
+### Svelte Components
 
-### Workflow
+Systematically fixed ~130 linting errors across the `site/src/components` directory.
 
-1. **Plan Release**:
-   - Triggered on push to `main` or label on PR.
-   - Runs `release-plan prepare` to calculate version bumps.
-   - Creates a "Prepare Release" PR with the new version and changelog.
-2. **Publish**:
-   - Triggered when the "Prepare Release" PR is merged.
-   - Runs `pnpm release-plan publish` to publish to NPM.
+#### Common Fixes
 
-### Configuration
+- **`svelte/require-each-key`**: Added unique keys (slugs, names, or indices) to all `#each` blocks.
+- **`@typescript-eslint/no-confusing-void-expression`**: Wrapped void-returning function calls in arrow functions with block bodies (e.g., `() => { fn(); }`).
+- **`@typescript-eslint/no-unnecessary-condition`**: Removed redundant checks where types guaranteed existence (e.g., removing `if (theme.charts)` where `charts` is mandatory).
+- **`svelte/no-useless-mustaches`**: Removed unnecessary mustache interpolation for string literals (e.g., `class={"foo"}` -> `class="foo"`).
+- **`@typescript-eslint/no-base-to-string`**: Explicitly cast arrays to `string[]` before calling `.join(" ")` in class name construction.
+- **`@typescript-eslint/no-unsafe-*`**: Improved type safety by removing `any` usage and adding proper interfaces (e.g., `DragData` interface in `SurfaceManager`).
 
-- Installed `release-plan` and `@release-plan/actions`.
-- Created `.github/workflows/plan-release.yml` and `.github/workflows/publish.yml`.
-- Created `RELEASE.md` to document the process.
-- **Important**: Enabled "Allow GitHub Actions to create and approve pull requests" in repository settings to allow the workflow to create the PR.
+#### Specific Component Fixes
+
+- **`HueShiftVisualizer.svelte`**: Fixed `Number()` conversions, unnecessary conditionals, and void expressions.
+- **`AnchorGraph.svelte`**: Fixed void expressions in event handlers and unnecessary optional chaining.
+- **`SurfaceManager.svelte`**: Added `DragData` interface to fix `any` usage in drag-and-drop logic.
+- **`SurfaceRow.svelte`**: Fixed floating promises (`void navigator.clipboard.writeText(...)`) and `any` usage.
+- **`ThemeBuilder.svelte`**: Fixed `any` usage in `JSON.parse` by casting to `SolverConfig`.
+- **`InspectorPanel.svelte`**: Removed unnecessary null checks for props that are guaranteed to be defined.
+- **`InspectorSurface.svelte`**: Fixed `no-base-to-string` by ensuring class names are strings.
+- **`Diagram.svelte`**: Fixed `no-base-to-string` and improved prop typing.
+- **`DynamicRange.svelte`**: Disabled `no-confusing-void-expression` for `{@render ...}` snippets as it appears to be a false positive or limitation with Svelte 5 snippets.
+
+### Scripts
+
+- **`scripts/check-links.ts`**: Added `void` return type to `checkLinks` and handled the floating promise at the top level.
+
+### Library
+
+- **`src/lib/exporters/dtcg.ts`**: Removed unnecessary checks for `theme.charts` and `theme.primitives` as they are mandatory in the `Theme` interface.
+- **`src/lib/exporters/tailwind.ts`**: Removed unnecessary checks for `theme.charts` and `theme.primitives`.
 
 ## Verification
 
-- Verified package exports using `publint`.
-- Verified CLI functionality (`axiomatic init`).
-- Verified site build.
-- Reset git tags to `v0.0.0` to ensure `release-plan` correctly detects the new release.
-- **Status**: The "Prepare Release" PR (#7) is created and correctly proposes `v0.1.0`.
-- **Next Step**: Merge PR #7 to publish the package.
+- Ran `pnpm lint` and confirmed 0 errors.
+- Ran `pnpm build` and confirmed successful build.

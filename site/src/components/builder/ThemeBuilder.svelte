@@ -1,5 +1,6 @@
 <script lang="ts">
   import { generateTheme, injectTheme } from "@axiomatic-design/color/runtime";
+  import type { SolverConfig } from "@axiomatic-design/color/types";
   import { getContext } from "svelte";
   import type { ConfigState } from "../../lib/state/ConfigState.svelte";
   import type { ThemeState } from "../../lib/state/ThemeState.svelte";
@@ -26,14 +27,12 @@
   $effect(() => {
     try {
       // Clone config to avoid mutation in solve() triggering infinite loop
-      const configClone = JSON.parse(JSON.stringify(config));
+      const configClone = JSON.parse(JSON.stringify(config)) as SolverConfig;
       const css = generateTheme(configClone, "#theme-builder-preview");
       // Pass undefined for target to append to head.
       styleElement = injectTheme(css, undefined, styleElement);
-      if (styleElement) {
-        styleElement.id = "theme-builder-styles";
-      }
-    } catch (e) {
+      styleElement.id = "theme-builder-styles";
+    } catch (e: unknown) {
       console.error("Solver failed:", e);
     }
   });
@@ -53,7 +52,9 @@
       <h2 class="text-strong">Axiomatic Color</h2>
       <p class="text-subtle">Customize global system parameters.</p>
       <button
-        onclick={() => configState.resetConfig()}
+        onclick={() => {
+          configState.resetConfig();
+        }}
         class="surface-workspace bordered text-subtle"
         style="margin-top: 0.75rem; width: 100%; padding: 0.5rem; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 500;"
       >
@@ -86,7 +87,9 @@
               </p>
               <button
                 class="preview-button surface-action"
-                onclick={() => themeState.toggle()}
+                onclick={() => {
+                  themeState.toggle();
+                }}
               >
                 Toggle Mode
               </button>
@@ -136,11 +139,11 @@
           <div class="preview-section">
             <h3 class="text-strong">Brand Integration</h3>
             <p class="text-subtle">
-              Elements using the{" "}
-              <code class="surface-workspace bordered preview-code">
+              Elements using the <code
+                class="surface-workspace bordered preview-code"
+              >
                 .hue-brand
-              </code>{" "}
-              utility.
+              </code> utility.
             </p>
 
             <div class="hue-brand">
@@ -185,8 +188,9 @@
                   </h4>
                   <p class="text-subtle preview-empty-text">
                     Add groups and surfaces in the sidebar to see them appear
-                    here. They will be generated as CSS classes like{" "}
-                    <code>.surface-card</code>.
+                    here. They will be generated as CSS classes like <code
+                      >.surface-card</code
+                    >.
                   </p>
                 </div>
               </div>
@@ -201,7 +205,7 @@
                       <div class="preview-surface-grid">
                         {#each group.surfaces as surface (surface.slug)}
                           <div
-                            class={`surface-${surface.slug} bordered preview-surface-card`}
+                            class="surface-{surface.slug} bordered preview-surface-card"
                           >
                             <span class="text-strong preview-surface-label">
                               {surface.label}

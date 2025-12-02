@@ -1,25 +1,29 @@
 <script lang="ts">
-  import { getContext } from 'svelte';
-  import type { ConfigState } from '../../lib/state/ConfigState.svelte';
-  import SurfaceRow from './SurfaceRow.svelte';
+  import { getContext } from "svelte";
+  import type { ConfigState } from "../../lib/state/ConfigState.svelte";
+  import SurfaceRow from "./SurfaceRow.svelte";
 
-  const configState = getContext<ConfigState>('config');
+  const configState = getContext<ConfigState>("config");
   let config = $derived(configState.config);
 
   let newGroupName = $state("");
   let error = $state<string | null>(null);
 
-  function handleError(fn: () => void) {
+  function handleError(fn: () => void): void {
     try {
       fn();
       error = null;
-    } catch (e: any) {
-      error = e.message;
-      setTimeout(() => error = null, 3000);
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        error = e.message;
+      } else {
+        error = String(e);
+      }
+      setTimeout(() => (error = null), 3000);
     }
   }
 
-  function handleAddGroup() {
+  function handleAddGroup(): void {
     if (newGroupName.trim()) {
       handleError(() => {
         configState.addGroup(newGroupName.trim());
@@ -31,18 +35,25 @@
   // --- Drag and Drop (Groups) ---
   let draggingGroupIndex: number | null = null;
 
-  function handleGroupDragStart(e: DragEvent, index: number) {
+  interface DragData {
+    type: "group" | "surface";
+    index?: number;
+    groupIndex?: number;
+    surfaceIndex?: number;
+  }
+
+  function handleGroupDragStart(e: DragEvent, index: number): void {
     draggingGroupIndex = index;
     if (e.dataTransfer) {
       e.dataTransfer.effectAllowed = "move";
       e.dataTransfer.setData(
         "application/json",
-        JSON.stringify({ type: "group", index })
+        JSON.stringify({ type: "group", index }),
       );
     }
   }
 
-  function handleGroupDragOver(e: DragEvent, index: number) {
+  function handleGroupDragOver(e: DragEvent, index: number): void {
     e.preventDefault(); // Allow drop
     if (draggingGroupIndex === null || draggingGroupIndex === index) return;
     if (e.dataTransfer) {
@@ -50,7 +61,7 @@
     }
   }
 
-  function handleGroupDrop(e: DragEvent, index: number) {
+  function handleGroupDrop(e: DragEvent, index: number): void {
     e.preventDefault();
 
     // Check for surface drop first
@@ -58,20 +69,24 @@
       try {
         const data = e.dataTransfer.getData("application/json");
         if (data) {
-          const parsed = JSON.parse(data);
-          if (parsed.type === "surface") {
+          const parsed = JSON.parse(data) as DragData;
+          if (
+            parsed.type === "surface" &&
+            typeof parsed.groupIndex === "number" &&
+            typeof parsed.surfaceIndex === "number"
+          ) {
             // Append to end of this group
             const targetSurfaceIndex = config.groups[index].surfaces.length;
             configState.moveSurface(
               parsed.groupIndex,
               parsed.surfaceIndex,
               index,
-              targetSurfaceIndex
+              targetSurfaceIndex,
             );
             return;
           }
         }
-      } catch (e) {
+      } catch {
         // Ignore parse errors, might be group drag
       }
     }
@@ -79,7 +94,7 @@
     if (draggingGroupIndex === null) return;
 
     handleError(() => {
-      configState.moveGroup(draggingGroupIndex!, index);
+      configState.moveGroup(draggingGroupIndex, index);
     });
     draggingGroupIndex = null;
   }
@@ -102,9 +117,7 @@
         class="surface-workspace bordered"
         style="padding: 2rem; border-radius: 8px; text-align: center;"
       >
-        <p class="text-subtle" style="margin: 0;">
-          No groups yet.
-        </p>
+        <p class="text-subtle" style="margin: 0;">No groups yet.</p>
         <p
           class="text-subtlest"
           style="font-size: 0.85rem; margin-top: 0.5rem;"
@@ -119,32 +132,43 @@
         class="surface-card bordered"
         style="padding: 1rem; border-radius: 8px; cursor: grab;"
         draggable="true"
-        ondragstart={(e) => handleGroupDragStart(e, groupIndex)}
-        ondragover={(e) => handleGroupDragOver(e, groupIndex)}
-        ondrop={(e) => handleGroupDrop(e, groupIndex)}
+        ondragstart={(e) => {
+          handleGroupDragStart(e, groupIndex);
+        }}
+        ondragover={(e) => {
+          handleGroupDragOver(e, groupIndex);
+        }}
+        ondrop={(e) => {
+          handleGroupDrop(e, groupIndex);
+        }}
         role="listitem"
       >
         <div
           style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;"
         >
-          <div style="display: flex; align-items: center; gap: 0.5rem; flex: 1;">
+          <div
+            style="display: flex; align-items: center; gap: 0.5rem; flex: 1;"
+          >
             <span class="text-subtle" style="cursor: grab;">☰</span>
             <input
               type="text"
               value={group.name}
-              oninput={(e) =>
-                handleError(() =>
+              oninput={(e) => {
+                const val = e.currentTarget.value;
+                handleError(() => {
                   configState.updateGroup(groupIndex, {
-                    name: e.currentTarget.value,
-                  })
-                )
-              }
+                    name: val,
+                  });
+                });
+              }}
               class="text-strong"
               style="background: transparent; border: none; font-size: 1.1rem; font-weight: bold; width: 100%;"
             />
           </div>
           <button
-            onclick={() => configState.removeGroup(groupIndex)}
+            onclick={() => {
+              configState.removeGroup(groupIndex);
+            }}
             class="text-subtle"
             style="background: transparent; border: none; cursor: pointer; font-size: 1.2rem;"
             title="Remove Group"
@@ -159,15 +183,15 @@
           {/each}
 
           <button
-            onclick={() =>
-              handleError(() =>
+            onclick={() => {
+              handleError(() => {
                 configState.addSurface(groupIndex, {
                   slug: `new-surface-${Date.now()}`,
                   label: "New Surface",
                   polarity: "page",
-                })
-              )
-            }
+                });
+              });
+            }}
             class="surface-workspace text-subtle bordered"
             style="padding: 0.5rem; border-radius: 6px; margin-top: 0.5rem; cursor: pointer; font-size: 0.9rem; width: 100%; text-align: center;"
           >

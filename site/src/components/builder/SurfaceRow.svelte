@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { SurfaceConfig } from "@axiomatic-design/color/types";
+  import type { Polarity, SurfaceConfig } from "@axiomatic-design/color/types";
   import { formatHex } from "culori";
   import { getContext } from "svelte";
   import type { ConfigState } from "../../lib/state/ConfigState.svelte";
@@ -22,21 +22,21 @@
   let solved = $derived(configState.solved);
 
   let colorSpec = $derived(
-    solved?.backgrounds.get(surface.slug)?.[resolvedTheme]
+    solved?.backgrounds.get(surface.slug)?.[resolvedTheme],
   );
   let hexValue = $derived(
-    colorSpec ? formatHex({ mode: "oklch", ...colorSpec }) : ""
+    colorSpec ? formatHex({ mode: "oklch", ...colorSpec }) : "",
   );
 
-  function update(updates: Partial<SurfaceConfig>) {
+  function update(updates: Partial<SurfaceConfig>): void {
     configState.updateSurface(groupIndex, surfaceIndex, updates);
   }
 
-  function remove() {
+  function remove(): void {
     configState.removeSurface(groupIndex, surfaceIndex);
   }
 
-  function handleDragStart(e: DragEvent) {
+  function handleDragStart(e: DragEvent): void {
     e.stopPropagation();
     if (e.dataTransfer) {
       e.dataTransfer.effectAllowed = "move";
@@ -46,12 +46,12 @@
           type: "surface",
           groupIndex,
           surfaceIndex,
-        })
+        }),
       );
     }
   }
 
-  function handleDragOver(e: DragEvent) {
+  function handleDragOver(e: DragEvent): void {
     e.preventDefault();
     e.stopPropagation();
     if (e.dataTransfer) {
@@ -59,7 +59,7 @@
     }
   }
 
-  function handleDrop(e: DragEvent) {
+  function handleDrop(e: DragEvent): void {
     e.preventDefault();
     e.stopPropagation();
 
@@ -67,8 +67,17 @@
       const data = e.dataTransfer.getData("application/json");
       if (data) {
         try {
-          const parsed = JSON.parse(data);
-          if (parsed.type === "surface") {
+          interface DragData {
+            type: "group" | "surface";
+            groupIndex?: number;
+            surfaceIndex?: number;
+          }
+          const parsed = JSON.parse(data) as DragData;
+          if (
+            parsed.type === "surface" &&
+            typeof parsed.groupIndex === "number" &&
+            typeof parsed.surfaceIndex === "number"
+          ) {
             // Don't move if dropping on itself
             if (
               parsed.groupIndex === groupIndex &&
@@ -80,7 +89,7 @@
               parsed.groupIndex,
               parsed.surfaceIndex,
               groupIndex,
-              surfaceIndex
+              surfaceIndex,
             );
           }
         } catch (e) {
@@ -90,10 +99,10 @@
     }
   }
 
-  function copyHex(e: Event) {
+  function copyHex(e: Event): void {
     e.stopPropagation();
     if (hexValue) {
-      navigator.clipboard.writeText(hexValue);
+      void navigator.clipboard.writeText(hexValue);
       // Could add a toast here
     }
   }
@@ -184,7 +193,9 @@
         <input
           type="text"
           value={surface.label}
-          oninput={(e) => update({ label: e.currentTarget.value })}
+          oninput={(e) => {
+            update({ label: e.currentTarget.value });
+          }}
           style="padding: 0.4rem; border-radius: 4px; border: 1px solid var(--border-subtle-token); background: transparent; color: var(--text-high-token);"
         />
       </label>
@@ -196,7 +207,9 @@
         <input
           type="text"
           value={surface.slug}
-          oninput={(e) => update({ slug: e.currentTarget.value })}
+          oninput={(e) => {
+            update({ slug: e.currentTarget.value });
+          }}
           style="padding: 0.4rem; border-radius: 4px; border: 1px solid var(--border-subtle-token); background: transparent; color: var(--text-high-token);"
         />
       </label>
@@ -207,7 +220,9 @@
         Polarity
         <select
           value={surface.polarity}
-          onchange={(e) => update({ polarity: e.currentTarget.value as any })}
+          onchange={(e) => {
+            update({ polarity: e.currentTarget.value as Polarity });
+          }}
           style="padding: 0.4rem; border-radius: 4px; border: 1px solid var(--border-subtle-token); background: var(--surface-token); color: var(--text-high-token);"
         >
           <option value="page">Page</option>
@@ -226,8 +241,9 @@
           max="0.4"
           step="0.01"
           value={surface.targetChroma ?? 0}
-          oninput={(e) =>
-            update({ targetChroma: Number(e.currentTarget.value) })}
+          oninput={(e) => {
+            update({ targetChroma: Number(e.currentTarget.value) });
+          }}
           style="width: 100%;"
         />
       </label>
@@ -253,26 +269,28 @@
               <input
                 type="color"
                 value={surface.override?.light ?? "#ffffff"}
-                oninput={(e) =>
+                oninput={(e) => {
                   update({
                     override: {
                       ...(surface.override ?? {}),
                       light: e.currentTarget.value,
                     },
-                  })}
+                  });
+                }}
                 style="height: 30px; width: 30px; padding: 0; border: none; background: none; cursor: pointer;"
               />
               <input
                 type="text"
                 placeholder="#RRGGBB"
                 value={surface.override?.light ?? ""}
-                oninput={(e) =>
+                oninput={(e) => {
                   update({
                     override: {
                       ...(surface.override ?? {}),
                       light: e.currentTarget.value,
                     },
-                  })}
+                  });
+                }}
                 style="flex: 1; padding: 0.4rem; border-radius: 4px; border: 1px solid var(--border-subtle-token); background: transparent; color: var(--text-high-token); font-family: monospace;"
               />
             </div>
@@ -286,26 +304,28 @@
               <input
                 type="color"
                 value={surface.override?.dark ?? "#000000"}
-                oninput={(e) =>
+                oninput={(e) => {
                   update({
                     override: {
                       ...(surface.override ?? {}),
                       dark: e.currentTarget.value,
                     },
-                  })}
+                  });
+                }}
                 style="height: 30px; width: 30px; padding: 0; border: none; background: none; cursor: pointer;"
               />
               <input
                 type="text"
                 placeholder="#RRGGBB"
                 value={surface.override?.dark ?? ""}
-                oninput={(e) =>
+                oninput={(e) => {
                   update({
                     override: {
                       ...(surface.override ?? {}),
                       dark: e.currentTarget.value,
                     },
-                  })}
+                  });
+                }}
                 style="flex: 1; padding: 0.4rem; border-radius: 4px; border: 1px solid var(--border-subtle-token); background: transparent; color: var(--text-high-token); font-family: monospace;"
               />
             </div>
@@ -313,7 +333,9 @@
         </div>
         {#if surface.override?.light || surface.override?.dark}
           <button
-            onclick={() => update({ override: undefined })}
+            onclick={() => {
+              update({ override: undefined });
+            }}
             class="text-subtle"
             style="margin-top: 0.5rem; font-size: 0.8rem; text-decoration: underline; background: none; border: none; cursor: pointer;"
           >

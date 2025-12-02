@@ -11,17 +11,17 @@
     children,
     class: className,
     ...rest
-  } = $props() as HTMLAttributes<HTMLDivElement>;
+  } = $props<HTMLAttributes<HTMLDivElement>>();
 
   let element = $state<HTMLElement>();
   let isSelected = $derived(element && inspector.selected === element);
 
-  function handleClick(e: MouseEvent) {
+  function handleClick(e: MouseEvent): void {
     e.stopPropagation();
     if (element) inspector.select(element);
   }
 
-  function handleKeydown(e: KeyboardEvent) {
+  function handleKeydown(e: KeyboardEvent): void {
     if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
       if (element) inspector.select(element);
@@ -31,7 +31,9 @@
 
 <div
   bind:this={element}
-  class={["inspector-surface", className].filter(Boolean).join(" ")}
+  class={(["inspector-surface", className || ""] as string[])
+    .filter((c) => !!c)
+    .join(" ")}
   role="button"
   tabindex="0"
   onclick={handleClick}

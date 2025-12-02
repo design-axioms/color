@@ -8,7 +8,7 @@
     evaluate: (candidate: number) => number,
     target: number,
     epsilon: number = 0.005,
-    maxIterations: number = 40
+    maxIterations: number = 40,
   ): number {
     let low = min;
     let high = max;
@@ -56,7 +56,7 @@
     config?: {
       curve: { p1: [number, number]; p2: [number, number] };
       maxRotation: number;
-    }
+    },
   ): number {
     if (!config) return 0;
     const { curve, maxRotation } = config;
@@ -68,7 +68,7 @@
       1,
       (val) => cubicBezier(val, curve.p1[0], curve.p2[0]),
       lightness,
-      0.001
+      0.001,
     );
 
     // Calculate y (hue shift factor) given t
@@ -109,7 +109,7 @@
     const stops = points
       .filter((_, i) => i % 5 === 0 || i === points.length - 1)
       .map((p) => {
-        const h = Number(baseHue) + p.shift;
+        const h = baseHue + p.shift;
         const pct = Math.round(p.l * 100);
 
         // FIX: Use a variable chroma that tapers at the ends (black/white).
@@ -131,7 +131,7 @@
     return points
       .filter((_, i) => i % 5 === 0 || i === points.length - 1)
       .map((p) => {
-        const h = Number(baseHue) + p.shift;
+        const h = baseHue + p.shift;
         const pct = Math.round(p.l * 100);
         return `hsl(${h.toFixed(1)}deg 100% 50%) ${pct}%`;
       })
@@ -140,8 +140,7 @@
 
   let midPointHue = $derived.by(() => {
     const midPoint = points[50]; // 50% lightness
-    if (!midPoint) return 0;
-    return Number(baseHue) + midPoint.shift;
+    return baseHue + midPoint.shift;
   });
 
   // Coordinate Mapping
@@ -150,19 +149,19 @@
   const SIZE = 100;
   const DRAW_SIZE = SIZE - PADDING * 2;
 
-  function toSvgX(val: number) {
+  function toSvgX(val: number): number {
     return PADDING + val * DRAW_SIZE;
   }
 
-  function toSvgY(val: number) {
+  function toSvgY(val: number): number {
     return SIZE - (PADDING + val * DRAW_SIZE);
   }
 
-  function fromSvgX(svgX: number) {
+  function fromSvgX(svgX: number): number {
     return Math.max(0, Math.min(1, (svgX - PADDING) / DRAW_SIZE));
   }
 
-  function fromSvgY(svgY: number) {
+  function fromSvgY(svgY: number): number {
     return Math.max(0, Math.min(1, (SIZE - PADDING - svgY) / DRAW_SIZE));
   }
 
@@ -184,12 +183,12 @@
 
   const uid = crypto.randomUUID();
 
-  function handleMouseDown(point: "p1" | "p2") {
+  function handleMouseDown(point: "p1" | "p2"): void {
     dragging = point;
   }
 
-  function handleMouseMove(event: MouseEvent | TouchEvent) {
-    if (!dragging || !svgElement) return;
+  function handleMouseMove(event: MouseEvent | TouchEvent): void {
+    if (!dragging) return;
 
     // Prevent scrolling on touch
     if (event.type === "touchmove") {
@@ -217,7 +216,7 @@
     }
   }
 
-  function handleMouseUp() {
+  function handleMouseUp(): void {
     dragging = null;
   }
 </script>
@@ -320,8 +319,12 @@
               role="button"
               tabindex="0"
               aria-label="Control Point 1"
-              onmousedown={() => handleMouseDown("p1")}
-              ontouchstart={() => handleMouseDown("p1")}
+              onmousedown={() => {
+                handleMouseDown("p1");
+              }}
+              ontouchstart={() => {
+                handleMouseDown("p1");
+              }}
               style:cursor={dragging ? "grabbing" : "grab"}
             />
 
@@ -338,8 +341,12 @@
               role="button"
               tabindex="0"
               aria-label="Control Point 2"
-              onmousedown={() => handleMouseDown("p2")}
-              ontouchstart={() => handleMouseDown("p2")}
+              onmousedown={() => {
+                handleMouseDown("p2");
+              }}
+              ontouchstart={() => {
+                handleMouseDown("p2");
+              }}
               style:cursor={dragging ? "grabbing" : "grab"}
             />
           {/if}
@@ -372,14 +379,14 @@
           <span class="preview-label">Result</span>
           <div
             class="gradient-strip"
-            style:background={`linear-gradient(to right, ${gradientStops})`}
+            style:background="linear-gradient(to right, {gradientStops})"
           ></div>
         </div>
         <div class="preview-row">
           <span class="preview-label">Hue Only</span>
           <div
             class="gradient-strip"
-            style:background={`linear-gradient(to right, ${hueGradientStops})`}
+            style:background="linear-gradient(to right, {hueGradientStops})"
           ></div>
         </div>
         <div class="gradient-labels">
@@ -429,7 +436,9 @@
           <div class="slider-container">
             <div
               class="slider-track"
-              style:background={`linear-gradient(to right, oklch(0.6 0.2 0), oklch(0.6 0.2 90), oklch(0.6 0.2 180), oklch(0.6 0.2 270), oklch(0.6 0.2 360))`}
+              style:background="linear-gradient(to right, oklch(0.6 0.2 0),
+              oklch(0.6 0.2 90), oklch(0.6 0.2 180), oklch(0.6 0.2 270),
+              oklch(0.6 0.2 360))"
             ></div>
             <input
               type="range"

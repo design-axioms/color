@@ -4,7 +4,7 @@ import path from "path";
 
 const DOCS_DIR = path.resolve("site/src/content/docs");
 
-async function checkLinks() {
+async function checkLinks(): Promise<void> {
   const files = await glob("**/*.{md,mdx}", { cwd: DOCS_DIR });
   let errors = 0;
 
@@ -58,4 +58,4 @@ async function checkLinks() {
   }
 }
 
-checkLinks();
+void checkLinks();

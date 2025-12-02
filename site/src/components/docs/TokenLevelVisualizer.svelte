@@ -38,7 +38,7 @@
 </script>
 
 <div class="token-visualizer">
-  {#each tokens as token}
+  {#each tokens as token (token.name)}
     <div class="token-card">
       <div class="card-header">
         <div class="token-info">

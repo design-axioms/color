@@ -11,13 +11,13 @@
   let solved = $derived(configState.solved);
   let mode = $derived(themeState.mode);
 
-  function getSurfaceColor(slug: string) {
+  function getSurfaceColor(slug: string): string {
     const spec = solved?.backgrounds.get(slug)?.[mode];
     if (!spec) return "transparent";
     return formatHex({ mode: "oklch", ...spec });
   }
 
-  function getTextColor(slug: string) {
+  function getTextColor(slug: string): string {
     const spec = solved?.backgrounds.get(slug)?.[mode];
     if (!spec) return "var(--text-high-token)";
     return spec.l > 0.6 ? "#000000" : "#ffffff";
@@ -32,14 +32,14 @@
     </div>
 
     <div class="children">
-      {#each config.groups as group}
+      {#each config.groups as group (group.name)}
         <div class="node group">
           <div class="node-content">
             <strong>{group.name}</strong>
           </div>
 
           <div class="children">
-            {#each group.surfaces as surface}
+            {#each group.surfaces as surface (surface.slug)}
               {@const bg = getSurfaceColor(surface.slug)}
               {@const fg = getTextColor(surface.slug)}
               <div class="node surface" style="--bg: {bg}; --fg: {fg}">

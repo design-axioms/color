@@ -7,7 +7,7 @@ pre-commit:
       glob: "*.{ts,js,json,md,yml,css,svelte,astro}"
       run: pnpm format {staged_files} && git add {staged_files}
     lint:
-      glob: "*.{ts,js}"
+      glob: "*.{ts,js,svelte,astro}"
       run: pnpm eslint {staged_files}
     security:
       glob: "*"

@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { getContext } from 'svelte';
-  import type { ConfigState } from '../../lib/state/ConfigState.svelte';
+  import { getContext } from "svelte";
+  import type { ConfigState } from "../../lib/state/ConfigState.svelte";
 
-  const configState = getContext<ConfigState>('config');
+  const configState = getContext<ConfigState>("config");
   let config = $derived(configState.config);
 </script>
 
@@ -24,9 +24,11 @@
           max="180"
           step="1"
           value={config.hueShift.maxRotation}
-          oninput={(e) =>
-            configState.updateHueShiftRotation(parseFloat(e.currentTarget.value))
-          }
+          oninput={(e) => {
+            configState.updateHueShiftRotation(
+              parseFloat(e.currentTarget.value),
+            );
+          }}
         />
       </label>
       <p class="text-subtlest" style="font-size: 0.85rem;">

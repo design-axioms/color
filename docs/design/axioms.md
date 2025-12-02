@@ -107,3 +107,11 @@ We model application state using plain classes and Runes, not framework-specific
 - **Reactivity**: We use fine-grained reactivity (`$state`, `$derived`) to track changes automatically.
 - **Injection**: State is injected via Context, avoiding global singletons and ensuring testability.
 - **Reference**: See [State Architecture](state-architecture.md).
+
+### 11. Testing is a Ratchet
+
+We do not just maintain quality; we actively increase it with every change.
+
+- **No Regression**: Coverage thresholds are a floor, not a ceiling. We never lower them.
+- **New Code, New Tests**: Every new feature or bug fix must include accompanying tests.
+- **Coverage Growth**: We aim to increase test coverage over time, treating low coverage as technical debt to be paid down.

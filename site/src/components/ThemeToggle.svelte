@@ -7,7 +7,9 @@
 
 <button
   class="theme-toggle"
-  onclick={() => theme.toggle()}
+  onclick={() => {
+    theme.toggle();
+  }}
   aria-label="Toggle theme"
 >
   {theme.isDark ? "🌙" : "☀️"}

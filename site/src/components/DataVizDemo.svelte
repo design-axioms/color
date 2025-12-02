@@ -10,7 +10,7 @@
     <div
       style="display: grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 0.5rem;"
     >
-      {#each chartColors as i}
+      {#each chartColors as i (i)}
         <div
           style="display: flex; flex-direction: column; gap: 0.25rem; align-items: center;"
         >
@@ -33,9 +33,11 @@
     <div
       style="height: 200px; display: flex; align-items: flex-end; gap: 4px; padding-top: 1rem;"
     >
-      {#each barHeights as height, i}
+      {#each barHeights as height, i (i)}
         <div
-          style="flex: 1; height: {height}%; background-color: var(--chart-{(i % 10) + 1}); border-radius: 4px 4px 0 0; opacity: 0.9;"
+          style="flex: 1; height: {height}%; background-color: var(--chart-{(i %
+            10) +
+            1}); border-radius: 4px 4px 0 0; opacity: 0.9;"
           title="--chart-{(i % 10) + 1}"
         ></div>
       {/each}

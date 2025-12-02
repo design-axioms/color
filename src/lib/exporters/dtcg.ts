@@ -82,39 +82,35 @@ export function toDTCG(theme: Theme): Record<string, DTCGGroup> {
     modeGroup["on-surface"] = onSurfaceGroup;
 
     // 2. Charts
-    if (theme.charts) {
-      const chartGroup: DTCGGroup = {};
-      theme.charts.forEach((chart, index) => {
-        const spec = chart[mode];
-        chartGroup[(index + 1).toString()] = {
-          $type: "color",
-          $value: formatColor(spec),
-        };
-      });
-      modeGroup["chart"] = chartGroup;
-    }
+    const chartGroup: DTCGGroup = {};
+    theme.charts.forEach((chart, index) => {
+      const spec = chart[mode];
+      chartGroup[(index + 1).toString()] = {
+        $type: "color",
+        $value: formatColor(spec),
+      };
+    });
+    modeGroup["chart"] = chartGroup;
 
     // 3. Primitives
-    if (theme.primitives) {
-      // Shadows
-      const shadowGroup: DTCGGroup = {};
-      for (const [size, token] of Object.entries(theme.primitives.shadows)) {
-        shadowGroup[size] = {
-          $type: "other",
-          $value: token[mode],
-          $description: "CSS box-shadow value",
-        };
-      }
-      modeGroup["shadow"] = shadowGroup;
-
-      // Focus
-      const focusGroup: DTCGGroup = {};
-      focusGroup["ring"] = {
-        $type: "color",
-        $value: theme.primitives.focus.ring[mode],
+    // Shadows
+    const shadowGroup: DTCGGroup = {};
+    for (const [size, token] of Object.entries(theme.primitives.shadows)) {
+      shadowGroup[size] = {
+        $type: "other",
+        $value: token[mode],
+        $description: "CSS box-shadow value",
       };
-      modeGroup["focus"] = focusGroup;
     }
+    modeGroup["shadow"] = shadowGroup;
+
+    // Focus
+    const focusGroup: DTCGGroup = {};
+    focusGroup["ring"] = {
+      $type: "color",
+      $value: theme.primitives.focus.ring[mode],
+    };
+    modeGroup["focus"] = focusGroup;
 
     tokens[mode] = modeGroup;
   }

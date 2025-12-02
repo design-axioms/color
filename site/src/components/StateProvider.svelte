@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { setContext } from "svelte";
+  import { setContext, type Snippet } from "svelte";
   import { themeState } from "../lib/state/ThemeState.svelte";
   import { configState } from "../lib/state/ConfigState.svelte";
 
-  let { children } = $props();
+  let { children } = $props<{ children: Snippet }>();
 
   // Provide the global singletons via context
   // This allows components to use getContext('theme') for dependency injection

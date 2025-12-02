@@ -4,7 +4,7 @@
 
   let selectedElement = $state<HTMLElement | null>(null);
 
-  function select(element: HTMLElement | null) {
+  function select(element: HTMLElement | null): void {
     selectedElement = element;
   }
 
@@ -22,7 +22,12 @@
   </div>
 
   {#if selectedElement}
-    <InspectorPanel element={selectedElement} onClose={() => select(null)} />
+    <InspectorPanel
+      element={selectedElement}
+      onClose={() => {
+        select(null);
+      }}
+    />
   {/if}
 </div>
 

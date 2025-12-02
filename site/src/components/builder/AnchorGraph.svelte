@@ -9,7 +9,6 @@
   let config = $derived(configState.config);
   let resolvedTheme = $derived(themeState.mode);
 
-  let container: HTMLDivElement;
   let dragging = $state<{
     polarity: "page" | "inverted";
     mode: "light" | "dark";
@@ -20,8 +19,8 @@
     e: PointerEvent,
     polarity: "page" | "inverted",
     mode: "light" | "dark",
-    handle: "start" | "end"
-  ) {
+    handle: "start" | "end",
+  ): void {
     e.preventDefault();
     e.stopPropagation();
     dragging = { polarity, mode, handle };
@@ -29,7 +28,7 @@
     window.addEventListener("pointerup", handlePointerUp);
   }
 
-  function handlePointerMove(e: PointerEvent) {
+  function handlePointerMove(e: PointerEvent): void {
     if (!dragging) return;
 
     // Find the correct track container based on polarity
@@ -43,17 +42,17 @@
       dragging.polarity,
       dragging.mode,
       dragging.handle,
-      x
+      x,
     );
   }
 
-  function handlePointerUp() {
+  function handlePointerUp(): void {
     dragging = null;
     window.removeEventListener("pointermove", handlePointerMove);
     window.removeEventListener("pointerup", handlePointerUp);
   }
 
-  function getStyle(start: number, end: number) {
+  function getStyle(start: number, end: number): string {
     const min = Math.min(start, end);
     const max = Math.max(start, end);
     return `left: ${min * 100}%; width: ${(max - min) * 100}%;`;
@@ -95,24 +94,28 @@
       <div class="lightness-gradient"></div>
 
       <!-- Page Light -->
+      <!-- eslint-disable @typescript-eslint/no-confusing-void-expression -->
       {@render Range(
         "page",
         "light",
         config.anchors.page.light.start.background,
         config.anchors.page.light.end.background,
         "var(--hue-info)",
-        "Light Mode"
+        "Light Mode",
       )}
+      <!-- eslint-enable @typescript-eslint/no-confusing-void-expression -->
 
       <!-- Page Dark -->
+      <!-- eslint-disable @typescript-eslint/no-confusing-void-expression -->
       {@render Range(
         "page",
         "dark",
         config.anchors.page.dark.start.background,
         config.anchors.page.dark.end.background,
         "var(--hue-purple)",
-        "Dark Mode"
+        "Dark Mode",
       )}
+      <!-- eslint-enable @typescript-eslint/no-confusing-void-expression -->
     </div>
   </div>
 
@@ -157,24 +160,28 @@
       <div class="lightness-gradient"></div>
 
       <!-- Inverted Light -->
+      <!-- eslint-disable @typescript-eslint/no-confusing-void-expression -->
       {@render Range(
         "inverted",
         "light",
         config.anchors.inverted.light.start.background,
         config.anchors.inverted.light.end.background,
         "var(--hue-warning)",
-        "Light Mode"
+        "Light Mode",
       )}
+      <!-- eslint-enable @typescript-eslint/no-confusing-void-expression -->
 
       <!-- Inverted Dark -->
+      <!-- eslint-disable @typescript-eslint/no-confusing-void-expression -->
       {@render Range(
         "inverted",
         "dark",
         config.anchors.inverted.dark.start.background,
         config.anchors.inverted.dark.end.background,
         "var(--hue-error)",
-        "Dark Mode"
+        "Dark Mode",
       )}
+      <!-- eslint-enable @typescript-eslint/no-confusing-void-expression -->
     </div>
   </div>
 </div>
@@ -185,10 +192,10 @@
   start: number,
   end: number,
   color: string,
-  label: string
+  label: string,
 )}
   {@const style = getStyle(start, end)}
-  {@const isActive = dragging?.polarity === polarity && dragging?.mode === mode}
+  {@const isActive = dragging?.polarity === polarity && dragging.mode === mode}
   {@const isCurrentMode = mode === resolvedTheme}
 
   <div
@@ -207,7 +214,9 @@
     <div
       class="bar-handle start"
       style="left: {start <= end ? '0%' : '100%'}"
-      onpointerdown={(e) => handlePointerDown(e, polarity, mode, "start")}
+      onpointerdown={(e) => {
+        handlePointerDown(e, polarity, mode, "start");
+      }}
       role="slider"
       tabindex="0"
       aria-label="{label} Start"
@@ -217,7 +226,9 @@
     <div
       class="bar-handle end"
       style="left: {start <= end ? '100%' : '0%'}"
-      onpointerdown={(e) => handlePointerDown(e, polarity, mode, "end")}
+      onpointerdown={(e) => {
+        handlePointerDown(e, polarity, mode, "end");
+      }}
       role="slider"
       tabindex="0"
       aria-label="{label} End"

@@ -420,3 +420,20 @@ This file tracks key architectural and design decisions made throughout the proj
   - **Clarity**: "Algebraic" implies math is the primary interface. "Axiomatic" implies _rules_ are the primary interface, which is more accurate for a design system.
   - **Ecosystem**: Aligns with the broader "Axiomatic Design" suite of tools we are planning.
   - **Identity**: Creates a stronger, more distinct brand identity.
+
+### [2025-12-02] OIDC Trusted Publishing
+
+- **Context**: We needed a secure way to publish to npm from GitHub Actions. The traditional method uses a long-lived `NPM_TOKEN` secret, which is a security risk and prone to expiry/rotation issues.
+- **Decision**: Use **OpenID Connect (OIDC)** Trusted Publishing.
+- **Rationale**:
+  - **Security**: Eliminates the need for long-lived secrets. GitHub exchanges a short-lived token with npm for each run.
+  - **Provenance**: Enables generating build provenance (attestations), which increases supply chain security and user trust.
+  - **Modern Best Practice**: This is the recommended approach by both GitHub and npm.
+
+### [2025-12-02] Manual Bootstrap for First Release
+
+- **Context**: We encountered a "chicken-and-egg" problem when setting up OIDC. npm requires the package to exist _before_ you can configure Trusted Publishing for it. However, we couldn't publish it via CI because we hadn't configured it yet.
+- **Decision**: Manually publish `v0.1.0` from the developer's local machine to "bootstrap" the package registry entry.
+- **Rationale**:
+  - **Pragmatism**: It was the only way to break the deadlock.
+  - **One-Time Cost**: This is only required for the very first publish. Subsequent releases will use the automated OIDC pipeline.

@@ -1,7 +1,11 @@
 <script lang="ts">
   type Mode = "light" | "dark";
 
-  function getSurfaces(mode: Mode) {
+  function getSurfaces(mode: Mode): {
+    name: string;
+    className: string;
+    label: string;
+  }[] {
     const isLight = mode === "light";
     return isLight
       ? [
@@ -126,7 +130,7 @@
         style:justify-content="space-between"
         style:gap="0.5rem"
       >
-        {#each surfaces as s}
+        {#each surfaces as s (s.name)}
           <div
             class={s.className}
             style:background="var(--surface-token)"
@@ -164,14 +168,16 @@
   style:gap="1.5rem"
   style:margin-top="1.5rem"
 >
+  <!-- eslint-disable @typescript-eslint/no-confusing-void-expression -->
   {@render rangeCard(
     "Light Mode (Dimming)",
     "Page starts bright. Surfaces get darker to create separation.",
-    "light"
+    "light",
   )}
   {@render rangeCard(
     "Dark Mode (Illumination)",
     "Page starts dark. Surfaces get lighter to approach the light source.",
-    "dark"
+    "dark",
   )}
+  <!-- eslint-enable @typescript-eslint/no-confusing-void-expression -->
 </div>
