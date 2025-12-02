@@ -1,4 +1,4 @@
-# Axiomatic Color
+# @axiomatic-design/color
 
 **An Axiomatic approach to color. Automated contrast, platform-native adaptation, and mathematically guaranteed accessibility.**
 
