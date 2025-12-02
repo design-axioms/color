@@ -1,9 +1,20 @@
 <script lang="ts">
   import { getContext } from "svelte";
   import type { BuilderState } from "../../../lib/state/BuilderState.svelte";
+  import { configState } from "../../../lib/state/ConfigState.svelte";
 
   const builder = getContext<BuilderState>("builder");
   let surfaceId = $derived(builder.selectedSurfaceId);
+
+  let surfaceConfig = $derived(
+    configState.config.groups
+      .flatMap((g) => g.surfaces)
+      .find((s) => s.slug === surfaceId),
+  );
+
+  let solvedBackground = $derived(
+    surfaceId ? configState.solved?.backgrounds.get(surfaceId) : undefined,
+  );
 </script>
 
 <div class="inspector-section">
@@ -19,38 +30,70 @@
     </button>
   </div>
 
-  <div class="context-trace">
-    <h4>Context Trace</h4>
-    <div class="trace-step">
-      <span class="step-label">Root</span>
-      <span class="step-value">L* 98</span>
+  {#if solvedBackground}
+    <div class="context-trace">
+      <h4>Solved Values</h4>
+      <div class="trace-step">
+        <span class="step-label">Light Mode</span>
+        <span class="step-value">L* {solvedBackground.light.l.toFixed(1)}</span>
+      </div>
+      <div class="trace-step">
+        <span class="step-label">Dark Mode</span>
+        <span class="step-value">L* {solvedBackground.dark.l.toFixed(1)}</span>
+      </div>
     </div>
-    <div class="trace-arrow">↓</div>
-    <div class="trace-step">
-      <span class="step-label">Parent (Card)</span>
-      <span class="step-value">L* 95</span>
-    </div>
-    <div class="trace-arrow">↓</div>
-    <div class="trace-step active">
-      <span class="step-label">Self ({surfaceId})</span>
-      <span class="step-value">L* 90</span>
-    </div>
-  </div>
+  {/if}
 </div>
 
-<div class="inspector-section">
-  <h3>Overrides</h3>
-  <div class="control-group">
-    <label>
-      <span>Lightness Offset</span>
-      <input type="range" min="-20" max="20" value="0" />
-    </label>
-    <label>
-      <span>Chroma Boost</span>
-      <input type="range" min="0" max="100" value="0" />
-    </label>
+{#if surfaceConfig}
+  <div class="inspector-section">
+    <h3>Overrides</h3>
+    <div class="control-group">
+      <label>
+        <div class="label-row">
+          <span>Contrast Offset (Light)</span>
+          <span class="value">{surfaceConfig.contrastOffset?.light ?? 0}</span>
+        </div>
+        <input
+          type="range"
+          min="-20"
+          max="20"
+          value={surfaceConfig.contrastOffset?.light ?? 0}
+          oninput={(e) => {
+            if (surfaceId) {
+              configState.updateSurfaceContrastOffset(
+                surfaceId,
+                "light",
+                e.currentTarget.valueAsNumber,
+              );
+            }
+          }}
+        />
+      </label>
+      <label>
+        <div class="label-row">
+          <span>Contrast Offset (Dark)</span>
+          <span class="value">{surfaceConfig.contrastOffset?.dark ?? 0}</span>
+        </div>
+        <input
+          type="range"
+          min="-20"
+          max="20"
+          value={surfaceConfig.contrastOffset?.dark ?? 0}
+          oninput={(e) => {
+            if (surfaceId) {
+              configState.updateSurfaceContrastOffset(
+                surfaceId,
+                "dark",
+                e.currentTarget.valueAsNumber,
+              );
+            }
+          }}
+        />
+      </label>
+    </div>
   </div>
-</div>
+{/if}
 
 <div class="inspector-section">
   <h3>Contrast</h3>
@@ -105,13 +148,6 @@
     color: var(--text-high-token);
   }
 
-  .trace-arrow {
-    text-align: center;
-    font-size: 0.7rem;
-    color: var(--text-subtle-token);
-    line-height: 0.8;
-  }
-
   .control-group {
     display: flex;
     flex-direction: column;
@@ -123,6 +159,16 @@
     flex-direction: column;
     gap: 0.25rem;
     font-size: 0.8rem;
+  }
+
+  .label-row {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .value {
+    color: var(--text-subtle-token);
+    font-variant-numeric: tabular-nums;
   }
 
   .contrast-badge {

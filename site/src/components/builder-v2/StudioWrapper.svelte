@@ -1,9 +1,11 @@
 <script lang="ts">
   import StateProvider from "../StateProvider.svelte";
+  import StyleInjector from "../StyleInjector.svelte";
   import StudioLayout from "./StudioLayout.svelte";
 </script>
 
 <StateProvider>
+  <StyleInjector />
   <div class="fullscreen-studio">
     <StudioLayout />
   </div>

@@ -1,9 +1,9 @@
 <script lang="ts">
   import { getContext } from "svelte";
   import type { BuilderState } from "../../lib/state/BuilderState.svelte";
-  import ComponentView from "./stage/ComponentView.svelte";
   import AbstractView from "./stage/AbstractView.svelte";
   import AuditView from "./stage/AuditView.svelte";
+  import ComponentView from "./stage/ComponentView.svelte";
 
   const builder = getContext<BuilderState>("builder");
 </script>

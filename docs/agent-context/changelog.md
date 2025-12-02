@@ -709,3 +709,22 @@
 - **Verification**:
   - Achieved 0 errors in `pnpm lint`.
   - Verified successful build with `pnpm build`.
+
+## Epoch 21: Phase 1 - Config State & Live Preview (2025-12-02)
+
+**Goal**: Connect the Theme Builder UI to a reactive configuration state and enable live preview in the browser.
+
+**Completed Work**:
+
+- **Package Refactoring**:
+  - Refactored `@axiomatic-design/color` to support browser-side solving.
+  - Extracted `solver.ts` to resolve circular dependencies.
+  - Exported `generateTheme` and `injectTheme` via `runtime.ts`.
+- **State Management**:
+  - Implemented `ConfigState.svelte.ts` using Svelte 5 Runes.
+  - Added persistence via `localStorage`.
+  - Implemented live CSS generation via `$derived`.
+- **UI Integration**:
+  - Created `StyleInjector.svelte` to apply the generated theme.
+  - Bound `GlobalInspector` and `SurfaceInspector` to the reactive state.
+  - Verified live updates for anchors, key colors, and surface overrides.

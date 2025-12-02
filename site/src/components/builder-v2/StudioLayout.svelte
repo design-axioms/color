@@ -1,9 +1,9 @@
 <script lang="ts">
-  import ContextTreePanel from "./ContextTreePanel.svelte";
-  import StagePanel from "./StagePanel.svelte";
-  import InspectorPanel from "./InspectorPanel.svelte";
   import { getContext } from "svelte";
   import type { BuilderState } from "../../lib/state/BuilderState.svelte";
+  import ContextTreePanel from "./ContextTreePanel.svelte";
+  import InspectorPanel from "./InspectorPanel.svelte";
+  import StagePanel from "./StagePanel.svelte";
 
   const builder = getContext<BuilderState>("builder");
 </script>

@@ -5,10 +5,12 @@ pre-commit:
       run: pnpm install && git add pnpm-lock.yaml
     format:
       glob: "*.{ts,js,json,md,yml,css,svelte,astro}"
+      exclude: "dist/**/*"
       run: pnpm format {staged_files} && git add {staged_files}
     lint:
       glob: "*.{ts,js,svelte,astro}"
-      run: pnpm eslint {staged_files}
+      exclude: "dist/**/*"
+      run: pnpm eslint --fix {staged_files} && git add {staged_files}
     security:
       glob: "*"
       run: pnpm lint:security {staged_files}

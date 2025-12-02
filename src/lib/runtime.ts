@@ -1,5 +1,5 @@
 import { generateTokensCss } from "./generator.ts";
-import { getKeyColorStats, solve } from "./index.ts";
+import { getKeyColorStats, solve } from "./solver.ts";
 import type { SolverConfig } from "./types.ts";
 
 export { toHighContrast } from "./generator.ts";
@@ -48,7 +48,7 @@ export function generateTheme(config: SolverConfig, selector?: string): string {
 export function injectTheme(
   css: string,
   target?: HTMLElement | ShadowRoot,
-  existingElement?: HTMLStyleElement
+  existingElement?: HTMLStyleElement,
 ): HTMLStyleElement {
   const style = existingElement || document.createElement("style");
   style.textContent = css;
