@@ -1,6 +1,6 @@
 <script lang="ts">
-  import StateProvider from './StateProvider.svelte';
-  import ThemeBuilder from './builder/ThemeBuilder.svelte';
+  import StateProvider from "./StateProvider.svelte";
+  import ThemeBuilder from "./builder/ThemeBuilder.svelte";
 </script>
 
 <StateProvider>
@@ -12,12 +12,12 @@
 <style>
   .fullscreen-container {
     position: fixed;
-    top: var(--sl-nav-height, 3.5rem);
+    top: 3.5rem;
     left: 0;
     right: 0;
     bottom: 0;
     z-index: 10;
-    background: var(--sl-color-bg);
+    background: var(--surface-base);
     overflow: hidden;
     display: flex;
     flex-direction: column;

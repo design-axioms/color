@@ -18,7 +18,7 @@
 <style>
   .panel {
     height: 100%;
-    border-left: 1px solid var(--border-dec-token);
+    border-left: 1px solid var(--computed-border-dec-color);
     overflow-y: auto;
   }
 </style>

@@ -6,9 +6,10 @@
     slug: string;
     mode: "light" | "dark";
     solved: Theme | null;
+    showStatus?: boolean;
   }
 
-  let { slug, mode, solved }: Props = $props();
+  let { slug, mode, solved, showStatus = false }: Props = $props();
 
   let surface = $derived(solved?.surfaces.find((s) => s.slug === slug));
   let computed = $derived(surface?.computed);
@@ -24,31 +25,47 @@
   let contrast = $derived(bg !== null ? contrastForPair(textL, bg) : 0);
   let score = $derived(Math.round(contrast));
 
-  let color = $derived.by(() => {
-    if (score < 45) return "#d32f2f";
-    if (score < 60) return "#f57c00";
-    return "#388e3c";
+  let status = $derived.by(() => {
+    if (score < 45) return "Fail";
+    if (score < 60) return "Weak";
+    return "Pass";
   });
 
-  let borderColor = $derived.by(() => {
-    if (score < 45) return "#ffcdd2";
-    if (score < 60) return "#ffe0b2";
-    return "#c8e6c9";
+  let statusClass = $derived.by(() => {
+    if (score < 45) return "surface-status-error";
+    if (score < 60) return "surface-status-warning";
+    return "surface-status-success";
   });
 </script>
 
 {#if surface && computed}
   <span
-    style:font-size="0.75rem"
-    style:padding="0.1rem 0.4rem"
-    style:border-radius="4px"
-    style:background-color="var(--surface-workspace-token)"
-    style:color
-    style:border="1px solid {borderColor}"
-    style:margin-left="auto"
-    style:font-weight="bold"
-    title="APCA Contrast: {score}"
+    class="contrast-badge {statusClass} font-mono"
+    title="APCA Contrast: {score} ({status})"
   >
-    Lc {score}
+    <span class="score">Lc {score}</span>
+    {#if showStatus}
+      <span class="status">({status})</span>
+    {/if}
   </span>
 {/if}
+
+<style>
+  .contrast-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.75rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+    font-weight: 600;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .status {
+    opacity: 0.8;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+  }
+</style>

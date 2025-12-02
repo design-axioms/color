@@ -4,6 +4,7 @@
   overflow: hidden;
   height: 100%;
   width: 100%;
+  --highlight-ring-color: var(--key-brand-color, #6e56cf);
 }
 
 .theme-builder-sidebar {
@@ -260,7 +261,7 @@
   transform: translateY(-50%);
   height: 4px;
   width: 100%;
-  background: var(--border-subtle-token);
+  background: var(--computed-border-dec-color);
   border-radius: 2px;
 }
 
@@ -293,9 +294,9 @@
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: var(--text-high-token);
+  background: var(--computed-fg-color);
   cursor: pointer;
-  border: 2px solid var(--surface-token);
+  border: 2px solid var(--computed-surface);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
@@ -304,22 +305,24 @@
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: var(--text-high-token);
+  background: var(--computed-fg-color);
   cursor: pointer;
-  border: 2px solid var(--surface-token);
+  border: 2px solid var(--computed-surface);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 .dual-range-input:disabled::-webkit-slider-thumb {
-  background: var(--text-subtle-token);
+  background: var(--computed-fg-color);
+  opacity: 0.5;
   cursor: not-allowed;
-  border-color: var(--border-subtle-token);
+  border-color: var(--computed-border-dec-color);
 }
 
 .dual-range-input:disabled::-moz-range-thumb {
-  background: var(--text-subtle-token);
+  background: var(--computed-fg-color);
+  opacity: 0.5;
   cursor: not-allowed;
-  border-color: var(--border-subtle-token);
+  border-color: var(--computed-border-dec-color);
 }
 
 /* --- Tabs --- */
@@ -334,20 +337,22 @@
   padding: 0.5rem 1rem;
   cursor: pointer;
   font-weight: 500;
-  color: var(--text-subtle-token);
+  color: var(--computed-fg-color);
+  opacity: 0.7;
   border-bottom: 2px solid transparent;
   transition:
     color 0.2s,
-    border-color 0.2s;
+    border-color 0.2s,
+    opacity 0.2s;
 }
 
 .tab-button:hover {
-  color: var(--text-high-token);
+  opacity: 1;
 }
 
 .tab-button.active {
-  color: var(--text-high-token);
-  border-bottom-color: var(--surface-action);
+  opacity: 1;
+  border-bottom-color: var(--computed-fg-color);
 }
 
 .highlight-ring {

@@ -45,7 +45,7 @@
       vector-effect="non-scaling-stroke"
     />
   </svg>
-  <div class="labels">
+  <div class="labels text-subtle font-mono">
     <span>L: {Math.round(l * 100)}%</span>
     <span>C: {c.toFixed(3)}</span>
   </div>
@@ -84,7 +84,7 @@
   }
 
   .current-point {
-    fill: var(--text-high-token);
+    fill: var(--computed-fg-color);
     stroke: var(--surface-page);
     stroke-width: 1px;
   }
@@ -94,8 +94,7 @@
     bottom: 4px;
     left: 4px;
     font-size: 0.7rem;
-    font-family: var(--font-mono);
-    color: var(--text-subtle-token);
+    /* font-family: var(--font-mono); */
     pointer-events: none;
     display: flex;
     gap: 0.5rem;

@@ -17,7 +17,7 @@
 <div class="vibe-controls">
   <div class="control">
     <label>
-      <span class="label-text">Contrast</span>
+      <span class="label-text text-subtle">Contrast</span>
       <input
         type="range"
         min="0"
@@ -29,7 +29,7 @@
   </div>
   <div class="control">
     <label>
-      <span class="label-text">Vibrancy</span>
+      <span class="label-text text-subtle">Vibrancy</span>
       <input
         type="range"
         min="0"
@@ -60,7 +60,6 @@
 
   .label-text {
     font-weight: 500;
-    color: var(--text-subtle-token);
   }
 
   input[type="range"] {

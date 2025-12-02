@@ -1,15 +1,31 @@
 <script lang="ts">
+  import { getContext } from "svelte";
   import { configState } from "../../../lib/state/ConfigState.svelte";
   import { themeState } from "../../../lib/state/ThemeState.svelte";
+  import type { BuilderState } from "../../../lib/state/BuilderState.svelte";
   import type { Polarity } from "@axiomatic-design/color/types";
 
+  const builder = getContext<BuilderState>("builder");
   let mode = $derived(themeState.mode);
-  // Default to 'page' polarity for the main graph
-  let polarity: Polarity = "page";
+
+  // Polarity Selection
+  let polarity = $state<Polarity>("page");
+  const polarities: Polarity[] = ["page", "inverted", "action"];
 
   let anchors = $derived(configState.config.anchors[polarity][mode]);
   let start = $derived(anchors.start.background);
   let end = $derived(anchors.end.background);
+
+  // Selected Surface Visualization
+  let selectedSurfaceId = $derived(builder.selectedSurfaceId);
+  let selectedSurfaceL = $derived.by(() => {
+    if (!selectedSurfaceId || !configState.solved) return null;
+    const bg = configState.solved.backgrounds.get(selectedSurfaceId);
+    if (!bg) return null;
+    // Check if the surface actually belongs to the current polarity?
+    // For now, just show its lightness regardless, as a reference.
+    return mode === "light" ? bg.light.l : bg.dark.l;
+  });
 
   let width = 600;
   let height = 300;
@@ -49,8 +65,21 @@
   }
 </script>
 
-<div class="abstract-view">
-  <h3>Interactive Lightness Graph ({mode})</h3>
+<div class="abstract-view text-subtle">
+  <div class="header">
+    <h3>Interactive Lightness Graph ({mode})</h3>
+    <div class="polarity-tabs">
+      {#each polarities as p (p)}
+        <button
+          class:active={polarity === p}
+          class="text-subtle"
+          onclick={() => (polarity = p)}
+        >
+          {p}
+        </button>
+      {/each}
+    </div>
+  </div>
 
   <svg
     {width}
@@ -67,14 +96,14 @@
       y1={padding}
       x2={padding}
       y2={height - padding}
-      stroke="var(--surface-bordered)"
+      stroke="var(--computed-border-dec-color)"
     />
     <line
       x1={padding}
       y1={height - padding}
       x2={width - padding}
       y2={height - padding}
-      stroke="var(--surface-bordered)"
+      stroke="var(--computed-border-dec-color)"
     />
 
     <!-- Curve (Linear for now) -->
@@ -83,17 +112,39 @@
       y1={yScale(start)}
       x2={width - padding}
       y2={yScale(end)}
-      stroke="var(--text-subtle-token)"
+      stroke="currentColor"
       stroke-width="2"
       stroke-dasharray="4"
     />
+
+    <!-- Selected Surface Line -->
+    {#if selectedSurfaceL !== null}
+      <line
+        x1={padding}
+        y1={yScale(selectedSurfaceL)}
+        x2={width - padding}
+        y2={yScale(selectedSurfaceL)}
+        stroke="var(--text-link)"
+        stroke-width="2"
+      />
+      <text
+        x={width / 2}
+        y={yScale(selectedSurfaceL) - 8}
+        text-anchor="middle"
+        font-size="12"
+        fill="var(--text-link)"
+        font-weight="bold"
+      >
+        {selectedSurfaceId} ({selectedSurfaceL.toFixed(2)})
+      </text>
+    {/if}
 
     <!-- Start Handle -->
     <circle
       cx={padding}
       cy={yScale(start)}
       r="8"
-      fill="var(--text-high-token)"
+      fill="var(--computed-fg-color)"
       cursor="ns-resize"
       onmousedown={() => {
         handleMouseDown("start");
@@ -112,7 +163,7 @@
       cx={width - padding}
       cy={yScale(end)}
       r="8"
-      fill="var(--text-high-token)"
+      fill="var(--computed-fg-color)"
       cursor="ns-resize"
       onmousedown={() => {
         handleMouseDown("end");
@@ -128,7 +179,11 @@
     >
   </svg>
 
-  <p class="hint">Drag the points to adjust the anchor lightness.</p>
+  <p class="hint">
+    Drag the points to adjust the anchor lightness for <strong
+      >{polarity}</strong
+    > surfaces.
+  </p>
 </div>
 
 <style>
@@ -137,7 +192,38 @@
     flex-direction: column;
     align-items: center;
     padding: 2rem;
-    color: var(--text-subtle-token);
+  }
+
+  .header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .polarity-tabs {
+    display: flex;
+    gap: 0.5rem;
+    background: var(--surface-sunken);
+    padding: 0.25rem;
+    border-radius: 4px;
+  }
+
+  .polarity-tabs button {
+    background: none;
+    border: none;
+    padding: 0.25rem 0.75rem;
+    border-radius: 2px;
+    cursor: pointer;
+    font-size: 0.8rem;
+  }
+
+  .polarity-tabs button.active {
+    background: var(--surface-card);
+    color: var(--computed-fg-color);
+    font-weight: 500;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   }
 
   svg {

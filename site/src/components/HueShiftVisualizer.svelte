@@ -236,7 +236,7 @@
   ontouchmove={handleMouseMove}
 />
 
-<div class="visualizer-container not-content">
+<div class="visualizer-container not-content surface-card bordered">
   <div class="visualizer-header">
     <h3 class="text-strong">Hue Shift Playground</h3>
     <p class="text-subtle">
@@ -247,7 +247,7 @@
   <div class="visualizer-grid">
     <!-- Graph Section -->
     <div class="graph-section">
-      <div class="graph-container">
+      <div class="graph-container surface-sunken bordered">
         <svg
           bind:this={svgElement}
           viewBox="0 0 100 100"
@@ -264,7 +264,7 @@
               <path
                 d="M 10 0 L 0 0 0 10"
                 fill="none"
-                stroke="var(--border-subtle-token)"
+                stroke="var(--computed-border-dec-color)"
                 stroke-width="0.5"
               />
             </pattern>
@@ -280,7 +280,7 @@
           <path
             d={svgPath}
             fill="none"
-            stroke="var(--text-high-token)"
+            stroke="var(--computed-fg-color)"
             stroke-width="3"
             stroke-linecap="round"
             vector-effect="non-scaling-stroke"
@@ -294,7 +294,7 @@
               y1={toSvgY(0)}
               x2={toSvgX(curve.p1[0])}
               y2={toSvgY(curve.p1[1])}
-              stroke="var(--text-subtle-token)"
+              stroke="var(--computed-fg-color)"
               stroke-width="1"
               stroke-dasharray="2 2"
               vector-effect="non-scaling-stroke"
@@ -306,7 +306,7 @@
               y1={toSvgY(1)}
               x2={toSvgX(curve.p2[0])}
               y2={toSvgY(curve.p2[1])}
-              stroke="var(--text-subtle-token)"
+              stroke="var(--computed-fg-color)"
               stroke-width="1"
               stroke-dasharray="2 2"
               vector-effect="non-scaling-stroke"
@@ -319,8 +319,8 @@
               cx={toSvgX(curve.p1[0])}
               cy={toSvgY(curve.p1[1])}
               r="4"
-              fill="var(--surface-token)"
-              stroke="var(--text-high-token)"
+              fill="var(--computed-bg-color)"
+              stroke="var(--computed-fg-color)"
               stroke-width="2"
               vector-effect="non-scaling-stroke"
               class="control-point"
@@ -341,8 +341,8 @@
               cx={toSvgX(curve.p2[0])}
               cy={toSvgY(curve.p2[1])}
               r="4"
-              fill="var(--surface-token)"
-              stroke="var(--text-high-token)"
+              fill="var(--computed-bg-color)"
+              stroke="var(--computed-fg-color)"
               stroke-width="2"
               vector-effect="non-scaling-stroke"
               class="control-point"
@@ -364,42 +364,46 @@
             cx={toSvgX(0)}
             cy={toSvgY(0)}
             r="2"
-            fill="var(--text-subtle-token)"
+            fill="var(--computed-fg-color)"
             vector-effect="non-scaling-stroke"
           />
           <circle
             cx={toSvgX(1)}
             cy={toSvgY(1)}
             r="2"
-            fill="var(--text-subtle-token)"
+            fill="var(--computed-fg-color)"
             vector-effect="non-scaling-stroke"
           />
         </svg>
 
         <!-- Axis Labels -->
-        <div class="axis-label x-axis">Lightness (0 → 100)</div>
-        <div class="axis-label y-axis">Rotation (0° → {maxRotation}°)</div>
+        <div class="axis-label x-axis text-subtle">Lightness (0 → 100)</div>
+        <div class="axis-label y-axis text-subtle">
+          Rotation (0° → {maxRotation}°)
+        </div>
       </div>
 
       <!-- Gradient Strip -->
       <div class="gradient-preview">
         <div class="preview-row">
-          <span class="preview-label">Result</span>
+          <span class="preview-label text-subtle">Result</span>
           <div
             class="gradient-strip"
             style:background="linear-gradient(to right, {gradientStops})"
           ></div>
         </div>
         <div class="preview-row">
-          <span class="preview-label">Hue Only</span>
+          <span class="preview-label text-subtle">Hue Only</span>
           <div
             class="gradient-strip"
             style:background="linear-gradient(to right, {hueGradientStops})"
           ></div>
         </div>
-        <div class="gradient-labels">
+        <div class="gradient-labels text-subtle">
           <span>Black</span>
-          <span class="mid-label">Hue at 50% L: {midPointHue.toFixed(1)}°</span>
+          <span class="mid-label text-strong"
+            >Hue at 50% L: {midPointHue.toFixed(1)}°</span
+          >
           <span>White</span>
         </div>
       </div>
@@ -408,10 +412,10 @@
     <!-- Controls Section -->
     <div class="controls-section">
       <div class="control-group">
-        <h4 class="control-title">Global Parameters</h4>
+        <h4 class="control-title text-subtle">Global Parameters</h4>
 
         <div class="control-item">
-          <label class="checkbox-label">
+          <label class="checkbox-label text-strong">
             <input type="checkbox" bind:checked={showControls} />
             Show Control Points
           </label>
@@ -419,8 +423,10 @@
 
         <div class="control-item">
           <div class="control-header">
-            <label for="maxRotation-{uid}">Max Rotation</label>
-            <span class="control-value">{maxRotation}°</span>
+            <label for="maxRotation-{uid}" class="text-strong"
+              >Max Rotation</label
+            >
+            <span class="control-value text-subtle">{maxRotation}°</span>
           </div>
           <div class="slider-container">
             <div class="slider-track"></div>
@@ -438,8 +444,8 @@
 
         <div class="control-item">
           <div class="control-header">
-            <label for="baseHue-{uid}">Base Hue</label>
-            <span class="control-value">{baseHue}°</span>
+            <label for="baseHue-{uid}" class="text-strong">Base Hue</label>
+            <span class="control-value text-subtle">{baseHue}°</span>
           </div>
           <div class="slider-container">
             <div
@@ -463,22 +469,22 @@
 
       <!-- Bezier Sliders Removed in favor of direct manipulation -->
       <div class="control-group">
-        <h4 class="control-title">Curve Values</h4>
+        <h4 class="control-title text-subtle">Curve Values</h4>
         <div class="values-grid">
-          <div class="value-item">
-            <span class="label">P1</span>
-            <span class="value"
+          <div class="value-item surface-sunken bordered">
+            <span class="label text-subtle">P1</span>
+            <span class="value text-strong"
               >({curve.p1[0].toFixed(2)}, {curve.p1[1].toFixed(2)})</span
             >
           </div>
-          <div class="value-item">
-            <span class="label">P2</span>
-            <span class="value"
+          <div class="value-item surface-sunken bordered">
+            <span class="label text-subtle">P2</span>
+            <span class="value text-strong"
               >({curve.p2[0].toFixed(2)}, {curve.p2[1].toFixed(2)})</span
             >
           </div>
         </div>
-        <p class="hint-text">
+        <p class="hint-text text-subtle">
           Drag the points on the graph to adjust the curve.
         </p>
       </div>
@@ -488,8 +494,6 @@
 
 <style>
   .visualizer-container {
-    background: var(--surface-token);
-    border: 1px solid var(--border-subtle-token);
     border-radius: 8px;
     padding: 1.5rem;
     display: flex;
@@ -500,13 +504,11 @@
   .visualizer-header h3 {
     margin: 0 0 0.25rem 0;
     font-size: 1.1rem;
-    color: var(--text-high-token);
   }
 
   .visualizer-header p {
     margin: 0;
     font-size: 0.9rem;
-    color: var(--text-subtle-token);
   }
 
   .visualizer-grid {
@@ -525,8 +527,6 @@
   .graph-container {
     position: relative;
     height: 250px;
-    background: var(--surface-page-token, #f8f9fa); /* Fallback */
-    border: 1px solid var(--border-subtle-token);
     border-radius: 6px;
     overflow: hidden;
     touch-action: none; /* Prevent scrolling while dragging */
@@ -549,7 +549,6 @@
   .axis-label {
     position: absolute;
     font-size: 0.75rem;
-    color: var(--text-subtlest-token);
     font-family: monospace;
   }
 
@@ -579,26 +578,23 @@
 
   .preview-label {
     font-size: 0.75rem;
-    color: var(--text-subtle-token);
     font-weight: 600;
   }
 
   .gradient-strip {
     height: 32px;
     border-radius: 4px;
-    border: 1px solid var(--border-subtle-token);
+    border: 1px solid var(--computed-border-dec-color);
   }
 
   .gradient-labels {
     display: flex;
     justify-content: space-between;
     font-size: 0.75rem;
-    color: var(--text-subtle-token);
   }
 
   .mid-label {
     font-family: monospace;
-    color: var(--text-high-token);
   }
 
   /* Controls */
@@ -619,8 +615,7 @@
     font-size: 0.85rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: var(--text-subtle-token);
-    border-bottom: 1px solid var(--border-subtle-token);
+    border-bottom: 1px solid var(--computed-border-dec-color);
     padding-bottom: 0.5rem;
   }
 
@@ -638,13 +633,12 @@
   }
 
   .control-header label {
-    color: var(--text-strong-token);
+    /* color handled by utility */
   }
 
   .control-value {
     font-family: monospace;
     font-size: 0.85rem;
-    color: var(--text-subtle-token);
   }
 
   /* Values Grid */
@@ -658,27 +652,22 @@
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
-    background: var(--surface-page-token);
     padding: 0.5rem;
     border-radius: 4px;
-    border: 1px solid var(--border-subtle-token);
   }
 
   .value-item .label {
     font-size: 0.75rem;
-    color: var(--text-subtle-token);
     font-weight: 600;
   }
 
   .value-item .value {
     font-family: monospace;
     font-size: 0.9rem;
-    color: var(--text-high-token);
   }
 
   .hint-text {
     font-size: 0.8rem;
-    color: var(--text-subtle-token);
     font-style: italic;
     margin: 0;
   }
@@ -688,7 +677,6 @@
     align-items: center;
     gap: 0.5rem;
     font-size: 0.9rem;
-    color: var(--text-strong-token);
     cursor: pointer;
     user-select: none;
   }
@@ -705,7 +693,7 @@
     position: absolute;
     width: 100%;
     height: 4px;
-    background: var(--border-subtle-token);
+    background: var(--computed-border-dec-color);
     border-radius: 2px;
     pointer-events: none;
   }
@@ -733,8 +721,8 @@
     width: 16px;
     height: 16px;
     border-radius: 50%;
-    background: var(--text-high-token);
-    border: 2px solid var(--surface-token);
+    background: var(--computed-fg-color);
+    border: 2px solid var(--computed-bg-color);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
     margin-top: -6px; /* Center vertically relative to track if needed, but flex handles it */
   }
@@ -743,8 +731,8 @@
     width: 16px;
     height: 16px;
     border-radius: 50%;
-    background: var(--text-high-token);
-    border: 2px solid var(--surface-token);
+    background: var(--computed-fg-color);
+    border: 2px solid var(--computed-bg-color);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
   }
 </style>

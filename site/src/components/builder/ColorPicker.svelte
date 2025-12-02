@@ -49,8 +49,8 @@
   }
 </script>
 
-<div class="color-picker-container">
-  <div class="preview-swatch" style="background-color: {value};"></div>
+<div class="color-picker-container surface-card bordered">
+  <div class="preview-swatch bordered" style="background-color: {value};"></div>
 
   <div class="sliders">
     <div class="slider-row">
@@ -103,8 +103,6 @@
     gap: 1rem;
     align-items: center;
     padding: 0.5rem;
-    background: var(--surface-token);
-    border: 1px solid var(--border-subtle-token);
     border-radius: 6px;
   }
 
@@ -112,7 +110,6 @@
     width: 40px;
     height: 40px;
     border-radius: 4px;
-    border: 1px solid var(--border-subtle-token);
     flex-shrink: 0;
   }
 

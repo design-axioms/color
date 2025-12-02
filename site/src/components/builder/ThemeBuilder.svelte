@@ -7,13 +7,13 @@
   import type { ThemeState } from "../../lib/state/ThemeState.svelte";
   import "./ThemeBuilder.css";
 
+  import AnalysisView from "./AnalysisView.svelte";
   import AnchorsEditor from "./AnchorsEditor.svelte";
   import AuditView from "./AuditView.svelte";
   import HueShiftEditor from "./HueShiftEditor.svelte";
   import InspectorPane from "./InspectorPane.svelte";
   import KeyColorsEditor from "./KeyColorsEditor.svelte";
   import SurfaceManager from "./SurfaceManager.svelte";
-  import VisualizerGraph from "./VisualizerGraph.svelte";
 
   import Cluster from "../layout/Cluster.svelte";
 
@@ -123,7 +123,7 @@
                   class="tab-button {activeTab === 'graph' ? 'active' : ''}"
                   onclick={() => (activeTab = "graph")}
                 >
-                  Graph
+                  Analysis
                 </button>
                 <button
                   class="tab-button {activeTab === 'audit' ? 'active' : ''}"
@@ -258,7 +258,7 @@
             {/if}
           </div>
         {:else if activeTab === "graph"}
-          <VisualizerGraph />
+          <AnalysisView />
         {:else if activeTab === "audit"}
           <AuditView />
         {/if}

@@ -11,6 +11,9 @@ exports[`generateTokensCss > generates correct CSS for a standard surface group 
   --shadow-xl: light-dark(oklch(0 0 0 / 0.1), oklch(1 0 0 / 0.15));
   /* Focus */
   --focus-ring-color: light-dark(oklch(0.45 0.2 250), oklch(0.75 0.2 250));
+  /* Highlight */
+  --highlight-ring-color: light-dark(oklch(0.45 0.2 300), oklch(0.75 0.2 300));
+  --highlight-surface-color: light-dark(oklch(0.95 0.05 300), oklch(0.2 0.05 300));
 }
 
 .surface-page, body {
@@ -86,6 +89,9 @@ exports[`generateTokensCss > generates palette tokens when configured 1`] = `
   --shadow-xl: light-dark(oklch(0 0 0 / 0.1), oklch(1 0 0 / 0.15));
   /* Focus */
   --focus-ring-color: light-dark(oklch(0.45 0.2 250), oklch(0.75 0.2 250));
+  /* Highlight */
+  --highlight-ring-color: light-dark(oklch(0.45 0.2 300), oklch(0.75 0.2 300));
+  --highlight-surface-color: light-dark(oklch(0.95 0.05 300), oklch(0.2 0.05 300));
   /* Data Visualization */
   --chart-1: light-dark(
     oklch(0.5 0.15 0),
@@ -114,6 +120,9 @@ exports[`generateTokensCss > handles missing background values gracefully 1`] = 
   --shadow-xl: light-dark(oklch(0 0 0 / 0.1), oklch(1 0 0 / 0.15));
   /* Focus */
   --focus-ring-color: light-dark(oklch(0.45 0.2 250), oklch(0.75 0.2 250));
+  /* Highlight */
+  --highlight-ring-color: light-dark(oklch(0.45 0.2 300), oklch(0.75 0.2 300));
+  --highlight-surface-color: light-dark(oklch(0.95 0.05 300), oklch(0.2 0.05 300));
 }
 
 .surface-unknown {

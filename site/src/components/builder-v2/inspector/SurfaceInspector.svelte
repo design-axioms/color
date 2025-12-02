@@ -2,9 +2,15 @@
   import { getContext } from "svelte";
   import type { BuilderState } from "../../../lib/state/BuilderState.svelte";
   import { configState } from "../../../lib/state/ConfigState.svelte";
+  import type { ThemeState } from "../../../lib/state/ThemeState.svelte";
+  import ContrastBadge from "../../builder/ContrastBadge.svelte";
 
   const builder = getContext<BuilderState>("builder");
+  const themeState = getContext<ThemeState>("theme");
+
   let surfaceId = $derived(builder.selectedSurfaceId);
+  let mode = $derived(themeState.mode);
+  let solved = $derived(configState.solved);
 
   let surfaceConfig = $derived(
     configState.config.groups
@@ -19,9 +25,9 @@
 
 <div class="inspector-section">
   <div class="header">
-    <h3>Surface: {surfaceId}</h3>
+    <h3 class="text-strong">Surface: {surfaceId}</h3>
     <button
-      class="close-btn"
+      class="close-btn text-subtle"
       onclick={() => {
         builder.selectSurface(null);
       }}
@@ -31,15 +37,19 @@
   </div>
 
   {#if solvedBackground}
-    <div class="context-trace">
-      <h4>Solved Values</h4>
+    <div class="context-trace bordered">
+      <h4 class="text-strong">Solved Values</h4>
       <div class="trace-step">
         <span class="step-label">Light Mode</span>
-        <span class="step-value">L* {solvedBackground.light.l.toFixed(1)}</span>
+        <span class="step-value text-subtle"
+          >L* {solvedBackground.light.l.toFixed(1)}</span
+        >
       </div>
       <div class="trace-step">
         <span class="step-label">Dark Mode</span>
-        <span class="step-value">L* {solvedBackground.dark.l.toFixed(1)}</span>
+        <span class="step-value text-subtle"
+          >L* {solvedBackground.dark.l.toFixed(1)}</span
+        >
       </div>
     </div>
   {/if}
@@ -47,12 +57,14 @@
 
 {#if surfaceConfig}
   <div class="inspector-section">
-    <h3>Overrides</h3>
+    <h3 class="text-strong">Overrides</h3>
     <div class="control-group">
       <label>
         <div class="label-row">
           <span>Contrast Offset (Light)</span>
-          <span class="value">{surfaceConfig.contrastOffset?.light ?? 0}</span>
+          <span class="value text-subtle"
+            >{surfaceConfig.contrastOffset?.light ?? 0}</span
+          >
         </div>
         <input
           type="range"
@@ -73,7 +85,9 @@
       <label>
         <div class="label-row">
           <span>Contrast Offset (Dark)</span>
-          <span class="value">{surfaceConfig.contrastOffset?.dark ?? 0}</span>
+          <span class="value text-subtle"
+            >{surfaceConfig.contrastOffset?.dark ?? 0}</span
+          >
         </div>
         <input
           type="range"
@@ -96,17 +110,23 @@
 {/if}
 
 <div class="inspector-section">
-  <h3>Contrast</h3>
-  <div class="contrast-badge surface-action hue-success">
-    <span class="score">APCA 75</span>
-    <span class="status">Lc (Pass)</span>
-  </div>
+  <h3 class="text-strong">Contrast</h3>
+  {#if surfaceId}
+    <div class="contrast-wrapper">
+      <ContrastBadge slug={surfaceId} {mode} {solved} showStatus={true} />
+    </div>
+  {:else}
+    <div class="contrast-badge surface-workspace bordered">
+      <span class="score">--</span>
+      <span class="status">N/A</span>
+    </div>
+  {/if}
 </div>
 
 <style>
   .inspector-section {
     padding: 1rem;
-    border-bottom: 1px solid var(--border-dec-token);
+    border-bottom: 1px solid var(--computed-border-dec-color);
   }
 
   .header {
@@ -119,7 +139,6 @@
   h3 {
     font-size: 0.9rem;
     font-weight: 600;
-    color: var(--text-high-token);
     margin: 0;
   }
 
@@ -127,11 +146,10 @@
     background: none;
     border: none;
     cursor: pointer;
-    color: var(--text-subtle-token);
   }
 
   .context-trace {
-    border: 1px solid var(--border-dec-token);
+    border: 1px solid var(--computed-border-dec-color);
     padding: 0.75rem;
     border-radius: 4px;
   }
@@ -145,7 +163,7 @@
 
   .trace-step.active {
     font-weight: bold;
-    color: var(--text-high-token);
+    color: var(--computed-fg-color);
   }
 
   .control-group {
@@ -167,16 +185,26 @@
   }
 
   .value {
-    color: var(--text-subtle-token);
+    color: var(--computed-text-subtle);
     font-variant-numeric: tabular-nums;
   }
 
-  .contrast-badge {
+  .contrast-wrapper {
+    display: flex;
+    justify-content: center;
+    padding: 0.5rem;
+  }
+
+  .contrast-badge.surface-workspace {
     display: inline-flex;
     flex-direction: column;
     align-items: center;
     padding: 0.5rem;
     border-radius: 4px;
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid var(--computed-border-dec-color);
+    background: var(--surface-workspace);
   }
 
   .score {
@@ -187,5 +215,10 @@
   .status {
     font-size: 0.7rem;
     text-transform: uppercase;
+  }
+
+  input[type="range"] {
+    width: 100%;
+    box-sizing: border-box;
   }
 </style>

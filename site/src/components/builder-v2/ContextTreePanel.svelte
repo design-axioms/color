@@ -11,7 +11,7 @@
   .panel {
     height: 100%;
     padding: 1rem;
-    border-right: 1px solid var(--border-dec-token);
+    border-right: 1px solid var(--computed-border-dec-color);
     overflow-y: auto;
   }
 </style>

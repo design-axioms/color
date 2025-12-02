@@ -1,6 +1,9 @@
 <script lang="ts">
   import { getContext } from "svelte";
   import type { BuilderState } from "../../lib/state/BuilderState.svelte";
+  import type { ConfigState } from "../../lib/state/ConfigState.svelte";
+  import type { ThemeState } from "../../lib/state/ThemeState.svelte";
+  import ContrastBadge from "../builder/ContrastBadge.svelte";
 
   interface TreeNode {
     id: string;
@@ -11,9 +14,13 @@
 
   let { node, level = 0 } = $props<{ node: TreeNode; level?: number }>();
   const builder = getContext<BuilderState>("builder");
+  const themeState = getContext<ThemeState>("theme");
+  const configState = getContext<ConfigState>("config");
 
   let isExpanded = $state(true);
   let isSelected = $derived(builder.selectedSurfaceId === node.id);
+  let mode = $derived(themeState.mode);
+  let solved = $derived(configState.solved);
 
   function toggleExpand(e: MouseEvent): void {
     e.stopPropagation();
@@ -37,6 +44,7 @@
   <div
     class="node-row"
     class:selected={isSelected}
+    class:surface-action={isSelected}
     onclick={selectNode}
     onmouseenter={handleMouseEnter}
     onmouseleave={handleMouseLeave}
@@ -47,6 +55,7 @@
       if (e.key === "Enter") selectNode();
     }}
   >
+    <div class="selection-marker" class:visible={isSelected}></div>
     {#if node.children && node.children.length > 0}
       <button class="toggle" onclick={toggleExpand}>
         {isExpanded ? "▼" : "▶"}
@@ -54,8 +63,12 @@
     {:else}
       <span class="spacer"></span>
     {/if}
-    <span class="icon {node.type}"></span>
+    <span class="icon {node.type} {node.type === 'action' ? 'text-link' : ''}"
+    ></span>
     <span class="label">{node.label}</span>
+    {#if node.type === "surface"}
+      <ContrastBadge slug={node.id} {mode} {solved} />
+    {/if}
   </div>
 
   {#if isExpanded && node.children}
@@ -69,21 +82,47 @@
 
 <style>
   .node-row {
+    position: relative;
     display: flex;
     align-items: center;
     padding: 0.25rem 0.5rem;
     cursor: pointer;
     user-select: none;
     border-radius: 4px;
+    overflow: hidden;
   }
 
+  /* TODO: Use a proper surface class for hover if needed, 
+     but for now removing invalid variable usage */
   .node-row:hover {
-    background: var(--surface-card);
+    /* background: var(--surface-card); */
+    background: var(
+      --surface-sunken
+    ); /* Temporary fix using current surface context? */
   }
 
   .node-row.selected {
-    background: var(--surface-action);
-    color: var(--text-high-token);
+    /* background: var(--surface-action); */
+    /* We should apply the class in markup, but for now let's use the computed values 
+       if we can't easily change the class structure without breaking layout */
+    background-color: var(
+      --computed-surface
+    ); /* This assumes the class is applied */
+  }
+
+  .selection-marker {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: var(--highlight-ring-color, #d946ef);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .selection-marker.visible {
+    opacity: 1;
   }
 
   .toggle {
@@ -111,7 +150,7 @@
   }
 
   .icon.surface {
-    background: var(--text-high-token);
+    background: currentColor;
   }
   .icon.group {
     background: transparent;
@@ -119,7 +158,7 @@
     border-radius: 2px;
   }
   .icon.action {
-    background: var(--text-link); /* Or brand hue */
+    background: currentColor;
   }
   .icon.text {
     background: transparent;

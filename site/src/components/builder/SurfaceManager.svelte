@@ -100,37 +100,29 @@
   }
 </script>
 
-<div>
-  <h3 class="text-strong" style="margin-bottom: 1rem;">Surfaces</h3>
+<div class="context-tree">
+  <div class="tree-header">
+    <h3 class="text-strong">Context Tree</h3>
+    <p class="text-subtle">Define the hierarchy of surfaces.</p>
+  </div>
 
   {#if error}
-    <div
-      style="padding: 0.75rem; margin-bottom: 1rem; border-radius: 6px; background: var(--hue-error); color: white; font-size: 0.9rem;"
-    >
+    <div class="error-banner">
       {error}
     </div>
   {/if}
 
-  <div style="display: flex; flex-direction: column; gap: 2rem;">
+  <div class="tree-content">
     {#if config.groups.length === 0}
-      <div
-        class="surface-workspace bordered"
-        style="padding: 2rem; border-radius: 8px; text-align: center;"
-      >
-        <p class="text-subtle" style="margin: 0;">No groups yet.</p>
-        <p
-          class="text-subtlest"
-          style="font-size: 0.85rem; margin-top: 0.5rem;"
-        >
-          Create a group to start adding surfaces.
-        </p>
+      <div class="empty-state">
+        <p class="text-subtle">No groups yet.</p>
+        <p class="text-subtlest">Create a group to start adding surfaces.</p>
       </div>
     {/if}
 
     {#each config.groups as group, groupIndex (group.name)}
       <div
-        class="surface-card bordered"
-        style="padding: 1rem; border-radius: 8px; cursor: grab;"
+        class="tree-group surface-sunken bordered"
         draggable="true"
         ondragstart={(e) => {
           handleGroupDragStart(e, groupIndex);
@@ -141,43 +133,36 @@
         ondrop={(e) => {
           handleGroupDrop(e, groupIndex);
         }}
-        role="listitem"
+        role="treeitem"
+        aria-expanded="true"
       >
-        <div
-          style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;"
-        >
-          <div
-            style="display: flex; align-items: center; gap: 0.5rem; flex: 1;"
-          >
-            <span class="text-subtle" style="cursor: grab;">☰</span>
-            <input
-              type="text"
-              value={group.name}
-              oninput={(e) => {
-                const val = e.currentTarget.value;
-                handleError(() => {
-                  configState.updateGroup(groupIndex, {
-                    name: val,
-                  });
-                });
-              }}
-              class="text-strong"
-              style="background: transparent; border: none; font-size: 1.1rem; font-weight: bold; width: 100%;"
-            />
-          </div>
+        <!-- Group Header -->
+        <div class="group-header surface-card">
+          <span class="drag-handle text-subtle">⋮⋮</span>
+          <input
+            type="text"
+            value={group.name}
+            oninput={(e) => {
+              const val = e.currentTarget.value;
+              handleError(() => {
+                configState.updateGroup(groupIndex, { name: val });
+              });
+            }}
+            class="group-name-input text-strong"
+          />
           <button
             onclick={() => {
               configState.removeGroup(groupIndex);
             }}
-            class="text-subtle"
-            style="background: transparent; border: none; cursor: pointer; font-size: 1.2rem;"
+            class="icon-button delete-button text-subtle"
             title="Remove Group"
           >
             &times;
           </button>
         </div>
 
-        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+        <!-- Surfaces List -->
+        <div class="group-children">
           {#each group.surfaces as surface, surfaceIndex (surface.slug)}
             <SurfaceRow {surface} {groupIndex} {surfaceIndex} />
           {/each}
@@ -192,8 +177,7 @@
                 });
               });
             }}
-            class="surface-workspace text-subtle bordered"
-            style="padding: 0.5rem; border-radius: 6px; margin-top: 0.5rem; cursor: pointer; font-size: 0.9rem; width: 100%; text-align: center;"
+            class="add-surface-button text-subtle"
           >
             + Add Surface
           </button>
@@ -201,20 +185,154 @@
       </div>
     {/each}
 
-    <div style="display: flex; gap: 0.5rem;">
+    <!-- Add Group Footer -->
+    <div class="add-group-row">
       <input
         type="text"
         bind:value={newGroupName}
         placeholder="New Group Name"
-        style="flex: 1; padding: 0.5rem; border-radius: 4px; border: 1px solid var(--border-subtle-token); background: transparent; color: var(--text-high-token);"
+        class="new-group-input bordered text-strong"
+        onkeydown={(e) => {
+          if (e.key === "Enter") handleAddGroup();
+        }}
       />
-      <button
-        onclick={handleAddGroup}
-        class="surface-action text-strong bordered"
-        style="padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer;"
-      >
+      <button onclick={handleAddGroup} class="add-group-button">
         Add Group
       </button>
     </div>
   </div>
 </div>
+
+<style>
+  .context-tree {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .tree-header h3 {
+    margin: 0;
+    font-size: 1rem;
+  }
+
+  .tree-header p {
+    margin: 0.25rem 0 0;
+    font-size: 0.85rem;
+  }
+
+  .error-banner {
+    padding: 0.75rem;
+    border-radius: 6px;
+    background: oklch(0.6 0.2 var(--hue-error));
+    color: white;
+    font-size: 0.9rem;
+  }
+
+  .tree-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .empty-state {
+    padding: 2rem;
+    border: 1px dashed var(--computed-border-dec-color);
+    border-radius: 8px;
+    text-align: center;
+  }
+
+  /* Group Styling */
+  .tree-group {
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .group-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--computed-border-dec-color);
+  }
+
+  .drag-handle {
+    cursor: grab;
+    font-size: 1.2rem;
+    line-height: 1;
+  }
+
+  .group-name-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+
+  .group-name-input:focus {
+    outline: none;
+    text-decoration: underline;
+  }
+
+  .icon-button {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 0 0.25rem;
+  }
+
+  .icon-button:hover {
+    /* color handled by utility */
+  }
+
+  .delete-button:hover {
+    color: oklch(0.6 0.2 var(--hue-error));
+  }
+
+  .group-children {
+    padding: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .add-surface-button {
+    background: transparent;
+    border: 1px dashed var(--computed-border-dec-color);
+    padding: 0.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+    transition: all 0.2s;
+  }
+
+  .add-surface-button:hover {
+    border-color: currentColor;
+    color: currentColor;
+  }
+
+  /* Add Group Row */
+  .add-group-row {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .new-group-input {
+    flex: 1;
+    padding: 0.5rem;
+    border-radius: 4px;
+    background: transparent;
+  }
+
+  .add-group-button {
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    background: var(--surface-action, #007bff); /* Fallback */
+    color: white; /* Assuming action is dark/brand */
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+  }
+</style>

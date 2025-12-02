@@ -111,18 +111,17 @@
 </script>
 
 <div
-  class="surface-workspace bordered"
-  style="border-radius: 6px; overflow: hidden; cursor: grab; {isSelected
-    ? 'background-color: var(--highlight-surface-color); border-color: var(--highlight-ring-color);'
-    : ''}"
+  class="surface-row {isSelected ? 'selected' : ''}"
   draggable="true"
   ondragstart={handleDragStart}
   ondragover={handleDragOver}
   ondrop={handleDrop}
-  role="listitem"
+  role="treeitem"
+  aria-selected={isSelected}
 >
+  <div class="selection-marker" class:visible={isSelected}></div>
   <div
-    style="padding: 0.75rem; display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"
+    class="row-content"
     onclick={() => {
       builderState.selectSurface(isSelected ? null : surface.slug);
     }}
@@ -134,152 +133,111 @@
     role="button"
     tabindex="0"
   >
-    <span class="text-subtle" style="cursor: grab;">☰</span>
-    <span
-      style:transform={isSelected ? "rotate(90deg)" : "rotate(0deg)"}
-      style:transition="transform 0.2s"
-    >
-      ▶
-    </span>
-    <span class="text-strong" style="flex: 1;">
+    <span class="drag-handle">⋮⋮</span>
+
+    <span class="text-strong label">
       {surface.label}
     </span>
 
-    {#if hexValue}
-      <button
-        class="text-subtle code-font"
-        style="background: none; border: none; cursor: copy; font-size: 0.8rem; padding: 2px 4px; border-radius: 4px;"
-        onclick={copyHex}
-        title="Copy Hex"
-      >
-        {hexValue.toUpperCase()}
-      </button>
-    {/if}
+    <div class="meta-group">
+      {#if hexValue}
+        <button
+          class="hex-badge surface-workspace bordered font-mono text-subtle"
+          onclick={copyHex}
+          title="Copy Hex"
+        >
+          {hexValue.toUpperCase()}
+        </button>
+      {/if}
 
-    {#if surface.override?.light || surface.override?.dark}
-      <span
-        title="Has manual overrides"
-        style="font-size: 0.8rem; cursor: help;">⚠️</span
-      >
-    {/if}
-    <ContrastBadge slug={surface.slug} mode={resolvedTheme} {solved} />
+      {#if surface.override?.light || surface.override?.dark}
+        <span title="Has manual overrides" class="override-icon">⚠️</span>
+      {/if}
+
+      <ContrastBadge slug={surface.slug} mode={resolvedTheme} {solved} />
+    </div>
   </div>
 
   {#if isExpanded}
-    <div
-      style="padding: 0.75rem; border-top: 1px solid var(--border-subtle-token); display: flex; flex-direction: column; gap: 0.75rem; cursor: default;"
-      onclick={(e) => {
-        e.stopPropagation();
-      }}
-      onkeydown={(e) => {
-        e.stopPropagation();
-      }}
-      role="group"
-    >
+    <div class="row-details surface-workspace">
       <!-- Data Density Section -->
       {#if colorSpec}
-        <div
-          class="surface-card bordered"
-          style="padding: 0.5rem; border-radius: 4px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; text-align: center;"
-        >
-          <div>
-            <div class="text-subtlest" style="font-size: 0.75rem;">
-              Lightness
-            </div>
-            <div class="text-strong code-font">{colorSpec.l.toFixed(3)}</div>
+        <div class="data-grid bordered">
+          <div class="data-item">
+            <span class="label text-subtle">L</span>
+            <span class="value font-mono">{colorSpec.l.toFixed(3)}</span>
           </div>
-          <div>
-            <div class="text-subtlest" style="font-size: 0.75rem;">Chroma</div>
-            <div class="text-strong code-font">{colorSpec.c.toFixed(3)}</div>
+          <div class="data-item">
+            <span class="label text-subtle">C</span>
+            <span class="value font-mono">{colorSpec.c.toFixed(3)}</span>
           </div>
-          <div>
-            <div class="text-subtlest" style="font-size: 0.75rem;">Hue</div>
-            <div class="text-strong code-font">{colorSpec.h.toFixed(1)}°</div>
+          <div class="data-item">
+            <span class="label text-subtle">H</span>
+            <span class="value font-mono">{colorSpec.h.toFixed(1)}°</span>
           </div>
         </div>
       {/if}
 
-      <label
-        class="text-subtle"
-        style="display: flex; flex-direction: column; gap: 0.25rem;"
-      >
-        Label
-        <input
-          type="text"
-          value={surface.label}
-          oninput={(e) => {
-            update({ label: e.currentTarget.value });
-          }}
-          style="padding: 0.4rem; border-radius: 4px; border: 1px solid var(--border-subtle-token); background: transparent; color: var(--text-high-token);"
-        />
-      </label>
-      <label
-        class="text-subtle"
-        style="display: flex; flex-direction: column; gap: 0.25rem;"
-      >
-        Slug
-        <input
-          type="text"
-          value={surface.slug}
-          oninput={(e) => {
-            update({ slug: e.currentTarget.value });
-          }}
-          style="padding: 0.4rem; border-radius: 4px; border: 1px solid var(--border-subtle-token); background: transparent; color: var(--text-high-token);"
-        />
-      </label>
-      <label
-        class="text-subtle"
-        style="display: flex; flex-direction: column; gap: 0.25rem;"
-      >
-        Polarity
-        <select
-          value={surface.polarity}
-          onchange={(e) => {
-            update({ polarity: e.currentTarget.value as Polarity });
-          }}
-          style="padding: 0.4rem; border-radius: 4px; border: 1px solid var(--border-subtle-token); background: var(--surface-token); color: var(--text-high-token);"
-        >
-          <option value="page">Page</option>
-          <option value="inverted">Inverted</option>
-        </select>
-      </label>
-
-      <label
-        class="text-subtle"
-        style="display: flex; flex-direction: column; gap: 0.25rem;"
-      >
-        Target Chroma ({surface.targetChroma ?? 0})
-        <input
-          type="range"
-          min="0"
-          max="0.4"
-          step="0.01"
-          value={surface.targetChroma ?? 0}
-          oninput={(e) => {
-            update({ targetChroma: Number(e.currentTarget.value) });
-          }}
-          style="width: 100%;"
-        />
-      </label>
+      <div class="form-grid">
+        <label>
+          <span class="text-subtle">Label</span>
+          <input
+            type="text"
+            class="bordered text-strong"
+            value={surface.label}
+            oninput={(e) => {
+              update({ label: e.currentTarget.value });
+            }}
+          />
+        </label>
+        <label>
+          <span class="text-subtle">Slug</span>
+          <input
+            type="text"
+            class="bordered text-strong"
+            value={surface.slug}
+            oninput={(e) => {
+              update({ slug: e.currentTarget.value });
+            }}
+          />
+        </label>
+        <label>
+          <span class="text-subtle">Polarity</span>
+          <select
+            class="bordered text-strong"
+            value={surface.polarity}
+            onchange={(e) => {
+              update({ polarity: e.currentTarget.value as Polarity });
+            }}
+          >
+            <option value="page">Page</option>
+            <option value="inverted">Inverted</option>
+          </select>
+        </label>
+        <label>
+          <span class="text-subtle"
+            >Target Chroma ({surface.targetChroma ?? 0})</span
+          >
+          <input
+            type="range"
+            min="0"
+            max="0.4"
+            step="0.01"
+            value={surface.targetChroma ?? 0}
+            oninput={(e) => {
+              update({ targetChroma: Number(e.currentTarget.value) });
+            }}
+          />
+        </label>
+      </div>
 
       <!-- Overrides -->
-      <div
-        style="border-top: 1px solid var(--border-subtle-token); padding-top: 0.75rem; margin-top: 0.5rem;"
-      >
-        <span
-          class="text-strong"
-          style="font-size: 0.9rem; display: block; margin-bottom: 0.5rem;"
-          >Overrides</span
-        >
-        <div
-          style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;"
-        >
-          <label
-            class="text-subtle"
-            style="display: flex; flex-direction: column; gap: 0.25rem;"
-          >
-            Light Mode
-            <div style="display: flex; gap: 0.25rem;">
+      <div class="overrides-section">
+        <span class="section-title text-strong">Overrides</span>
+        <div class="override-grid">
+          <label>
+            <span>Light</span>
+            <div class="color-input-group">
               <input
                 type="color"
                 value={surface.override?.light ?? "#ffffff"}
@@ -291,11 +249,10 @@
                     },
                   });
                 }}
-                style="height: 30px; width: 30px; padding: 0; border: none; background: none; cursor: pointer;"
               />
               <input
                 type="text"
-                placeholder="#RRGGBB"
+                class="bordered font-mono text-strong"
                 value={surface.override?.light ?? ""}
                 oninput={(e) => {
                   update({
@@ -305,16 +262,13 @@
                     },
                   });
                 }}
-                style="flex: 1; padding: 0.4rem; border-radius: 4px; border: 1px solid var(--border-subtle-token); background: transparent; color: var(--text-high-token); font-family: monospace;"
+                placeholder="#RRGGBB"
               />
             </div>
           </label>
-          <label
-            class="text-subtle"
-            style="display: flex; flex-direction: column; gap: 0.25rem;"
-          >
-            Dark Mode
-            <div style="display: flex; gap: 0.25rem;">
+          <label>
+            <span>Dark</span>
+            <div class="color-input-group">
               <input
                 type="color"
                 value={surface.override?.dark ?? "#000000"}
@@ -326,11 +280,10 @@
                     },
                   });
                 }}
-                style="height: 30px; width: 30px; padding: 0; border: none; background: none; cursor: pointer;"
               />
               <input
                 type="text"
-                placeholder="#RRGGBB"
+                class="bordered font-mono text-strong"
                 value={surface.override?.dark ?? ""}
                 oninput={(e) => {
                   update({
@@ -340,7 +293,7 @@
                     },
                   });
                 }}
-                style="flex: 1; padding: 0.4rem; border-radius: 4px; border: 1px solid var(--border-subtle-token); background: transparent; color: var(--text-high-token); font-family: monospace;"
+                placeholder="#RRGGBB"
               />
             </div>
           </label>
@@ -350,24 +303,20 @@
             onclick={() => {
               update({ override: undefined });
             }}
-            class="text-subtle"
-            style="margin-top: 0.5rem; font-size: 0.8rem; text-decoration: underline; background: none; border: none; cursor: pointer;"
+            class="clear-button text-subtle"
           >
             Clear Overrides
           </button>
         {/if}
       </div>
 
-      <div
-        style="display: flex; justify-content: flex-end; margin-top: 0.5rem;"
-      >
+      <div class="actions-row">
         <button
           onclick={(e) => {
             e.stopPropagation();
             remove();
           }}
-          class="text-subtle"
-          style="color: var(--hue-error); background: transparent; border: none; cursor: pointer; font-size: 0.9rem;"
+          class="delete-button"
         >
           Delete Surface
         </button>
@@ -375,3 +324,205 @@
     </div>
   {/if}
 </div>
+
+<style>
+  .surface-row {
+    position: relative;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+    overflow: hidden;
+  }
+
+  .surface-row:hover {
+    /* background: var(--surface-workspace); */
+    /* Use a subtle background on hover if needed, or rely on state-selected */
+    background: oklch(from var(--computed-fg-color) l c h / 0.05);
+  }
+
+  /* .surface-row.selected handled by state-selected class */
+
+  .selection-marker {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: var(
+      --highlight-ring-color,
+      #d946ef
+    ); /* Fallback or use computed? */
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .selection-marker.visible {
+    opacity: 1;
+  }
+
+  .row-content {
+    padding: 0.5rem 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+  }
+
+  .drag-handle {
+    color: currentColor;
+    opacity: 0.5;
+    cursor: grab;
+    font-size: 1rem;
+  }
+
+  .label {
+    flex: 1;
+    font-size: 0.9rem;
+  }
+
+  .meta-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .hex-badge {
+    /* background: var(--surface-workspace); */
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 0.75rem;
+    cursor: copy;
+  }
+
+  .hex-badge:hover {
+    filter: brightness(0.95);
+  }
+
+  .override-icon {
+    font-size: 0.8rem;
+    cursor: help;
+  }
+
+  /* Expanded Details */
+  .row-details {
+    padding: 0.75rem;
+    border-top: 1px solid var(--computed-border-dec-color);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    cursor: default;
+    /* background: var(--surface-workspace); */
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+  }
+
+  .data-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+    padding: 0.5rem;
+    border-radius: 4px;
+  }
+
+  .data-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .data-item .label {
+    font-size: 0.7rem;
+  }
+
+  .data-item .value {
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .form-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .form-grid label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    font-size: 0.8rem;
+  }
+
+  .form-grid input[type="text"],
+  .form-grid select {
+    padding: 0.4rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+  }
+
+  .overrides-section {
+    border-top: 1px solid var(--computed-border-dec-color);
+    padding-top: 0.75rem;
+  }
+
+  .section-title {
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  .override-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+
+  .color-input-group {
+    display: flex;
+    gap: 0.25rem;
+  }
+
+  .color-input-group input[type="color"] {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+  }
+
+  .color-input-group input[type="text"] {
+    flex: 1;
+    padding: 0.4rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+  }
+
+  .clear-button {
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    text-decoration: underline;
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+
+  .actions-row {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .delete-button {
+    color: oklch(
+      0.6 0.2 var(--hue-error)
+    ); /* This is still manual, but maybe acceptable for now? */
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 0.85rem;
+  }
+
+  .delete-button:hover {
+    text-decoration: underline;
+  }
+</style>

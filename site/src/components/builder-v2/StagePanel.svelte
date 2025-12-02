@@ -125,7 +125,7 @@
 
   .toolbar {
     padding: 0.5rem;
-    border-bottom: 1px solid var(--border-dec-token);
+    border-bottom: 1px solid var(--computed-border-dec-color);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -149,19 +149,19 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--text-base-token, currentColor);
+    color: currentColor;
     transition: all 0.2s ease;
   }
 
   button:hover {
     background: var(--surface-card);
-    color: var(--text-high-token);
+    color: var(--computed-fg-color);
   }
 
   button.active {
     background: var(--surface-action);
-    border-color: var(--border-int-token);
-    color: var(--text-high-token);
+    border-color: var(--computed-border-int-color);
+    color: var(--computed-fg-color);
   }
 
   .canvas {

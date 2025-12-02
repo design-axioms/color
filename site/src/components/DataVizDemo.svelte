@@ -15,11 +15,9 @@
           style="display: flex; flex-direction: column; gap: 0.25rem; align-items: center;"
         >
           <div
-            style="background-color: var(--chart-{i}); width: 100%; aspect-ratio: 1/1; border-radius: 6px; box-shadow: var(--shadow-sm); border: 1px solid var(--border-dec-token);"
+            style="background-color: var(--chart-{i}); width: 100%; aspect-ratio: 1/1; border-radius: 6px; box-shadow: var(--shadow-sm); border: 1px solid var(--computed-border-dec-color);"
           ></div>
-          <span
-            style="font-size: 0.7rem; color: var(--text-subtle-token); font-family: var(--sl-font-mono);"
-          >
+          <span class="text-subtle font-mono" style="font-size: 0.7rem;">
             {i}
           </span>
         </div>
@@ -55,7 +53,7 @@
             var(--chart-3) 35% 55%,
             var(--chart-4) 55% 80%,
             var(--chart-5) 80% 100%
-          ); box-shadow: var(--shadow-md); border: 1px solid var(--border-dec-token);"
+          ); box-shadow: var(--shadow-md); border: 1px solid var(--computed-border-dec-color);"
       ></div>
     </div>
   </div>

@@ -3,6 +3,42 @@
    Configuration Providers.
 */
 
+:root {
+  /* Status Hues (Global) */
+  --hue-error: 25;
+  --hue-warning: 85;
+  --hue-success: 140;
+
+  /* Missing Text Tokens */
+  --text-strong-token: light-dark(oklch(0.1935 0 0), oklch(0.9866 0 0));
+  --text-token: var(--text-high-token);
+}
+
+/* --- STATUS SURFACES --- */
+.surface-status-success {
+  --surface-token: light-dark(
+    oklch(0.85 0.15 var(--hue-success)),
+    oklch(0.25 0.15 var(--hue-success))
+  );
+  --text-high-token: var(--text-strong-token);
+}
+
+.surface-status-warning {
+  --surface-token: light-dark(
+    oklch(0.9 0.15 var(--hue-warning)),
+    oklch(0.25 0.15 var(--hue-warning))
+  );
+  --text-high-token: var(--text-strong-token);
+}
+
+.surface-status-error {
+  --surface-token: light-dark(
+    oklch(0.65 0.2 var(--hue-error)),
+    oklch(0.35 0.2 var(--hue-error))
+  );
+  --text-high-token: light-dark(oklch(1 0 0), oklch(1 0 0));
+}
+
 /* --- SURFACES --- */
 /* Surface definitions are now auto-generated in generated-tokens.css */
 
@@ -114,6 +150,16 @@
   color: oklch(from var(--computed-fg-color) l c var(--hue-brand));
   text-decoration: underline;
   cursor: pointer;
+}
+
+/* --- TYPOGRAPHY --- */
+
+.font-mono {
+  font-family: var(--font-mono-token);
+}
+
+.font-sans {
+  font-family: var(--font-sans-token, system-ui, sans-serif);
 }
 
 /* --- STATES --- */

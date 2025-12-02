@@ -69,13 +69,13 @@
 
 <div class="graph-view">
   <div class="header">
-    <h3>Lightness Curve ({mode})</h3>
+    <h3 class="text-strong">Lightness Curve ({mode})</h3>
     <p class="text-subtle">
       Visualizing surface lightness progression across nesting levels.
     </p>
   </div>
 
-  <div class="chart-container">
+  <div class="chart-container surface-sunken bordered">
     <svg {width} {height} viewBox="0 0 {width} {height}">
       <!-- Grid Lines -->
       {#each [0, 0.25, 0.5, 0.75, 1] as l (l)}
@@ -84,7 +84,7 @@
           y1={yScale(l)}
           x2={width - padding}
           y2={yScale(l)}
-          stroke="var(--color-border)"
+          stroke="var(--computed-border-dec-color)"
           stroke-dasharray="4"
         />
         <text
@@ -93,7 +93,8 @@
           dominant-baseline="middle"
           text-anchor="end"
           font-size="10"
-          fill="var(--color-fg-subtle)"
+          class="text-subtle"
+          fill="currentColor"
         >
           {l}
         </text>
@@ -106,7 +107,8 @@
           y={height - padding + 20}
           text-anchor="middle"
           font-size="10"
-          fill="var(--color-fg-subtle)"
+          class="text-subtle"
+          fill="currentColor"
           transform="rotate(45, {xScale(i, dataPoints.length)}, {height -
             padding +
             20})"
@@ -119,7 +121,8 @@
       <path
         d={pathD}
         fill="none"
-        stroke="var(--color-fg-strong)"
+        class="text-strong"
+        stroke="currentColor"
         stroke-width="2"
       />
 
@@ -130,7 +133,7 @@
           cy={yScale(p.y)}
           r="4"
           fill="var(--color-{p.slug}-bg)"
-          stroke="var(--color-border)"
+          stroke="var(--computed-border-dec-color)"
           stroke-width="1"
         >
           <title>{p.name}: {p.y.toFixed(3)}</title>
@@ -139,36 +142,31 @@
     </svg>
   </div>
 
-  <div class="legend">
+  <div class="legend text-subtle">
     <div class="legend-item">
-      <span class="axis-label">Y-Axis:</span> Lightness (0-1)
+      <span class="axis-label text-strong">Y-Axis:</span> Lightness (0-1)
     </div>
     <div class="legend-item">
-      <span class="axis-label">X-Axis:</span> Nesting Level / Surface Sequence
+      <span class="axis-label text-strong">X-Axis:</span> Nesting Level / Surface
+      Sequence
     </div>
   </div>
 </div>
 
 <style>
   .graph-view {
-    padding: 2rem;
     display: flex;
     flex-direction: column;
-    gap: 2rem;
-    height: 100%;
-    overflow-y: auto;
+    gap: 1rem;
   }
 
   .header h3 {
-    font-size: 1.25rem;
+    font-size: 1.1rem;
     font-weight: 600;
-    color: var(--color-fg-strong);
-    margin-bottom: 0.5rem;
+    margin: 0;
   }
 
   .chart-container {
-    background: var(--color-surface-100);
-    border: 1px solid var(--color-border);
     border-radius: 8px;
     padding: 1rem;
     display: flex;
@@ -180,11 +178,9 @@
     display: flex;
     gap: 2rem;
     font-size: 0.875rem;
-    color: var(--color-fg-subtle);
   }
 
   .axis-label {
     font-weight: 600;
-    color: var(--color-fg-strong);
   }
 </style>

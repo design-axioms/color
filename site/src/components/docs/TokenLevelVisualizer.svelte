@@ -39,13 +39,13 @@
 
 <div class="token-visualizer">
   {#each tokens as token (token.name)}
-    <div class="token-card">
-      <div class="card-header">
+    <div class="token-card surface-card bordered">
+      <div class="card-header surface-sunken">
         <div class="token-info">
           <div class="token-name">
-            <code>{token.name}</code>
+            <code class="font-mono text-strong">{token.name}</code>
           </div>
-          <div class="token-usage">{token.usage}</div>
+          <div class="token-usage text-subtle">{token.usage}</div>
         </div>
 
         <div class="card-metrics-desktop">
@@ -63,7 +63,7 @@
             >
               {token.sample}
             </span>
-            <span class="theme-label">Light</span>
+            <span class="theme-label text-subtle">Light</span>
           </div>
         </div>
 
@@ -76,13 +76,13 @@
             >
               {token.sample}
             </span>
-            <span class="theme-label">Dark</span>
+            <span class="theme-label text-subtle">Dark</span>
           </div>
         </div>
       </div>
 
       <!-- Mobile Metrics (shown below preview on small screens) -->
-      <div class="card-metrics-mobile">
+      <div class="card-metrics-mobile surface-card">
         <A11yMetrics apca={token.target} wcag={token.wcag} align="start" />
       </div>
     </div>
@@ -98,20 +98,17 @@
   }
 
   .token-card {
-    border: 1px solid var(--border-subtle-token);
     border-radius: 12px;
     overflow: hidden;
-    background: var(--surface-token);
     box-shadow: var(--shadow-sm);
   }
 
   .card-header {
     padding: 1.25rem 1.5rem;
-    border-bottom: 1px solid var(--border-subtle-token);
+    border-bottom: 1px solid var(--computed-border-dec-color);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: var(--surface-subtle-token);
   }
 
   .token-info {
@@ -121,10 +118,8 @@
   }
 
   .token-name code {
-    font-family: var(--font-mono-token);
     font-size: 1.1rem;
     font-weight: 700;
-    color: var(--text-strong-token);
     background: transparent;
     padding: 0;
     border: none;
@@ -132,7 +127,6 @@
 
   .token-usage {
     font-size: 0.9rem;
-    color: var(--text-subtle-token);
   }
 
   .card-preview {
@@ -170,7 +164,6 @@
     text-transform: uppercase;
     letter-spacing: 0.05em;
     opacity: 0.5;
-    color: var(--text-subtle-token);
   }
 
   .card-metrics-desktop {
@@ -182,13 +175,11 @@
     display: none;
     padding: 1rem 1.5rem;
     gap: 2rem;
-    background: var(--surface-token);
-    border-top: 1px solid var(--border-subtle-token);
+    border-top: 1px solid var(--computed-border-dec-color);
   }
 
   .unit {
     font-size: 0.75rem;
-    color: var(--text-subtle-token);
     font-weight: 400;
   }
 

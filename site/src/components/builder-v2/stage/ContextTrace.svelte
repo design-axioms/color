@@ -30,16 +30,16 @@
 </script>
 
 {#if trace}
-  <div class="context-trace">
-    <div class="path">
+  <div class="context-trace surface-card bordered shadow-lg font-mono">
+    <div class="path text-subtle">
       <span class="segment">System</span>
       <span class="separator">/</span>
       <span class="segment">{trace.group}</span>
       <span class="separator">/</span>
-      <span class="segment highlight">{trace.surface}</span>
+      <span class="segment highlight text-strong">{trace.surface}</span>
     </div>
     {#if resolved}
-      <div class="metrics">
+      <div class="metrics text-subtle">
         L: {Math.round(resolved.l * 100)}% C: {resolved.c.toFixed(3)} H: {Math.round(
           resolved.h,
         )}
@@ -54,18 +54,18 @@
     bottom: 1rem;
     left: 50%;
     transform: translateX(-50%);
-    background: var(--surface-card);
-    border: 1px solid var(--surface-bordered);
+    /* background: var(--surface-card); */
+    /* border: 1px solid var(--surface-bordered); */
     padding: 0.5rem 1rem;
     border-radius: 99px;
-    box-shadow: var(--shadow-lg);
+    /* box-shadow: var(--shadow-lg); */
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 0.25rem;
     pointer-events: none;
     z-index: 100;
-    font-family: var(--font-mono);
+    /* font-family: var(--font-mono); */
     font-size: 0.8rem;
     white-space: nowrap;
   }
@@ -73,17 +73,14 @@
   .path {
     display: flex;
     gap: 0.5rem;
-    color: var(--text-subtle-token);
   }
 
   .highlight {
-    color: var(--text-high-token);
     font-weight: 600;
   }
 
   .metrics {
     font-size: 0.7rem;
-    color: var(--text-subtle-token);
     opacity: 0.8;
   }
 </style>

@@ -16,7 +16,7 @@
   });
 </script>
 
-<div class="token-inspector-container not-content">
+<div class="token-inspector-container not-content surface-sunken bordered">
   <div class="inspector-content">
     <slot />
   </div>
@@ -34,10 +34,8 @@
 <style>
   .token-inspector-container {
     position: relative;
-    border: 1px solid var(--border-subtle-token);
     border-radius: 8px;
     overflow: hidden;
-    background: var(--surface-page-token);
   }
 
   .inspector-content {

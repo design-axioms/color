@@ -31,7 +31,7 @@
 
 <style>
   .inspector-pane {
-    border-bottom: 1px solid var(--border-dec-token);
+    border-bottom: 1px solid var(--computed-border-dec-color);
   }
 
   .inspector-header {
@@ -49,7 +49,7 @@
   }
 
   .inspector-header:hover {
-    background-color: var(--surface-token);
+    background-color: var(--computed-surface);
   }
 
   .inspector-content {

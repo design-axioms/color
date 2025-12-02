@@ -52,7 +52,9 @@
     display: flex;
     /* Respect Starlight's navbar height */
     height: calc(100vh - 3.5rem);
-    width: 100vw;
+    /* Use left/right 0 instead of width: 100vw to avoid scrollbar issues */
+    right: 0;
+    width: auto;
     overflow: hidden;
     position: fixed;
     top: 3.5rem;
@@ -62,13 +64,13 @@
 
   .sidebar {
     flex-shrink: 0;
-    border-right: 1px solid var(--border-dec-token);
+    border-right: 1px solid var(--computed-border-dec-color);
     overflow: hidden; /* Required for slide transition */
   }
 
   .inspector {
     flex-shrink: 0;
-    border-left: 1px solid var(--border-dec-token);
+    border-left: 1px solid var(--computed-border-dec-color);
     overflow: hidden; /* Required for slide transition */
   }
 

@@ -54,6 +54,10 @@ describe("generateTokensCss", () => {
       focus: {
         ring: { light: "oklch(0.45 0.2 250)", dark: "oklch(0.75 0.2 250)" },
       },
+      highlight: {
+        ring: { light: "oklch(0.45 0.2 300)", dark: "oklch(0.75 0.2 300)" },
+        surface: { light: "oklch(0.95 0.05 300)", dark: "oklch(0.2 0.05 300)" },
+      },
     };
 
     const theme = {
@@ -94,6 +98,10 @@ describe("generateTokensCss", () => {
       },
       focus: {
         ring: { light: "oklch(0.45 0.2 250)", dark: "oklch(0.75 0.2 250)" },
+      },
+      highlight: {
+        ring: { light: "oklch(0.45 0.2 300)", dark: "oklch(0.75 0.2 300)" },
+        surface: { light: "oklch(0.95 0.05 300)", dark: "oklch(0.2 0.05 300)" },
       },
     };
 
@@ -140,6 +148,10 @@ describe("generateTokensCss", () => {
       },
       focus: {
         ring: { light: "oklch(0.45 0.2 250)", dark: "oklch(0.75 0.2 250)" },
+      },
+      highlight: {
+        ring: { light: "oklch(0.45 0.2 300)", dark: "oklch(0.75 0.2 300)" },
+        surface: { light: "oklch(0.95 0.05 300)", dark: "oklch(0.2 0.05 300)" },
       },
     };
 

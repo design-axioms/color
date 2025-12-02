@@ -763,3 +763,26 @@
 - **System Updates**:
   - **Highlight Primitive**: Formalized `highlight` as the "Color of Attention" and mapped it to `<mark>` and `::selection`.
   - **Multiple Key Colors**: Updated `ConfigState` to support multiple key colors.
+
+## Epoch 21: Phase 4 - V2 Implementation (2025-12-02)
+
+**Goal**: Implement the new "System Modeling" UI, transforming the Theme Builder from a form-filler into a powerful design tool.
+
+**Completed Work**:
+
+- **Context Tree (Surface Manager)**:
+  - Refactored the flat list into a hierarchical **Context Tree**.
+  - Implemented drag-and-drop nesting and reordering.
+  - Added inline actions and compact rows for better density.
+- **Context Graph**:
+  - Replaced disconnected sliders with a unified **Context Graph**.
+  - Visualized Light and Dark mode tracks together, showing the "Safe Zone" and contrast relationships.
+- **Gamut Slice**:
+  - Created a canvas-based **Gamut Slice** visualization (Lightness vs Chroma).
+  - Added a Hue slider to explore the color space boundaries.
+- **Selection System**:
+  - Implemented a robust selection state with a distinct `--highlight-ring-color` (Magenta).
+  - Applied selection rings consistently across the Tree, Preview, and Inspector.
+- **Token Cleanup**:
+  - Refactored all frontend components to remove raw `var(--*-token)` references.
+  - Enforced strict ESLint rules (no unused vars, no void returns) to ensure code quality.

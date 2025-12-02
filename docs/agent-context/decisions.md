@@ -464,3 +464,27 @@ This file tracks key architectural and design decisions made throughout the proj
   - **Isolation**: The `not-content` class is Starlight's standard mechanism for opting out of typography styles.
   - **Simplicity**: Avoids writing complex CSS resets or using Shadow DOM.
   - **Consistency**: Reuses an existing component (`Diagram`) designed for this exact purpose.
+
+### [2025-12-02] Unified Context Graph
+
+- **Context**: The previous "Anchor Graph" consisted of 4 disconnected sliders, making it impossible to visualize the relationship between Light and Dark modes.
+- **Decision**: Create a single `ContextGraph` component that stacks Light and Dark tracks vertically within each Context (Page/Inverted).
+- **Rationale**:
+  - **Mental Model**: Reinforces that Light and Dark modes are two sides of the same coin (Context).
+  - **Contrast**: Allows visualizing the "Safe Zone" (the gap between background and text) directly on the graph.
+
+### [2025-12-02] Context Tree for Surface Management
+
+- **Context**: The "Surface Manager" was a flat list of cards, which failed to represent the hierarchical nature of the system (surfaces nest inside surfaces).
+- **Decision**: Refactor the UI into a nested **Context Tree**.
+- **Rationale**:
+  - **Axiom Alignment**: "Context is King". The tree visualizes how context flows down the hierarchy.
+  - **Scalability**: A tree view handles many surfaces better than a grid of large cards.
+
+### [2025-12-02] Strict Token Compliance
+
+- **Context**: We found raw CSS variable references (e.g., `var(--bg-surface-sunken-token)`) in the codebase, which bypassed our type-safe `theme.ts` system.
+- **Decision**: Ban raw token usage in frontend components and enforce it via `check-tokens.sh`.
+- **Rationale**:
+  - **Maintainability**: If we rename a token in the generator, the type system will catch it. Raw strings would break silently.
+  - **Consistency**: Ensures all UI components use the same source of truth for values.
