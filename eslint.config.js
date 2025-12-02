@@ -1,14 +1,29 @@
 import js from "@eslint/js";
 import tseslint from "typescript-eslint";
+import eslintPluginAstro from "eslint-plugin-astro";
+import eslintPluginSvelte from "eslint-plugin-svelte";
+import globals from "globals";
+import eslintConfigPrettier from "eslint-config-prettier";
 
+// eslint-disable-next-line @typescript-eslint/no-deprecated
 export default tseslint.config(
   js.configs.recommended,
   ...tseslint.configs.strictTypeChecked,
+  ...eslintPluginAstro.configs.recommended,
+  ...eslintPluginSvelte.configs["flat/recommended"],
   {
     languageOptions: {
       parserOptions: {
-        projectService: true,
+        projectService: {
+          allowDefaultProject: ["eslint.config.js", "knip.ts"],
+          defaultProject: "tsconfig.json",
+        },
         tsconfigRootDir: import.meta.dirname,
+        extraFileExtensions: [".astro", ".svelte"],
+      },
+      globals: {
+        ...globals.browser,
+        ...globals.node,
       },
     },
     rules: {
@@ -36,12 +51,41 @@ export default tseslint.config(
     },
   },
   {
+    files: ["**/*.svelte"],
+    languageOptions: {
+      parserOptions: {
+        parser: tseslint.parser,
+      },
+    },
+  },
+  {
+    files: ["**/*.svelte.ts"],
+    languageOptions: {
+      parser: tseslint.parser,
+      parserOptions: {
+        projectService: true,
+      },
+    },
+  },
+  {
+    files: ["**/*.astro"],
+    languageOptions: {
+      parserOptions: {
+        project: null,
+      },
+    },
+  },
+  {
     ignores: [
       "node_modules/**",
-      "demo/**",
+      "dist/**",
       "coverage/**",
       "*.config.ts",
       "**/__tests__/**",
+      "site/dist/**",
+      "site/.astro/**",
+      "**/*.d.ts",
     ],
-  }
+  },
+  eslintConfigPrettier,
 );

@@ -27,6 +27,14 @@ const config: KnipConfig = {
         "@typescript-eslint/parser",
         "playwright", // Used in tests
         "preact", // Used in tsconfig.json
+        "astro-eslint-parser",
+        "svelte-eslint-parser",
+        "eslint-plugin-astro",
+        "eslint-plugin-svelte",
+        "eslint-config-prettier",
+        "prettier-plugin-astro",
+        "prettier-plugin-svelte",
+        "globals",
       ],
     },
     site: {

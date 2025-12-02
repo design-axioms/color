@@ -1,11 +1,25 @@
-# Task List - Epoch 19: Phase 3
+# Task List - Epoch 20: Linting & Quality Assurance (Phase 2)
 
-- [x] Verify `package.json` metadata (name: `@axiomatic-design/color`, bin: `axiomatic`) <!-- id: 0 -->
-- [x] Run `pnpm build` and verify output <!-- id: 1 -->
-- [x] Run `publint` <!-- id: 2 -->
-- [x] Verify CLI (`axiomatic --help`) <!-- id: 3 -->
-- [x] Verify `axiomatic init` <!-- id: 4 -->
-- [x] Verify Site Build <!-- id: 5 -->
-- [x] Run `pnpm publish --dry-run` <!-- id: 6 -->
-- [x] Update `CHANGELOG.md` <!-- id: 7 -->
-- [x] Publish to NPM <!-- id: 8 -->
+**Goal**: Resolve all linting errors and warnings identified in Phase 1.
+
+## 1. Fix Svelte Component Errors
+
+- [ ] Fix `svelte/require-each-key` errors (missing keys in `#each` blocks).
+- [ ] Fix `@typescript-eslint/explicit-function-return-type` errors in components.
+- [ ] Fix `@typescript-eslint/no-unsafe-*` errors (type safety issues).
+- [ ] Fix `@typescript-eslint/no-confusing-void-expression` errors.
+
+## 2. Fix Script Errors
+
+- [ ] Fix `explicit-function-return-type` in `scripts/`.
+- [ ] Fix `no-floating-promises` in `scripts/`.
+
+## 3. Fix General Errors
+
+- [ ] Fix `no-unnecessary-condition` errors.
+- [ ] Fix `no-unused-vars` errors.
+
+## 4. Final Verification
+
+- [ ] Run `pnpm lint` and ensure 0 errors.
+- [ ] Run `pnpm test:coverage` and ensure it still passes.

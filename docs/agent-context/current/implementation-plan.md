@@ -1,29 +1,46 @@
-# Implementation Plan - Epoch 19: Phase 3 - Verification & Publish
+# Implementation Plan - Epoch 20: Linting & Quality Assurance (Phase 1)
 
-**Goal**: Verify the rebranded `@axiomatic-design/color` package and publish it to NPM.
+**Goal**: Review and tighten ESLint and Prettier configurations to ensure code quality and consistency across the entire monorepo (including the new `site/` directory).
 
-## 1. Verification
+## 1. Audit Current State
 
-- [x] **Package Metadata**: Double-check `package.json` name, version, and bin entries.
-- [x] **Build Integrity**: Run a clean build (`pnpm build`) and verify the output directory structure.
-- [x] **Exports Check**: Run `publint` to ensure all exports are correctly defined for the new package name.
-- [x] **CLI Verification**:
-  - [x] Run `pnpm axiomatic --help` to verify the binary name and help text.
-  - [x] Test `axiomatic init` in a temporary directory.
-- [x] **Site Build**: Verify the documentation site builds with the new package references.
+- [ ] Run `pnpm lint` to see the current status of the codebase.
+- [ ] Check if `site/` (Astro/Svelte) is currently being linted.
+- [ ] Check `prettier` configuration and usage.
 
-## 2. Publishing Preparation
+## 2. Configuration Updates
 
-- [x] **Dry Run**: Execute `pnpm publish --dry-run` to inspect the tarball contents.
-- [x] **Changelog**: Ensure `CHANGELOG.md` is up to date with the rebrand details.
+- [ ] **ESLint**:
+  - [ ] Update `eslint.config.js` to include `site/` (remove `demo/` from ignores if it's gone).
+  - [ ] Add support for **Astro** files (`eslint-plugin-astro`).
+  - [ ] Add support for **Svelte** files (`eslint-plugin-svelte`).
+  - [ ] Ensure `typescript-eslint` is correctly configured for the new project structure.
+- [ ] **Prettier**:
+  - [ ] Ensure `.prettierrc` exists and is configured.
+  - [ ] Ensure `eslint-config-prettier` is used to prevent conflicts.
 
-## 3. Execution
+## 3. Coverage Infrastructure
 
-- [x] **Setup Release Plan**:
-  - [x] Install `release-plan`.
-  - [x] Create `.github/workflows/plan-release.yml`.
-  - [x] Update `.github/workflows/publish.yml`.
-  - [x] Create `RELEASE.md`.
-- [x] **Push**: Push the configuration to `main`.
-- [x] **Initial Tag**: Ensure `v0.1.0` tag exists (or `v0.0.0` if starting fresh).
-- [x] **Trigger**: Create a dummy PR or wait for next PR to trigger the plan.
+- [ ] **Expand Coverage**:
+  - [ ] Update `vitest.config.ts` to include `src/cli/**/*.ts`.
+- [ ] **Thresholds**:
+  - [ ] Configure coverage thresholds in `vitest.config.ts` (start with a baseline, e.g., 80% or current levels).
+- [ ] **Reporting**:
+  - [ ] Ensure `test:coverage` generates a report that can be viewed easily.
+
+## 4. Verification
+
+- [ ] Run the linter on the entire codebase.
+- [ ] Document the number of errors/warnings (to be fixed in Phase 2).
+- [ ] Ensure the lint command is wired up in `package.json` and `lefthook.yml`.
+
+## 4. Verification
+
+- [ ] Run the linter on the entire codebase.
+- [ ] Document the number of errors/warnings (to be fixed in Phase 2).
+- [ ] Ensure the lint command is wired up in `package.json` and `lefthook.yml`.
+- [ ] Verify coverage reports are generated and thresholds are enforced.
+
+## 5. User Feedback
+
+- [ ] Confirm if there are specific rules or plugins the user wants to enforce.
