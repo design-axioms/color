@@ -1,5 +1,16 @@
 # Changelog
 
+## Release (2025-12-02)
+
+
+
+#### :rocket: Enhancement
+* [#4](https://github.com/design-axioms/color/pull/4) docs: update readme ([@wycats](https://github.com/wycats))
+* [#3](https://github.com/design-axioms/color/pull/3) chore: force v0.1.0 release ([@wycats](https://github.com/wycats))
+
+#### Committers: 1
+- Yehuda Katz ([@wycats](https://github.com/wycats))
+
 All notable changes to this project will be documented in this file.
 
 ## [0.1.0] - 2025-12-02
