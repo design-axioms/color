@@ -47,7 +47,7 @@ export function generateTokensCss(
   groups: SurfaceGroup[],
   theme: Theme,
   borderTargets?: BorderTargets,
-  options?: ConfigOptions
+  options?: ConfigOptions,
 ): string {
   const rootLines: string[] = [];
   const propertyLines: string[] = [];
@@ -75,7 +75,7 @@ export function generateTokensCss(
   // Shadows
   for (const [size, token] of Object.entries(shadows)) {
     rootLines.push(
-      `  ${v(`shadow-${size}`)}: light-dark(${token.light}, ${token.dark});`
+      `  ${v(`shadow-${size}`)}: light-dark(${token.light}, ${token.dark});`,
     );
   }
 
@@ -84,7 +84,21 @@ export function generateTokensCss(
   rootLines.push(
     `  ${v("focus-ring-color")}: light-dark(${focus.ring.light}, ${
       focus.ring.dark
-    });`
+    });`,
+  );
+
+  // Highlight
+  rootLines.push(`  /* Highlight */`);
+  const { highlight } = theme.primitives;
+  rootLines.push(
+    `  ${v("highlight-ring-color")}: light-dark(${highlight.ring.light}, ${
+      highlight.ring.dark
+    });`,
+  );
+  rootLines.push(
+    `  ${v("highlight-surface-color")}: light-dark(${
+      highlight.surface.light
+    }, ${highlight.surface.dark});`,
   );
 
   // Data Visualization Palette
@@ -94,12 +108,12 @@ export function generateTokensCss(
       rootLines.push(
         `  ${v(`chart-${index + 1}`)}: light-dark(
     oklch(${toNumber(chart.light.l)} ${toNumber(chart.light.c)} ${toNumber(
-          chart.light.h
-        )}),
+      chart.light.h,
+    )}),
     oklch(${toNumber(chart.dark.l)} ${toNumber(chart.dark.c)} ${toNumber(
-          chart.dark.h
-        )})
-  );`
+      chart.dark.h,
+    )})
+  );`,
       );
     });
   }
@@ -141,7 +155,7 @@ export function generateTokensCss(
         `  ${v("surface-token")}: light-dark(
     oklch(${toNumber(bgLight.l)} ${toNumber(bgLight.c)} ${toNumber(bgLight.h)}),
     oklch(${toNumber(bgDark.l)} ${toNumber(bgDark.c)} ${toNumber(bgDark.h)})
-  );`
+  );`,
       );
 
       // 2. Text Tokens
@@ -149,21 +163,21 @@ export function generateTokensCss(
         `  ${v("text-high-token")}: light-dark(
     oklch(${toNumber(lightSpec["fg-high"])} 0 0),
     oklch(${toNumber(darkSpec["fg-high"])} 0 0)
-  );`
+  );`,
       );
 
       rootLines.push(
         `  ${v("text-subtle-token")}: light-dark(
     oklch(${toNumber(lightSpec["fg-subtle"])} 0 0),
     oklch(${toNumber(darkSpec["fg-subtle"])} 0 0)
-  );`
+  );`,
       );
 
       rootLines.push(
         `  ${v("text-subtlest-token")}: light-dark(
     oklch(${toNumber(lightSpec["fg-subtlest"])} 0 0),
     oklch(${toNumber(darkSpec["fg-subtlest"])} 0 0)
-  );`
+  );`,
       );
 
       // 3. Border Tokens
@@ -171,28 +185,28 @@ export function generateTokensCss(
         const solveBorder = (
           bgL: number,
           textL: number,
-          target: number
+          target: number,
         ): number => solveBorderAlpha(bgL, textL, target);
 
         const lightDec = solveBorder(
           bgLight.l,
           lightSpec["fg-strong"],
-          borderTargets.decorative
+          borderTargets.decorative,
         );
         const darkDec = solveBorder(
           bgDark.l,
           darkSpec["fg-strong"],
-          borderTargets.decorative
+          borderTargets.decorative,
         );
         const lightInt = solveBorder(
           bgLight.l,
           lightSpec["fg-strong"],
-          borderTargets.interactive
+          borderTargets.interactive,
         );
         const darkInt = solveBorder(
           bgDark.l,
           darkSpec["fg-strong"],
-          borderTargets.interactive
+          borderTargets.interactive,
         );
 
         const lightBorderL = lightSpec["fg-strong"];
@@ -202,14 +216,14 @@ export function generateTokensCss(
           `  ${v("border-dec-token")}: light-dark(
     oklch(${toNumber(lightBorderL)} 0 0 / ${toNumber(lightDec)}),
     oklch(${toNumber(darkBorderL)} 0 0 / ${toNumber(darkDec)})
-  );`
+  );`,
         );
 
         rootLines.push(
           `  ${v("border-int-token")}: light-dark(
     oklch(${toNumber(lightBorderL)} 0 0 / ${toNumber(lightInt)}),
     oklch(${toNumber(darkBorderL)} 0 0 / ${toNumber(darkInt)})
-  );`
+  );`,
         );
       }
 
@@ -242,12 +256,12 @@ export function generateTokensCss(
             rootLines.push(
               `  ${v("surface-token")}: light-dark(
     oklch(${toNumber(bgState.light.l)} ${toNumber(bgState.light.c)} ${toNumber(
-                bgState.light.h
-              )}),
+      bgState.light.h,
+    )}),
     oklch(${toNumber(bgState.dark.l)} ${toNumber(bgState.dark.c)} ${toNumber(
-                bgState.dark.h
-              )})
-  );`
+      bgState.dark.h,
+    )})
+  );`,
             );
             rootLines.push(`}`);
           }

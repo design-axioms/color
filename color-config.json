@@ -42,7 +42,8 @@
       }
     },
     "keyColors": {
-      "brand": "#6e56cf"
+      "brand": "#6e56cf",
+      "highlight": "#bd33da"
     }
   },
   "hueShift": {

@@ -12,18 +12,30 @@
   let dragging = $state<{
     polarity: "page" | "inverted";
     mode: "light" | "dark";
-    handle: "start" | "end";
+    handle: "start" | "end" | "range";
+    startX: number;
+    initialStart: number;
+    initialEnd: number;
   } | null>(null);
 
   function handlePointerDown(
     e: PointerEvent,
     polarity: "page" | "inverted",
     mode: "light" | "dark",
-    handle: "start" | "end",
+    handle: "start" | "end" | "range",
+    currentStart: number,
+    currentEnd: number,
   ): void {
     e.preventDefault();
     e.stopPropagation();
-    dragging = { polarity, mode, handle };
+    dragging = {
+      polarity,
+      mode,
+      handle,
+      startX: e.clientX,
+      initialStart: currentStart,
+      initialEnd: currentEnd,
+    };
     window.addEventListener("pointermove", handlePointerMove);
     window.addEventListener("pointerup", handlePointerUp);
   }
@@ -36,14 +48,42 @@
     if (!track) return;
 
     const rect = track.getBoundingClientRect();
-    const x = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
 
-    configState.updateAnchor(
-      dragging.polarity,
-      dragging.mode,
-      dragging.handle,
-      x,
-    );
+    if (dragging.handle === "range") {
+      const deltaX = (e.clientX - dragging.startX) / rect.width;
+      let newStart = dragging.initialStart + deltaX;
+      let newEnd = dragging.initialEnd + deltaX;
+
+      // Clamp to 0-1 while maintaining range width
+      if (newStart < 0) {
+        newEnd += 0 - newStart;
+        newStart = 0;
+      }
+      if (newEnd > 1) {
+        newStart -= newEnd - 1;
+        newEnd = 1;
+      }
+      // Safety check if range is somehow > 1
+      if (newStart < 0) newStart = 0;
+      if (newEnd > 1) newEnd = 1;
+
+      configState.updateAnchor(
+        dragging.polarity,
+        dragging.mode,
+        "start",
+        newStart,
+      );
+      configState.updateAnchor(dragging.polarity, dragging.mode, "end", newEnd);
+    } else {
+      const x = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+
+      configState.updateAnchor(
+        dragging.polarity,
+        dragging.mode,
+        dragging.handle,
+        x,
+      );
+    }
   }
 
   function handlePointerUp(): void {
@@ -63,7 +103,15 @@
   <!-- Page Context Track -->
   <div class="track-section">
     <div class="track-header">
-      <span class="track-title">Page Context</span>
+      <div style="display: flex; align-items: center; gap: 0.5rem;">
+        <span class="track-title">Page Context</span>
+        {#if configState.syncDark}
+          <span
+            title="Dark Mode Synced"
+            style="font-size: 0.8rem; cursor: help;">🔒</span
+          >
+        {/if}
+      </div>
       <div class="track-values">
         <div class="value-pair">
           <span class="label">Light</span>
@@ -114,6 +162,7 @@
         config.anchors.page.dark.end.background,
         "var(--hue-purple)",
         "Dark Mode",
+        configState.syncDark,
       )}
       <!-- eslint-enable @typescript-eslint/no-confusing-void-expression -->
     </div>
@@ -122,7 +171,15 @@
   <!-- Inverted Context Track -->
   <div class="track-section">
     <div class="track-header">
-      <span class="track-title">Inverted Context</span>
+      <div style="display: flex; align-items: center; gap: 0.5rem;">
+        <span class="track-title">Inverted Context</span>
+        {#if configState.syncDark}
+          <span
+            title="Dark Mode Synced"
+            style="font-size: 0.8rem; cursor: help;">🔒</span
+          >
+        {/if}
+      </div>
       <div class="track-values">
         <div class="value-pair">
           <span class="label">Light</span>
@@ -180,6 +237,7 @@
         config.anchors.inverted.dark.end.background,
         "var(--hue-error)",
         "Dark Mode",
+        configState.syncDark,
       )}
       <!-- eslint-enable @typescript-eslint/no-confusing-void-expression -->
     </div>
@@ -193,17 +251,33 @@
   end: number,
   color: string,
   label: string,
+  disabled = false,
 )}
   {@const style = getStyle(start, end)}
   {@const isActive = dragging?.polarity === polarity && dragging.mode === mode}
   {@const isCurrentMode = mode === resolvedTheme}
 
   <div
-    class="range-bar {isActive ? 'dragging' : ''}"
-    style="{style} --range-color: {color}; opacity: {isCurrentMode ? 1 : 0.6};"
+    class="range-bar {isActive ? 'dragging' : ''} {disabled ? 'disabled' : ''}"
+    style="{style} --range-color: {color}; opacity: {disabled
+      ? 0.4
+      : isCurrentMode
+        ? 1
+        : 0.6}; {disabled ? 'pointer-events: none;' : ''}"
   >
     <!-- The Bar itself -->
-    <div class="bar-fill"></div>
+    <div
+      class="bar-fill"
+      onpointerdown={(e) => {
+        if (!disabled)
+          handlePointerDown(e, polarity, mode, "range", start, end);
+      }}
+      role="slider"
+      tabindex={disabled ? -1 : 0}
+      aria-label="{label} Range"
+      aria-valuenow={start}
+      aria-disabled={disabled}
+    ></div>
 
     <!-- Label -->
     <!-- <div class="bar-label" style="color: {color}">
@@ -215,24 +289,27 @@
       class="bar-handle start"
       style="left: {start <= end ? '0%' : '100%'}"
       onpointerdown={(e) => {
-        handlePointerDown(e, polarity, mode, "start");
+        if (!disabled)
+          handlePointerDown(e, polarity, mode, "start", start, end);
       }}
       role="slider"
-      tabindex="0"
+      tabindex={disabled ? -1 : 0}
       aria-label="{label} Start"
       aria-valuenow={start}
+      aria-disabled={disabled}
     ></div>
 
     <div
       class="bar-handle end"
       style="left: {start <= end ? '100%' : '0%'}"
       onpointerdown={(e) => {
-        handlePointerDown(e, polarity, mode, "end");
+        if (!disabled) handlePointerDown(e, polarity, mode, "end", start, end);
       }}
       role="slider"
-      tabindex="0"
+      tabindex={disabled ? -1 : 0}
       aria-label="{label} End"
       aria-valuenow={end}
+      aria-disabled={disabled}
     ></div>
   </div>
 {/snippet}

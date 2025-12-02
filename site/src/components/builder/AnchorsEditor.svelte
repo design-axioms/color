@@ -22,7 +22,7 @@
           Anchor Visualization
         </h3>
         <p class="text-subtle" style="margin: 0.25rem 0 0; font-size: 0.8rem;">
-          Drag handles to adjust ranges
+          Defines the lightness range for surfaces in this mode.
         </p>
       </div>
       <label

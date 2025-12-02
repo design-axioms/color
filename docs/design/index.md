@@ -10,6 +10,7 @@ This directory contains the high-level design documents for the Color System.
 ## Deep Dives
 
 - [Hue Shift Rationale](hue-shift.md): The physics and math behind the non-linear hue rotation.
+- [Selection vs. Focus](selection-vs-focus.md): Distinguishing between interaction and inspection states.
 - [State Architecture](state-architecture.md): The "Classes with Runes" pattern used in the Svelte migration.
 
 ## Best Practices & Guides

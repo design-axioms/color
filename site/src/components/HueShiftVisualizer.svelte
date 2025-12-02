@@ -76,14 +76,21 @@
     return factor * maxRotation;
   }
 
-  // State
-  let p1x = $state(0.33);
-  let p1y = $state(0.0);
-  let p2x = $state(0.67);
-  let p2y = $state(1.0);
-  let maxRotation = $state(60);
-  let baseHue = $state(270); // Purple
-  let showControls = $state(true);
+  interface Props {
+    curve?: { p1: [number, number]; p2: [number, number] };
+    maxRotation?: number;
+    baseHue?: number;
+    showControls?: boolean;
+    onUpdate?: () => void;
+  }
+
+  let {
+    curve = $bindable({ p1: [0.33, 0.0], p2: [0.67, 1.0] }),
+    maxRotation = $bindable(60),
+    baseHue = $bindable(270),
+    showControls = $bindable(true),
+    onUpdate,
+  }: Props = $props();
 
   // Dragging State
   let dragging = $state<"p1" | "p2" | null>(null);
@@ -96,7 +103,7 @@
     for (let i = 0; i <= steps; i++) {
       const l = i / steps;
       const shift = calculateHueShift(l, {
-        curve: { p1: [p1x, p1y], p2: [p2x, p2y] },
+        curve,
         maxRotation,
       });
       pts.push({ l, shift });
@@ -173,10 +180,10 @@
     const endX = toSvgX(1);
     const endY = toSvgY(1);
 
-    const cp1x = toSvgX(p1x);
-    const cp1y = toSvgY(p1y);
-    const cp2x = toSvgX(p2x);
-    const cp2y = toSvgY(p2y);
+    const cp1x = toSvgX(curve.p1[0]);
+    const cp1y = toSvgY(curve.p1[1]);
+    const cp2x = toSvgX(curve.p2[0]);
+    const cp2y = toSvgY(curve.p2[1]);
 
     return `M ${startX} ${startY} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${endX} ${endY}`;
   });
@@ -208,12 +215,13 @@
     const y = fromSvgY(svgY);
 
     if (dragging === "p1") {
-      p1x = x;
-      p1y = y;
+      curve.p1[0] = x;
+      curve.p1[1] = y;
     } else {
-      p2x = x;
-      p2y = y;
+      curve.p2[0] = x;
+      curve.p2[1] = y;
     }
+    onUpdate?.();
   }
 
   function handleMouseUp(): void {
@@ -284,8 +292,8 @@
             <line
               x1={toSvgX(0)}
               y1={toSvgY(0)}
-              x2={toSvgX(p1x)}
-              y2={toSvgY(p1y)}
+              x2={toSvgX(curve.p1[0])}
+              y2={toSvgY(curve.p1[1])}
               stroke="var(--text-subtle-token)"
               stroke-width="1"
               stroke-dasharray="2 2"
@@ -296,8 +304,8 @@
             <line
               x1={toSvgX(1)}
               y1={toSvgY(1)}
-              x2={toSvgX(p2x)}
-              y2={toSvgY(p2y)}
+              x2={toSvgX(curve.p2[0])}
+              y2={toSvgY(curve.p2[1])}
               stroke="var(--text-subtle-token)"
               stroke-width="1"
               stroke-dasharray="2 2"
@@ -308,8 +316,8 @@
             <!-- Control Points (Interactive) -->
             <!-- P1 -->
             <circle
-              cx={toSvgX(p1x)}
-              cy={toSvgY(p1y)}
+              cx={toSvgX(curve.p1[0])}
+              cy={toSvgY(curve.p1[1])}
               r="4"
               fill="var(--surface-token)"
               stroke="var(--text-high-token)"
@@ -330,8 +338,8 @@
 
             <!-- P2 -->
             <circle
-              cx={toSvgX(p2x)}
-              cy={toSvgY(p2y)}
+              cx={toSvgX(curve.p2[0])}
+              cy={toSvgY(curve.p2[1])}
               r="4"
               fill="var(--surface-token)"
               stroke="var(--text-high-token)"
@@ -459,11 +467,15 @@
         <div class="values-grid">
           <div class="value-item">
             <span class="label">P1</span>
-            <span class="value">({p1x.toFixed(2)}, {p1y.toFixed(2)})</span>
+            <span class="value"
+              >({curve.p1[0].toFixed(2)}, {curve.p1[1].toFixed(2)})</span
+            >
           </div>
           <div class="value-item">
             <span class="label">P2</span>
-            <span class="value">({p2x.toFixed(2)}, {p2y.toFixed(2)})</span>
+            <span class="value"
+              >({curve.p2[0].toFixed(2)}, {curve.p2[1].toFixed(2)})</span
+            >
           </div>
         </div>
         <p class="hint-text">

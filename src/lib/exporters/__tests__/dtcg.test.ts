@@ -58,6 +58,13 @@ describe("DTCG Exporter", () => {
         focus: {
           ring: { light: "oklch(0.5 0.2 250)", dark: "oklch(0.6 0.2 250)" },
         },
+        highlight: {
+          ring: { light: "oklch(0.5 0.2 320)", dark: "oklch(0.6 0.2 320)" },
+          surface: {
+            light: "oklch(0.9 0.05 320)",
+            dark: "oklch(0.2 0.05 320)",
+          },
+        },
       },
     };
 

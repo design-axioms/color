@@ -112,6 +112,21 @@ export function toDTCG(theme: Theme): Record<string, DTCGGroup> {
     };
     modeGroup["focus"] = focusGroup;
 
+    // Highlight
+    const highlightGroup: DTCGGroup = {};
+    highlightGroup["ring"] = {
+      $type: "color",
+      $value: theme.primitives.highlight.ring[mode],
+      $description:
+        "High-visibility outline for selected or highlighted elements.",
+    };
+    highlightGroup["surface"] = {
+      $type: "color",
+      $value: theme.primitives.highlight.surface[mode],
+      $description: "Background for selected items in lists/trees.",
+    };
+    modeGroup["highlight"] = highlightGroup;
+
     tokens[mode] = modeGroup;
   }
 

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unnecessary-condition */
 import { converter } from "culori";
 import {
   avg,
@@ -238,7 +239,8 @@ function solveBackgroundSequence(
       const intraGroupStep = deltaInfo.delta * 0.2;
       const stagger = surfaceIndex * intraGroupStep;
 
-      const offset = surface.contrastOffset?.[mode] ?? 0;
+      const offset =
+        (surface.contrastOffset && surface.contrastOffset[mode]) || 0;
       const targetContrast = groupBaseContrast + stagger + offset;
 
       const clampedContrast = clampTo(targetContrast, minContrast, maxContrast);
@@ -300,7 +302,17 @@ function solveCharts(
   });
 }
 
-function solvePrimitives(): Primitives {
+function getHue(color: string | undefined, fallback: number): number {
+  if (!color) return fallback;
+  const oklch = toOklch(color);
+  if (!oklch || typeof oklch.h !== "number" || isNaN(oklch.h)) return fallback;
+  return oklch.h;
+}
+
+function solvePrimitives(config: SolverConfig): Primitives {
+  const brandHue = getHue(config.anchors.keyColors?.brand, 250);
+  const highlightHue = getHue(config.anchors.keyColors?.highlight, 320);
+
   return {
     shadows: {
       sm: {
@@ -325,8 +337,21 @@ function solvePrimitives(): Primitives {
     },
     focus: {
       ring: {
-        light: "oklch(0.45 0.2 var(--hue-brand, 250))",
-        dark: "oklch(0.75 0.2 var(--hue-brand, 250))",
+        light: `oklch(0.45 0.2 ${brandHue})`,
+        dark: `oklch(0.75 0.2 ${brandHue})`,
+      },
+    },
+    highlight: {
+      ring: {
+        light: `oklch(0.60 0.25 ${highlightHue})`,
+        dark: `oklch(0.60 0.25 ${highlightHue})`,
+      },
+      // Constraint: Must be accessible as a text background (for <mark>) and as a list item background.
+      // Light Mode: L=0.96 provides high contrast against dark text.
+      // Dark Mode: L=0.25 provides high contrast against light text.
+      surface: {
+        light: `oklch(0.96 0.05 ${highlightHue})`,
+        dark: `oklch(0.25 0.05 ${highlightHue})`,
       },
     },
   };
@@ -430,7 +455,7 @@ export function solve(config: SolverConfig): Theme {
   });
 
   const charts = solveCharts(config, backgrounds);
-  const primitives = solvePrimitives();
+  const primitives = solvePrimitives(config);
 
   return {
     surfaces: solvedSurfaces,

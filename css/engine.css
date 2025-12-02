@@ -241,14 +241,15 @@
    The browser interpolates these numbers, and the :where rule recalculates the colors every frame.
 */
 :where(
-    [class^="surface-"],
-    [class*=" surface-"],
-    [class^="state-"],
-    [class*=" state-"],
-    [class^="text-"],
-    [class*=" text-"]
-  ) {
-  transition: --computed-surface 0.2s ease-in-out,
+  [class^="surface-"],
+  [class*=" surface-"],
+  [class^="state-"],
+  [class*=" state-"],
+  [class^="text-"],
+  [class*=" text-"]
+) {
+  transition:
+    --computed-surface 0.2s ease-in-out,
     --computed-fg-color 0.2s ease-in-out,
     --computed-border-dec-color 0.2s ease-in-out,
     --computed-border-int-color 0.2s ease-in-out;
@@ -271,13 +272,16 @@
   outline-offset: 2px;
 }
 
-/* --- SELECTION --- */
+/* --- HIGHLIGHT & SELECTION --- */
+
+mark {
+  background-color: var(--highlight-surface-color);
+  color: var(--text-high-token);
+}
 
 ::selection {
-  background-color: oklch(
-    from var(--computed-fg-color) l 0.15 var(--hue-brand, var(--base-hue)) / 0.2
-  );
-  color: inherit;
+  background-color: var(--highlight-surface-color);
+  color: var(--text-high-token);
 }
 
 /* --- FORCED COLORS (High Contrast) --- */

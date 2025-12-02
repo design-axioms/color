@@ -2,6 +2,7 @@
   import type { Polarity, SurfaceConfig } from "@axiomatic-design/color/types";
   import { formatHex } from "culori";
   import { getContext } from "svelte";
+  import { builderState } from "../../lib/state/BuilderState.svelte";
   import type { ConfigState } from "../../lib/state/ConfigState.svelte";
   import type { ThemeState } from "../../lib/state/ThemeState.svelte";
   import ContrastBadge from "./ContrastBadge.svelte";
@@ -17,7 +18,8 @@
   const themeState = getContext<ThemeState>("theme");
   const configState = getContext<ConfigState>("config");
 
-  let isExpanded = $state(false);
+  let isSelected = $derived(builderState.selectedSurfaceId === surface.slug);
+  let isExpanded = $derived(isSelected); // Expand when selected
   let resolvedTheme = $derived(themeState.mode);
   let solved = $derived(configState.solved);
 
@@ -110,7 +112,9 @@
 
 <div
   class="surface-workspace bordered"
-  style="border-radius: 6px; overflow: hidden; cursor: grab;"
+  style="border-radius: 6px; overflow: hidden; cursor: grab; {isSelected
+    ? 'background-color: var(--highlight-surface-color); border-color: var(--highlight-ring-color);'
+    : ''}"
   draggable="true"
   ondragstart={handleDragStart}
   ondragover={handleDragOver}
@@ -119,14 +123,20 @@
 >
   <div
     style="padding: 0.75rem; display: flex; align-items: center; gap: 0.5rem; cursor: pointer;"
-    onclick={() => (isExpanded = !isExpanded)}
-    onkeydown={(e) => e.key === "Enter" && (isExpanded = !isExpanded)}
+    onclick={() => {
+      builderState.selectSurface(isSelected ? null : surface.slug);
+    }}
+    onkeydown={(e) => {
+      if (e.key === "Enter") {
+        builderState.selectSurface(isSelected ? null : surface.slug);
+      }
+    }}
     role="button"
     tabindex="0"
   >
     <span class="text-subtle" style="cursor: grab;">☰</span>
     <span
-      style:transform={isExpanded ? "rotate(90deg)" : "rotate(0deg)"}
+      style:transform={isSelected ? "rotate(90deg)" : "rotate(0deg)"}
       style:transition="transform 0.2s"
     >
       ▶
@@ -153,14 +163,18 @@
       >
     {/if}
     <ContrastBadge slug={surface.slug} mode={resolvedTheme} {solved} />
-    <span class="text-subtle" style="font-size: 0.8rem;">
-      {surface.slug}
-    </span>
   </div>
 
   {#if isExpanded}
     <div
-      style="padding: 0.75rem; border-top: 1px solid var(--border-subtle-token); display: flex; flex-direction: column; gap: 0.75rem;"
+      style="padding: 0.75rem; border-top: 1px solid var(--border-subtle-token); display: flex; flex-direction: column; gap: 0.75rem; cursor: default;"
+      onclick={(e) => {
+        e.stopPropagation();
+      }}
+      onkeydown={(e) => {
+        e.stopPropagation();
+      }}
+      role="group"
     >
       <!-- Data Density Section -->
       {#if colorSpec}

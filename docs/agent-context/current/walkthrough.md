@@ -1,24 +1,21 @@
-# Walkthrough: Theme Builder Layout Polish
+# Phase 3 Walkthrough
 
-## Overview
+## Sub-phase 1: Foundation
 
-This phase focused on refining the layout of the Theme Builder to ensure it works well on standard laptop screens (1366x768) and is isolated from the documentation site's global styles.
+### Highlight Token Implementation
 
-## Changes
+We identified a need to distinguish between "Focus" (interaction state) and "Selection" (inspection state) in the UI. To support this, we added a new `highlight` primitive to the core system.
 
-### Style Isolation
+#### Changes
 
-- Wrapped the entire `StudioLayout` in the `<Diagram>` component.
-- This applies the `not-content` class, which prevents Starlight's typography styles (like margins on lists or adjacent elements) from interfering with the application UI.
+- **Configuration**: Added a `highlight` key color to `color-config.json`. We chose Magenta (`#bd33da`, hue ~320) to contrast with the Brand Blue (`#6e56cf`, hue ~250).
+- **Types**: Updated `Primitives` in `src/lib/types.ts` to include `highlight: { ring: ModeSpec; surface: ModeSpec; }`.
+- **Solver**: Updated `src/lib/solver.ts` to calculate highlight colors based on the configured key color (or fallback to hue 320).
+- **Generator**: Updated `src/lib/generator.ts` to output `--highlight-ring-color` and `--highlight-surface-color` CSS variables.
+- **Exporters**: Updated DTCG, Tailwind, and TypeScript exporters to include the new tokens.
 
-### Responsive Layout
+#### Verification
 
-- Updated `ComponentView` to use `grid-template-columns: repeat(auto-fit, minmax(320px, 1fr))` instead of a fixed 2-column layout.
-- This ensures that on narrower screens (like 1366px with sidebars open), the grid adapts gracefully without overflowing or squishing content.
-- Increased `max-width` to `1000px` to better utilize space on wider screens.
-
-### Vertical Space Optimization
-
-- Changed the vertical alignment of the stage from `center` to `flex-start`.
-- Added `padding-top: 4rem` to position the content comfortably at the top while avoiding the "floating in the void" effect.
-- This makes better use of vertical space, especially on taller screens, and prevents the UI from feeling empty.
+- Verified that `tokens.json` contains the new highlight tokens.
+- Verified that `theme.css` contains the new CSS variables.
+- Verified that the hue matches the requested Magenta (approx 320).

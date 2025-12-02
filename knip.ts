@@ -40,7 +40,11 @@ const config: KnipConfig = {
     site: {
       entry: ["astro.config.mjs", "src/content.config.ts"],
       project: ["src/**/*.{ts,tsx,astro,svelte,mdx}"],
-      ignore: ["dist/**", ".astro/**"],
+      ignore: [
+        "dist/**",
+        ".astro/**",
+        "src/components/builder/ColorPicker.svelte",
+      ],
       ignoreDependencies: [
         "astro",
         "@astrojs/check",

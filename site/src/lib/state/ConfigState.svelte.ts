@@ -226,6 +226,20 @@ export class ConfigState {
     this.config.anchors.keyColors[key] = value;
   }
 
+  addKeyColor(key: string, value: string): void {
+    this.markAsCustom();
+    if (key in this.config.anchors.keyColors) {
+      throw new Error(`Key color "${key}" already exists.`);
+    }
+    this.config.anchors.keyColors[key] = value;
+  }
+
+  removeKeyColor(key: string): void {
+    this.markAsCustom();
+    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+    delete this.config.anchors.keyColors[key];
+  }
+
   updateHueShiftRotation(degrees: number): void {
     this.markAsCustom();
     if (this.config.hueShift) {

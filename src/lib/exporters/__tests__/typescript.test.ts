@@ -58,6 +58,13 @@ describe("TypeScript Exporter", () => {
         focus: {
           ring: { light: "oklch(0.5 0.2 250)", dark: "oklch(0.6 0.2 250)" },
         },
+        highlight: {
+          ring: { light: "oklch(0.5 0.2 320)", dark: "oklch(0.6 0.2 320)" },
+          surface: {
+            light: "oklch(0.9 0.05 320)",
+            dark: "oklch(0.2 0.05 320)",
+          },
+        },
       },
     };
 
@@ -86,6 +93,10 @@ describe("TypeScript Exporter", () => {
       primitives: {
         shadows: { sm: { light: "", dark: "" } },
         focus: { ring: { light: "", dark: "" } },
+        highlight: {
+          ring: { light: "", dark: "" },
+          surface: { light: "", dark: "" },
+        },
       },
     } as any; // Partial theme is enough for this test
 

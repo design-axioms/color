@@ -2,12 +2,15 @@
   import { generateTheme, injectTheme } from "@axiomatic-design/color/runtime";
   import type { SolverConfig } from "@axiomatic-design/color/types";
   import { getContext } from "svelte";
+  import { builderState } from "../../lib/state/BuilderState.svelte";
   import type { ConfigState } from "../../lib/state/ConfigState.svelte";
   import type { ThemeState } from "../../lib/state/ThemeState.svelte";
   import "./ThemeBuilder.css";
 
   import AnchorsEditor from "./AnchorsEditor.svelte";
+  import AuditView from "./AuditView.svelte";
   import HueShiftEditor from "./HueShiftEditor.svelte";
+  import InspectorPane from "./InspectorPane.svelte";
   import KeyColorsEditor from "./KeyColorsEditor.svelte";
   import SurfaceManager from "./SurfaceManager.svelte";
   import VisualizerGraph from "./VisualizerGraph.svelte";
@@ -62,10 +65,23 @@
       </button>
     </div>
 
-    <AnchorsEditor />
-    <KeyColorsEditor />
-    <HueShiftEditor />
-    <SurfaceManager />
+    <div class="inspector-scroll-area">
+      <InspectorPane title="Global Settings">
+        <KeyColorsEditor />
+      </InspectorPane>
+
+      <InspectorPane title="Anchors & Contrast">
+        <AnchorsEditor />
+      </InspectorPane>
+
+      <InspectorPane title="Hue Shift">
+        <HueShiftEditor />
+      </InspectorPane>
+
+      <InspectorPane title="Surfaces">
+        <SurfaceManager />
+      </InspectorPane>
+    </div>
   </aside>
 
   <main class="theme-builder-main" id="theme-builder-preview">
@@ -108,6 +124,12 @@
                   onclick={() => (activeTab = "graph")}
                 >
                   Graph
+                </button>
+                <button
+                  class="tab-button {activeTab === 'audit' ? 'active' : ''}"
+                  onclick={() => (activeTab = "audit")}
+                >
+                  Audit
                 </button>
               </Cluster>
             </div>
@@ -205,7 +227,20 @@
                       <div class="preview-surface-grid">
                         {#each group.surfaces as surface (surface.slug)}
                           <div
-                            class="surface-{surface.slug} bordered preview-surface-card"
+                            class="surface-{surface.slug} bordered preview-surface-card {builderState.selectedSurfaceId ===
+                            surface.slug
+                              ? 'highlight-ring'
+                              : ''}"
+                            onclick={() => {
+                              builderState.selectSurface(surface.slug);
+                            }}
+                            onkeydown={(e) => {
+                              if (e.key === "Enter") {
+                                builderState.selectSurface(surface.slug);
+                              }
+                            }}
+                            role="button"
+                            tabindex="0"
                           >
                             <span class="text-strong preview-surface-label">
                               {surface.label}
@@ -222,8 +257,10 @@
               </div>
             {/if}
           </div>
-        {:else}
+        {:else if activeTab === "graph"}
           <VisualizerGraph />
+        {:else if activeTab === "audit"}
+          <AuditView />
         {/if}
       </div>
     </div>

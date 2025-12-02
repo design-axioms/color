@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { formatHex } from "culori";
+  /* eslint-disable @typescript-eslint/no-unsafe-assignment */
   import { getContext } from "svelte";
   import type { ConfigState } from "../../lib/state/ConfigState.svelte";
   import type { ThemeState } from "../../lib/state/ThemeState.svelte";
@@ -8,131 +8,183 @@
   const themeState = getContext<ThemeState>("theme");
 
   let config = $derived(configState.config);
+
   let solved = $derived(configState.solved);
   let mode = $derived(themeState.mode);
 
-  function getSurfaceColor(slug: string): string {
-    const spec = solved?.backgrounds.get(slug)?.[mode];
-    if (!spec) return "transparent";
-    return formatHex({ mode: "oklch", ...spec });
+  let dataPoints = $derived.by(() => {
+    if (!solved) return [];
+    const points: {
+      x: number;
+      y: number;
+      name: string;
+      slug: string;
+      group: string;
+    }[] = [];
+    let index = 0;
+    for (const group of config.groups) {
+      for (const surface of group.surfaces) {
+        const bg = solved.backgrounds.get(surface.slug)?.[mode] as
+          | { l: number }
+          | undefined;
+        if (bg) {
+          points.push({
+            x: index,
+            y: bg.l, // 0-1
+            name: surface.name,
+            slug: surface.slug,
+            group: group.name,
+          });
+        }
+        index++;
+      }
+    }
+    return points;
+  });
+
+  let width = 800;
+  let height = 400;
+  let padding = 40;
+
+  function xScale(index: number, total: number): number {
+    if (total <= 1) return padding;
+    return padding + (index / (total - 1)) * (width - 2 * padding);
   }
 
-  function getTextColor(slug: string): string {
-    const spec = solved?.backgrounds.get(slug)?.[mode];
-    if (!spec) return "var(--text-high-token)";
-    return spec.l > 0.6 ? "#000000" : "#ffffff";
+  function yScale(lightness: number): number {
+    // Invert Y because SVG 0 is top
+    return height - padding - lightness * (height - 2 * padding);
   }
+
+  let pathD = $derived.by(() => {
+    if (dataPoints.length === 0) return "";
+    const points = dataPoints.map((p, i) => {
+      const x = xScale(i, dataPoints.length);
+      const y = yScale(p.y);
+      return `${x},${y}`;
+    });
+    return `M ${points.join(" L ")}`;
+  });
 </script>
 
-<div class="graph-container">
-  <div class="node root">
-    <div class="node-content">
-      <strong>Root</strong>
-      <span class="badge">{mode}</span>
-    </div>
+<div class="graph-view">
+  <div class="header">
+    <h3>Lightness Curve ({mode})</h3>
+    <p class="text-subtle">
+      Visualizing surface lightness progression across nesting levels.
+    </p>
+  </div>
 
-    <div class="children">
-      {#each config.groups as group (group.name)}
-        <div class="node group">
-          <div class="node-content">
-            <strong>{group.name}</strong>
-          </div>
-
-          <div class="children">
-            {#each group.surfaces as surface (surface.slug)}
-              {@const bg = getSurfaceColor(surface.slug)}
-              {@const fg = getTextColor(surface.slug)}
-              <div class="node surface" style="--bg: {bg}; --fg: {fg}">
-                <div class="node-content surface-content">
-                  <strong>{surface.label}</strong>
-                  <code class="slug">{surface.slug}</code>
-                </div>
-              </div>
-            {/each}
-          </div>
-        </div>
+  <div class="chart-container">
+    <svg {width} {height} viewBox="0 0 {width} {height}">
+      <!-- Grid Lines -->
+      {#each [0, 0.25, 0.5, 0.75, 1] as l (l)}
+        <line
+          x1={padding}
+          y1={yScale(l)}
+          x2={width - padding}
+          y2={yScale(l)}
+          stroke="var(--color-border)"
+          stroke-dasharray="4"
+        />
+        <text
+          x={padding - 10}
+          y={yScale(l)}
+          dominant-baseline="middle"
+          text-anchor="end"
+          font-size="10"
+          fill="var(--color-fg-subtle)"
+        >
+          {l}
+        </text>
       {/each}
+
+      <!-- X Axis Labels -->
+      {#each dataPoints as p, i (p.slug)}
+        <text
+          x={xScale(i, dataPoints.length)}
+          y={height - padding + 20}
+          text-anchor="middle"
+          font-size="10"
+          fill="var(--color-fg-subtle)"
+          transform="rotate(45, {xScale(i, dataPoints.length)}, {height -
+            padding +
+            20})"
+        >
+          {p.name}
+        </text>
+      {/each}
+
+      <!-- Line -->
+      <path
+        d={pathD}
+        fill="none"
+        stroke="var(--color-fg-strong)"
+        stroke-width="2"
+      />
+
+      <!-- Points -->
+      {#each dataPoints as p, i (p.slug)}
+        <circle
+          cx={xScale(i, dataPoints.length)}
+          cy={yScale(p.y)}
+          r="4"
+          fill="var(--color-{p.slug}-bg)"
+          stroke="var(--color-border)"
+          stroke-width="1"
+        >
+          <title>{p.name}: {p.y.toFixed(3)}</title>
+        </circle>
+      {/each}
+    </svg>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item">
+      <span class="axis-label">Y-Axis:</span> Lightness (0-1)
+    </div>
+    <div class="legend-item">
+      <span class="axis-label">X-Axis:</span> Nesting Level / Surface Sequence
     </div>
   </div>
 </div>
 
 <style>
-  .graph-container {
+  .graph-view {
     padding: 2rem;
-    overflow: auto;
-    display: flex;
-    justify-content: center;
-  }
-
-  .node {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-    position: relative;
+    gap: 2rem;
+    height: 100%;
+    overflow-y: auto;
   }
 
-  .node-content {
-    padding: 0.5rem 1rem;
-    border: 1px solid var(--border-subtle-token);
+  .header h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--color-fg-strong);
+    margin-bottom: 0.5rem;
+  }
+
+  .chart-container {
+    background: var(--color-surface-100);
+    border: 1px solid var(--color-border);
     border-radius: 8px;
-    background: var(--surface-token);
-    min-width: 120px;
-    text-align: center;
-    z-index: 1;
-    box-shadow: var(--shadow-sm-token);
+    padding: 1rem;
+    display: flex;
+    justify-content: center;
+    overflow-x: auto;
   }
 
-  .children {
+  .legend {
     display: flex;
     gap: 2rem;
-    align-items: flex-start;
-    position: relative;
-    padding-top: 1rem;
+    font-size: 0.875rem;
+    color: var(--color-fg-subtle);
   }
 
-  /* Vertical line from parent to children container */
-  .children::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 50%;
-    width: 1px;
-    height: 1rem;
-    background: var(--border-subtle-token);
-  }
-
-  /* Horizontal line connecting children */
-  .children::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: transparent; /* We need to be smarter about lines */
-  }
-
-  .surface-content {
-    background: var(--bg);
-    color: var(--fg);
-    border: 1px solid rgba(0, 0, 0, 0.1);
-  }
-
-  .slug {
-    display: block;
-    font-size: 0.75rem;
-    opacity: 0.8;
-  }
-
-  .badge {
-    display: inline-block;
-    font-size: 0.7rem;
-    padding: 2px 6px;
-    border-radius: 4px;
-    background: var(--surface-action);
-    color: var(--text-on-action);
-    margin-left: 0.5rem;
-    text-transform: uppercase;
+  .axis-label {
+    font-weight: 600;
+    color: var(--color-fg-strong);
   }
 </style>

@@ -741,3 +741,25 @@
   - Updated `ComponentView` to use a responsive grid (`repeat(auto-fit, minmax(320px, 1fr))`) instead of a fixed 2-column layout.
   - Optimized vertical alignment (`flex-start` + padding) to reduce whitespace on taller screens.
   - Increased `max-width` to `1000px` for better space utilization.
+
+## Epoch 21: Phase 3 - Design & Concept (2025-12-02)
+
+**Goal**: Implement design and usability feedback to make the Theme Builder a more powerful, intuitive, and educational tool.
+
+**Completed Work**:
+
+- **UI/UX Refactoring**:
+  - **Inspector Panes**: Refactored the Inspector into collapsible panes (Accordion layout) for better organization.
+  - **Dual-Thumb Slider**: Implemented a custom dual-thumb slider for intuitive contrast range editing.
+  - **Context Tree Editing**: Enabled structural editing (Drag & Drop, Selection) in the Surface Manager.
+- **Advanced Features**:
+  - **Dark Mode Linking**: Implemented logic to link Dark Mode anchors to Light Mode, with a lock toggle.
+  - **Custom Color Picker**: Created a custom OKLCH color picker for precise color selection.
+  - **Hue Shift Editor**: Integrated an interactive Hue Shift Visualizer into the editor.
+- **Polish**:
+  - **Audit View**: Implemented a new view to audit contrast scores (APCA) and gamut issues.
+  - **Abstract View**: Refined the Graph view to visualize the lightness curve across nesting levels.
+  - **Prose**: Updated micro-copy and tooltips for better clarity.
+- **System Updates**:
+  - **Highlight Primitive**: Formalized `highlight` as the "Color of Attention" and mapped it to `<mark>` and `::selection`.
+  - **Multiple Key Colors**: Updated `ConfigState` to support multiple key colors.

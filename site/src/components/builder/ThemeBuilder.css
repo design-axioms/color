@@ -336,7 +336,9 @@
   font-weight: 500;
   color: var(--text-subtle-token);
   border-bottom: 2px solid transparent;
-  transition: color 0.2s, border-color 0.2s;
+  transition:
+    color 0.2s,
+    border-color 0.2s;
 }
 
 .tab-button:hover {
@@ -346,4 +348,9 @@
 .tab-button.active {
   color: var(--text-high-token);
   border-bottom-color: var(--surface-action);
+}
+
+.highlight-ring {
+  outline: 2px solid var(--highlight-ring-color);
+  outline-offset: 2px;
 }

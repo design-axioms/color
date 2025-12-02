@@ -182,6 +182,10 @@ export interface Primitives {
   focus: {
     ring: { light: string; dark: string };
   };
+  highlight: {
+    ring: { light: string; dark: string };
+    surface: { light: string; dark: string };
+  };
 }
 
 export interface Theme {

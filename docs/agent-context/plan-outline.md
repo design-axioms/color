@@ -56,7 +56,7 @@
     - **Goal**: Connect the Theme Builder UI to a reactive configuration state and enable live preview in the browser.
   - **Phase 2: Layout Polish (Completed)**
     - **Goal**: Refine the layout for responsiveness and isolation from documentation styles.
-  - **Phase 3: Design & Concept (Planned)**
+  - **Phase 3: Design & Concept (In Progress)**
     - **Goal**: Audit the current design, explore new concepts, and review architecture.
 
 ## Epoch 22: Developer Tooling (Planned)

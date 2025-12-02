@@ -4,6 +4,7 @@ export * from "./defaults.ts";
 export { toHighContrast } from "./generator.ts";
 export {
   contrastForBackground,
+  contrastForPair,
   roundLightness,
   solveBackgroundForContrast,
 } from "./math.ts";
