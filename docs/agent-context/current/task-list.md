@@ -1,5 +1,0 @@
-- [x] **Connect Context Tree**: Replace mock data in `ContextTree.svelte` with real `ConfigState` data and connect selection to `BuilderState`. <!-- id: 1 -->
-- [x] **Implement Gamut Visualization**: Create a `GamutSlice` component to visualize the P3/sRGB boundary and surface positions. <!-- id: 2 -->
-- [x] **Interactive Graph**: Make `AbstractView.svelte` interactive, allowing users to drag the curve to adjust anchors. <!-- id: 3 -->
-- [x] **Educational Overlays**: Implement hover states in the Context Tree and Stage to show "Context Trace" (why a surface looks the way it does). <!-- id: 4 -->
-- [x] **Vibe Controls**: Implement `VibeEngine` and high-level controls for Contrast, Vibrancy, and Warmth. <!-- id: 5 -->

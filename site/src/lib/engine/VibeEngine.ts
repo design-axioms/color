@@ -4,12 +4,6 @@ import type { SolverConfig, Mutable } from "@axiomatic-design/color/types";
 const parse = converter("oklch");
 const format = formatCss;
 
-import { converter, formatCss } from "culori";
-import type { SolverConfig, Mutable } from "@axiomatic-design/color/types";
-
-const parse = converter("oklch");
-const format = formatCss;
-
 /**
  * Adjusts the contrast of the theme.
  * @param config The configuration to mutate.
