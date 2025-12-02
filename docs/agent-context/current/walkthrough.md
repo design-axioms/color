@@ -25,6 +25,7 @@ We have transitioned to an automated release process using `release-plan`.
 - Installed `release-plan` and `@release-plan/actions`.
 - Created `.github/workflows/plan-release.yml` and `.github/workflows/publish.yml`.
 - Created `RELEASE.md` to document the process.
+- **Important**: Enabled "Allow GitHub Actions to create and approve pull requests" in repository settings to allow the workflow to create the PR.
 
 ## Verification
 
@@ -32,3 +33,5 @@ We have transitioned to an automated release process using `release-plan`.
 - Verified CLI functionality (`axiomatic init`).
 - Verified site build.
 - Reset git tags to `v0.0.0` to ensure `release-plan` correctly detects the new release.
+- **Status**: The "Prepare Release" PR (#7) is created and correctly proposes `v0.1.0`.
+- **Next Step**: Merge PR #7 to publish the package.
