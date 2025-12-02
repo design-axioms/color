@@ -437,3 +437,21 @@ This file tracks key architectural and design decisions made throughout the proj
 - **Rationale**:
   - **Pragmatism**: It was the only way to break the deadlock.
   - **One-Time Cost**: This is only required for the very first publish. Subsequent releases will use the automated OIDC pipeline.
+
+### [2025-12-02] CI Workflow Optimization
+
+- **Context**: The CI pipeline was failing due to missing Astro types during linting and redundant test flags.
+- **Decision**:
+  - Run `astro sync` before linting in CI.
+  - Remove redundant `--run` flag from `pnpm test` in CI (since it's already in `package.json`).
+- **Rationale**:
+  - **Correctness**: Astro types are generated code; they must exist for the linter to validate imports correctly.
+  - **Efficiency**: Fixing the configuration prevents false negatives in the CI pipeline.
+
+### [2025-12-02] Contributing Documentation
+
+- **Context**: As we move to a public release, we need to standardize the contribution workflow.
+- **Decision**: Create `CONTRIBUTING.md` documenting the PR workflow, CI checks, and development environment.
+- **Rationale**:
+  - **Onboarding**: Helps new contributors (and AI agents) understand the expected workflow.
+  - **Standardization**: Explicitly stating the "Branch -> PR -> Merge" flow reduces ambiguity.

@@ -40,7 +40,16 @@ Systematically fixed ~130 linting errors across the `site/src/components` direct
 - **`src/lib/exporters/dtcg.ts`**: Removed unnecessary checks for `theme.charts` and `theme.primitives` as they are mandatory in the `Theme` interface.
 - **`src/lib/exporters/tailwind.ts`**: Removed unnecessary checks for `theme.charts` and `theme.primitives`.
 
+### CI/CD & Documentation
+
+- **CI Fixes**:
+  - Updated `.github/workflows/ci.yml` to run `pnpm --filter site astro sync` before linting to ensure Astro types are generated.
+  - Removed redundant `--run` flag from `pnpm test` command in CI workflow.
+- **Documentation**:
+  - Added `CONTRIBUTING.md` to document the PR workflow, CI checks, and development guidelines.
+
 ## Verification
 
 - Ran `pnpm lint` and confirmed 0 errors.
 - Ran `pnpm build` and confirmed successful build.
+- **Deployment**: Successfully deployed to Vercel (Production) after merging PR #9.

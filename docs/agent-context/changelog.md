@@ -702,6 +702,10 @@
   - Fixed floating promises and return types in `scripts/check-links.ts`.
 - **Library Fixes**:
   - Removed unnecessary conditional checks for mandatory properties (`charts`, `primitives`) in `dtcg.ts` and `tailwind.ts` exporters.
+- **CI/CD & Documentation**:
+  - **CI Fixes**: Updated `.github/workflows/ci.yml` to run `pnpm --filter site astro sync` before linting and removed redundant `--run` flag from test command.
+  - **Documentation**: Added `CONTRIBUTING.md` to document the PR workflow, CI checks, and development guidelines.
+  - **Deployment**: Successfully deployed to Vercel (Production) after merging PR #9.
 - **Verification**:
   - Achieved 0 errors in `pnpm lint`.
   - Verified successful build with `pnpm build`.
