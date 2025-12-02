@@ -15,7 +15,7 @@ pre-commit:
     knip:
       run: pnpm knip
     test:
-      run: pnpm test
+      run: pnpm -r test
 
 pre-push:
   parallel: false
