@@ -54,3 +54,12 @@
 - **Phases**:
   - **Phase 1: Design & Concept**
     - **Goal**: Audit the current design, explore new concepts, and review architecture.
+
+## Epoch 22: Developer Tooling (Planned)
+
+- **Goal**: Create a world-class developer experience for users of the Axiomatic Color system.
+- **Phases**:
+  - **Phase 1: VS Code Extension**
+    - **Goal**: Visualize tokens inline, provide hover information, and autocomplete.
+  - **Phase 2: Custom Lints**
+    - **Goal**: Create ESLint or Stylelint rules to enforce system constraints (e.g., "No hardcoded colors", "Use semantic tokens").

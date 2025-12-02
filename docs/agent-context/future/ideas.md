@@ -42,3 +42,9 @@ The current Theme Builder UI is functional but sparse. It lacks data density and
     - Color swatches for token references (e.g., `--surface-card`).
     - Hover tooltips showing the resolved values (L\*, C, H).
     - Linting for invalid token usage or hardcoded colors.
+- **Custom Lints**: A set of ESLint or Stylelint rules for users of the library.
+  - **Goal**: Enforce system constraints and best practices.
+  - **Rules**:
+    - `no-hardcoded-colors`: Warns when using hex/rgb/hsl values directly instead of tokens.
+    - `prefer-semantic-tokens`: Encourages using `--surface-card` over `--surface-token` where appropriate.
+    - `validate-token-usage`: Checks if a token is valid for the current context (e.g., using a text token on a background).
