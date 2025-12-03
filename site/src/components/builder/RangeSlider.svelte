@@ -12,6 +12,8 @@
     handleClass?: string;
     startHandleShape?: "circle" | "square";
     endHandleShape?: "circle" | "square";
+    startHandleLabel?: string;
+    endHandleLabel?: string;
     onChange?: (start: number, end: number) => void;
   }
 
@@ -28,6 +30,8 @@
     handleClass = "surface-action",
     startHandleShape = "circle",
     endHandleShape = "circle",
+    startHandleLabel = "",
+    endHandleLabel = "",
     onChange,
   }: Props = $props();
 
@@ -161,7 +165,11 @@
     }}
     aria-label="{label} Start"
     aria-disabled={disabled}
-  ></button>
+  >
+    {#if startHandleLabel}
+      <span class="handle-label">{startHandleLabel}</span>
+    {/if}
+  </button>
 
   <!-- End Handle -->
   <button
@@ -173,7 +181,11 @@
     }}
     aria-label="{label} End"
     aria-disabled={disabled}
-  ></button>
+  >
+    {#if endHandleLabel}
+      <span class="handle-label">{endHandleLabel}</span>
+    {/if}
+  </button>
 </div>
 
 <style>
@@ -219,15 +231,21 @@
   .handle {
     position: absolute;
     top: 50%;
-    width: 16px;
-    height: 16px;
+    width: 24px; /* Larger handles */
+    height: 24px;
     transform: translate(-50%, -50%);
     cursor: col-resize;
-    background-color: #888; /* Fallback */
-    border: 2px solid white;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    background-color: var(--surface-1);
+    border: 2px solid var(--border-interactive);
+    box-shadow: var(--shadow-sm);
     padding: 0;
     z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: bold;
+    color: var(--text-subtle);
   }
 
   .handle.shape-circle {
@@ -235,16 +253,22 @@
   }
 
   .handle.shape-square {
-    border-radius: 2px;
+    border-radius: 4px;
   }
 
   .handle:hover {
     transform: translate(-50%, -50%) scale(1.1);
     z-index: 3;
+    border-color: var(--border-active);
   }
 
   .handle:active {
     transform: translate(-50%, -50%) scale(1.1);
     cursor: grabbing;
+    border-color: var(--border-active);
+  }
+
+  .handle-label {
+    pointer-events: none;
   }
 </style>

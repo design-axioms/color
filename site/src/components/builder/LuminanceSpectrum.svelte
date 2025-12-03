@@ -48,10 +48,10 @@
     return "surface-action hue-error"; // Fail
   }
 
-  function getContrastColor(ratio: number): string {
-    if (ratio >= 7) return config.anchors.keyColors.success;
-    if (ratio >= 4.5) return config.anchors.keyColors.warning;
-    return config.anchors.keyColors.error;
+  function getContrastColorClass(ratio: number): string {
+    if (ratio >= 7) return "text-success";
+    if (ratio >= 4.5) return "text-warning";
+    return "text-error";
   }
 
   function handleDarkChange(start: number, end: number): void {
@@ -77,12 +77,38 @@
       <span>100% (White)</span>
     </div>
 
-    <!-- The Track -->
+    <!-- The Track Container -->
     <div class="spectrum-track">
-      <!-- Gradient Background -->
+      <!-- Gradient Background (The Equator) -->
       <div class="gradient-bg"></div>
 
-      <!-- Dark Mode Slider -->
+      <!-- Light Mode Zone (Above) -->
+      <div class="slider-layer light-layer">
+        <div class="zone-label">Light Mode</div>
+        <RangeSlider
+          start={lightInk}
+          end={lightSurface}
+          label="Light Mode"
+          fillClass={getFillClass(lightContrast)}
+          handleClass="surface-action hue-info"
+          startHandleShape="circle"
+          endHandleShape="square"
+          startHandleLabel="T"
+          endHandleLabel="Bg"
+          onChange={handleLightChange}
+        />
+        <!-- Contrast Badge (Pill on Bridge) -->
+        <div
+          class="contrast-badge light font-mono"
+          style="left: {((lightInk + lightSurface) / 2) * 100}%"
+        >
+          <span class={getContrastColorClass(lightContrast)}
+            >{lightContrast.toFixed(1)}:1</span
+          >
+        </div>
+      </div>
+
+      <!-- Dark Mode Zone (Below) -->
       <div class="slider-layer dark-layer">
         <RangeSlider
           start={darkSurface}
@@ -92,40 +118,20 @@
           handleClass="surface-action hue-brand"
           startHandleShape="square"
           endHandleShape="circle"
+          startHandleLabel="Bg"
+          endHandleLabel="T"
           onChange={handleDarkChange}
         />
-        <!-- Contrast Badge (Below) -->
+        <!-- Contrast Badge (Pill on Bridge) -->
         <div
           class="contrast-badge dark font-mono"
           style="left: {((darkSurface + darkInk) / 2) * 100}%"
         >
-          <span style="color: {getContrastColor(darkContrast)}"
+          <span class={getContrastColorClass(darkContrast)}
             >{darkContrast.toFixed(1)}:1</span
           >
         </div>
-      </div>
-
-      <!-- Light Mode Slider -->
-      <div class="slider-layer light-layer">
-        <RangeSlider
-          start={lightInk}
-          end={lightSurface}
-          label="Light Mode"
-          fillClass={getFillClass(lightContrast)}
-          handleClass="surface-action hue-info"
-          startHandleShape="circle"
-          endHandleShape="square"
-          onChange={handleLightChange}
-        />
-        <!-- Contrast Badge (Above) -->
-        <div
-          class="contrast-badge light font-mono"
-          style="left: {((lightInk + lightSurface) / 2) * 100}%"
-        >
-          <span style="color: {getContrastColor(lightContrast)}"
-            >{lightContrast.toFixed(1)}:1</span
-          >
-        </div>
+        <div class="zone-label bottom">Dark Mode</div>
       </div>
     </div>
   </div>
@@ -164,10 +170,9 @@
 
   .spectrum-track {
     position: relative;
-    height: 60px;
+    height: 160px; /* Increased height for breathing room */
     background: var(--surface-2);
     border-radius: 6px;
-    /* border: 1px solid var(--border-subtle); */
   }
 
   .gradient-bg {
@@ -175,21 +180,48 @@
     top: 50%;
     left: 0;
     right: 0;
-    height: 8px;
+    height: 4px;
     transform: translateY(-50%);
     background: linear-gradient(to right, black, white);
-    border-radius: 4px;
+    border-radius: 2px;
     border: 1px solid rgba(0, 0, 0, 0.1);
     z-index: 0;
   }
 
   .slider-layer {
     position: absolute;
-    top: 0;
     left: 0;
     width: 100%;
-    height: 100%;
-    pointer-events: none; /* Let events pass through to RangeSlider elements */
+    height: 50%; /* Each zone takes half height */
+    pointer-events: none;
+  }
+
+  .light-layer {
+    top: 0;
+    z-index: 2;
+  }
+
+  .dark-layer {
+    top: 50%;
+    z-index: 1;
+  }
+
+  .zone-label {
+    position: absolute;
+    left: 1rem;
+    font-size: 0.7rem;
+    font-weight: bold;
+    color: var(--text-subtle);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .light-layer .zone-label {
+    top: 0.5rem;
+  }
+
+  .dark-layer .zone-label.bottom {
+    bottom: 0.5rem;
   }
 
   /* Make RangeSlider children interactive */
@@ -201,21 +233,23 @@
     pointer-events: auto;
   }
 
-  /* Offset layers vertically to avoid handle collision */
-  .dark-layer {
-    z-index: 1;
-  }
-  .dark-layer :global(.range-fill),
-  .dark-layer :global(.handle) {
-    top: 65% !important; /* Override RangeSlider default */
-  }
-
-  .light-layer {
-    z-index: 2;
-  }
+  /* Position Handles and Tethers */
+  /* Light Mode: Handles closer to bottom of its zone (near equator) */
   .light-layer :global(.range-fill),
   .light-layer :global(.handle) {
-    top: 35% !important; /* Override RangeSlider default */
+    top: 70% !important; /* Just above the equator */
+  }
+
+  /* Dark Mode: Handles closer to top of its zone (near equator) */
+  .dark-layer :global(.range-fill),
+  .dark-layer :global(.handle) {
+    top: 30% !important; /* Just below the equator */
+  }
+
+  /* Bridge Styling (Thicker tether) */
+  .slider-layer :global(.range-fill) {
+    height: 4px !important;
+    border-radius: 2px;
   }
 
   .contrast-badge {
@@ -223,19 +257,34 @@
     transform: translateX(-50%);
     font-size: 0.7rem;
     background: var(--surface-1);
-    padding: 2px 6px;
-    border-radius: 4px;
+    padding: 2px 8px;
+    border-radius: 12px; /* Pill shape */
     border: 1px solid var(--border-subtle);
     white-space: nowrap;
     pointer-events: none;
-    z-index: 0;
+    z-index: 10;
+    box-shadow: var(--shadow-sm);
   }
 
   .contrast-badge.light {
-    top: 5px;
+    top: 45%; /* Positioned on the bridge */
   }
 
   .contrast-badge.dark {
-    bottom: 5px;
+    top: 5%; /* Positioned on the bridge */
+  }
+
+  /* Text colors for badges */
+  .text-success {
+    color: var(--color-success, #10b981);
+    font-weight: bold;
+  }
+  .text-warning {
+    color: var(--color-warning, #f59e0b);
+    font-weight: bold;
+  }
+  .text-error {
+    color: var(--color-error, #ef4444);
+    font-weight: bold;
   }
 </style>
