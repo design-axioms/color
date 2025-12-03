@@ -94,116 +94,123 @@
     const max = Math.max(start, end);
     return `left: ${min * 100}%; width: ${(max - min) * 100}%;`;
   }
+
+  let { showPage = true, showInverted = true } = $props();
 </script>
 
 <div class="context-graph-wrapper">
   <!-- Page Context Section -->
-  <div class="context-section">
-    <div class="section-header">
-      <div class="title-group">
-        <h3 class="text-strong">Page Context</h3>
-        <p class="text-subtle">The primary background and surface range.</p>
+  {#if showPage}
+    <div class="context-section">
+      <div class="section-header">
+        <div class="title-group">
+          <h3 class="text-strong">Page Context</h3>
+          <p class="text-subtle">The primary background and surface range.</p>
+        </div>
+        <div class="controls">
+          <label class="sync-toggle">
+            <input type="checkbox" bind:checked={configState.syncDark} />
+            <span class="text-subtle">Sync Dark Mode</span>
+            {#if configState.syncDark}
+              <span title="Dark Mode is derived from Light Mode contrast"
+                >🔒</span
+              >
+            {:else}
+              <span title="Dark Mode is independent">🔓</span>
+            {/if}
+          </label>
+        </div>
       </div>
-      <div class="controls">
-        <label class="sync-toggle">
-          <input type="checkbox" bind:checked={configState.syncDark} />
-          <span class="text-subtle">Sync Dark Mode</span>
-          {#if configState.syncDark}
-            <span title="Dark Mode is derived from Light Mode contrast">🔒</span
-            >
-          {:else}
-            <span title="Dark Mode is independent">🔓</span>
-          {/if}
-        </label>
+
+      <div class="track-container">
+        <div class="track-axis text-subtle font-mono">
+          <span>0% (Black)</span>
+          <span class="axis-label">Lightness</span>
+          <span>100% (White)</span>
+        </div>
+
+        <div class="graph-track track-page">
+          <div class="lightness-gradient"></div>
+
+          <!-- Page Light Range -->
+          <!-- eslint-disable @typescript-eslint/no-confusing-void-expression -->
+          {@render Range(
+            "page",
+            "light",
+            config.anchors.page.light.start.background,
+            config.anchors.page.light.end.background,
+            "hue-info",
+            "Light Mode",
+          )}
+          <!-- eslint-enable @typescript-eslint/no-confusing-void-expression -->
+
+          <!-- Page Dark Range -->
+          <!-- eslint-disable @typescript-eslint/no-confusing-void-expression -->
+          {@render Range(
+            "page",
+            "dark",
+            config.anchors.page.dark.start.background,
+            config.anchors.page.dark.end.background,
+            "hue-brand",
+            "Dark Mode",
+            configState.syncDark,
+          )}
+          <!-- eslint-enable @typescript-eslint/no-confusing-void-expression -->
+        </div>
       </div>
     </div>
-
-    <div class="track-container">
-      <div class="track-axis text-subtle font-mono">
-        <span>0% (Black)</span>
-        <span class="axis-label">Lightness</span>
-        <span>100% (White)</span>
-      </div>
-
-      <div class="graph-track track-page">
-        <div class="lightness-gradient"></div>
-
-        <!-- Page Light Range -->
-        <!-- eslint-disable @typescript-eslint/no-confusing-void-expression -->
-        {@render Range(
-          "page",
-          "light",
-          config.anchors.page.light.start.background,
-          config.anchors.page.light.end.background,
-          "hue-info",
-          "Light Mode",
-        )}
-        <!-- eslint-enable @typescript-eslint/no-confusing-void-expression -->
-
-        <!-- Page Dark Range -->
-        <!-- eslint-disable @typescript-eslint/no-confusing-void-expression -->
-        {@render Range(
-          "page",
-          "dark",
-          config.anchors.page.dark.start.background,
-          config.anchors.page.dark.end.background,
-          "hue-brand",
-          "Dark Mode",
-          configState.syncDark,
-        )}
-        <!-- eslint-enable @typescript-eslint/no-confusing-void-expression -->
-      </div>
-    </div>
-  </div>
+  {/if}
 
   <!-- Inverted Context Section -->
-  <div class="context-section">
-    <div class="section-header">
-      <div class="title-group">
-        <h3 class="text-strong">Inverted Context</h3>
-        <p class="text-subtle">
-          High-contrast surfaces (like tooltips or dark sidebars).
-        </p>
+  {#if showInverted}
+    <div class="context-section">
+      <div class="section-header">
+        <div class="title-group">
+          <h3 class="text-strong">Inverted Context</h3>
+          <p class="text-subtle">
+            High-contrast surfaces (like tooltips or dark sidebars).
+          </p>
+        </div>
+      </div>
+
+      <div class="track-container">
+        <div class="track-axis text-subtle font-mono">
+          <span>0%</span>
+          <span class="axis-label">Lightness</span>
+          <span>100%</span>
+        </div>
+
+        <div class="graph-track track-inverted">
+          <div class="lightness-gradient"></div>
+
+          <!-- Inverted Light Range -->
+          <!-- eslint-disable @typescript-eslint/no-confusing-void-expression -->
+          {@render Range(
+            "inverted",
+            "light",
+            config.anchors.inverted.light.start.background,
+            config.anchors.inverted.light.end.background,
+            "hue-warning",
+            "Light Mode",
+          )}
+          <!-- eslint-enable @typescript-eslint/no-confusing-void-expression -->
+
+          <!-- Inverted Dark Range -->
+          <!-- eslint-disable @typescript-eslint/no-confusing-void-expression -->
+          {@render Range(
+            "inverted",
+            "dark",
+            config.anchors.inverted.dark.start.background,
+            config.anchors.inverted.dark.end.background,
+            "hue-error",
+            "Dark Mode",
+            configState.syncDark,
+          )}
+          <!-- eslint-enable @typescript-eslint/no-confusing-void-expression -->
+        </div>
       </div>
     </div>
-
-    <div class="track-container">
-      <div class="track-axis text-subtle font-mono">
-        <span>0%</span>
-        <span class="axis-label">Lightness</span>
-        <span>100%</span>
-      </div>
-
-      <div class="graph-track track-inverted">
-        <div class="lightness-gradient"></div>
-
-        <!-- Inverted Light Range -->
-        <!-- eslint-disable @typescript-eslint/no-confusing-void-expression -->
-        {@render Range(
-          "inverted",
-          "light",
-          config.anchors.inverted.light.start.background,
-          config.anchors.inverted.light.end.background,
-          "hue-warning",
-          "Light Mode",
-        )}
-        <!-- eslint-enable @typescript-eslint/no-confusing-void-expression -->
-
-        <!-- Inverted Dark Range -->
-        <!-- eslint-disable @typescript-eslint/no-confusing-void-expression -->
-        {@render Range(
-          "inverted",
-          "dark",
-          config.anchors.inverted.dark.start.background,
-          config.anchors.inverted.dark.end.background,
-          "hue-error",
-          "Dark Mode",
-          configState.syncDark,
-        )}
-        <!-- eslint-enable @typescript-eslint/no-confusing-void-expression -->
-      </div>
-    </div>
-  </div>
+  {/if}
 </div>
 
 {#snippet Range(

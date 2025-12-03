@@ -803,3 +803,20 @@
 - **Verification**:
   - Updated snapshots in `generator.test.ts` and `scoping.test.ts` to reflect the new class names.
   - Verified that the documentation site builds and renders correctly with the consolidated CSS.
+
+## Epoch 22: Phase 2 - Luminance Spectrum UI (2025-12-02)
+
+**Goal**: Replace the disconnected "Page Anchors" sliders with a unified **Luminance Spectrum** visualization to improve the mental model of lightness and contrast.
+
+**Completed Work**:
+
+- **New Components**:
+  - **`RangeSlider.svelte`**: Created a reusable dual-handle slider component with drag support and accessibility attributes.
+  - **`LuminanceSpectrum.svelte`**: Implemented the main visualization component that composes two range sliders on a single 0-100% lightness track.
+- **Integration**:
+  - Replaced the legacy "Page Context" section in `AnchorsEditor.svelte` with the new `LuminanceSpectrum`.
+  - Updated `ContextGraph.svelte` to allow selective rendering of the "Inverted Context" section.
+- **Features**:
+  - **Unified Axis**: Visualizes Light and Dark modes on the same physical track.
+  - **Contrast Feedback**: Displays real-time APCA contrast badges (Lc) with color-coded compliance indicators (Green/Yellow/Red).
+  - **Constraints**: Enforces logical constraints (Surface < Ink) via the UI interaction model.

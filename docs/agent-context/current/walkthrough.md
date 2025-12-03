@@ -1,37 +1,35 @@
-# Walkthrough: Utility Cleanup & CSS Consolidation
+# Walkthrough - Epoch 22: Phase 2 - Luminance Spectrum UI
 
 ## Overview
 
-This phase focused on refining the utility class architecture and consolidating the CSS codebase to align with the "Surface Composition" model and improve maintainability.
+We have replaced the disconnected "Page Anchors" sliders with a unified **Luminance Spectrum** visualization. This new component treats Light and Dark modes as two windows onto a single continuous axis of lightness (L\*), providing immediate feedback on contrast ratios and accessibility.
 
 ## Key Changes
 
-### 1. Utility Class Refactoring
+### 1. New Components
 
-We audited and refactored the utility classes in `site/src/styles/docs.css` based on the "Utility Architecture Report".
+- **`RangeSlider.svelte`**: A reusable, dual-handle slider component that supports min/max values and drag interactions. It serves as the primitive for the spectrum ranges.
+- **`LuminanceSpectrum.svelte`**: The main container component that visualizes the 0-100% lightness spectrum. It composes two `RangeSlider` instances (one for Dark Mode, one for Light Mode) and calculates real-time contrast ratios.
 
-- **Renamed `.focus-visible-ring` to `.ring-focus-visible`**: This establishes a consistent `.ring-*` namespace for focus indicators, matching `.ring-focus` (static).
-- **Removed `.fill-subtlest`**: This utility was deemed "random" and inconsistent. We replaced it with the standard `currentColor` pattern combined with text utilities (e.g., `fill="currentColor" class="text-subtlest"`). This promotes better composition and reduces specific "fill" utilities.
+### 2. Integration
 
-### 2. Component Updates
+- **`AnchorsEditor.svelte`**: Replaced the "Page Context" section of the legacy `ContextGraph` with the new `LuminanceSpectrum` component.
+- **`ContextGraph.svelte`**: Updated to accept `showPage` and `showInverted` props, allowing us to selectively render the "Inverted Context" section while delegating "Page Context" to the new component.
 
-We updated the consuming components to match the new utility names:
+### 3. Features
 
-- **`GamutSlice.svelte`**: Updated to use `fill="currentColor"` and `.text-subtlest`.
-- **`HueShiftVisualizer.svelte`**: Updated to use `.ring-focus-visible`.
+- **Unified Axis**: Both Light and Dark modes are visualized on a single track, making it easier to understand their relationship.
+- **Contrast Feedback**: Live "Lc" (Lightness Contrast) badges display the contrast ratio between the Surface and Ink handles.
+- **Color-Coded Compliance**: The badges change color (Green/Yellow/Red) based on APCA compliance levels (75+/60+/Fail).
+- **Constraints**: The UI naturally enforces `Surface < Ink` (Dark) and `Ink < Surface` (Light) constraints via the range slider logic.
 
-### 3. CSS Consolidation
+## Technical Details
 
-We simplified the CSS architecture by removing redundant files and pointing the Astro configuration to the shared source of truth.
+- **State Management**: Leverages Svelte 5 Runes (`$derived`, `$state`) for reactive updates from `ConfigState`.
+- **Math**: Uses `contrastForPair` from `@axiomatic-design/color` to calculate accurate APCA contrast ratios.
+- **CSS**: Uses absolute positioning and z-indexing to layer the Dark and Light mode sliders on top of the gradient track.
 
-- **Removed `site/src/styles/engine.css` and `site/src/styles/utilities.css`**: These were duplicates of the files in the root `css/` directory.
-- **Updated `astro.config.mjs`**: Configured to import `engine.css` and `utilities.css` directly from the root `css/` directory. This ensures that the documentation site always uses the latest engine code.
+## Next Steps
 
-### 4. Documentation
-
-- **Updated `tokens.md`**: Reflected the class renames and removed the raw token usage example, replacing it with a recommendation to use utility classes.
-
-## Verification
-
-- **Tests**: All tests passed, including updated snapshots for the generator.
-- **Linting**: The codebase is lint-free.
+- Gather user feedback on the new interaction model.
+- Consider migrating the "Inverted Context" to a similar spectrum visualization if this pattern proves successful.

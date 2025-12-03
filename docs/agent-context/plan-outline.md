@@ -63,7 +63,16 @@
   - **Phase 5: Cleanup & Consolidation (Completed)**
     - **Goal**: Refactor utility classes and consolidate CSS architecture for long-term maintainability.
 
-## Epoch 22: Developer Tooling (Planned)
+## Epoch 22: Fresh Eyes Audit (In Progress)
+
+- **Goal**: Conduct a comprehensive "Fresh Eyes" audit of the entire project (CLI, Docs, Theme Builder, Codebase) to identify friction points, inconsistencies, and areas for improvement before starting the Developer Tooling epoch.
+- **Phases**:
+  - **Phase 1: Audit & Plan (In Progress)**
+    - **Goal**: systematic review of the project and creation of a prioritized remediation plan.
+  - **Phase 2: Luminance Spectrum UI (Planned)**
+    - **Goal**: Implement the "Luminance Spectrum" visualization to replace the disconnected "Page Anchors" sliders, providing a unified view of the lightness axis.
+
+## Epoch 23: Developer Tooling (Planned)
 
 - **Goal**: Create a world-class developer experience for users of the Axiomatic Color system.
 - **Phases**:
