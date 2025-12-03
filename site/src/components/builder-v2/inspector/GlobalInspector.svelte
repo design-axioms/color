@@ -1,16 +1,10 @@
 <script lang="ts">
   import { formatHex } from "culori";
   import { configState } from "../../../lib/state/ConfigState.svelte";
+  import LuminanceSpectrum from "../../builder/LuminanceSpectrum.svelte";
   import VibeControls from "./VibeControls.svelte";
 
   // Global Inspector: Controls for system-wide parameters (Anchors, Key Colors).
-
-  function toPercent(val: number): number {
-    return Math.round(val * 100);
-  }
-  function fromPercent(val: number): number {
-    return val / 100;
-  }
 
   function safeFormatHex(val: string | undefined): string {
     if (!val) return "#000000";
@@ -30,107 +24,7 @@
 </div>
 
 <div class="inspector-section">
-  <h3 class="text-strong">Page Anchors</h3>
-  <div class="control-group">
-    <label>
-      <div class="label-row">
-        <span>Light Start (L*)</span>
-        <span class="value text-subtle"
-          >{toPercent(
-            configState.config.anchors.page.light.start.background,
-          )}%</span
-        >
-      </div>
-      <input
-        type="range"
-        min="0"
-        max="100"
-        value={toPercent(
-          configState.config.anchors.page.light.start.background,
-        )}
-        oninput={(e) => {
-          configState.updateAnchor(
-            "page",
-            "light",
-            "start",
-            fromPercent(e.currentTarget.valueAsNumber),
-          );
-        }}
-      />
-    </label>
-    <label>
-      <div class="label-row">
-        <span>Light End (L*)</span>
-        <span class="value text-subtle"
-          >{toPercent(
-            configState.config.anchors.page.light.end.background,
-          )}%</span
-        >
-      </div>
-      <input
-        type="range"
-        min="0"
-        max="100"
-        value={toPercent(configState.config.anchors.page.light.end.background)}
-        oninput={(e) => {
-          configState.updateAnchor(
-            "page",
-            "light",
-            "end",
-            fromPercent(e.currentTarget.valueAsNumber),
-          );
-        }}
-      />
-    </label>
-    <label>
-      <div class="label-row">
-        <span>Dark Start (L*)</span>
-        <span class="value text-subtle"
-          >{toPercent(
-            configState.config.anchors.page.dark.start.background,
-          )}%</span
-        >
-      </div>
-      <input
-        type="range"
-        min="0"
-        max="100"
-        value={toPercent(configState.config.anchors.page.dark.start.background)}
-        oninput={(e) => {
-          configState.updateAnchor(
-            "page",
-            "dark",
-            "start",
-            fromPercent(e.currentTarget.valueAsNumber),
-          );
-        }}
-      />
-    </label>
-    <label>
-      <div class="label-row">
-        <span>Dark End (L*)</span>
-        <span class="value text-subtle"
-          >{toPercent(
-            configState.config.anchors.page.dark.end.background,
-          )}%</span
-        >
-      </div>
-      <input
-        type="range"
-        min="0"
-        max="100"
-        value={toPercent(configState.config.anchors.page.dark.end.background)}
-        oninput={(e) => {
-          configState.updateAnchor(
-            "page",
-            "dark",
-            "end",
-            fromPercent(e.currentTarget.valueAsNumber),
-          );
-        }}
-      />
-    </label>
-  </div>
+  <LuminanceSpectrum />
 </div>
 
 <div class="inspector-section">

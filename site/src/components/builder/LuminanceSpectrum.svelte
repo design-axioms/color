@@ -22,9 +22,9 @@
   let lightContrast = contrastForPair(lightSurface, lightInk);
 
   function getContrastColor(ratio: number): string {
-    if (ratio >= 75) return "var(--axm-key-success-color)"; // AAA / APCA 75+
-    if (ratio >= 60) return "var(--axm-key-warning-color)"; // AA / APCA 60+
-    return "var(--axm-key-error-color)"; // Fail
+    if (ratio >= 75) return config.anchors.keyColors.success; // AAA / APCA 75+
+    if (ratio >= 60) return config.anchors.keyColors.warning; // AA / APCA 60+
+    return config.anchors.keyColors.error; // Fail
   }
 
   function handleDarkChange(start: number, end: number): void {
