@@ -83,7 +83,7 @@
 
       <!-- Light Mode Zone (Above) -->
       <div class="slider-layer light-layer">
-        <div class="zone-label">Light Mode</div>
+        <div class="zone-label top-left">Light Mode</div>
 
         <!-- Projection Lines -->
         <div class="projection-line" style="left: {lightInk * 100}%"></div>
@@ -93,7 +93,8 @@
           start={lightInk}
           end={lightSurface}
           label="Light Mode"
-          fillClass="surface-action"
+          trackClass="invisible-track"
+          fillClass="surface-action bridge"
           handleClass="surface-action"
           startHandleShape="pill"
           endHandleShape="pill"
@@ -113,6 +114,38 @@
         </div>
       </div>
 
+      <!-- Dark Mode Zone (Below) -->
+      <div class="slider-layer dark-layer">
+        <div class="zone-label bottom-left">Dark Mode</div>
+
+        <!-- Projection Lines -->
+        <div class="projection-line" style="left: {darkSurface * 100}%"></div>
+        <div class="projection-line" style="left: {darkInk * 100}%"></div>
+
+        <RangeSlider
+          start={darkSurface}
+          end={darkInk}
+          label="Dark Mode"
+          trackClass="invisible-track"
+          fillClass="surface-action bridge"
+          handleClass="surface-action"
+          startHandleShape="pill"
+          endHandleShape="pill"
+          startHandleLabel="Surface"
+          endHandleLabel="Ink"
+          onChange={handleDarkChange}
+        />
+        <!-- Contrast Badge (Pill on Bridge) -->
+        <div
+          class="contrast-badge dark font-mono"
+          style="left: {((darkSurface + darkInk) / 2) * 100}%"
+        >
+          <span class={getContrastColorClass(darkContrast)}>
+            {getContrastIcon(darkContrast)}
+            {darkContrast.toFixed(1)}:1
+          </span>
+        </div>
+      </div>
       <!-- Dark Mode Zone (Below) -->
       <div class="slider-layer dark-layer">
         <div class="zone-label bottom">Dark Mode</div>
@@ -238,18 +271,19 @@
   .zone-label {
     position: absolute;
     left: 1rem;
-    font-size: 0.7rem;
-    font-weight: bold;
+    font-size: 0.75rem;
+    font-weight: 800; /* Bold */
     color: var(--text-subtle);
     text-transform: uppercase;
     letter-spacing: 0.05em;
+    z-index: 5;
   }
 
-  .light-layer .zone-label {
+  .zone-label.top-left {
     top: 0.5rem;
   }
 
-  .dark-layer .zone-label.bottom {
+  .zone-label.bottom-left {
     bottom: 0.5rem;
   }
 
@@ -257,20 +291,20 @@
   .projection-line {
     position: absolute;
     width: 1px;
-    background-color: var(--border-subtle);
+    background-color: transparent;
     border-left: 1px dashed var(--text-subtle);
-    opacity: 0.5;
+    opacity: 0.4;
     z-index: 0;
   }
 
   .light-layer .projection-line {
-    top: 20%; /* Start from handle area */
+    top: 20%; /* Start from handle center */
     bottom: 0; /* Go to equator */
   }
 
   .dark-layer .projection-line {
     top: 0; /* Start from equator */
-    bottom: 20%; /* Go to handle area */
+    bottom: 20%; /* Go to handle center */
   }
 
   /* Make RangeSlider children interactive */
@@ -280,6 +314,11 @@
   .slider-layer :global(.range-fill),
   .slider-layer :global(.handle) {
     pointer-events: auto;
+  }
+
+  /* Hide the default track of the RangeSlider */
+  .slider-layer :global(.invisible-track) {
+    background-color: transparent !important;
   }
 
   /* Position Handles and Tethers */
@@ -296,11 +335,11 @@
   }
 
   /* Bridge Styling (Thicker tether, neutral) */
-  .slider-layer :global(.range-fill) {
-    height: 4px !important;
-    border-radius: 2px;
-    /* background-color: var(--surface-1) !important;  Handled by fillClass="surface-action" */
+  .slider-layer :global(.bridge) {
+    height: 6px !important; /* Thicker structural beam */
+    border-radius: 3px;
     border: 1px solid var(--border-subtle);
+    z-index: 1;
   }
 
   .contrast-badge {
