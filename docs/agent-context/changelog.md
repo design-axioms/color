@@ -786,3 +786,20 @@
 - **Token Cleanup**:
   - Refactored all frontend components to remove raw `var(--*-token)` references.
   - Enforced strict ESLint rules (no unused vars, no void returns) to ensure code quality.
+
+## Epoch 21: Phase 5 - Cleanup & Consolidation (2025-12-02)
+
+**Goal**: Refactor utility classes for consistency and consolidate the CSS architecture to simplify maintenance and reduce duplication.
+
+**Completed Work**:
+
+- **Utility Refactor**:
+  - Renamed `.focus-visible-ring` to `.ring-focus-visible` to align with the `ring-*` naming convention.
+  - Removed `.fill-subtlest` as it was redundant.
+- **CSS Consolidation**:
+  - Moved `site/src/styles/docs.css` to `css/utilities.css` (or merged relevant parts).
+  - Pointed Astro configuration to use the root `css/` directory instead of local styles.
+  - Ensured a single source of truth for all CSS utilities across the CLI, Demo, and Documentation.
+- **Verification**:
+  - Updated snapshots in `generator.test.ts` and `scoping.test.ts` to reflect the new class names.
+  - Verified that the documentation site builds and renders correctly with the consolidated CSS.

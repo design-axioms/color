@@ -488,3 +488,20 @@ This file tracks key architectural and design decisions made throughout the proj
 - **Rationale**:
   - **Maintainability**: If we rename a token in the generator, the type system will catch it. Raw strings would break silently.
   - **Consistency**: Ensures all UI components use the same source of truth for values.
+
+### [2025-12-02] CSS Consolidation
+
+- **Context**: We had duplicate utility classes in `site/src/styles/docs.css` and `css/utilities.css`, leading to confusion about which file to edit and potential inconsistencies.
+- **Decision**: Consolidate all CSS utilities into the root `css/` directory and point the Astro configuration to use these shared files.
+- **Rationale**:
+  - **Single Source of Truth**: Ensures that the CLI, Demo, and Documentation all use the exact same CSS engine.
+  - **Maintainability**: Reduces code duplication and makes it easier to update utilities globally.
+  - **Consistency**: Guarantees that a utility class like `.ring-focus-visible` behaves identically in every environment.
+
+### [2025-12-02] Utility Class Renaming
+
+- **Context**: The utility class `.focus-visible-ring` was inconsistent with other ring utilities (e.g., Tailwind's `ring-*` convention).
+- **Decision**: Rename `.focus-visible-ring` to `.ring-focus-visible`.
+- **Rationale**:
+  - **Consistency**: Aligns with the standard "property-modifier" naming convention used elsewhere in the system.
+  - **Predictability**: Makes it easier for developers to guess the class name.

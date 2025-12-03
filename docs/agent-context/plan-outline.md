@@ -48,7 +48,7 @@
   - **Phase 2: Fix Issues (Completed)**
     - **Goal**: Resolve all linting errors and warnings.
 
-## Epoch 21: Theme Builder V2 (In Progress)
+## Epoch 21: Theme Builder V2 (Completed)
 
 - **Goal**: Reimagine the Theme Builder as a learning environment and design tool.
 - **Phases**:
@@ -60,6 +60,8 @@
     - **Goal**: Audit the current design, explore new concepts, and review architecture.
   - **Phase 4: V2 Implementation (Completed)**
     - **Goal**: Implement the new "System Modeling" UI, including Context Tree, Gamut Visualization, and Direct Manipulation graphs.
+  - **Phase 5: Cleanup & Consolidation (Completed)**
+    - **Goal**: Refactor utility classes and consolidate CSS architecture for long-term maintainability.
 
 ## Epoch 22: Developer Tooling (Planned)
 

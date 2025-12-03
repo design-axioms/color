@@ -36,7 +36,7 @@ describe("Runtime Scoping", () => {
 
     // Check variable scoping
     expect(css).toContain("#my-scope {");
-    expect(css).toContain("--hue-brand:");
+    expect(css).toContain("--axm-hue-brand:");
 
     // Check class scoping
     expect(css).toContain("#my-scope .surface-card {");
@@ -45,7 +45,7 @@ describe("Runtime Scoping", () => {
     // We split by newline and check lines that start with .surface-card
     const lines = css.split("\n");
     const globalRules = lines.filter((line: string) =>
-      line.trim().startsWith(".surface-card")
+      line.trim().startsWith(".surface-card"),
     );
     expect(globalRules).toHaveLength(0);
   });
