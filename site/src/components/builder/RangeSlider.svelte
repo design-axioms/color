@@ -235,7 +235,7 @@
     height: 24px;
     transform: translate(-50%, -50%);
     cursor: col-resize;
-    background-color: var(--surface-1);
+    /* background-color: var(--surface-1);  Let the handleClass control the background */
     border: 2px solid var(--border-interactive);
     box-shadow: var(--shadow-sm);
     padding: 0;

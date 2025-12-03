@@ -77,7 +77,7 @@
     </div>
 
     <!-- The Track Container -->
-    <div class="spectrum-track">
+    <div class="spectrum-track surface-workspace">
       <!-- Gradient Background (The Ruler) -->
       <div class="gradient-bg"></div>
 
@@ -93,8 +93,8 @@
           start={lightInk}
           end={lightSurface}
           label="Light Mode"
-          fillClass="surface-1"
-          handleClass="surface-1"
+          fillClass="surface-action"
+          handleClass="surface-action"
           startHandleShape="pill"
           endHandleShape="pill"
           startHandleLabel="Ink"
@@ -125,8 +125,8 @@
           start={darkSurface}
           end={darkInk}
           label="Dark Mode"
-          fillClass="surface-1"
-          handleClass="surface-1"
+          fillClass="surface-action"
+          handleClass="surface-action"
           startHandleShape="pill"
           endHandleShape="pill"
           startHandleLabel="Surface"
@@ -182,7 +182,7 @@
   .spectrum-track {
     position: relative;
     height: 200px; /* Increased height for Lanes layout */
-    background: var(--surface-2);
+    /* background: var(--surface-2); Removed in favor of surface-workspace class */
     border-radius: 6px;
   }
 
@@ -299,7 +299,7 @@
   .slider-layer :global(.range-fill) {
     height: 4px !important;
     border-radius: 2px;
-    background-color: var(--surface-1) !important; /* Neutral chrome */
+    /* background-color: var(--surface-1) !important;  Handled by fillClass="surface-action" */
     border: 1px solid var(--border-subtle);
   }
 
