@@ -48,6 +48,12 @@ The current Theme Builder UI is functional but sparse. It lacks data density and
     - `no-hardcoded-colors`: Warns when using hex/rgb/hsl values directly instead of tokens.
     - `prefer-semantic-tokens`: Encourages using `--surface-card` over `--surface-token` where appropriate.
     - `validate-token-usage`: Checks if a token is valid for the current context (e.g., using a text token on a background).
+- **Configurable Prefix & Public Linter**:
+  - **Goal**: Allow users to customize the CSS variable prefix (currently `axm-`) and enforce usage rules.
+  - **Features**:
+    - Configuration option in `color-config.json` for `prefix`.
+    - A public CLI command (e.g., `axiomatic lint`) that wraps our internal `check-tokens.sh` logic but respects the user's configured prefix.
+    - This ensures users can enforce "no raw tokens" or "no hardcoded colors" policies in their own CI pipelines.
 - **AI Context (`llms.txt`)**: A standardized file to help LLMs understand the project.
   - **Goal**: Enable AI agents to effectively generate code using the Axiomatic Color system.
   - **Content**:
@@ -55,3 +61,9 @@ The current Theme Builder UI is functional but sparse. It lacks data density and
     - List of available tokens and their semantic meaning.
     - Examples of correct usage (surfaces, modifiers).
     - Architecture overview (Solver -> CSS Engine).
+
+## Architecture
+
+- **Simplify Token Surface**: We currently have special tokens like `highlight-surface-color` and `highlight-ring-color` that might be better modeled as standard surfaces with a specific hue (e.g., `.surface-highlight` or `.surface-selected` with `.hue-highlight`).
+  - **Goal**: Reduce the number of "special" global tokens and rely more on the core surface + hue composition model.
+  - **Benefit**: More consistent API, fewer special cases in the generator.

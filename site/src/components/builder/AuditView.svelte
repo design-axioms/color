@@ -63,15 +63,15 @@
           <tbody>
             {#each solved.surfaces as surface (surface.slug)}
               {@const bg = solved.backgrounds.get(surface.slug)?.[mode]}
-              {@const computed = surface.computed[mode]}
-              {#if bg}
+              {@const computed = surface.computed?.[mode]}
+              {#if bg && computed}
                 <tr>
                   <td class="surface-name">
                     <div
                       class="swatch"
                       style="background-color: var(--color-{surface.slug}-bg)"
                     ></div>
-                    {surface.name}
+                    {surface.label}
                   </td>
                   <td class="value-cell">
                     L: {bg.l.toFixed(2)}
@@ -110,7 +110,7 @@
                 style="background-color: var(--color-{surface.slug}-bg)"
               ></div>
               <div class="gamut-info">
-                <span class="gamut-name">{surface.name}</span>
+                <span class="gamut-name">{surface.label}</span>
                 <span class="gamut-values">
                   L: {bg.l.toFixed(3)}, C: {bg.c.toFixed(3)}, H: {bg.h.toFixed(
                     1,

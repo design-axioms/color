@@ -313,7 +313,7 @@
               opacity="0.5"
             />
 
-            <!-- Control Points (Interactive) -->
+            <!-- Control Points (Visual Only) -->
             <!-- P1 -->
             <circle
               cx={toSvgX(curve.p1[0])}
@@ -324,16 +324,6 @@
               stroke-width="2"
               vector-effect="non-scaling-stroke"
               class="control-point"
-              role="button"
-              tabindex="0"
-              aria-label="Control Point 1"
-              onmousedown={() => {
-                handleMouseDown("p1");
-              }}
-              ontouchstart={() => {
-                handleMouseDown("p1");
-              }}
-              style:cursor={dragging ? "grabbing" : "grab"}
             />
 
             <!-- P2 -->
@@ -346,16 +336,6 @@
               stroke-width="2"
               vector-effect="non-scaling-stroke"
               class="control-point"
-              role="button"
-              tabindex="0"
-              aria-label="Control Point 2"
-              onmousedown={() => {
-                handleMouseDown("p2");
-              }}
-              ontouchstart={() => {
-                handleMouseDown("p2");
-              }}
-              style:cursor={dragging ? "grabbing" : "grab"}
             />
           {/if}
 
@@ -375,6 +355,43 @@
             vector-effect="non-scaling-stroke"
           />
         </svg>
+
+        {#if showControls}
+          <!-- Interactive Overlay -->
+          <div class="controls-overlay">
+            <!-- P1 Button -->
+            <button
+              type="button"
+              class="control-handle focus-visible-ring"
+              style:left="{toSvgX(curve.p1[0])}%"
+              style:top="{toSvgY(curve.p1[1])}%"
+              style:cursor={dragging ? "grabbing" : "grab"}
+              aria-label="Control Point 1"
+              onmousedown={() => {
+                handleMouseDown("p1");
+              }}
+              ontouchstart={() => {
+                handleMouseDown("p1");
+              }}
+            ></button>
+
+            <!-- P2 Button -->
+            <button
+              type="button"
+              class="control-handle focus-visible-ring"
+              style:left="{toSvgX(curve.p2[0])}%"
+              style:top="{toSvgY(curve.p2[1])}%"
+              style:cursor={dragging ? "grabbing" : "grab"}
+              aria-label="Control Point 2"
+              onmousedown={() => {
+                handleMouseDown("p2");
+              }}
+              ontouchstart={() => {
+                handleMouseDown("p2");
+              }}
+            ></button>
+          </div>
+        {/if}
 
         <!-- Axis Labels -->
         <div class="axis-label x-axis text-subtle">Lightness (0 → 100)</div>
@@ -562,6 +579,25 @@
     left: 8px;
   }
 
+  .controls-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .control-handle {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    transform: translate(-50%, -50%);
+    background: transparent;
+    border: none;
+    border-radius: 50%;
+    cursor: grab;
+    pointer-events: auto;
+    padding: 0;
+  }
+
   /* Gradient Preview */
   .gradient-preview {
     margin-top: 1rem;
@@ -630,10 +666,6 @@
     justify-content: space-between;
     align-items: center;
     font-size: 0.9rem;
-  }
-
-  .control-header label {
-    /* color handled by utility */
   }
 
   .control-value {

@@ -15,13 +15,13 @@
   inherits: true;
 }
 
-@property --hue-brand {
+@property --axm-hue-brand {
   syntax: "<number>";
   initial-value: 0;
   inherits: true;
 }
 
-@property --chroma-brand {
+@property --axm-chroma-brand {
   syntax: "<number>";
   initial-value: 0;
   inherits: true;
@@ -121,32 +121,32 @@
 }
 
 /* Proxy tokens that cascade from utilities */
-@property --surface-token {
+@property --axm-surface-token {
   syntax: "<color>";
   inherits: true;
 }
 
-@property --text-high-token {
+@property --axm-text-high-token {
   syntax: "<color>";
   inherits: true;
 }
 
-@property --text-subtle-token {
+@property --axm-text-subtle-token {
   syntax: "<color>";
   inherits: true;
 }
 
-@property --text-subtlest-token {
+@property --axm-text-subtlest-token {
   syntax: "<color>";
   inherits: true;
 }
 
-@property --border-dec-token {
+@property --axm-border-dec-token {
   syntax: "<color>";
   inherits: true;
 }
 
-@property --border-int-token {
+@property --axm-border-int-token {
   syntax: "<color>";
   inherits: true;
 }
@@ -179,7 +179,7 @@
   /* Reify Surface Color */
   /* Extract L and H (Shift) from token, combine with computed C and base hue */
   --computed-surface: oklch(
-    from var(--surface-token) var(--override-surface-lightness, l)
+    from var(--axm-surface-token) var(--override-surface-lightness, l)
       var(--computed-surface-C)
       calc(var(--base-hue, 0) + var(--hue-adjust, 0) + h)
   );
@@ -188,7 +188,7 @@
   background-color: var(--computed-surface);
 
   /* Apply Scrollbar */
-  scrollbar-color: var(--text-subtle-token) var(--surface-token);
+  scrollbar-color: var(--axm-text-subtle-token) var(--axm-surface-token);
 
   /* --- 2. TEXT CALCULATION --- */
 
@@ -201,7 +201,7 @@
   /* Reify Text Color */
   /* Extract L from text token, apply computed C and H */
   --computed-fg-color: oklch(
-    from var(--text-high-token) l var(--computed-fg-C) var(--computed-fg-H)
+    from var(--axm-text-high-token) l var(--computed-fg-C) var(--computed-fg-H)
   );
 
   /* Apply Text Color */
@@ -221,14 +221,14 @@
   /* Decorative Border */
   /* Extract L and alpha from border token, apply text C and H */
   --computed-border-dec-color: oklch(
-    from var(--border-dec-token) l var(--computed-fg-C) var(--computed-fg-H) /
-      alpha
+    from var(--axm-border-dec-token) l var(--computed-fg-C)
+      var(--computed-fg-H) / alpha
   );
 
   /* Interactive Border */
   --computed-border-int-color: oklch(
-    from var(--border-int-token) l var(--computed-fg-C) var(--computed-fg-H) /
-      alpha
+    from var(--axm-border-int-token) l var(--computed-fg-C)
+      var(--computed-fg-H) / alpha
   );
 
   /* Default to Decorative */
@@ -268,20 +268,22 @@
 
 :focus-visible {
   outline: 2px solid
-    oklch(from var(--computed-fg-color) l 0.2 var(--hue-brand, var(--base-hue)));
+    oklch(
+      from var(--computed-fg-color) l 0.2 var(--axm-hue-brand, var(--base-hue))
+    );
   outline-offset: 2px;
 }
 
 /* --- HIGHLIGHT & SELECTION --- */
 
 mark {
-  background-color: var(--highlight-surface-color);
-  color: var(--text-high-token);
+  background-color: var(--axm-highlight-surface-color);
+  color: var(--axm-text-high-token);
 }
 
 ::selection {
-  background-color: var(--highlight-surface-color);
-  color: var(--text-high-token);
+  background-color: var(--axm-highlight-surface-color);
+  color: var(--axm-text-high-token);
 }
 
 /* --- FORCED COLORS (High Contrast) --- */
@@ -381,7 +383,7 @@ mark {
     --base-chroma: 0;
     --surface-chroma-adjust: 0;
     --hue-adjust: 0;
-    --chroma-brand: 0;
+    --axm-chroma-brand: 0;
   }
 
   /* Force white backgrounds for main surfaces */
@@ -397,7 +399,7 @@ mark {
     --computed-surface: white;
 
     /* Add a subtle border to define the surface since the background is gone */
-    border: 1px solid var(--text-subtlest-token);
+    border: 1px solid var(--axm-text-subtlest-token);
   }
 
   /* Ensure text is dark (Black ink) */

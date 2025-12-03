@@ -93,8 +93,9 @@
 
     if (draggingGroupIndex === null) return;
 
+    const srcIndex = draggingGroupIndex;
     handleError(() => {
-      configState.moveGroup(draggingGroupIndex, index);
+      configState.moveGroup(srcIndex, index);
     });
     draggingGroupIndex = null;
   }
@@ -120,70 +121,72 @@
       </div>
     {/if}
 
-    {#each config.groups as group, groupIndex (group.name)}
-      <div
-        class="tree-group surface-sunken bordered"
-        draggable="true"
-        ondragstart={(e) => {
-          handleGroupDragStart(e, groupIndex);
-        }}
-        ondragover={(e) => {
-          handleGroupDragOver(e, groupIndex);
-        }}
-        ondrop={(e) => {
-          handleGroupDrop(e, groupIndex);
-        }}
-        role="treeitem"
-        aria-expanded="true"
-      >
-        <!-- Group Header -->
-        <div class="group-header surface-card">
-          <span class="drag-handle text-subtle">⋮⋮</span>
-          <input
-            type="text"
-            value={group.name}
-            oninput={(e) => {
-              const val = e.currentTarget.value;
-              handleError(() => {
-                configState.updateGroup(groupIndex, { name: val });
-              });
-            }}
-            class="group-name-input text-strong"
-          />
-          <button
-            onclick={() => {
-              configState.removeGroup(groupIndex);
-            }}
-            class="icon-button delete-button text-subtle"
-            title="Remove Group"
-          >
-            &times;
-          </button>
-        </div>
-
-        <!-- Surfaces List -->
-        <div class="group-children">
-          {#each group.surfaces as surface, surfaceIndex (surface.slug)}
-            <SurfaceRow {surface} {groupIndex} {surfaceIndex} />
-          {/each}
-
-          <button
-            onclick={() => {
-              handleError(() => {
-                configState.addSurface(groupIndex, {
-                  slug: `new-surface-${Date.now()}`,
-                  label: "New Surface",
-                  polarity: "page",
+    <ul class="groups-list">
+      {#each config.groups as group, groupIndex (group.name)}
+        <li
+          class="tree-group surface-sunken bordered"
+          draggable="true"
+          ondragstart={(e) => {
+            handleGroupDragStart(e, groupIndex);
+          }}
+          ondragover={(e) => {
+            handleGroupDragOver(e, groupIndex);
+          }}
+          ondrop={(e) => {
+            handleGroupDrop(e, groupIndex);
+          }}
+        >
+          <!-- Group Header -->
+          <div class="group-header surface-card">
+            <span class="drag-handle text-subtle">⋮⋮</span>
+            <input
+              type="text"
+              value={group.name}
+              oninput={(e) => {
+                const val = e.currentTarget.value;
+                handleError(() => {
+                  configState.updateGroup(groupIndex, { name: val });
                 });
-              });
-            }}
-            class="add-surface-button text-subtle"
-          >
-            + Add Surface
-          </button>
-        </div>
-      </div>
-    {/each}
+              }}
+              class="group-name-input text-strong"
+            />
+            <button
+              onclick={() => {
+                configState.removeGroup(groupIndex);
+              }}
+              class="icon-button delete-button text-subtle"
+              title="Remove Group"
+            >
+              &times;
+            </button>
+          </div>
+
+          <!-- Surfaces List -->
+          <ul class="group-children">
+            {#each group.surfaces as surface, surfaceIndex (surface.slug)}
+              <SurfaceRow {surface} {groupIndex} {surfaceIndex} />
+            {/each}
+
+            <li class="add-surface-wrapper">
+              <button
+                onclick={() => {
+                  handleError(() => {
+                    configState.addSurface(groupIndex, {
+                      slug: `new-surface-${Date.now()}`,
+                      label: "New Surface",
+                      polarity: "page",
+                    });
+                  });
+                }}
+                class="add-surface-button text-subtle"
+              >
+                + Add Surface
+              </button>
+            </li>
+          </ul>
+        </li>
+      {/each}
+    </ul>
 
     <!-- Add Group Footer -->
     <div class="add-group-row">
@@ -229,6 +232,15 @@
   }
 
   .tree-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .groups-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
@@ -282,10 +294,6 @@
     padding: 0 0.25rem;
   }
 
-  .icon-button:hover {
-    /* color handled by utility */
-  }
-
   .delete-button:hover {
     color: oklch(0.6 0.2 var(--hue-error));
   }
@@ -295,6 +303,12 @@
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
+    list-style: none;
+    margin: 0;
+  }
+
+  .add-surface-wrapper {
+    display: contents;
   }
 
   .add-surface-button {

@@ -177,9 +177,6 @@
   .mt-2 {
     margin-top: 0.5rem;
   }
-  .mt-4 {
-    margin-top: 1rem;
-  }
 
   /* Semantic Text Colors (assuming these exist or should exist) */
   .text-positive {

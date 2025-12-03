@@ -13,7 +13,9 @@ export function getMaxChroma(
   let max = 0.4; // Reasonable max for OKLCH
   let result = 0;
 
-  const convert = mode === "p3" ? oklchToP3 : oklchToRgb;
+  const convert = (mode === "p3" ? oklchToP3 : oklchToRgb) as (
+    color: unknown,
+  ) => unknown;
 
   for (let i = 0; i < 10; i++) {
     const mid = (min + max) / 2;

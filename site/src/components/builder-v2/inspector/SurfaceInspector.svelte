@@ -161,11 +161,6 @@
     padding: 0.25rem 0;
   }
 
-  .trace-step.active {
-    font-weight: bold;
-    color: var(--computed-fg-color);
-  }
-
   .control-group {
     display: flex;
     flex-direction: column;
@@ -204,7 +199,6 @@
     width: 100%;
     box-sizing: border-box;
     border: 1px solid var(--computed-border-dec-color);
-    background: var(--surface-workspace);
   }
 
   .score {

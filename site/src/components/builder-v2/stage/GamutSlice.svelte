@@ -28,20 +28,20 @@
   });
 </script>
 
-<div class="gamut-slice">
+<div class="gamut-slice bg-surface">
   <svg viewBox="0 0 100 40" preserveAspectRatio="none">
     <!-- P3 Gamut -->
-    <path d={p3Path} class="gamut p3" />
+    <path d={p3Path} class="gamut p3 fill-subtlest" />
 
     <!-- sRGB Gamut -->
-    <path d={srgbPath} class="gamut srgb" />
+    <path d={srgbPath} class="gamut srgb fill-subtlest" />
 
     <!-- Current Point -->
     <circle
       cx={l * 100}
       cy={40 - c * 100}
       r="1.5"
-      class="current-point"
+      class="current-point stroke-surface"
       vector-effect="non-scaling-stroke"
     />
   </svg>
@@ -55,7 +55,6 @@
   .gamut-slice {
     width: 100%;
     height: 100px;
-    background: var(--surface-sunken);
     border-radius: 4px;
     position: relative;
     overflow: hidden;
@@ -74,18 +73,15 @@
   }
 
   .gamut.p3 {
-    fill: var(--surface-subtle);
     opacity: 0.3;
   }
 
   .gamut.srgb {
-    fill: var(--surface-subtle);
     opacity: 0.5;
   }
 
   .current-point {
     fill: var(--computed-fg-color);
-    stroke: var(--surface-page);
     stroke-width: 1px;
   }
 

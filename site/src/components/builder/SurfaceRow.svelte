@@ -110,34 +110,30 @@
   }
 </script>
 
-<div
+<li
   class="surface-row {isSelected ? 'selected' : ''}"
   draggable="true"
   ondragstart={handleDragStart}
   ondragover={handleDragOver}
   ondrop={handleDrop}
-  role="treeitem"
-  aria-selected={isSelected}
 >
-  <div class="selection-marker" class:visible={isSelected}></div>
   <div
-    class="row-content"
-    onclick={() => {
-      builderState.selectSurface(isSelected ? null : surface.slug);
-    }}
-    onkeydown={(e) => {
-      if (e.key === "Enter") {
-        builderState.selectSurface(isSelected ? null : surface.slug);
-      }
-    }}
-    role="button"
-    tabindex="0"
-  >
+    class="selection-marker surface-action hue-highlight"
+    class:visible={isSelected}
+  ></div>
+  <div class="row-content">
     <span class="drag-handle">⋮⋮</span>
 
-    <span class="text-strong label">
-      {surface.label}
-    </span>
+    <button
+      class="main-action"
+      onclick={() => {
+        builderState.selectSurface(isSelected ? null : surface.slug);
+      }}
+    >
+      <span class="text-strong label">
+        {surface.label}
+      </span>
+    </button>
 
     <div class="meta-group">
       {#if hexValue}
@@ -316,14 +312,14 @@
             e.stopPropagation();
             remove();
           }}
-          class="delete-button"
+          class="delete-button hue-error"
         >
           Delete Surface
         </button>
       </div>
     </div>
   {/if}
-</div>
+</li>
 
 <style>
   .surface-row {
@@ -348,10 +344,6 @@
     top: 0;
     bottom: 0;
     width: 4px;
-    background: var(
-      --highlight-ring-color,
-      #d946ef
-    ); /* Fallback or use computed? */
     opacity: 0;
     transition: opacity 0.2s;
   }
@@ -365,7 +357,7 @@
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    cursor: pointer;
+    /* cursor: pointer; moved to button */
   }
 
   .drag-handle {
@@ -375,8 +367,22 @@
     font-size: 1rem;
   }
 
-  .label {
+  .main-action {
     flex: 1;
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    text-align: left;
+    cursor: pointer;
+    color: inherit;
+    font: inherit;
+    display: flex;
+    align-items: center;
+  }
+
+  .label {
+    /* flex: 1; moved to button */
     font-size: 0.9rem;
   }
 
@@ -513,9 +519,6 @@
   }
 
   .delete-button {
-    color: oklch(
-      0.6 0.2 var(--hue-error)
-    ); /* This is still manual, but maybe acceptable for now? */
     background: transparent;
     border: none;
     cursor: pointer;

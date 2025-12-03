@@ -4,72 +4,19 @@
 */
 
 :root {
-  /* Status Hues (Global) */
-  --hue-error: 25;
-  --hue-warning: 85;
-  --hue-success: 140;
-
   /* Missing Text Tokens */
   --text-strong-token: light-dark(oklch(0.1935 0 0), oklch(0.9866 0 0));
-  --text-token: var(--text-high-token);
+  --text-token: var(--axm-text-high-token);
 }
 
 /* --- STATUS SURFACES --- */
-.surface-status-success {
-  --surface-token: light-dark(
-    oklch(0.85 0.15 var(--hue-success)),
-    oklch(0.25 0.15 var(--hue-success))
-  );
-  --text-high-token: var(--text-strong-token);
-}
-
-.surface-status-warning {
-  --surface-token: light-dark(
-    oklch(0.9 0.15 var(--hue-warning)),
-    oklch(0.25 0.15 var(--hue-warning))
-  );
-  --text-high-token: var(--text-strong-token);
-}
-
-.surface-status-error {
-  --surface-token: light-dark(
-    oklch(0.65 0.2 var(--hue-error)),
-    oklch(0.35 0.2 var(--hue-error))
-  );
-  --text-high-token: light-dark(oklch(1 0 0), oklch(1 0 0));
-}
+/* Surface definitions are now auto-generated in generated-tokens.css */
 
 /* --- SURFACES --- */
 /* Surface definitions are now auto-generated in generated-tokens.css */
 
 /* --- SEMANTIC HUES --- */
-
-.hue-success {
-  --base-hue: 140; /* Green */
-  --hue-adjust: 0;
-  --base-chroma: 0.015; /* Subtle tint */
-
-  --default-fg-hue: 140;
-  --override-fg-chroma: 0.15; /* Vibrant text */
-}
-
-.hue-warning {
-  --base-hue: 85; /* Amber */
-  --hue-adjust: 0;
-  --base-chroma: 0.015;
-
-  --default-fg-hue: 85;
-  --override-fg-chroma: 0.15;
-}
-
-.hue-error {
-  --base-hue: 25; /* Red */
-  --hue-adjust: 0;
-  --base-chroma: 0.015;
-
-  --default-fg-hue: 25;
-  --override-fg-chroma: 0.15;
-}
+/* Hue utilities are now auto-generated from keyColors */
 
 /* --- BORDERS --- */
 
@@ -87,44 +34,26 @@
 
 /* Elevation */
 .shadow-sm {
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--axm-shadow-sm);
 }
 .shadow-md {
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--axm-shadow-md);
 }
 .shadow-lg {
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--axm-shadow-lg);
 }
 .shadow-xl {
-  box-shadow: var(--shadow-xl);
+  box-shadow: var(--axm-shadow-xl);
 }
 
 /* Focus */
 .focus-ring:focus-visible {
-  outline: 2px solid var(--focus-ring-color);
+  outline: 2px solid var(--axm-focus-ring-color);
   outline-offset: 2px;
 }
 
 /* Hue Adjustments */
-.hue-brand {
-  --base-hue: var(--hue-brand);
-  --hue-adjust: 0;
-  /* Apply a subtle tint to the surface background */
-  --base-chroma: calc(var(--chroma-brand) * 0.1);
-
-  --default-fg-hue: var(--hue-brand);
-  --override-fg-chroma: var(--chroma-brand);
-}
-
-.hue-blue {
-  --base-hue: var(--hue-blue);
-  --hue-adjust: 0;
-  /* Apply a subtle tint to the surface background */
-  --base-chroma: calc(var(--chroma-blue) * 0.1);
-
-  --default-fg-hue: var(--hue-blue);
-  --override-fg-chroma: var(--chroma-blue);
-}
+/* .hue-{name} classes are auto-generated from keyColors */
 
 /* Text Lightness Overrides */
 .text-strong {
@@ -134,20 +63,22 @@
 .text-subtle {
   /* Apply computed chroma/hue to the subtle token */
   color: oklch(
-    from var(--text-subtle-token) l var(--computed-fg-C) var(--computed-fg-H)
+    from var(--axm-text-subtle-token) l var(--computed-fg-C)
+      var(--computed-fg-H)
   );
 }
 
 .text-subtler {
   /* Apply computed chroma/hue to the subtlest token */
   color: oklch(
-    from var(--text-subtlest-token) l var(--computed-fg-C) var(--computed-fg-H)
+    from var(--axm-text-subtlest-token) l var(--computed-fg-C)
+      var(--computed-fg-H)
   );
 }
 
 .text-link {
   /* Links use the brand hue by default */
-  color: oklch(from var(--computed-fg-color) l c var(--hue-brand));
+  color: oklch(from var(--computed-fg-color) l c var(--axm-hue-brand));
   text-decoration: underline;
   cursor: pointer;
 }
@@ -175,14 +106,18 @@
 .state-selected,
 [aria-selected="true"] {
   /* Selected state uses brand background */
-  background-color: oklch(from var(--computed-surface) l c var(--hue-brand));
+  background-color: oklch(
+    from var(--computed-surface) l c var(--axm-hue-brand)
+  );
   /* Ensure text contrast on brand background might need adjustment, 
      but for now let's assume the lightness shift is handled by the surface logic 
      if we were to make this a full surface. 
      Since it's a modifier, we might need a specific token. 
      For Phase 1, let's keep it simple: Brand Border + Background Tint */
-  border-color: oklch(from var(--computed-fg-color) l c var(--hue-brand));
-  background-color: oklch(from var(--computed-surface) l 0.05 var(--hue-brand));
+  border-color: oklch(from var(--computed-fg-color) l c var(--axm-hue-brand));
+  background-color: oklch(
+    from var(--computed-surface) l 0.05 var(--axm-hue-brand)
+  );
 }
 
 /* Surface Adjustments */

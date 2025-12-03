@@ -28,7 +28,7 @@ mkdir -p docs/guide/css
 pnpm solve
 
 # Concatenate the CSS files and remove @import statements
-cat css/tokens.css css/engine.css css/utilities.css css/theme.css | sed '/^@import/d' > docs/guide/css/color-system.css
+cat css/engine.css css/utilities.css css/theme.css | sed '/^@import/d' > docs/guide/css/color-system.css
 
 if [ $? -eq 0 ]; then
   echo "Successfully updated docs/guide/css/color-system.css"

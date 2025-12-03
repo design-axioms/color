@@ -102,7 +102,7 @@
   grid-template-columns: repeat(5, 1fr);
   text-align: center;
   font-size: 0.8em;
-  color: var(--text-subtle-token);
+  color: var(--axm-text-subtle-token);
 }
 
 .docs-text-sm {
@@ -157,7 +157,7 @@
 .docs-text-subtle-sm {
   margin: 0;
   font-size: 0.9rem;
-  color: var(--text-subtle-token);
+  color: var(--axm-text-subtle-token);
 }
 
 .docs-flex-between {
@@ -177,7 +177,7 @@
   position: absolute;
   top: 0;
   bottom: 0;
-  background: var(--text-subtle-token);
+  background: var(--axm-text-subtle-token);
   opacity: 0.2;
   border-radius: 3px;
 }
@@ -189,7 +189,7 @@
   height: 16px;
   background: var(--text-strong-token);
   border-radius: 50%;
-  border: 2px solid var(--surface-token);
+  border: 2px solid var(--axm-surface-token);
 }
 
 .docs-slider-thumb.right {
@@ -212,8 +212,8 @@
 
 .docs-badge-pass {
   font-size: 0.8em;
-  border: 1px solid var(--chart-3);
-  color: var(--chart-3);
+  border: 1px solid var(--axm-chart-3);
+  color: var(--axm-chart-3);
   padding: 2px 6px;
   border-radius: 4px;
   font-weight: bold;
@@ -247,7 +247,7 @@
 }
 
 .docs-code-block {
-  background: var(--surface-token);
+  background: var(--axm-surface-token);
   padding: 1rem;
   border-radius: 4px;
   overflow-x: auto;
@@ -359,3 +359,40 @@ mjx-container[display="true"] {
   margin: 1.5rem 0;
   text-align: center;
 }
+
+/* Utilities for Components to avoid raw token usage */
+
+.stroke-surface {
+  stroke: var(--axm-surface-token);
+}
+
+.border-surface {
+  border-color: var(--axm-surface-token);
+  border-style: solid;
+}
+
+.fill-subtlest {
+  fill: var(--axm-text-subtlest-token);
+}
+
+.bg-surface {
+  background-color: var(--axm-surface-token);
+}
+
+.ring-focus-static {
+  outline: 2px solid var(--axm-focus-ring-color);
+}
+
+.focus-visible-ring:focus-visible {
+  outline: 2px solid var(--axm-focus-ring-color);
+  outline-offset: 2px;
+}
+
+.border-highlight {
+  border-color: var(--axm-highlight-ring-color);
+  border-style: solid;
+  border-width: 2px;
+}
+
+/* Graph Colors */
+/* Removed .graph-color-* in favor of .surface-action + .hue-* composition */

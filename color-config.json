@@ -43,7 +43,13 @@
     },
     "keyColors": {
       "brand": "#6e56cf",
-      "highlight": "#bd33da"
+      "highlight": "#bd33da",
+      "success": "#2ea043",
+      "warning": "#9a6700",
+      "danger": "#d73a49",
+      "error": "danger",
+      "blue": "#0366d6",
+      "info": "blue"
     }
   },
   "hueShift": {

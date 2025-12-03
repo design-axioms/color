@@ -135,7 +135,7 @@
           "light",
           config.anchors.page.light.start.background,
           config.anchors.page.light.end.background,
-          "oklch(0.7 0.15 var(--hue-info))",
+          "hue-info",
           "Light Mode",
         )}
         <!-- eslint-enable @typescript-eslint/no-confusing-void-expression -->
@@ -147,7 +147,7 @@
           "dark",
           config.anchors.page.dark.start.background,
           config.anchors.page.dark.end.background,
-          "oklch(0.6 0.2 var(--hue-brand))",
+          "hue-brand",
           "Dark Mode",
           configState.syncDark,
         )}
@@ -184,7 +184,7 @@
           "light",
           config.anchors.inverted.light.start.background,
           config.anchors.inverted.light.end.background,
-          "oklch(0.85 0.16 var(--hue-warning))",
+          "hue-warning",
           "Light Mode",
         )}
         <!-- eslint-enable @typescript-eslint/no-confusing-void-expression -->
@@ -196,7 +196,7 @@
           "dark",
           config.anchors.inverted.dark.start.background,
           config.anchors.inverted.dark.end.background,
-          "oklch(0.6 0.2 var(--hue-error))",
+          "hue-error",
           "Dark Mode",
           configState.syncDark,
         )}
@@ -211,7 +211,7 @@
   mode: "light" | "dark",
   start: number,
   end: number,
-  color: string,
+  hueClass: string,
   label: string,
   disabled = false,
 )}
@@ -223,11 +223,11 @@
     class="range-group {isActive ? 'dragging' : ''} {disabled
       ? 'disabled'
       : ''} {mode}"
-    style="{style} --range-color: {color};"
+    {style}
   >
     <!-- Label (Above/Below based on mode to avoid collision) -->
     <div class="range-label {mode} font-mono">
-      <span class="mode-badge" style="background: {color}"
+      <span class="mode-badge surface-action {hueClass}"
         >{mode === "light" ? "L" : "D"}</span
       >
       <span class="range-values text-subtle"
@@ -236,46 +236,40 @@
     </div>
 
     <!-- The Bar itself -->
-    <div
-      class="bar-fill"
+    <button
+      class="bar-fill surface-action {hueClass}"
+      type="button"
       onpointerdown={(e) => {
         if (!disabled)
           handlePointerDown(e, polarity, mode, "range", start, end);
       }}
-      role="slider"
-      tabindex={disabled ? -1 : 0}
       aria-label="{label} Range"
-      aria-valuenow={start}
       aria-disabled={disabled}
-    ></div>
+    ></button>
 
     <!-- Handles -->
-    <div
-      class="bar-handle start"
+    <button
+      class="bar-handle start surface-action {hueClass}"
+      type="button"
       style="left: {start <= end ? '0%' : '100%'}"
       onpointerdown={(e) => {
         if (!disabled)
           handlePointerDown(e, polarity, mode, "start", start, end);
       }}
-      role="slider"
-      tabindex={disabled ? -1 : 0}
       aria-label="{label} Start"
-      aria-valuenow={start}
       aria-disabled={disabled}
-    ></div>
+    ></button>
 
-    <div
-      class="bar-handle end"
+    <button
+      class="bar-handle end surface-action {hueClass}"
+      type="button"
       style="left: {start <= end ? '100%' : '0%'}"
       onpointerdown={(e) => {
         if (!disabled) handlePointerDown(e, polarity, mode, "end", start, end);
       }}
-      role="slider"
-      tabindex={disabled ? -1 : 0}
       aria-label="{label} End"
-      aria-valuenow={end}
       aria-disabled={disabled}
-    ></div>
+    ></button>
   </div>
 {/snippet}
 
@@ -396,20 +390,24 @@
     left: 0;
     right: 0;
     height: 6px;
-    background-color: var(--range-color);
+    /* background-color: var(--range-color); */
     border-radius: 3px;
     opacity: 0.9;
     box-shadow: 0 0 0 1px var(--computed-bg-color);
     cursor: grab;
     pointer-events: auto;
+    /* Button Reset */
+    appearance: none;
+    border: none;
+    padding: 0;
   }
 
   .bar-handle {
     position: absolute;
     width: 14px;
     height: 14px;
-    background-color: var(--computed-bg-color);
-    border: 2px solid var(--range-color);
+    /* background-color: var(--computed-bg-color); */
+    /* border: 2px solid var(--range-color); */
     border-radius: 50%;
     transform: translate(-50%, -50%);
     cursor: col-resize;
@@ -417,6 +415,9 @@
     z-index: 10;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
     transition: transform 0.1s;
+    /* Button Reset */
+    appearance: none;
+    padding: 0;
   }
 
   .bar-handle:hover {
@@ -451,12 +452,8 @@
     width: 16px;
     height: 16px;
     border-radius: 4px;
-    color: white;
+    /* color: white; */
     font-weight: bold;
     font-size: 0.6rem;
-  }
-
-  .range-values {
-    /* color handled by utility class */
   }
 </style>

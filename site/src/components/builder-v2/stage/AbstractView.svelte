@@ -1,16 +1,16 @@
 <script lang="ts">
+  import type { Polarity } from "@axiomatic-design/color/types";
   import { getContext } from "svelte";
+  import type { BuilderState } from "../../../lib/state/BuilderState.svelte";
   import { configState } from "../../../lib/state/ConfigState.svelte";
   import { themeState } from "../../../lib/state/ThemeState.svelte";
-  import type { BuilderState } from "../../../lib/state/BuilderState.svelte";
-  import type { Polarity } from "@axiomatic-design/color/types";
 
   const builder = getContext<BuilderState>("builder");
   let mode = $derived(themeState.mode);
 
   // Polarity Selection
   let polarity = $state<Polarity>("page");
-  const polarities: Polarity[] = ["page", "inverted", "action"];
+  const polarities: Polarity[] = ["page", "inverted"];
 
   let anchors = $derived(configState.config.anchors[polarity][mode]);
   let start = $derived(anchors.start.background);
@@ -51,9 +51,9 @@
     if (!isDragging) return;
 
     // Calculate new lightness from Y position
-    // We need the SVG's bounding rect to get relative Y
-    const svg = e.currentTarget as SVGSVGElement;
-    const rect = svg.getBoundingClientRect();
+    // We need the container's bounding rect to get relative Y
+    const container = e.currentTarget as HTMLDivElement;
+    const rect = container.getBoundingClientRect();
     const y = e.clientY - rect.top;
     const l = yToLightness(y);
 
@@ -81,103 +81,136 @@
     </div>
   </div>
 
-  <svg
-    {width}
-    {height}
-    viewBox="0 0 {width} {height}"
+  <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+  <div
+    class="graph-container"
     onmousemove={handleMouseMove}
     onmouseup={handleMouseUp}
     onmouseleave={handleMouseUp}
     role="application"
+    aria-label="Lightness Graph Editor"
   >
-    <!-- Grid -->
-    <line
-      x1={padding}
-      y1={padding}
-      x2={padding}
-      y2={height - padding}
-      stroke="var(--computed-border-dec-color)"
-    />
-    <line
-      x1={padding}
-      y1={height - padding}
-      x2={width - padding}
-      y2={height - padding}
-      stroke="var(--computed-border-dec-color)"
-    />
-
-    <!-- Curve (Linear for now) -->
-    <line
-      x1={padding}
-      y1={yScale(start)}
-      x2={width - padding}
-      y2={yScale(end)}
-      stroke="currentColor"
-      stroke-width="2"
-      stroke-dasharray="4"
-    />
-
-    <!-- Selected Surface Line -->
-    {#if selectedSurfaceL !== null}
+    <svg
+      {width}
+      {height}
+      viewBox="0 0 {width} {height}"
+      role="img"
+      aria-label="Lightness Graph Visualization"
+    >
+      <!-- Grid -->
       <line
         x1={padding}
-        y1={yScale(selectedSurfaceL)}
+        y1={padding}
+        x2={padding}
+        y2={height - padding}
+        stroke="var(--computed-border-dec-color)"
+      />
+      <line
+        x1={padding}
+        y1={height - padding}
         x2={width - padding}
-        y2={yScale(selectedSurfaceL)}
-        stroke="var(--text-link)"
+        y2={height - padding}
+        stroke="var(--computed-border-dec-color)"
+      />
+
+      <!-- Curve (Linear for now) -->
+      <line
+        x1={padding}
+        y1={yScale(start)}
+        x2={width - padding}
+        y2={yScale(end)}
+        stroke="currentColor"
         stroke-width="2"
+        stroke-dasharray="4"
+      />
+
+      <!-- Selected Surface Line -->
+      {#if selectedSurfaceL !== null}
+        <line
+          x1={padding}
+          y1={yScale(selectedSurfaceL)}
+          x2={width - padding}
+          y2={yScale(selectedSurfaceL)}
+          stroke="var(--text-link)"
+          stroke-width="2"
+        />
+        <text
+          x={width / 2}
+          y={yScale(selectedSurfaceL) - 8}
+          text-anchor="middle"
+          font-size="12"
+          fill="var(--text-link)"
+          font-weight="bold"
+        >
+          {selectedSurfaceId} ({selectedSurfaceL.toFixed(2)})
+        </text>
+      {/if}
+
+      <!-- Start Handle (Visual) -->
+      <circle
+        cx={padding}
+        cy={yScale(start)}
+        r="8"
+        fill="var(--computed-fg-color)"
       />
       <text
-        x={width / 2}
-        y={yScale(selectedSurfaceL) - 8}
-        text-anchor="middle"
+        x={padding + 15}
+        y={yScale(start)}
+        dominant-baseline="middle"
         font-size="12"
-        fill="var(--text-link)"
-        font-weight="bold"
+        fill="currentColor">Start: {start.toFixed(2)}</text
       >
-        {selectedSurfaceId} ({selectedSurfaceL.toFixed(2)})
-      </text>
-    {/if}
 
-    <!-- Start Handle -->
-    <circle
-      cx={padding}
-      cy={yScale(start)}
-      r="8"
-      fill="var(--computed-fg-color)"
-      cursor="ns-resize"
-      onmousedown={() => {
-        handleMouseDown("start");
-      }}
-    />
-    <text
-      x={padding + 15}
-      y={yScale(start)}
-      dominant-baseline="middle"
-      font-size="12"
-      fill="currentColor">Start: {start.toFixed(2)}</text
-    >
+      <!-- End Handle (Visual) -->
+      <circle
+        cx={width - padding}
+        cy={yScale(end)}
+        r="8"
+        fill="var(--computed-fg-color)"
+      />
+      <text
+        x={width - padding - 15}
+        y={yScale(end)}
+        text-anchor="end"
+        dominant-baseline="middle"
+        font-size="12"
+        fill="currentColor">End: {end.toFixed(2)}</text
+      >
+    </svg>
 
-    <!-- End Handle -->
-    <circle
-      cx={width - padding}
-      cy={yScale(end)}
-      r="8"
-      fill="var(--computed-fg-color)"
-      cursor="ns-resize"
-      onmousedown={() => {
-        handleMouseDown("end");
-      }}
-    />
-    <text
-      x={width - padding - 15}
-      y={yScale(end)}
-      text-anchor="end"
-      dominant-baseline="middle"
-      font-size="12"
-      fill="currentColor">End: {end.toFixed(2)}</text
+    <!-- Interactive Overlay -->
+    <div
+      class="controls-overlay"
+      style:width="{width}px"
+      style:height="{height}px"
     >
-  </svg>
+      <!-- Start Handle Button -->
+      <button
+        type="button"
+        class="control-handle"
+        style:left="{padding}px"
+        style:top="{yScale(start)}px"
+        style:cursor="ns-resize"
+        aria-label="Start Anchor"
+        onmousedown={() => {
+          handleMouseDown("start");
+        }}
+      ></button>
+
+      <!-- End Handle Button -->
+      <button
+        type="button"
+        class="control-handle"
+        style:left="{width - padding}px"
+        style:top="{yScale(end)}px"
+        style:cursor="ns-resize"
+        aria-label="End Anchor"
+        onmousedown={() => {
+          handleMouseDown("end");
+        }}
+      ></button>
+    </div>
+  </div>
 
   <p class="hint">
     Drag the points to adjust the anchor lightness for <strong
@@ -226,11 +259,51 @@
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   }
 
-  svg {
+  .graph-container {
+    margin: 1rem 0;
     background: var(--surface-sunken);
     border-radius: 8px;
-    margin: 1rem 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+  }
+
+  .controls-overlay {
+    position: absolute;
+    top: 0;
+    left: 0; /* Centering handled by flex parent if width matches, but here we set explicit width */
+    /* Actually, since parent is flex center, and we want overlay to match SVG... */
+    /* Better to let the overlay be absolutely positioned relative to container */
+    pointer-events: none;
+  }
+
+  /* Fix overlay positioning since container is flex-centered */
+  /* The SVG has explicit width/height. The overlay should match. */
+
+  .control-handle {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    transform: translate(-50%, -50%);
+    background: transparent;
+    border: none;
+    border-radius: 50%;
+    pointer-events: auto;
+    padding: 0;
+  }
+
+  .control-handle:focus-visible {
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: 2px;
+  }
+
+  svg {
+    /* background: var(--surface-sunken); moved to container */
+    /* border-radius: 8px; moved to container */
+    /* margin: 1rem 0; moved to container */
     user-select: none;
+    display: block; /* Remove inline spacing */
   }
 
   .hint {

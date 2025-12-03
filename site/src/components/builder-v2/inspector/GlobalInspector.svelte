@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { formatHex } from "culori";
   import { configState } from "../../../lib/state/ConfigState.svelte";
   import VibeControls from "./VibeControls.svelte";
 
@@ -9,6 +10,17 @@
   }
   function fromPercent(val: number): number {
     return val / 100;
+  }
+
+  function safeFormatHex(val: string | undefined): string {
+    if (!val) return "#000000";
+    // Truncate long decimals in oklch strings to avoid parsing errors
+    // e.g. oklch(0.6027... 0.302... 298...) -> oklch(0.603 0.302 298)
+    const cleaned = val.replace(/(\d+\.\d{4,})/g, (match) =>
+      parseFloat(match).toFixed(3),
+    );
+    const hex = formatHex(cleaned);
+    return hex ?? "#000000";
   }
 </script>
 
@@ -129,7 +141,7 @@
         <span>{key}</span>
         <input
           type="color"
-          {value}
+          value={safeFormatHex(value)}
           oninput={(e) => {
             configState.updateKeyColor(key, e.currentTarget.value);
           }}

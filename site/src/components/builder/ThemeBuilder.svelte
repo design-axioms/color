@@ -226,7 +226,7 @@
                       </h4>
                       <div class="preview-surface-grid">
                         {#each group.surfaces as surface (surface.slug)}
-                          <div
+                          <button
                             class="surface-{surface.slug} bordered preview-surface-card {builderState.selectedSurfaceId ===
                             surface.slug
                               ? 'highlight-ring'
@@ -234,13 +234,7 @@
                             onclick={() => {
                               builderState.selectSurface(surface.slug);
                             }}
-                            onkeydown={(e) => {
-                              if (e.key === "Enter") {
-                                builderState.selectSurface(surface.slug);
-                              }
-                            }}
-                            role="button"
-                            tabindex="0"
+                            type="button"
                           >
                             <span class="text-strong preview-surface-label">
                               {surface.label}
@@ -248,7 +242,7 @@
                             <code class="text-subtle preview-surface-code">
                               .surface-{surface.slug}
                             </code>
-                          </div>
+                          </button>
                         {/each}
                       </div>
                     </div>

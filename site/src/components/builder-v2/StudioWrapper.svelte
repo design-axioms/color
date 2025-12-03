@@ -13,7 +13,7 @@
 </StateProvider>
 
 <style>
-  .fullscreen-studio {
+  :global(.fullscreen-studio) {
     position: fixed;
     top: 0;
     left: 0;

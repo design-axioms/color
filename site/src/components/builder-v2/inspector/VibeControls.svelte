@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { configState } from "../../../lib/state/ConfigState.svelte";
   import { setContrast, setVibrancy } from "../../../lib/engine/VibeEngine";
+  import { configState } from "../../../lib/state/ConfigState.svelte";
 
   let contrast = $state(50);
   let vibrancy = $state(50);
@@ -14,7 +14,7 @@
   }
 </script>
 
-<div class="vibe-controls">
+<div class="vibe-controls bg-surface">
   <div class="control">
     <label>
       <span class="label-text text-subtle">Contrast</span>
@@ -47,7 +47,6 @@
     flex-direction: column;
     gap: 1rem;
     padding: 1rem;
-    background: var(--surface-sunken);
     border-radius: 4px;
   }
 

@@ -30,6 +30,12 @@ export interface Anchors {
 export interface PolarityAnchors {
   readonly page: Anchors;
   readonly inverted: Anchors;
+  /**
+   * A map of key color names to their values.
+   * Values can be:
+   * - A hex color string (e.g. "#ff0000")
+   * - A reference to another key color (e.g. "danger")
+   */
   readonly keyColors: Record<string, string>;
 }
 
@@ -76,6 +82,11 @@ export type SurfaceConfig = {
    * If set, the solver will adjust Lightness to compensate for the HK effect.
    */
   targetChroma?: number;
+  /**
+   * Target hue for this surface.
+   * Can be a number (0-360) or a reference to a key color (e.g. "brand").
+   */
+  hue?: number | string;
   /**
    * Derivative surfaces (states) that are solved relative to this surface.
    */

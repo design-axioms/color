@@ -163,6 +163,9 @@ importers:
       '@sveltejs/vite-plugin-svelte':
         specifier: ^6.2.1
         version: 6.2.1(svelte@5.45.2)(vite@7.2.4(@types/node@24.10.1)(jiti@2.6.1)(yaml@2.8.1))
+      '@types/culori':
+        specifier: ^4.0.1
+        version: 4.0.1
       rehype-mathjax:
         specifier: ^7.1.0
         version: 7.1.0

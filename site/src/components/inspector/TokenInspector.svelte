@@ -1,6 +1,8 @@
 <script lang="ts">
-  import { setContext } from "svelte";
+  import { setContext, type Snippet } from "svelte";
   import InspectorPanel from "./InspectorPanel.svelte";
+
+  let { children } = $props<{ children?: Snippet }>();
 
   let selectedElement = $state<HTMLElement | null>(null);
 
@@ -18,7 +20,7 @@
 
 <div class="token-inspector-container not-content surface-sunken bordered">
   <div class="inspector-content">
-    <slot />
+    {@render children?.()}
   </div>
 
   {#if selectedElement}

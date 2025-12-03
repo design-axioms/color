@@ -1,5 +1,4 @@
 <script lang="ts">
-  /* eslint-disable @typescript-eslint/no-unsafe-assignment */
   import { getContext } from "svelte";
   import type { ConfigState } from "../../lib/state/ConfigState.svelte";
   import type { ThemeState } from "../../lib/state/ThemeState.svelte";
@@ -31,7 +30,7 @@
           points.push({
             x: index,
             y: bg.l, // 0-1
-            name: surface.name,
+            name: surface.label,
             slug: surface.slug,
             group: group.name,
           });

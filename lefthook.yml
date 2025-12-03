@@ -28,7 +28,7 @@ pre-push:
     typecheck:
       run: tsc --noEmit
     site-check:
-      run: pnpm --filter site astro check
+      run: pnpm --filter site astro check && pnpm --filter site exec svelte-check
     build:
       run: pnpm build
     publint:

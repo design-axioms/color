@@ -40,6 +40,20 @@ export function getKeyColorStats(keyColors?: Record<string, string>): {
     return {};
   }
 
+  // If 'brand' exists, use it exclusively for global stats
+  if (keyColors.brand) {
+    const entry = toOklch(keyColors.brand) as
+      | { l: number; c: number; h: number }
+      | undefined;
+    if (entry) {
+      return {
+        lightness: roundLightness(entry.l),
+        chroma: parseFloat(entry.c.toFixed(4)),
+        hue: isNaN(entry.h) ? undefined : parseFloat(entry.h.toFixed(4)),
+      };
+    }
+  }
+
   const lightnesses: number[] = [];
   const chromas: number[] = [];
   const hues: number[] = [];
@@ -409,6 +423,16 @@ export function solve(config: SolverConfig): Theme {
           // Use targetChroma if specified
           if (surface.targetChroma !== undefined) {
             chroma = surface.targetChroma;
+          }
+
+          // Use target hue if specified
+          if (surface.hue !== undefined) {
+            if (typeof surface.hue === "number") {
+              hue = surface.hue;
+            } else {
+              // Resolve key color
+              hue = getHue(config.anchors.keyColors[surface.hue], defaultHue);
+            }
           }
           // If it's a state (e.g. hover), we might want to adjust chroma?
           // For now, keep it simple.

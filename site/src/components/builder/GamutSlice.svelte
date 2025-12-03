@@ -37,7 +37,7 @@
       for (let x = 0; x < width; x++) {
         const c = (x / width) * maxChroma;
 
-        const color = { mode: "oklch", l, c, h: hue };
+        const color = { mode: "oklch" as const, l, c, h: hue };
 
         // Check if color is within sRGB gamut
         if (displayable(color)) {
@@ -80,7 +80,7 @@
   });
 </script>
 
-<div class="gamut-slice surface-sunken bordered">
+<div class="gamut-slice surface-workspace bordered">
   <div class="canvas-container bordered">
     <canvas bind:this={canvas} {width} {height}></canvas>
 
@@ -91,7 +91,7 @@
       {@const isHighlighted = slug === highlightSlug}
 
       <div
-        class="point {isHighlighted ? 'highlighted' : ''}"
+        class="point {isHighlighted ? 'highlighted border-highlight' : ''}"
         style="left: {x}px; top: {y}px; background-color: {formatHex({
           mode: 'oklch',
           ...color,
@@ -146,7 +146,6 @@
   .point.highlighted {
     width: 12px;
     height: 12px;
-    border: 2px solid var(--highlight-ring-color);
     z-index: 10;
   }
 

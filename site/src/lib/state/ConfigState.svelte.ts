@@ -134,7 +134,7 @@ export class ConfigState {
     }
   }
 
-  private markAsCustom(): void {
+  markAsCustom(): void {
     if (this.presetId !== "") {
       this.presetId = "";
     }
