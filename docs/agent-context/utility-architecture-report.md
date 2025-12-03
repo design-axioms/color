@@ -55,14 +55,13 @@ We recommend splitting the "Utility Classes" section in `tokens.md` into clearer
 - `.bg-surface`: "Paint background with current surface color."
 - `.border-surface`: "Paint border with current surface color (blend/cutout)."
 - `.stroke-surface`: "Paint SVG stroke with current surface color."
-- `.fill-subtlest`: "Paint SVG fill with subtlest text color."
 
 ### B. Interaction States
 
 _Utilities that apply system-wide interaction styles._
 
-- `.ring-focus-static`: "Apply the standard focus ring permanently."
-- `.focus-visible-ring`: "Apply the standard focus ring on keyboard focus."
+- `.ring-focus`: "Apply the standard focus ring permanently."
+- `.ring-focus-visible`: "Apply the standard focus ring on keyboard focus."
 - `.border-highlight`: "Apply the standard highlight/selection color to the border." (Consider renaming to `.state-selected-border` or similar if we want to be more semantic, but `.border-highlight` is consistent with atomic CSS naming).
 
 ### C. Surface Primitives (Distinct Category)

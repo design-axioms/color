@@ -31,10 +31,10 @@
 <div class="gamut-slice bg-surface">
   <svg viewBox="0 0 100 40" preserveAspectRatio="none">
     <!-- P3 Gamut -->
-    <path d={p3Path} class="gamut p3 fill-subtlest" />
+    <path d={p3Path} fill="currentColor" class="gamut p3 text-subtlest" />
 
     <!-- sRGB Gamut -->
-    <path d={srgbPath} class="gamut srgb fill-subtlest" />
+    <path d={srgbPath} fill="currentColor" class="gamut srgb text-subtlest" />
 
     <!-- Current Point -->
     <circle

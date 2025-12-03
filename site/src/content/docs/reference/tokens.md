@@ -19,13 +19,7 @@ These tokens are scoped to the surface class (e.g., `.surface-card`). They chang
 
 ### Usage
 
-```css
-.my-component {
-  background: var(--axm-surface-token);
-  color: var(--axm-text-high-token);
-  border: 1px solid var(--axm-border-dec-token);
-}
-```
+Prefer using the utility classes (like `.text-strong`, `.surface-card`) instead of accessing these tokens directly. This ensures your UI remains consistent with the system's composition model.
 
 ## Utility Classes
 
@@ -40,7 +34,6 @@ These utilities allow elements to "read" the current surface context and apply i
 | `.bg-surface`     | Sets `background-color` to the surface token. |
 | `.border-surface` | Sets `border-color` to the surface token.     |
 | `.stroke-surface` | Sets SVG `stroke` to the surface token.       |
-| `.fill-subtlest`  | Sets SVG `fill` to the subtlest text token.   |
 
 ### Interaction States
 
@@ -48,8 +41,8 @@ These utilities apply system-wide interaction styles, ensuring consistency for f
 
 | Class                 | Description                                      |
 | :-------------------- | :----------------------------------------------- |
-| `.ring-focus-static`  | Applies a static focus ring.                     |
-| `.focus-visible-ring` | Applies a focus ring only on `:focus-visible`.   |
+| `.ring-focus`         | Applies a static focus ring.                     |
+| `.ring-focus-visible` | Applies a focus ring only on `:focus-visible`.   |
 | `.border-highlight`   | Sets `border-color` to the highlight ring color. |
 
 ### Composition

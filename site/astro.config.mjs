@@ -31,9 +31,9 @@ export default defineConfig({
     starlight({
       title: "Axiomatic Color",
       customCss: [
-        "./src/styles/engine.css",
+        path.resolve(__dirname, "../css/engine.css"),
         "./src/styles/theme.css",
-        "./src/styles/utilities.css",
+        path.resolve(__dirname, "../css/utilities.css"),
         "./src/styles/docs.css",
         "./src/styles/starlight-overrides.css",
       ],

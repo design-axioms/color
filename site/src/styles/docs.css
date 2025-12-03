@@ -371,19 +371,15 @@ mjx-container[display="true"] {
   border-style: solid;
 }
 
-.fill-subtlest {
-  fill: var(--axm-text-subtlest-token);
-}
-
 .bg-surface {
   background-color: var(--axm-surface-token);
 }
 
-.ring-focus-static {
+.ring-focus {
   outline: 2px solid var(--axm-focus-ring-color);
 }
 
-.focus-visible-ring:focus-visible {
+.ring-focus-visible:focus-visible {
   outline: 2px solid var(--axm-focus-ring-color);
   outline-offset: 2px;
 }

@@ -362,7 +362,7 @@
             <!-- P1 Button -->
             <button
               type="button"
-              class="control-handle focus-visible-ring"
+              class="control-handle ring-focus-visible"
               style:left="{toSvgX(curve.p1[0])}%"
               style:top="{toSvgY(curve.p1[1])}%"
               style:cursor={dragging ? "grabbing" : "grab"}
@@ -378,7 +378,7 @@
             <!-- P2 Button -->
             <button
               type="button"
-              class="control-handle focus-visible-ring"
+              class="control-handle ring-focus-visible"
               style:left="{toSvgX(curve.p2[0])}%"
               style:top="{toSvgY(curve.p2[1])}%"
               style:cursor={dragging ? "grabbing" : "grab"}
