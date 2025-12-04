@@ -162,34 +162,11 @@
     color-scheme: dark;
   }
 
-  :root,
-  :root[data-theme="light"],
-  :root[data-theme="dark"] {
-    /* --- Page Surface Tokens (Copied from theme.css for :root scope) --- */
-    --local-light-h: 5;
-    --local-light-c: 0;
-    --local-dark-h: 0;
-    --local-dark-c: 0;
-    --surface-light-h: var(--base-hue, var(--local-light-h));
-    --surface-light-c: var(--base-chroma, var(--local-light-c));
-    --surface-dark-h: var(--base-hue, var(--local-dark-h));
-    --surface-dark-c: var(--base-chroma, var(--local-dark-c));
-    --axm-surface-token: light-dark(
-      oklch(1 var(--surface-light-c) var(--surface-light-h)),
-      oklch(0 var(--surface-dark-c) var(--surface-dark-h))
-    );
-    --axm-text-high-token: light-dark(oklch(0 0 0), oklch(1 0 0));
-    --axm-text-subtle-token: light-dark(oklch(0.4586 0 0), oklch(0.893 0 0));
-    --axm-text-subtlest-token: light-dark(oklch(0.54 0 0), oklch(0.8406 0 0));
-    --axm-border-dec-token: light-dark(
-      oklch(0.1935 0 0 / 0.0799),
-      oklch(0.9866 0 0 / 0.3938)
-    );
-    --axm-border-int-token: light-dark(
-      oklch(0.1935 0 0 / 0.2093),
-      oklch(0.9866 0 0 / 0.5718)
-    );
-
+  /* 
+   * We apply these mappings on `body` because `theme.css` defines the 
+   * Axiomatic tokens on `body` (and .surface-page), not :root.
+   */
+  body {
     /* --- Grays (Mapping to Axiomatic Neutrals) --- */
     --sl-color-gray-1: var(--axm-text-high-token);
     --sl-color-gray-2: var(--axm-text-subtle-token);
@@ -204,17 +181,17 @@
     --sl-color-accent-high: oklch(0.8 0.1 var(--axm-hue-brand));
 
     /* --- Backgrounds --- */
-    --sl-color-bg: light-dark(oklch(1 0 5), oklch(0 0 0));
-    --sl-color-bg-nav: light-dark(oklch(1 0 5), oklch(0 0 0));
-    --sl-color-bg-sidebar: light-dark(oklch(0.98 0 5), oklch(0.02 0 0));
+    --sl-color-bg: var(--axm-surface-token);
+    --sl-color-bg-nav: var(--axm-surface-token);
+    --sl-color-bg-sidebar: var(--axm-surface-token);
 
     /* --- Text --- */
-    --sl-color-text: light-dark(oklch(0 0 0), oklch(1 0 0));
+    --sl-color-text: var(--axm-text-high-token);
     --sl-color-text-invert: light-dark(oklch(1 0 0), oklch(0 0 0));
 
     /* --- Borders --- */
-    --sl-color-hairline: light-dark(oklch(0 0 0 / 0.1), oklch(1 0 0 / 0.1));
-    --sl-color-border: light-dark(oklch(0 0 0 / 0.15), oklch(1 0 0 / 0.15));
+    --sl-color-hairline: var(--axm-border-dec-token);
+    --sl-color-border: var(--axm-border-int-token);
   }
 
   :root {

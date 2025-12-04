@@ -125,7 +125,16 @@
   - **Phase 3: Infrastructure Hardening (Completed)**
     - **Goal**: Fix verification scripts, resolve lint errors, and improve test coverage to ensure a stable codebase.
 
-## Epoch 28: Developer Tooling (Planned)
+## Epoch 28: Code Review & Hardening (Completed)
+
+- **Goal**: Perform a comprehensive context-aware code review to ensure alignment with Axioms and Decisions before proceeding to new features.
+- **Phases**:
+  - **Phase 1: Review Planning (Completed)**
+    - **Goal**: Analyze recent changes against the "Constitution" (Axioms) and formulate a specific review checklist.
+  - **Phase 2: Execution & Remediation (Completed)**
+    - **Goal**: Execute the review checklist, identify violations, and implement fixes for critical issues (e.g., hardcoded tokens, performance risks).
+
+## Epoch 29: Developer Tooling (Planned)
 
 - **Goal**: Create a world-class developer experience for users of the Axiomatic Color system.
 - **Phases**:

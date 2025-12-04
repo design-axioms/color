@@ -38,7 +38,7 @@ export default defineConfig({
       },
       customCss: [
         path.resolve(__dirname, "../css/engine.css"),
-        "./src/styles/theme.css",
+        path.resolve(__dirname, "../css/theme.css"),
         path.resolve(__dirname, "../css/utilities.css"),
         "./src/styles/docs.css",
         "./src/styles/starlight-custom.css",

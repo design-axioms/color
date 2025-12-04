@@ -1,43 +1,38 @@
-# Implementation Plan - Epoch 25: The Grand Simulation
+# Implementation Plan - Epoch 28: Code Review & Hardening
 
-**Goal**: Validate the system's advanced capabilities by simulating the specific workflows of key personas (Alex, Jordan, Dr. Chen, Marcus) in a real environment.
+## Goal
 
-## Phase 1: The Tinkerer (Alex)
+Perform a comprehensive context-aware code review to ensure alignment with Axioms and Decisions before proceeding to new features.
 
-**Goal**: Simulate creating a "Cyberpunk" theme (High Chroma, Dark Mode) by manipulating the configuration to extremes.
+## Phase 1: Review Planning (Completed)
 
-- [ ] **Setup**: Create `examples/grand-simulation` and initialize a new project.
-- [ ] **Configuration**: Manually edit `color-config.json` to:
-  - Set a high-chroma primary brand color (Neon Pink/Cyan).
-  - Adjust anchors to create a high-contrast "Cyberpunk" look (deep blacks, bright highlights).
-  - Enable P3 gamut support (if configurable, or verify it's on by default).
-- [ ] **Build**: Run `axiomatic build` and verify it succeeds without errors despite the extreme values.
+- [x] Analyze recent changes against the "Constitution" (Axioms).
+- [x] Formulate a specific review checklist.
 
-## Phase 2: The Audit (Jordan)
+## Phase 2: Execution & Remediation
 
-**Goal**: Verify accessibility compliance of the extreme theme using the `audit` command and high-contrast generation.
+- [x] **Source of Truth Verification**:
+  - [x] Verify if `site/src/styles/starlight-custom.css` duplicates `css/theme.css` tokens. **(FAILED)**
+  - [x] Verify if font definitions in `starlight-custom.css` duplicate `site/src/styles/fonts.css`. **(PASSED)**
+- [x] **Runtime Performance**:
+  - [x] Audit `src/lib/browser.ts` `MutationObserver` for performance risks. **(RISK IDENTIFIED)**
+  - [x] Verify `initInvertedSurfaces` error handling. **(PASSED)**
+- [x] **Component Architecture**:
+  - [x] Review `site/src/components/algebra/*` for Svelte 5 best practices. **(PASSED)**
+  - [x] Check for "Magic Numbers" in new components. **(ACCEPTABLE)**
+- [x] **Strict Token Compliance**:
+  - [x] Scan `site/src/content/docs/advanced/composition-algebra.mdx` for hardcoded values. **(PASSED)**
 
-- [ ] **Audit**: Run `axiomatic audit` on the "Cyberpunk" config.
-  - **Expectation**: It might fail some APCA checks due to high chroma/contrast.
-  - **Action**: Adjust the config based on the audit feedback until it passes (or understand why it fails).
-- [ ] **High Contrast**: Inspect the generated CSS to ensure `prefers-contrast: more` media queries are present and correct.
-- [ ] **Forced Colors**: Verify that semantic system colors (Canvas, Highlight) are used in the output.
+## Phase 3: Remediation (Completed)
 
-## Phase 3: The Scientist (Dr. Chen)
+- [x] **Fix Source of Truth**:
+  - [x] Remove manual token definitions from `site/src/styles/starlight-custom.css`.
+  - [x] Ensure `css/theme.css` is correctly loaded in the Starlight config.
+  - [x] Deleted stale `site/src/styles/theme.css`.
+- [x] **Optimize Runtime**:
+  - [x] Refactor `ThemeManager` observer to be more efficient (avoid full DOM scans).
 
-**Goal**: Inspect the generated CSS for P3 gamut support (`oklch`) and verify interpolation logic.
+## Phase 4: Documentation
 
-- [ ] **Gamut Inspection**: Read `theme.css` and grep for `oklch(`.
-  - Verify that values are not clamped to sRGB (chroma > 0.4 for neon colors).
-- [ ] **Interpolation Check**: Verify that the hue rotation logic (if used) is producing expected intermediate values.
-
-## Phase 4: The Architect (Marcus)
-
-**Goal**: Validate interoperability by exporting the theme to DTCG and Tailwind formats and inspecting the output.
-
-- [ ] **DTCG Export**: Run `axiomatic export --format dtcg`.
-  - Validate the JSON structure against the DTCG spec (roughly).
-  - Check that semantic tokens are preserved.
-- [ ] **Tailwind Export**: Run `axiomatic export --format tailwind`.
-  - Verify the output is a valid Tailwind config partial.
-  - Check that it references the CSS variables correctly.
+- [x] Document findings in `docs/agent-context/current/review-findings.md`.
+- [ ] Create remediation tasks for any violations found.

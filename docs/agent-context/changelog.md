@@ -907,3 +907,18 @@
   - **Linting**: Resolved 50+ ESLint errors across Svelte components and test files, enforcing strict type safety.
   - **Testing**: Updated `src/lib/__tests__/browser.test.ts` to mock `getComputedStyle` correctly.
   - **Configuration**: Updated `tsconfig.json` and `eslint.config.js` to properly handle test files and ignores.
+
+## Epoch 28: Code Review & Hardening (2025-12-03)
+
+**Goal**: Address "Source of Truth" violations and performance risks identified during code review to ensure a stable and maintainable codebase.
+
+**Completed Work**:
+
+- **Source of Truth Remediation**:
+  - **CSS**: Refactored `site/src/styles/starlight-custom.css` to remove hardcoded color tokens. It now maps Starlight's semantic variables (e.g., `--sl-color-bg`) directly to Axiomatic system variables (e.g., `--bg-surface-sunken`).
+  - **Configuration**: Updated `site/astro.config.mjs` to import the authoritative `../css/theme.css` instead of relying on implicit or duplicate styles.
+- **Performance Optimization**:
+  - **Runtime**: Optimized `ThemeManager` in `src/lib/browser.ts`. The `MutationObserver` now checks only `addedNodes` for inverted surfaces instead of re-scanning the entire document tree on every mutation.
+- **Verification**:
+  - Verified the build (`pnpm --filter site build`) passes with the new configuration.
+  - Confirmed that the documentation site renders correctly with the refactored styles.

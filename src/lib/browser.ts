@@ -127,19 +127,20 @@ export class ThemeManager {
     if (typeof MutationObserver === "undefined") return;
 
     this.observer = new MutationObserver((mutations) => {
-      let shouldUpdate = false;
+      const elementsToUpdate = new Set<HTMLElement>();
+      const selector = this.invertedSelectors.join(",");
+
       for (const mutation of mutations) {
         if (mutation.type === "childList") {
-          // Check if any added node is or contains an inverted surface
           for (const node of mutation.addedNodes) {
             if (node instanceof HTMLElement) {
-              if (
-                this.matchesInverted(node) ||
-                node.querySelector(this.invertedSelectors.join(","))
-              ) {
-                shouldUpdate = true;
-                break;
+              if (node.matches(selector)) {
+                elementsToUpdate.add(node);
               }
+              const descendants = node.querySelectorAll(selector);
+              descendants.forEach((d) =>
+                elementsToUpdate.add(d as HTMLElement),
+              );
             }
           }
         } else if (
@@ -148,16 +149,18 @@ export class ThemeManager {
         ) {
           if (
             mutation.target instanceof HTMLElement &&
-            this.matchesInverted(mutation.target)
+            mutation.target.matches(selector)
           ) {
-            shouldUpdate = true;
+            elementsToUpdate.add(mutation.target);
           }
         }
-        if (shouldUpdate) break;
       }
 
-      if (shouldUpdate) {
-        this.updateInvertedSurfaces();
+      if (elementsToUpdate.size > 0) {
+        const targetScheme = this.resolvedMode === "light" ? "dark" : "light";
+        elementsToUpdate.forEach((el) => {
+          el.style.setProperty("color-scheme", targetScheme);
+        });
       }
     });
 

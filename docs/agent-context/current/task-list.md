@@ -1,0 +1,8 @@
+- [x] **Fix Source of Truth Violation**
+  - [x] Update `site/astro.config.mjs` to point to `../css/theme.css`.
+  - [x] Remove hardcoded tokens from `site/src/styles/starlight-custom.css`.
+  - [x] Delete stale `site/src/styles/theme.css`.
+- [x] **Optimize Runtime**
+  - [x] Refactor `ThemeManager` in `src/lib/browser.ts` to use a more efficient `MutationObserver` strategy.
+- [x] **Verify Fixes**
+  - [x] Run `pnpm --filter site build` to ensure no regressions.

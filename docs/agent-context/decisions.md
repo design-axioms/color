@@ -556,3 +556,19 @@ This file tracks key architectural and design decisions made throughout the proj
   - **Performance**: Zero JS overhead compared to MathJax or KaTeX.
   - **Accessibility**: Native support in modern browsers is excellent and accessible to screen readers.
   - **Control**: CSS overrides allow us to match the font stack and spacing exactly to our design system.
+
+### [2025-12-03] Single Source of Truth for Docs Theme
+
+- **Context**: The documentation site was defining its own color tokens in `starlight-custom.css`, duplicating values from the generated `theme.css`. This led to maintenance issues where the docs didn't reflect the actual system state.
+- **Decision**: Refactor `starlight-custom.css` to map Starlight variables _to_ Axiomatic variables (e.g., `--sl-color-bg: var(--bg-surface-sunken)`).
+- **Rationale**:
+  - **Consistency**: Ensures the docs always look exactly like the system they document.
+  - **Maintainability**: Changing a system token automatically updates the docs theme without manual intervention.
+
+### [2025-12-03] Targeted MutationObserver
+
+- **Context**: The `ThemeManager` was scanning the entire `document.body` on every DOM mutation to find inverted surfaces. This is a potential performance bottleneck for large applications.
+- **Decision**: Optimize the observer to check only `mutation.addedNodes`.
+- **Rationale**:
+  - **Performance**: Drastically reduces the work done during DOM updates.
+  - **Correctness**: We only need to apply the "Hard Flip" fix to _new_ elements entering the DOM; existing elements are already handled.
