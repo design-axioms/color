@@ -4,7 +4,7 @@ import type {
   SolverConfig,
   SurfaceConfig,
   SurfaceGroup,
-} from "../types";
+} from "../types.js";
 
 const toOklch = converter("oklch");
 
@@ -131,6 +131,8 @@ export class DTCGImporter {
   }
 
   private pickBestColor(tokens: FlattenedToken[]): FlattenedToken | null {
+    if (tokens.length === 0) return null;
+
     // 1. Prefer exact matches for "main", "base", "500"
     const priority = ["500", "main", "base", "primary", "DEFAULT"];
     for (const p of priority) {
@@ -154,7 +156,7 @@ export class DTCGImporter {
       }
     }
 
-    return best || tokens[0];
+    return best || tokens[0] || null;
   }
 
   private extractAnchors(): Omit<PolarityAnchors, "keyColors"> {
@@ -241,6 +243,7 @@ export class DTCGImporter {
       // Try to map them
       for (const t of surfaceTokens) {
         const name = t.path[t.path.length - 1];
+        if (!name) continue;
         if (name === "surface") continue; // Skip the group name itself
 
         surfaces.push({
@@ -265,6 +268,7 @@ export class DTCGImporter {
 
       for (const t of bgTokens) {
         const name = t.path[t.path.length - 1];
+        if (!name) continue;
         // Filter out common non-surface backgrounds
         if (["transparent", "none", "current"].includes(name.toLowerCase()))
           continue;

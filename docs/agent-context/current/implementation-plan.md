@@ -1,58 +1,65 @@
-# Implementation Plan - Epoch 32 Phase 1: Round-Trip DTCG
+# Implementation Plan: Epoch 32 Phase 2 (Token Reorganization)
 
 ## Goal
 
-Enable importing configuration from standard Design Token Community Group (DTCG) token files, allowing interoperability with tools like Figma (via plugins) and Style Dictionary.
+Refactor the DTCG exporter to produce a multi-file structure (Primitives, Semantics, Modes) that aligns with the "Three-Tier" architecture and better supports tools like Tokens Studio.
 
-## Strategy
+## Architecture Changes
 
-We will implement a "heuristic importer" that attempts to map generic design tokens to the specific semantic requirements of the Axiomatic system.
+### 1. Exporter Interface
 
-1.  **Strict Mapping**: If tokens follow our naming convention (e.g., `surface.card`), map them directly.
-2.  **Heuristic Mapping**: If tokens are "incompatible" (generic palettes, raw colors), use them to populate:
-    - **Key Colors**: Detect tokens like "brand", "primary", "success" and map them to `anchors.keyColors`.
-    - **Anchors**: If a lightness scale is detected (e.g., `gray.100` to `gray.900`), infer the `start` and `end` anchor points for the `page` context.
+The `DTCGExporter` currently returns a single JSON object. We will change this to return a "File Map":
 
-## Tasks
+```typescript
+type DTCGExport = {
+  files: {
+    "primitives.json": DTCGFile;
+    "light.json": DTCGFile;
+    "dark.json": DTCGFile;
+    // potentially others
+  };
+};
+```
 
-### 1. Importer Logic (`src/lib/importers/dtcg.ts`)
+### 2. Primitives Generation
 
-- [ ] Create `DTCGImporter` class.
-- [ ] Implement `parse(json: string): ColorConfig`.
-- [ ] Implement **Key Color Heuristics**:
-  - **Flatten**: Flatten the token dictionary into dot-notation keys (e.g., `color.brand.primary`).
-  - **Scan**: Look for keywords in the path: `brand`, `primary`, `accent`, `success`, `warning`, `danger`, `error`, `info`.
-  - **Extract**:
-    - If the match is a single color value, use it directly.
-    - If the match is a scale (e.g., `brand.100`...`brand.900`), pick the "middle" value (e.g., `500` or the one with highest chroma).
-  - **Populate**: Add to `anchors.keyColors`.
-- [ ] Implement **Anchor Heuristics**:
-  - **Scan**: Look for neutral scales: `gray`, `neutral`, `slate`, `zinc`, `mono`.
-  - **Analyze**: Convert values to OKLCH to determine lightness.
-  - **Infer**:
-    - `anchors.page.light.start`: Lightest value in the scale (e.g., `gray.50` -> L=98).
-    - `anchors.page.light.end`: Darkest value in the scale (e.g., `gray.900` -> L=10).
-    - `anchors.page.dark.start`: Darkest value (L=10).
-    - `anchors.page.dark.end`: Lightest value (L=98).
-- [ ] Implement **Surface Heuristics**:
-  - **Direct Map**: If tokens match `surface.*` (e.g., `surface.card`), map to `groups`.
-  - **Fallback**: If no surfaces found, create a default "Imported" group with a generic `card` surface using the `page` polarity.
+We need to extract the "Ingredients" from the `ColorConfig`:
 
-### 2. CLI Command (`src/cli/commands/import.ts`)
+- **Key Colors**: `config.keyColors` -> `color.{name}`
+- **Anchors**: `config.anchors` (calculated steps) -> `color.neutral.{step}`
 
-- [ ] Add `import` command.
-  - Usage: `axiomatic import <file>`
-  - Options: `--dry-run`, `--out <file>`
-- [ ] Integrate `DTCGImporter`.
-- [ ] Output/Update `color-config.json`.
+### 3. Mode Generation
 
-### 3. Verification
+Instead of a single file with `light` and `dark` keys, we will generate separate files.
 
-- [ ] Create sample DTCG files (e.g., from Figma Tokens or Style Dictionary).
-- [ ] Test importing a "messy" file and verifying the resulting `color-config.json`.
-- [ ] Verify that the imported config generates a valid theme.
+- `light.json`: Contains the resolved values for the Light theme.
+- `dark.json`: Contains the resolved values for the Dark theme.
+- **Nesting**: All tokens will be wrapped in a `color` group to avoid root namespace pollution.
 
-## Risks
+## Step-by-Step Implementation
 
-- **Ambiguity**: Heuristics might guess wrong. We should log what we inferred so the user can correct it.
-- **Data Loss**: We can't map everything. We should be clear about what was ignored.
+### Step 1: Refactor `src/lib/exporters/dtcg.ts`
+
+1.  Modify the `toDTCG` function signature (or create a new `toDTCGMultiFile` function to preserve backward compatibility if needed, but likely we'll just update the main one and let the CLI handle the output format).
+2.  Implement `getPrimitives(config)`: Returns the DTCG structure for key colors and anchors.
+3.  Implement `getMode(theme, modeName)`: Returns the DTCG structure for a specific mode.
+4.  Combine these into the result map.
+
+### Step 2: Update CLI `src/cli/commands/export.ts`
+
+1.  Check the `--out` argument.
+2.  If it ends in `.json`, assume single-file mode (maybe merge the result into one object for legacy support, or error).
+3.  If it's a directory (or doesn't have an extension), assume multi-file mode.
+4.  Ensure the output directory exists.
+5.  Write the files.
+
+### Step 3: Verification
+
+1.  Generate tokens for the example config.
+2.  Check the output files.
+3.  Validate against the DTCG spec (using the `check-tokens.sh` script if applicable, or manual inspection).
+
+## Risks & Mitigations
+
+- **Breaking Changes**: Changing the export format is a breaking change for anyone consuming the JSON. We should consider a flag or heuristic to maintain the old format if needed, but since we are in `0.x`, we can break it with a major version bump or just document it.
+- **Complexity**: Splitting files might make it harder to see the "whole picture" at once. Good documentation is key.

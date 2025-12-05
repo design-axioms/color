@@ -1,32 +1,43 @@
-# Walkthrough: Round-Trip DTCG Import
+# Walkthrough: Epoch 32 Phase 2 - Token Reorganization
 
-## Overview
+## Goal
 
-This phase focused on implementing the ability to import Design Tokens Community Group (DTCG) format JSON files into the Axiomatic system. The challenge was mapping "flat" or "palette-based" tokens to the "constraint-based" Axiomatic configuration.
+The goal of this phase was to reorganize the DTCG export structure to align with ecosystem standards, specifically the "Token Sets" model used by tools like Tokens Studio. This involved splitting the monolithic export into three distinct tiers: Primitives, Light Mode, and Dark Mode.
 
-## Key Decisions
+## Changes
 
-### Heuristic Mapping
+### 1. Exporter Refactoring (`src/lib/exporters/dtcg.ts`)
 
-Instead of requiring a strict schema match, we implemented a heuristic importer that infers intent from common naming conventions.
+We refactored the `toDTCG` function to return a `DTCGExport` object, which contains a map of filenames to their content (`Record<string, DTCGFile>`).
 
-1.  **Key Colors**: We scan for semantic keywords (`brand`, `success`, `danger`) and extract a representative color. We prefer tokens named `500`, `main`, or `base`, falling back to the color with the highest Chroma.
-2.  **Anchors**: We identify neutral scales (e.g., `gray`, `neutral`) and use their min/max lightness values to define the `page` and `inverted` context ranges. This ensures the imported system respects the original contrast boundaries.
-3.  **Surfaces**: We look for tokens grouped under `surface` or containing `bg`/`background`. These are mapped to `SurfaceConfig` entries.
+- **`generatePrimitives`**: Extracts global key colors and anchors into a `primitives.json` structure.
+- **`generateMode`**: Generates semantic tokens (surfaces, text, charts, shadows) for a specific mode (`light` or `dark`).
+- **`toDTCG`**: Orchestrates the generation of `primitives.json`, `light.json`, and `dark.json`.
 
-### CLI Integration
+### 2. CLI Update (`src/cli/commands/export.ts`)
 
-We added a new `import` command to the CLI:
-`axiomatic import <file> [--out <file>] [--dry-run]`
+We updated the `export` command to handle directory outputs.
 
-This allows users to quickly bootstrap a configuration from an existing design system export.
+- **Directory Detection**: If the `--out` path does not end in `.json`, it is treated as a directory.
+- **Multi-File Write**: When exporting to a directory, the CLI writes the individual files returned by the exporter (`primitives.json`, `light.json`, `dark.json`).
+- **Legacy Support**: If the `--out` path ends in `.json`, the CLI merges the files into a single JSON object (preserving the old structure) for backward compatibility.
 
-## Implementation Details
+### 3. TypeScript Fixes
 
-- **`src/lib/importers/dtcg.ts`**: The core logic class. It uses `culori` to analyze color values (Lightness/Chroma) for better inference.
-- **`src/cli/commands/import.ts`**: The command handler that orchestrates the file I/O and calls the importer.
-- **`src/cli/index.ts`**: Updated to route the `import` command.
+We resolved several TypeScript errors that were blocking the build:
+
+- Fixed strict property initialization in `src/lib/inspector/overlay.ts`.
+- Fixed import extensions and type safety issues in `src/lib/importers/dtcg.ts`.
+- Updated tests in `src/lib/exporters/__tests__/dtcg.test.ts` to match the new exporter signature.
 
 ## Verification
 
-We verified the importer using a sample `examples/tokens.json` file containing a typical Tailwind-like structure. The output correctly identified the brand color, the neutral range, and the surface tokens.
+We verified the changes by:
+
+1.  Running `pnpm build` to ensure a clean compilation.
+2.  Running `axiomatic export --out tokens/` to generate the new file structure.
+3.  Inspecting the generated files (`primitives.json`, `light.json`, `dark.json`) to confirm they contain the expected data.
+
+## Next Steps
+
+The next phase is **Epoch 32 Phase 3: High-Level Presets ("Vibes")**, where we will implement curated configuration presets to simplify the initial setup for users.

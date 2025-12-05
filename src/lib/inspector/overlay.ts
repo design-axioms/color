@@ -84,8 +84,8 @@ const STYLES = `
 
 export class AxiomaticDebugger extends HTMLElement {
   private root: ShadowRoot;
-  private highlightLayer: HTMLElement;
-  private infoCard: HTMLElement;
+  private highlightLayer!: HTMLElement;
+  private infoCard!: HTMLElement;
   private activeElement: HTMLElement | null = null;
   private isEnabled = false;
 

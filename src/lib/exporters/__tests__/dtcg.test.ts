@@ -68,20 +68,32 @@ describe("DTCG Exporter", () => {
       },
     };
 
-    const dtcg = toDTCG(theme);
+    const config: any = {
+      anchors: {
+        keyColors: {
+          brand: "#0000FF",
+        },
+      },
+    };
 
-    expect(dtcg).toHaveProperty("light");
-    expect(dtcg).toHaveProperty("dark");
+    const dtcg = toDTCG(theme, config);
+
+    expect(dtcg.files).toHaveProperty("light.json");
+    expect(dtcg.files).toHaveProperty("dark.json");
+    expect(dtcg.files).toHaveProperty("primitives.json");
 
     // Check Light Mode
-    const light = dtcg.light;
+    const light = dtcg.files["light.json"];
     if (!light) throw new Error("Light mode missing");
 
-    expect(light).toHaveProperty("surface");
-    expect(light).toHaveProperty("on-surface");
+    expect(light).toHaveProperty("color");
+    const colorGroup = light["color"] as any;
+
+    expect(colorGroup).toHaveProperty("surface");
+    expect(colorGroup).toHaveProperty("on-surface");
 
     // Check Surface Token
-    const surfaceGroup = light["surface"] as any;
+    const surfaceGroup = colorGroup["surface"] as any;
     const cardBg = surfaceGroup["card"];
     expect(cardBg).toHaveProperty("$type", "color");
     expect(cardBg).toHaveProperty("$value");
@@ -90,15 +102,15 @@ describe("DTCG Exporter", () => {
     expect(cardBg.$value).toMatch(/^oklch\(/);
 
     // Check Foreground Tokens
-    const onSurfaceGroup = light["on-surface"] as any;
+    const onSurfaceGroup = colorGroup["on-surface"] as any;
     const cardFg = onSurfaceGroup["card"];
     expect(cardFg).toHaveProperty("high");
     expect(cardFg["high"]).toHaveProperty("$type", "color");
     expect(cardFg["high"]).toHaveProperty("$value");
 
     // Check Charts
-    expect(light).toHaveProperty("chart");
-    const chartGroup = light["chart"] as any;
+    expect(colorGroup).toHaveProperty("chart");
+    const chartGroup = colorGroup["chart"] as any;
     expect(chartGroup["1"]).toHaveProperty("$type", "color");
 
     // Check Primitives
@@ -106,8 +118,8 @@ describe("DTCG Exporter", () => {
     const shadowGroup = light["shadow"] as any;
     expect(shadowGroup["sm"]).toHaveProperty("$type", "other");
 
-    expect(light).toHaveProperty("focus");
-    const focusGroup = light["focus"] as any;
+    expect(colorGroup).toHaveProperty("focus");
+    const focusGroup = colorGroup["focus"] as any;
     expect(focusGroup["ring"]).toHaveProperty("$type", "color");
   });
 });

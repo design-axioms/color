@@ -177,7 +177,7 @@
   - **Phase 1: Round-Trip DTCG (Completed)**
     - **Goal**: Enable importing configuration from standard DTCG token files, allowing interoperability with Figma and other tools.
     - **Design Doc**: [Interoperability Strategy](../design/interoperability-strategy.md)
-  - **Phase 2: Token Reorganization (Proposed)**
+  - **Phase 2: Token Reorganization (Completed)**
     - **Goal**: Reorganize the system's own token exports to align with ecosystem standards (Primitives vs. Semantic, Mode Splitting).
     - **Design Doc**: [Token Reorganization](../design/token-reorganization.md)
   - **Phase 3: High-Level Presets ("Vibes")**
