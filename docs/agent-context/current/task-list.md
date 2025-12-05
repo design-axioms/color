@@ -1,20 +1,13 @@
-# Task List: Epoch 33 Phase 1 - Architecture & Axiom Audit
+# Task List: Epoch 33 Phase 2 - Documentation Consistency
 
-- [x] **Step 1: Axiom Review** <!-- id: 0 -->
-  - [x] Read `docs/design/axioms.md` to refresh on the core laws. <!-- id: 1 -->
-  - [x] Create a checklist of specific axioms to verify (e.g., Late Binding, Determinism, Isomorphism). <!-- id: 2 -->
-    - [x] **Late Binding**: Verify `css/engine.css` uses indirection variables.
-    - [x] **Determinism**: Verify CLI output stability.
-    - [x] **Isomorphism**: Verify `src/lib/solver.ts` environment agnosticism.
-    - [x] **No Magic Numbers**: Verify CSS files for raw values.
-    - [x] **Accessibility**: Verify `audit` command logic.
-- [x] **Step 2: Codebase Audit** <!-- id: 3 -->
-  - [x] Audit `src/lib/` for violations of "Late Binding" (e.g., hardcoded values in logic). <!-- id: 4 -->
-  - [x] Audit `src/cli/` for violations of "Determinism" (e.g., reliance on environment variables without explicit config). <!-- id: 5 -->
-  - [x] Audit `css/` for violations of "System Token" usage (e.g., raw hex values). <!-- id: 6 -->
-- [x] **Step 3: Documentation Audit** <!-- id: 7 -->
-  - [x] Verify that `docs/design/axioms.md` is referenced correctly in other design docs. <!-- id: 8 -->
-  - [x] Check for outdated terminology in `docs/concepts/`. <!-- id: 9 -->
-- [ ] **Step 4: Report Generation** <!-- id: 10 -->
-  - [x] Compile findings into `docs/agent-context/current/audit-report.md`. <!-- id: 11 -->
-  - [ ] Prioritize issues for Phase 3 (Remediation). <!-- id: 12 -->
+- [x] **Step 1: Vibes Documentation** <!-- id: 0 -->
+  - [x] Check existing configuration docs for "Vibes" mentions. <!-- id: 1 -->
+  - [x] Create or update a guide explaining how to use the `vibes` property in `color-config.json`. <!-- id: 2 -->
+  - [x] Document the available built-in vibes (Default, Vibrant, Corporate, Academic). <!-- id: 3 -->
+- [x] **Step 2: Token Export Documentation** <!-- id: 4 -->
+  - [x] Check `docs/usage/export.mdx` (or equivalent) for outdated single-file export info. <!-- id: 5 -->
+  - [x] Update docs to explain the new directory-based export structure (`primitives.json`, `light.json`, `dark.json`). <!-- id: 6 -->
+  - [x] Explain the "Token Sets" concept (Primitives vs. Semantic Modes). <!-- id: 7 -->
+- [x] **Step 3: CLI Reference Update** <!-- id: 8 -->
+  - [x] Ensure CLI reference docs reflect the new `export --out <dir>` behavior. <!-- id: 9 -->
+  - [x] Ensure CLI reference docs mention `vibes` in `init` or configuration sections. <!-- id: 10 -->

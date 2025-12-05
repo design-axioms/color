@@ -20,10 +20,24 @@ The flow is **unidirectional**. You should treat your `color-config.json` as the
 To generate a DTCG-compatible JSON file, use the `export` command:
 
 ```bash
-pnpm axiomatic export --format dtcg > tokens.json
+npx axiomatic export --format dtcg --out tokens/
 ```
 
-This will output a JSON file containing your entire theme (Light and Dark modes) in the standard format.
+This will output a directory containing your theme tokens split into logical sets:
+
+- `tokens/primitives.json`: Global values like Key Colors.
+- `tokens/light.json`: Semantic tokens for Light Mode.
+- `tokens/dark.json`: Semantic tokens for Dark Mode.
+
+This "Multi-File" structure is the standard for modern design token tools (like Tokens Studio), allowing you to treat Light and Dark modes as switchable themes.
+
+### Single File Export (Legacy)
+
+If you prefer a single JSON file, you can specify a file path instead of a directory:
+
+```bash
+npx axiomatic export --format dtcg --out tokens.json
+```
 
 ## Importing into Figma
 
@@ -34,8 +48,12 @@ This will output a JSON file containing your entire theme (Light and Dark modes)
 1.  Open the **Tokens Studio** plugin in Figma.
 2.  Go to the **Tools** tab (or Settings).
 3.  Click **Load from file/folder** or **Import**.
-4.  Select your generated `tokens.json`.
-5.  The plugin will create token sets for `light` and `dark`.
+4.  Select your `tokens/` directory (or the individual JSON files).
+5.  The plugin will create token sets for `primitives`, `light`, and `dark`.
+
+**Best Practice**:
+- Enable the **primitives** set as "Source" (Reference only).
+- Enable **light** OR **dark** as "Active" to switch themes.
 
 ### Using Native Figma Variables
 

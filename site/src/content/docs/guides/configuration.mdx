@@ -1,0 +1,62 @@
+---
+title: Configuration
+description: Learn how to configure the Axiomatic Color System.
+---
+
+The `color-config.json` file is the heart of your design system. It defines your semantic intent, and the solver uses it to generate your CSS.
+
+## Structure
+
+The configuration is divided into three main sections:
+
+1.  **Vibes**: High-level presets that control the "physics" of the system.
+2.  **Anchors**: The fixed points of lightness that define your contrast range.
+3.  **Groups & Surfaces**: The semantic taxonomy of your UI.
+
+```json
+{
+  "$schema": "node_modules/@axiomatic-design/color/color-config.schema.json",
+  "vibes": {
+    "mode": "default"
+  },
+  "anchors": { ... },
+  "groups": [ ... ]
+}
+```
+
+## Vibes (Presets)
+
+Vibes are the easiest way to change the look and feel of your system without tweaking individual math parameters. They configure the underlying physics engine (hue shifting, chroma scaling, and contrast targets).
+
+### Usage
+
+Add a `vibes` object to your config:
+
+```json
+{
+  "vibes": {
+    "mode": "vibrant"
+  }
+}
+```
+
+### Available Vibes
+
+| Vibe | Description | Characteristics |
+| :--- | :--- | :--- |
+| **default** | Balanced and neutral. | Standard contrast, minimal hue shift. |
+| **vibrant** | High energy and saturation. | Aggressive hue shifting, higher chroma surfaces. |
+| **corporate** | Safe, blue-tinted, and professional. | Cool grays, high contrast text, conservative. |
+| **academic** | Low chroma, high legibility. | Warm grays, serif-friendly, paper-like. |
+
+## Anchors
+
+Anchors define the "Lightness Space" of your application. They tell the solver where "White" and "Black" are, and how much contrast is required for text.
+
+See [Physics of Light](/concepts/physics-of-light) for a deep dive.
+
+## Groups & Surfaces
+
+Surfaces are organized into **Groups** (e.g., "Canvas", "Objects", "Actions"). This is purely for organization and does not affect the output CSS.
+
+See [Thinking in Surfaces](/concepts/thinking-in-surfaces) for the mental model.

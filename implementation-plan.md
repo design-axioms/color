@@ -1,23 +1,23 @@
-# Implementation Plan - Epoch 33 Phase 1: Architecture & Axiom Audit
+# Implementation Plan - Epoch 33 Phase 2: Documentation Consistency
 
 ## Objective
 
-To verify the conceptual integrity of the Axiomatic Color System by auditing the codebase and documentation against its core axioms.
+To ensure the documentation is consistent with the latest features (Vibes, Token Reorganization) and follows the "User Journey".
 
 ## Scope
 
-- **Core Library (`src/lib`)**: Check for logic that violates isomorphism or late binding.
-- **CLI (`src/cli`)**: Check for non-deterministic behavior.
-- **CSS Engine (`css/`)**: Check for hardcoded values or "magic numbers".
-- **Documentation (`docs/`)**: Check for consistency with the current implementation and axioms.
+- **Vibes**: Document the new high-level configuration layer.
+- **Exports**: Update the Export guide to reflect the new multi-file output format.
+- **CLI**: Update the CLI reference to match the current implementation.
 
 ## Methodology
 
-1.  **Static Analysis**: Use `grep` and manual inspection to find potential violations.
-2.  **Axiom Mapping**: For each axiom, define specific anti-patterns to look for.
-3.  **Reporting**: Document every finding with a severity level (Critical, Major, Minor) and a proposed fix.
+1.  **Discovery**: Locate relevant documentation files using `ls` and `grep`.
+2.  **Gap Analysis**: Compare the code (implementation) with the docs.
+3.  **Remediation**: Edit the MDX files to close the gaps.
 
 ## Deliverables
 
-- `docs/agent-context/current/audit-report.md`: A detailed report of findings.
-- Updated `docs/agent-context/future/ideas.md` or `deferred_work.md` with remediation tasks.
+- Updated `docs/usage/configuration.mdx` (or equivalent).
+- Updated `docs/usage/export.mdx` (or equivalent).
+- Updated `docs/reference/cli.mdx` (or equivalent).
