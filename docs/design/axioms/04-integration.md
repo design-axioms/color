@@ -61,3 +61,21 @@ We adopt features that are "Newly Available" in major browsers (last 2 versions)
 - **Color Spaces**: `oklch()`, `p3` gamut.
 - **CSS Features**: `light-dark()`, `@property`, `popover`, `:has()`.
 - **Runtime**: Node 24.
+
+## 10. Standard CSS First
+
+We write standard CSS, not a proprietary dialect.
+
+### No Extensions
+
+We do not use non-standard extensions (like Sass mixins, custom functions, or proprietary at-rules) that require a specific preprocessor to understand.
+
+- Our CSS should be readable and understandable by anyone who knows the spec.
+- We use tools (like Lightning CSS) only for **bundling** (imports) and **optimization** (minification), not for language extension.
+
+### Spec Compliance
+
+If a feature is in the spec (even if new), we use it.
+
+- We prefer native CSS features (`@property`, `calc()`, nesting) over build-time abstractions.
+- We trust the browser engine to do the heavy lifting (see [Law of Late Binding](../axioms/05-engineering.md#12-the-law-of-late-binding)).

@@ -649,3 +649,12 @@ This file tracks key architectural and design decisions made throughout the proj
   - **Discoverability**: A top-level command makes the feature easy to find.
   - **Workflow**: Fits naturally into the "init -> import -> build" lifecycle.
   - **Safety**: Supports `--dry-run` to let users preview the changes before overwriting their config.
+
+### [2025-12-06] Standard CSS First
+
+- **Context**: We are migrating the build system to Lightning CSS. We need to decide whether to leverage its non-standard features (like nesting or custom media queries) or stick to standard CSS.
+- **Decision**: We will write **Standard CSS** exclusively. Build tools are for optimization and bundling only.
+- **Rationale**:
+  - **Longevity**: Standard CSS is forever. Proprietary syntax (Sass, Less, non-standard extensions) creates technical debt and lock-in.
+  - **Portability**: Our CSS should be usable without a build step if necessary (e.g., via CDN).
+  - **Clarity**: Users should be able to read the source code and understand it without knowing a specific tool's syntax.

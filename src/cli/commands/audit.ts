@@ -204,23 +204,21 @@ export function auditCommand(args: string[], cwd: string): void {
   }
 
   // 3. Dead Token Detection
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  if (config.anchors.keyColors) {
-    const definedKeys = new Set(Object.keys(config.anchors.keyColors));
-    const usedKeys = new Set<string>();
 
-    for (const group of config.groups) {
-      for (const surface of group.surfaces) {
-        if (typeof surface.hue === "string") {
-          usedKeys.add(surface.hue);
-        }
+  const definedKeys = new Set(Object.keys(config.anchors.keyColors));
+  const usedKeys = new Set<string>();
+
+  for (const group of config.groups) {
+    for (const surface of group.surfaces) {
+      if (typeof surface.hue === "string") {
+        usedKeys.add(surface.hue);
       }
     }
+  }
 
-    for (const key of definedKeys) {
-      if (!usedKeys.has(key)) {
-        // warnings.push(`Key color '${key}' is defined but not referenced by any surface.`);
-      }
+  for (const key of definedKeys) {
+    if (!usedKeys.has(key)) {
+      // warnings.push(`Key color '${key}' is defined but not referenced by any surface.`);
     }
   }
 

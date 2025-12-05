@@ -41,8 +41,8 @@ We organize UI elements into a strict taxonomy of Surfaces that establish Contex
 
 ### [IV. The Laws of Integration](axioms/04-integration.md)
 
-**Code is Truth. No Magic Numbers. Baseline Newly Available.**
-We ensure consistency and interoperability by deriving everything from configuration and targeting modern web standards.
+**Code is Truth. No Magic Numbers. Baseline Newly Available. Standard CSS First.**
+We ensure consistency and interoperability by deriving everything from configuration and targeting modern web standards. We use build tools only for bundling and optimization, not for language extension.
 
 ### [V. The Laws of Engineering](axioms/05-engineering.md)
 

@@ -1022,3 +1022,28 @@
 - **Fixes**:
   - Corrected anchor value ranges in `vibes.ts` (switched from 0-100 to 0-1 to match system internals).
   - Resolved TypeScript circular dependencies and type inference issues with `DeepPartial`.
+
+## Epoch 33: Phase 3 - Remediation Plan (2025-12-06)
+
+**Goal**: Analyze the root causes of the "Epoch 33" failures and create a concrete plan for remediation in Epoch 34.
+
+**Completed Work**:
+
+- **Analysis**: Identified key issues:
+  - **Build Tooling**: The `cat`-based build script is fragile and lacks minification/optimization.
+  - **Token Complexity**: The token surface area is too large, confusing users.
+  - **Documentation Gaps**: Tutorials are missing or outdated.
+- **Planning**: Created `docs/agent-context/remediation-plan.md` outlining the roadmap for Epoch 34:
+  - **Phase 1**: Infrastructure (Lightning CSS).
+  - **Phase 2**: Token Simplification.
+  - **Phase 3**: Interactive Tutorials.
+
+## Epoch 34: Phase 0 - Axiom Update (2025-12-06)
+
+**Goal**: Formalize the architectural decision to prioritize Standard CSS over proprietary extensions.
+
+**Completed Work**:
+
+- **Axiom 10**: Added "Standard CSS First" to the Constitution (`docs/design/axioms/04-integration.md`).
+- **Constraint**: Explicitly forbade the use of Sass, Less, or non-standard CSS extensions. Build tools (like Lightning CSS) are restricted to bundling, minification, and polyfilling future standards.
+- **Verification**: Updated Golden Master snapshots to reflect the current state of the system.
