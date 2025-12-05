@@ -1,13 +1,11 @@
-# Task List: Epoch 33 Phase 2 - Documentation Consistency
+# Phase 3 Task List
 
-- [x] **Step 1: Vibes Documentation** <!-- id: 0 -->
-  - [x] Check existing configuration docs for "Vibes" mentions. <!-- id: 1 -->
-  - [x] Create or update a guide explaining how to use the `vibes` property in `color-config.json`. <!-- id: 2 -->
-  - [x] Document the available built-in vibes (Default, Vibrant, Corporate, Academic). <!-- id: 3 -->
-- [x] **Step 2: Token Export Documentation** <!-- id: 4 -->
-  - [x] Check `docs/usage/export.mdx` (or equivalent) for outdated single-file export info. <!-- id: 5 -->
-  - [x] Update docs to explain the new directory-based export structure (`primitives.json`, `light.json`, `dark.json`). <!-- id: 6 -->
-  - [x] Explain the "Token Sets" concept (Primitives vs. Semantic Modes). <!-- id: 7 -->
-- [x] **Step 3: CLI Reference Update** <!-- id: 8 -->
-  - [x] Ensure CLI reference docs reflect the new `export --out <dir>` behavior. <!-- id: 9 -->
-  - [x] Ensure CLI reference docs mention `vibes` in `init` or configuration sections. <!-- id: 10 -->
+- [x] **Review Future Ideas** <!-- id: 0 -->
+  - [x] Check status of "Debug Overlay" (referenced as Epoch 30). <!-- id: 1 -->
+  - [x] Evaluate "Simplify Token Surface" for potential inclusion in next Epoch. <!-- id: 2 -->
+  - [x] Assess "CSS Bundling" priority. <!-- id: 3 -->
+- [x] **Draft Roadmap** <!-- id: 4 -->
+  - [x] Define goals for Epoch 34. <!-- id: 5 -->
+  - [x] Update `docs/agent-context/future/ideas.md` with refined items. <!-- id: 6 -->
+- [x] **Finalize Remediation Plan** <!-- id: 7 -->
+  - [x] Create `docs/agent-context/remediation-plan.md` (or similar) summarizing the path forward. <!-- id: 8 -->
