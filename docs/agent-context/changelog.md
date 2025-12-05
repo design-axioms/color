@@ -1000,3 +1000,25 @@
 - **Verification**:
   - Verified the output structure matches the "Token Sets" model.
   - Confirmed that `primitives.json` contains key colors and `light.json`/`dark.json` contain semantic tokens.
+
+## Epoch 32: Phase 3 - High-Level Presets ("Vibes") (2025-12-05)
+
+**Goal**: Introduce a high-level configuration layer ("Vibes") to allow users to quickly apply opinionated defaults (e.g., "Vibrant", "Corporate", "Academic") without manual tuning.
+
+**Completed Work**:
+
+- **Vibe Registry**:
+  - Created `src/lib/vibes.ts` defining the `Vibe` interface and `VibeConfig` (Deep Partial SolverConfig).
+  - Implemented initial vibes: **Default**, **Academic** (Serif, Low Chroma), **Vibrant** (High Chroma, Hue Shift), and **Corporate** (Safe, Standard).
+- **Resolution Logic**:
+  - Implemented `resolveConfig` in `src/lib/resolve.ts` to handle the 3-layer merge strategy: `System Defaults` < `Vibe Defaults` < `User Config`.
+  - Implemented a robust `deepMerge` utility to handle nested configuration overrides correctly.
+- **CLI Integration**:
+  - Updated `build`, `export`, and `audit` commands to use `resolveConfig`, ensuring all CLI operations respect the selected vibe.
+  - Updated `audit` command to validate against a `UserConfig` schema (where `anchors` and `groups` are optional), allowing minimal config files.
+- **UI Integration**:
+  - Updated `ConfigState` in the Theme Builder to support loading vibes.
+  - Implemented `VibePicker` component in the sidebar to allow users to switch vibes instantly.
+- **Fixes**:
+  - Corrected anchor value ranges in `vibes.ts` (switched from 0-100 to 0-1 to match system internals).
+  - Resolved TypeScript circular dependencies and type inference issues with `DeepPartial`.

@@ -9,5 +9,7 @@ export {
   solveBackgroundForContrast,
 } from "./math.ts";
 export * from "./presets.ts";
+export * from "./resolve.ts";
 export * from "./runtime.ts";
 export * from "./solver.ts";
+export * from "./vibes.ts";

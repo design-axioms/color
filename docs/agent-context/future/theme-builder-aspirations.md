@@ -47,3 +47,11 @@ The goal is to transform it from a simple configuration tool into a **"learning 
 1.  **Design Audit**: Review the current builder against the original "Axioms" and "Personas".
 2.  **Concept Phase**: Sketch out (lo-fi) what an ideal interaction model looks like, ignoring current technical constraints.
 3.  **Architecture Review**: Determine if the current runtime/architecture supports this new vision or if we need a different approach (e.g., a more robust state machine, a different rendering engine).
+
+### 4. Live Export Preview
+
+- **Goal**: Demystify the export process and allow debugging before running the CLI.
+- **Ideas**:
+  - Add a "JSON" or "Export" tab to the Theme Builder.
+  - Display the live-generated `primitives.json`, `light.json`, and `dark.json` as the user tweaks sliders.
+  - Show the connection between configuration values and output tokens.

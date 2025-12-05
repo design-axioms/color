@@ -1,65 +1,69 @@
-# Implementation Plan: Epoch 32 Phase 2 (Token Reorganization)
+# Implementation Plan - Epoch 32 Phase 3: High-Level Presets ("Vibes")
 
 ## Goal
 
-Refactor the DTCG exporter to produce a multi-file structure (Primitives, Semantics, Modes) that aligns with the "Three-Tier" architecture and better supports tools like Tokens Studio.
+Implement a "Vibes" system that allows users to select high-level presets (e.g., "Cozy", "Academic", "Vibrant") which configure multiple lower-level parameters (density, typography, colorfulness) simultaneously.
 
-## Architecture Changes
+## User Story
 
-### 1. Exporter Interface
+As a user, I want to quickly change the "mood" of my theme without tweaking 50 individual sliders, so that I can find a good starting point for my project.
 
-The `DTCGExporter` currently returns a single JSON object. We will change this to return a "File Map":
+## Proposed Architecture
+
+### 1. The `Vibe` Concept
+
+A `Vibe` is a partial configuration that applies to:
+
+- **Typography**: Font families, scale, weights.
+- **Density**: Spacing scales, border radii.
+- **Colorfulness**: Target chroma, hue shifts.
+- **Physics**: Anchor positions (contrast).
+
+### 2. Configuration Schema
+
+Extend `SolverConfig` to support a `vibe` property (or `preset` expansion).
 
 ```typescript
-type DTCGExport = {
-  files: {
-    "primitives.json": DTCGFile;
-    "light.json": DTCGFile;
-    "dark.json": DTCGFile;
-    // potentially others
-  };
-};
+type Vibe = "default" | "academic" | "cozy" | "vibrant" | "corporate";
+
+interface SolverConfig {
+  // ... existing
+  vibe?: Vibe; // Applies defaults before other config
+}
 ```
 
-### 2. Primitives Generation
+### 3. Implementation Steps
 
-We need to extract the "Ingredients" from the `ColorConfig`:
+#### Step 1: Define Vibes
 
-- **Key Colors**: `config.keyColors` -> `color.{name}`
-- **Anchors**: `config.anchors` (calculated steps) -> `color.neutral.{step}`
+Create a registry of vibes in `src/lib/vibes.ts`.
+Each vibe should define:
 
-### 3. Mode Generation
+- `typography`: A `TypographyConfig`.
+- `anchors`: Overrides for anchor points.
+- `palette`: Target chroma/contrast.
 
-Instead of a single file with `light` and `dark` keys, we will generate separate files.
+#### Step 2: Solver Integration
 
-- `light.json`: Contains the resolved values for the Light theme.
-- `dark.json`: Contains the resolved values for the Dark theme.
-- **Nesting**: All tokens will be wrapped in a `color` group to avoid root namespace pollution.
+Update `createTheme` (or the entry point) to merge the selected `Vibe` into the user's config _before_ solving.
 
-## Step-by-Step Implementation
+- User config takes precedence over Vibe.
+- Vibe takes precedence over System Defaults.
 
-### Step 1: Refactor `src/lib/exporters/dtcg.ts`
+#### Step 3: Theme Builder UI
 
-1.  Modify the `toDTCG` function signature (or create a new `toDTCGMultiFile` function to preserve backward compatibility if needed, but likely we'll just update the main one and let the CLI handle the output format).
-2.  Implement `getPrimitives(config)`: Returns the DTCG structure for key colors and anchors.
-3.  Implement `getMode(theme, modeName)`: Returns the DTCG structure for a specific mode.
-4.  Combine these into the result map.
+- Add a "Vibe Picker" (Select/Cards) to the top of the Theme Builder.
+- When a vibe is selected, update the form state.
+- _Challenge_: How to handle "dirty" state? If I pick "Cozy" then change the font, am I still "Cozy"?
+  - _Solution_: Treat Vibe as a "Apply Preset" action that overwrites current settings, rather than a persistent mode.
 
-### Step 2: Update CLI `src/cli/commands/export.ts`
+## Task List
 
-1.  Check the `--out` argument.
-2.  If it ends in `.json`, assume single-file mode (maybe merge the result into one object for legacy support, or error).
-3.  If it's a directory (or doesn't have an extension), assume multi-file mode.
-4.  Ensure the output directory exists.
-5.  Write the files.
-
-### Step 3: Verification
-
-1.  Generate tokens for the example config.
-2.  Check the output files.
-3.  Validate against the DTCG spec (using the `check-tokens.sh` script if applicable, or manual inspection).
-
-## Risks & Mitigations
-
-- **Breaking Changes**: Changing the export format is a breaking change for anyone consuming the JSON. We should consider a flag or heuristic to maintain the old format if needed, but since we are in `0.x`, we can break it with a major version bump or just document it.
-- **Complexity**: Splitting files might make it harder to see the "whole picture" at once. Good documentation is key.
+- [ ] Define `Vibe` type and registry in `src/lib/vibes.ts`.
+- [ ] Implement `resolveVibe(config)` in the Solver pipeline.
+- [ ] Add "Vibe Picker" to Theme Builder UI.
+- [ ] Create 3 initial vibes:
+  - **Academic**: Serif fonts, high contrast, lower chroma.
+  - **Vibrant**: Higher target chroma, aggressive hue shifts.
+  - **Corporate**: Neutral blues, standard sans-serif, safe contrast.
+- [ ] Verify vibes in the Demo App.

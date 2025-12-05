@@ -1,86 +1,7 @@
 {
-  "$ref": "#/definitions/SolverConfig",
+  "$ref": "#/definitions/UserConfig",
   "$schema": "http://json-schema.org/draft-07/schema#",
   "definitions": {
-    "AnchorValue": {
-      "additionalProperties": false,
-      "properties": {
-        "adjustable": {
-          "type": "boolean"
-        },
-        "background": {
-          "type": "number"
-        }
-      },
-      "required": ["background"],
-      "type": "object"
-    },
-    "Anchors": {
-      "additionalProperties": false,
-      "properties": {
-        "dark": {
-          "$ref": "#/definitions/ModeAnchors"
-        },
-        "light": {
-          "$ref": "#/definitions/ModeAnchors"
-        }
-      },
-      "required": ["light", "dark"],
-      "type": "object"
-    },
-    "BezierCurve": {
-      "additionalProperties": false,
-      "properties": {
-        "p1": {
-          "items": {
-            "type": "number"
-          },
-          "maxItems": 2,
-          "minItems": 2,
-          "type": "array"
-        },
-        "p2": {
-          "items": {
-            "type": "number"
-          },
-          "maxItems": 2,
-          "minItems": 2,
-          "type": "array"
-        }
-      },
-      "required": ["p1", "p2"],
-      "type": "object"
-    },
-    "BorderTargets": {
-      "additionalProperties": false,
-      "properties": {
-        "critical": {
-          "type": "number"
-        },
-        "decorative": {
-          "type": "number"
-        },
-        "interactive": {
-          "type": "number"
-        }
-      },
-      "required": ["decorative", "interactive", "critical"],
-      "type": "object"
-    },
-    "ConfigOptions": {
-      "additionalProperties": false,
-      "properties": {
-        "prefix": {
-          "description": "The prefix to use for CSS variables. Defaults to \"color-sys\".",
-          "type": "string"
-        },
-        "selector": {
-          "description": "The CSS selector to scope the variables to. Defaults to \":root\".",
-          "type": "string"
-        }
-      },
-      "type": "object"
-    },
     "ContrastOffsets": {
       "additionalProperties": false,
       "properties": {
@@ -93,32 +14,137 @@
       },
       "type": "object"
     },
-    "HueShiftConfig": {
+    "DeepPartial<AnchorValue>": {
       "additionalProperties": false,
       "properties": {
-        "curve": {
-          "$ref": "#/definitions/BezierCurve"
+        "adjustable": {
+          "type": "boolean"
         },
-        "maxRotation": {
-          "description": "Maximum hue rotation in degrees.",
-          "type": "number"
+        "background": {
+          "$ref": "#/definitions/DeepPartial%3Cnumber%3E"
         }
       },
-      "required": ["curve", "maxRotation"],
       "type": "object"
     },
-    "ModeAnchors": {
+    "DeepPartial<Anchors>": {
+      "additionalProperties": false,
+      "properties": {
+        "dark": {
+          "$ref": "#/definitions/DeepPartial%3CModeAnchors%3E"
+        },
+        "light": {
+          "$ref": "#/definitions/DeepPartial%3CModeAnchors%3E"
+        }
+      },
+      "type": "object"
+    },
+    "DeepPartial<BezierCurve>": {
+      "additionalProperties": false,
+      "properties": {
+        "p1": {
+          "$ref": "#/definitions/DeepPartial%3C%5Bnumber%2Cnumber%5D%3E"
+        },
+        "p2": {
+          "$ref": "#/definitions/DeepPartial%3C%5Bnumber%2Cnumber%5D%3E"
+        }
+      },
+      "type": "object"
+    },
+    "DeepPartial<ModeAnchors>": {
       "additionalProperties": false,
       "properties": {
         "end": {
-          "$ref": "#/definitions/AnchorValue"
+          "$ref": "#/definitions/DeepPartial%3CAnchorValue%3E"
         },
         "start": {
-          "$ref": "#/definitions/AnchorValue"
+          "$ref": "#/definitions/DeepPartial%3CAnchorValue%3E"
         }
       },
-      "required": ["start", "end"],
       "type": "object"
+    },
+    "DeepPartial<PolarityAnchors>": {
+      "additionalProperties": false,
+      "properties": {
+        "inverted": {
+          "$ref": "#/definitions/DeepPartial%3CAnchors%3E"
+        },
+        "keyColors": {
+          "$ref": "#/definitions/DeepPartial%3Cindexed-type-1474508258-74242-74263-1474508258-74138-74264-1474508258-0-218439%3Cstring%2Cstring%3E1922313925%3E"
+        },
+        "page": {
+          "$ref": "#/definitions/DeepPartial%3CAnchors%3E"
+        }
+      },
+      "type": "object"
+    },
+    "DeepPartial<[number,number]>": {
+      "items": {
+        "type": ["number"]
+      },
+      "type": "array"
+    },
+    "DeepPartial<def-alias-src_lib_types.ts-2338-2569-src_lib_types.ts-0-5941[]>": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "gapBefore": {
+            "description": "Extra spacing (in contrast steps) before this group starts. Used to create visual separation between groups.",
+            "type": "number"
+          },
+          "name": {
+            "type": "string"
+          },
+          "surfaces": {
+            "items": {
+              "$ref": "#/definitions/SurfaceConfig"
+            },
+            "type": "array"
+          }
+        },
+        "required": ["name", "surfaces"],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "DeepPartial<def-alias-src_lib_types.ts-2569-2649-src_lib_types.ts-0-5941355102109>": {
+      "additionalProperties": false,
+      "properties": {
+        "p1": {
+          "$ref": "#/definitions/DeepPartial%3C%5Bnumber%2Cnumber%5D%3E"
+        },
+        "p2": {
+          "$ref": "#/definitions/DeepPartial%3C%5Bnumber%2Cnumber%5D%3E"
+        }
+      },
+      "type": "object"
+    },
+    "DeepPartial<indexed-type-1474508258-74242-74263-1474508258-74138-74264-1474508258-0-218439<string,string>1922313925>": {
+      "additionalProperties": {
+        "$ref": "#/definitions/DeepPartial%3Cstring%3E"
+      },
+      "type": "object"
+    },
+    "DeepPartial<number1805728063>": {
+      "description": "Maximum hue rotation in degrees.",
+      "type": "number"
+    },
+    "DeepPartial<number1808058353>": {
+      "description": "Number of sizes to generate (e.g. 5 for xs, sm, base, lg, xl).",
+      "type": "number"
+    },
+    "DeepPartial<number524178369>": {
+      "description": "Base size in rem (e.g. 0.75).",
+      "type": "number"
+    },
+    "DeepPartial<number686710375>": {
+      "description": "Max size in rem (e.g. 3.0).",
+      "type": "number"
+    },
+    "DeepPartial<number>": {
+      "type": "number"
+    },
+    "DeepPartial<string>": {
+      "type": "string"
     },
     "ModeSpec": {
       "additionalProperties": false,
@@ -165,90 +191,9 @@
       ],
       "type": "object"
     },
-    "PaletteConfig": {
-      "additionalProperties": false,
-      "properties": {
-        "hues": {
-          "description": "List of hues to use for the palette. Defaults to a standard 10-color categorical scale.",
-          "items": {
-            "type": "number"
-          },
-          "type": "array"
-        },
-        "targetChroma": {
-          "description": "Target chroma for chart colors. Defaults to ~0.12 (vibrant but not neon). Can be set to 'auto' to match the Action color.",
-          "type": "number"
-        },
-        "targetContrast": {
-          "description": "Target contrast against the page background (APCA). Lower values (e.g. 45-60) result in lighter colors in light mode (more pastel/vibrant) and darker colors in dark mode. Defaults to 60.",
-          "type": "number"
-        }
-      },
-      "type": "object"
-    },
     "Polarity": {
       "enum": ["page", "inverted"],
       "type": "string"
-    },
-    "PolarityAnchors": {
-      "additionalProperties": false,
-      "properties": {
-        "inverted": {
-          "$ref": "#/definitions/Anchors"
-        },
-        "keyColors": {
-          "additionalProperties": {
-            "type": "string"
-          },
-          "description": "A map of key color names to their values. Values can be:\n- A hex color string (e.g. \"#ff0000\")\n- A reference to another key color (e.g. \"danger\")",
-          "type": "object"
-        },
-        "page": {
-          "$ref": "#/definitions/Anchors"
-        }
-      },
-      "required": ["page", "inverted", "keyColors"],
-      "type": "object"
-    },
-    "PresetsConfig": {
-      "additionalProperties": false,
-      "properties": {
-        "typography": {
-          "$ref": "#/definitions/TypographyConfig"
-        }
-      },
-      "type": "object"
-    },
-    "SolverConfig": {
-      "additionalProperties": false,
-      "properties": {
-        "anchors": {
-          "$ref": "#/definitions/PolarityAnchors"
-        },
-        "borderTargets": {
-          "$ref": "#/definitions/BorderTargets"
-        },
-        "groups": {
-          "items": {
-            "$ref": "#/definitions/SurfaceGroup"
-          },
-          "type": "array"
-        },
-        "hueShift": {
-          "$ref": "#/definitions/HueShiftConfig"
-        },
-        "options": {
-          "$ref": "#/definitions/ConfigOptions"
-        },
-        "palette": {
-          "$ref": "#/definitions/PaletteConfig"
-        },
-        "presets": {
-          "$ref": "#/definitions/PresetsConfig"
-        }
-      },
-      "required": ["anchors", "groups"],
-      "type": "object"
     },
     "StateDefinition": {
       "additionalProperties": false,
@@ -328,79 +273,131 @@
       "required": ["slug", "label", "polarity"],
       "type": "object"
     },
-    "SurfaceGroup": {
+    "UserConfig": {
       "additionalProperties": false,
       "properties": {
-        "gapBefore": {
-          "description": "Extra spacing (in contrast steps) before this group starts. Used to create visual separation between groups.",
-          "type": "number"
-        },
-        "name": {
+        "$schema": {
           "type": "string"
         },
-        "surfaces": {
-          "items": {
-            "$ref": "#/definitions/SurfaceConfig"
+        "anchors": {
+          "$ref": "#/definitions/DeepPartial%3CPolarityAnchors%3E"
+        },
+        "borderTargets": {
+          "additionalProperties": false,
+          "properties": {
+            "critical": {
+              "$ref": "#/definitions/DeepPartial%3Cnumber%3E"
+            },
+            "decorative": {
+              "$ref": "#/definitions/DeepPartial%3Cnumber%3E"
+            },
+            "interactive": {
+              "$ref": "#/definitions/DeepPartial%3Cnumber%3E"
+            }
           },
-          "type": "array"
+          "type": "object"
+        },
+        "groups": {
+          "$ref": "#/definitions/DeepPartial%3Cdef-alias-src_lib_types.ts-2338-2569-src_lib_types.ts-0-5941%5B%5D%3E"
+        },
+        "hueShift": {
+          "additionalProperties": false,
+          "properties": {
+            "curve": {
+              "$ref": "#/definitions/DeepPartial%3CBezierCurve%3E"
+            },
+            "maxRotation": {
+              "$ref": "#/definitions/DeepPartial%3Cnumber1805728063%3E"
+            }
+          },
+          "type": "object"
+        },
+        "options": {
+          "additionalProperties": false,
+          "properties": {
+            "prefix": {
+              "type": "string"
+            },
+            "selector": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "palette": {
+          "additionalProperties": false,
+          "properties": {
+            "hues": {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            "targetChroma": {
+              "type": "number"
+            },
+            "targetContrast": {
+              "type": "number"
+            }
+          },
+          "type": "object"
+        },
+        "presets": {
+          "additionalProperties": false,
+          "properties": {
+            "typography": {
+              "additionalProperties": false,
+              "properties": {
+                "fonts": {
+                  "additionalProperties": {
+                    "$ref": "#/definitions/DeepPartial%3Cstring%3E"
+                  },
+                  "type": "object"
+                },
+                "scale": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "curve": {
+                      "$ref": "#/definitions/DeepPartial%3Cdef-alias-src_lib_types.ts-2569-2649-src_lib_types.ts-0-5941355102109%3E"
+                    },
+                    "maxSize": {
+                      "$ref": "#/definitions/DeepPartial%3Cnumber686710375%3E"
+                    },
+                    "minSize": {
+                      "$ref": "#/definitions/DeepPartial%3Cnumber524178369%3E"
+                    },
+                    "steps": {
+                      "$ref": "#/definitions/DeepPartial%3Cnumber1808058353%3E"
+                    }
+                  },
+                  "type": "object"
+                },
+                "sizes": {
+                  "additionalProperties": {
+                    "$ref": "#/definitions/DeepPartial%3Cstring%3E"
+                  },
+                  "type": "object"
+                },
+                "weights": {
+                  "additionalProperties": {
+                    "$ref": "#/definitions/DeepPartial%3Cnumber%3E"
+                  },
+                  "type": "object"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "vibe": {
+          "$ref": "#/definitions/VibeName"
         }
       },
-      "required": ["name", "surfaces"],
       "type": "object"
     },
-    "TypeScaleConfig": {
-      "additionalProperties": false,
-      "properties": {
-        "curve": {
-          "$ref": "#/definitions/BezierCurve",
-          "description": "Control points for the scaling curve."
-        },
-        "maxSize": {
-          "description": "Max size in rem (e.g. 3.0).",
-          "type": "number"
-        },
-        "minSize": {
-          "description": "Base size in rem (e.g. 0.75).",
-          "type": "number"
-        },
-        "steps": {
-          "description": "Number of sizes to generate (e.g. 5 for xs, sm, base, lg, xl).",
-          "type": "number"
-        }
-      },
-      "required": ["steps", "minSize", "maxSize", "curve"],
-      "type": "object"
-    },
-    "TypographyConfig": {
-      "additionalProperties": false,
-      "properties": {
-        "fonts": {
-          "additionalProperties": {
-            "type": "string"
-          },
-          "description": "Font families. e.g. { mono: \"ui-monospace, ...\", sans: \"system-ui, ...\" }",
-          "type": "object"
-        },
-        "scale": {
-          "$ref": "#/definitions/TypeScaleConfig",
-          "description": "Configuration for generating a type scale. If provided, this will override the `sizes` map."
-        },
-        "sizes": {
-          "additionalProperties": {
-            "type": "string"
-          },
-          "description": "Font sizes. e.g. { sm: \"0.875rem\", lg: \"1.125rem\" }",
-          "type": "object"
-        },
-        "weights": {
-          "additionalProperties": {
-            "type": "number"
-          },
-          "description": "Font weights. e.g. { medium: 500, bold: 700 }",
-          "type": "object"
-        }
-      },
-      "type": "object"
+    "VibeName": {
+      "type": ["string"]
     }
   }
 }

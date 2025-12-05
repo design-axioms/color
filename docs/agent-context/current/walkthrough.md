@@ -1,43 +1,52 @@
-# Walkthrough: Epoch 32 Phase 2 - Token Reorganization
+# Walkthrough: Epoch 32 Phase 3 - High-Level Presets ("Vibes")
 
 ## Goal
 
-The goal of this phase was to reorganize the DTCG export structure to align with ecosystem standards, specifically the "Token Sets" model used by tools like Tokens Studio. This involved splitting the monolithic export into three distinct tiers: Primitives, Light Mode, and Dark Mode.
+The goal of this phase was to introduce "Vibes" — high-level configuration presets that allow users to quickly apply a distinct look and feel to their theme without manually tuning every parameter.
 
-## Changes
+## Implementation Details
 
-### 1. Exporter Refactoring (`src/lib/exporters/dtcg.ts`)
+### 1. Vibe Registry (`src/lib/vibes.ts`)
 
-We refactored the `toDTCG` function to return a `DTCGExport` object, which contains a map of filenames to their content (`Record<string, DTCGFile>`).
+We defined a `Vibe` interface and a `VibeConfig` type. `VibeConfig` is a `DeepPartial<SolverConfig>`, allowing vibes to override specific parts of the configuration (like anchor values, typography, or hue shift settings) while inheriting the rest from system defaults.
 
-- **`generatePrimitives`**: Extracts global key colors and anchors into a `primitives.json` structure.
-- **`generateMode`**: Generates semantic tokens (surfaces, text, charts, shadows) for a specific mode (`light` or `dark`).
-- **`toDTCG`**: Orchestrates the generation of `primitives.json`, `light.json`, and `dark.json`.
+We implemented four initial vibes:
 
-### 2. CLI Update (`src/cli/commands/export.ts`)
+- **Default**: The baseline system configuration.
+- **Academic**: High contrast, serif fonts, low chroma (0.08), minimal hue shift. Ideal for journals.
+- **Vibrant**: High chroma (0.18), aggressive hue shift (45deg), geometric sans-serif. Ideal for consumer apps.
+- **Corporate**: Standard chroma (0.1), moderate hue shift, standard sans-serif. Trustworthy and stable.
 
-We updated the `export` command to handle directory outputs.
+### 2. Resolution Logic (`src/lib/resolve.ts`)
 
-- **Directory Detection**: If the `--out` path does not end in `.json`, it is treated as a directory.
-- **Multi-File Write**: When exporting to a directory, the CLI writes the individual files returned by the exporter (`primitives.json`, `light.json`, `dark.json`).
-- **Legacy Support**: If the `--out` path ends in `.json`, the CLI merges the files into a single JSON object (preserving the old structure) for backward compatibility.
+We created a `resolveConfig` function that implements a 3-layer merge strategy:
 
-### 3. TypeScript Fixes
+1.  **System Defaults**: The hardcoded defaults in `src/lib/defaults.ts`.
+2.  **Vibe Defaults**: The configuration from the selected vibe (if any).
+3.  **User Config**: The user's `color-config.json` overrides.
 
-We resolved several TypeScript errors that were blocking the build:
+This ensures that a user can select "Vibrant" but still override specific values (like a key color) in their config file.
 
-- Fixed strict property initialization in `src/lib/inspector/overlay.ts`.
-- Fixed import extensions and type safety issues in `src/lib/importers/dtcg.ts`.
-- Updated tests in `src/lib/exporters/__tests__/dtcg.test.ts` to match the new exporter signature.
+### 3. CLI Updates
+
+We updated the CLI commands (`build`, `export`, `audit`) to use `resolveConfig` instead of using the raw config directly.
+
+- **Audit Command**: We updated the schema validation to use `UserConfig` (where `anchors` and `groups` are optional) instead of `SolverConfig`. This allows users to have a minimal config file like `{ "vibe": "vibrant" }`.
+
+### 4. UI Integration
+
+We updated the Theme Builder (`site/src/components/builder-v2/`) to support vibes.
+
+- **ConfigState**: Updated to load vibes using `resolveConfig`.
+- **VibePicker**: Added a dropdown in the sidebar to switch between vibes.
+
+## Key Decisions
+
+- **Terminology**: We chose "Vibe" over "Preset" to distinguish these high-level "feel" settings from lower-level component presets (like "Border Preset").
+- **Deep Merge**: We implemented a custom `deepMerge` to ensure that nested properties (like `anchors.page.light.start`) are merged correctly without wiping out sibling properties.
+- **0-1 Range**: We aligned the anchor values in vibes to use the 0-1 range (e.g., 0.99) used by the system internals, correcting an initial mismatch where 0-100 was used.
 
 ## Verification
 
-We verified the changes by:
-
-1.  Running `pnpm build` to ensure a clean compilation.
-2.  Running `axiomatic export --out tokens/` to generate the new file structure.
-3.  Inspecting the generated files (`primitives.json`, `light.json`, `dark.json`) to confirm they contain the expected data.
-
-## Next Steps
-
-The next phase is **Epoch 32 Phase 3: High-Level Presets ("Vibes")**, where we will implement curated configuration presets to simplify the initial setup for users.
+- **CLI**: Verified that `axiomatic audit` passes with a minimal config file `{ "vibe": "vibrant" }`.
+- **Build**: Verified that the package and site build successfully.

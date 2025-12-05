@@ -5,128 +5,66 @@
 # The Constitution (Axioms)
 
 > **Status**: Living Document
-> **Version**: 1.2 (Epoch 19)
+> **Version**: 2.0 (Epoch 30)
 
 This document serves as the "Constitution" for Axiomatic Color. It consolidates the core philosophy, physical laws, and architectural rules that govern the system. All design decisions and code changes must align with these axioms.
 
-## I. The Prime Directive
+## Vision
+
+**Axiomatic Color is a Physics Engine for Design.**
+
+We are not building a "Paint Set" (a collection of static colors). We are building a **Deterministic System** that generates accessible, harmonious, and adaptive interfaces from semantic intent.
+
+- **Input**: Semantic Intent + Context.
+- **Process**: Algorithmic Solver (Accessibility Constraints + Optical Physics).
+- **Output**: Adaptive, Accessible, Harmonious UI.
+
+## The Axioms
+
+The axioms are organized into domains:
+
+### [0. The Fundamental Theorem](axioms/00-fundamental-theorem.md)
+
+**Color = f(Context, Intent)**
+Color is not a static value; it is a function. The system is a reactive dependency graph that resolves pixel values based on semantic intent and environmental context.
+
+### [I. The Prime Directive](axioms/01-accessibility.md)
 
 **Accessibility is the Foundation of Aesthetics.**
+We reject the idea that accessibility and aesthetics are in conflict. Accessibility is the mathematical constraint solver that generates the palette.
 
-A design cannot be beautiful if it cannot be perceived. We reject the idea that accessibility and aesthetics are in conflict; instead, we treat accessibility as the physical medium upon which beauty is built.
+### [II. The Laws of Physics (Light)](axioms/02-physics.md)
 
-- **Constraint, not Feature**: Accessibility is not a "nice to have" or a compliance checklist item. It is the mathematical constraint solver that generates the palette.
-- **Universal Perception**: We design for the human eye in all its variations (aging, color blindness, low vision), not just the designer's monitor.
+**Lightness is Relative. Chroma is Expensive. Hue Rotates.**
+We model color as a physical phenomenon, respecting the non-linear nature of human perception (Bezold-Brücke effect, Gamut Cusps).
 
-## II. The Laws of Physics (Light)
+### [III. The Laws of Architecture (Surfaces)](axioms/03-architecture.md)
 
-These axioms describe how the system models light and color perception.
+**Surfaces are Containers. Context Flows Down. Text is Relative.**
+We organize UI elements into a strict taxonomy of Surfaces that establish Context for their children.
 
-### 1. Lightness is Relative
+### [IV. The Laws of Integration](axioms/04-integration.md)
 
-A surface's lightness is never absolute; it is defined by its **Context**.
+**Code is Truth. No Magic Numbers. Baseline Newly Available.**
+We ensure consistency and interoperability by deriving everything from configuration and targeting modern web standards.
 
-- **Polarity**: A "light" surface in a dark mode context is actually dark. A "dark" surface in a light mode context is actually light.
-- **Adaptation**: The system solves for _contrast ratios_, not hex codes. `Surface-100` might be white in one theme and black in another, but its relationship to its content remains constant.
+### [V. The Laws of Engineering](axioms/05-engineering.md)
 
-### 2. Chroma is Expensive
+**State is a Domain Model. Testing is a Ratchet. Late Binding.**
+We build maintainable, testable software that leverages the power of the browser's CSS engine for dynamic resolution.
 
-High chroma (saturation) reduces available lightness contrast.
+### [VI. The Law of Static Projection](axioms/06-projection.md)
 
-- **The Trade-off**: You cannot have a color that is both extremely vibrant and extremely accessible against all backgrounds.
-- **Budgeting**: Every surface has a "chroma budget". Spending it on vibrancy means you have less room for lightness variation.
+**Static exports are snapshots.**
+Since the system is dynamic, any static export (JSON, PDF) is a lossy projection of the system's state at a specific moment. We must enumerate states explicitly in these formats.
 
-### 3. Hue Rotates (The Bezold-Brücke Effect)
+## Missing / Implicit Axioms (To Be Formalized)
 
-Hue is not static across the lightness spectrum.
+The following principles guide our work but have not yet been codified into Law:
 
-- **Natural Shift**: As colors get lighter or darker, our perception of their hue shifts. A linear ramp of "Blue" often looks purple in the darks or teal in the lights.
-- **Non-Linear Correction**: The system uses cubic Bezier curves to rotate hue non-linearly, mimicking natural light physics (cool shadows → warm highlights) to maintain perceptual harmony.
-- **Reference**: See [Hue Shift Rationale](hue-shift.md) for the mathematical implementation.
-
-## III. The Laws of Architecture (Surfaces)
-
-These axioms describe how the system organizes UI elements.
-
-### 4. Surfaces are Containers
-
-Every visible element lives on a **Surface**.
-
-- **No Floating Content**: Text, icons, and borders never exist in a vacuum. They are always "on" something.
-- **Taxonomy**:
-  - **Canvas**: The infinite backdrop (`page`, `workspace`).
-  - **Object**: A contained element (`card`, `tinted`).
-  - **Action**: An interactive element (`action`).
-  - **Spotlight**: A high-emphasis element (`spotlight`).
-
-### 5. Context Flows Down
-
-A surface establishes the **Context** for its children.
-
-- **Inheritance**: When you nest a Card on a Page, the Card consumes the Page's context and creates a new context for its contents.
-- **Automatic Adjustment**: The system automatically adjusts contrast and polarity based on the nesting level. You don't manually pick "Dark Card" or "Light Card"; you just pick "Card".
-
-### 6. Text is Relative
-
-Text color is defined by the surface it sits on, not by global variables.
-
-- **Context Consumers**: Text tokens (`text-strong`, `text-subtle`) are abstract requests for contrast.
-- **Inversion**: `text-strong` on a light surface is dark. `text-strong` on a dark surface is light. The component doesn't know or care; it just asks for "Strong Text".
-
-## IV. The Laws of Integration
-
-These axioms describe how the system interacts with the world.
-
-### 7. The Code is the Source of Truth
-
-Design tools (Figma, Sketch) are downstream consumers of the code, not the other way around.
-
-- **Generation**: Tokens are generated from the configuration code.
-- **No Manual Tweaks**: We do not manually tweak individual hex codes in the output. If a color looks wrong, we adjust the _algorithm_ or the _configuration constraints_.
-- **Isomorphism**: The core logic (`src/lib`) is isomorphic. It runs identically in Node.js (CLI) and the Browser (Theme Builder), ensuring the preview always matches the build output.
-
-### 8. No Magic Numbers
-
-All values are derived from the configuration (Anchors, Curves).
-
-- **Math vs. Magic**: We reject arbitrary values like "Blue-500".
-- **Derivation**: Every color is the result of a solver function: `f(Context, Intent) = Color`.
-
-### 9. Baseline Newly Available
-
-We build for the modern web, not the legacy web.
-
-- **Policy**: We adopt features that are "Newly Available" in major browsers (last 2 versions). We do not burden the codebase with polyfills or fallbacks for obsolete browsers unless strictly necessary.
-- **Examples**: `oklch()`, `light-dark()`, `@property`, `popover`.
-
-## V. The Laws of Engineering
-
-These axioms describe how we build the software itself.
-
-### 10. State is a Domain Model
-
-We model application state using plain classes and Runes, not framework-specific boilerplate.
-
-- **Encapsulation**: Logic lives in `*.svelte.ts` classes, not in UI components.
-- **Reactivity**: We use fine-grained reactivity (`$state`, `$derived`) to track changes automatically.
-- **Injection**: State is injected via Context, avoiding global singletons and ensuring testability.
-- **Reference**: See [State Architecture](state-architecture.md).
-
-### 11. Testing is a Ratchet
-
-We do not just maintain quality; we actively increase it with every change.
-
-- **No Regression**: Coverage thresholds are a floor, not a ceiling. We never lower them.
-- **New Code, New Tests**: Every new feature or bug fix must include accompanying tests.
-- **Coverage Growth**: We aim to increase test coverage over time, treating low coverage as technical debt to be paid down.
-
-### 12. The Law of Late Binding
-
-Color is a Function, Not a Value.
-
-- **Dynamic Resolution**: Final pixel values are resolved at the last possible moment by the engine.
-- **Indirection**: Utilities never set properties directly; they modify the _inputs_ to the engine's calculation.
-- **Composition**: Primitive tokens are exposed as class-based utilities that modify orthogonal inputs (e.g., Lightness vs. Hue), allowing them to be composed naturally without conflict.
+- **The Law of Determinism**: Given the same configuration, the output must be bit-for-bit identical.
+- **The Law of Lossless Interoperability**: We export to other formats (Tailwind, DTCG) without losing semantic meaning.
+- **The Law of "Just Enough" Configuration**: We expose knobs for _intent_, not _implementation_.
 
 ---
 
@@ -278,8 +216,16 @@ Where <math><mtext>eval</mtext><mo stretchy="false">(</mo><msub><mi>L</mi><mi ma
 </math>
 
 :::tip[In Plain English]
-<math><mi mathvariant="normal">Φ</mi></math> is the browser's rendering engine. It takes the DNA (<math><mi mathvariant="normal">Σ</mi></math>) and turns it into actual pixels. Crucially, it decides the actual lightness _at the last moment_ based on whether we are in light or dark mode.
-:::
+
+<math>
+  <mi mathvariant="normal">Φ</mi>
+</math>
+is the browser's rendering engine. It takes the DNA (
+<math>
+  <mi mathvariant="normal">Σ</mi>
+</math>
+) and turns it into actual pixels. Crucially, it decides the actual lightness
+_at the last moment_ based on whether we are in light or dark mode. :::
 
 ## 3. The Operators
 
@@ -986,6 +932,131 @@ The cubic Bezier implementation assumes the curve starts at `(0,0)` and ends at 
 - **OKLCH Color Space**: Hue rotations happen in the perceptually uniform OKLCH space, ensuring equal visual impact across the spectrum
 - **Chroma Independence**: Hue shifts don't affect saturation, maintaining consistent vibrancy
 - **CSS `@property`**: Registered custom properties allow smooth animated transitions between hue-shifted values
+
+---
+
+## advanced/reactive-pipeline.mdx
+
+# The Reactive Pipeline
+
+Most color systems are **Static Maps**. You define a palette (`blue-500`), assign it to a variable (`--primary`), and use it.
+
+Axiomatic Color is different. It is a **Reactive Pipeline**.
+
+## The Core Equation
+
+If you are familiar with React, you know the formula:
+
+$$
+UI = f(State)
+$$
+
+In Axiomatic Color, we apply this same principle to design tokens:
+
+$$
+Color = f(Context, Intent)
+$$
+
+- **Context**: Where is this element? (Light Mode? Dark Mode? Inside a Card? On a Brand Surface?)
+- **Intent**: What is this element? (Text? Border? Background?)
+- **Color**: The final pixel value.
+
+## Static vs. Reactive
+
+### The Static Model (Traditional)
+
+In a traditional system, tokens are **Values**.
+
+```css
+:root {
+  --text-primary: #111827;
+  --bg-card: #ffffff;
+}
+
+.dark {
+  --text-primary: #f9fafb;
+  --bg-card: #1f2937;
+}
+```
+
+This works for simple Light/Dark switching. But what happens when you put a card _inside_ a dark section in Light Mode? You have to manually override the tokens or use complex CSS cascades.
+
+### The Reactive Model (Axiomatic)
+
+In Axiomatic, tokens are **Functions**.
+
+We don't just swap values; we swap the **calculation**.
+
+```css
+/* Simplified for explanation */
+.surface-card {
+  /* 1. Establish Context */
+  --context-lightness: var(--anchor-page-lightness);
+
+  /* 2. Define the Function */
+  background: oklch(var(--context-lightness) 0 0);
+  color: oklch(from var(--context-lightness) calc(1 - l) 0 0);
+}
+```
+
+When you nest a surface, the `Context` changes. The `Intent` (Text, Background) remains the same, but because the input `Context` changed, the output `Color` automatically updates.
+
+## How It Works: Late Binding
+
+To make this work in standard CSS, we use a technique called **Late Binding**.
+
+Instead of resolving colors at build time (Sass/PostCSS), we resolve them at **Runtime** (Browser) using CSS Custom Properties.
+
+### 1. The Inputs (Primitives)
+
+We start with the raw ingredients. These are global and immutable.
+
+```css
+:root {
+  --primitive-brand-500: oklch(0.6 0.2 250);
+  --primitive-neutral-0: oklch(1 0 0);
+  --primitive-neutral-1000: oklch(0 0 0);
+}
+```
+
+### 2. The Context (State)
+
+When you enter a surface, it sets local variables that describe the environment.
+
+```css
+.surface-sunken {
+  /* I am a slightly darker surface */
+  --context-base-lightness: 0.95;
+  --context-contrast-direction: -1; /* Get darker for contrast */
+}
+```
+
+### 3. The Resolution (Function)
+
+Utility classes don't point to fixed colors. They point to **Logic**.
+
+```css
+.text-subtle {
+  /* Calculate lightness based on the CURRENT context */
+  --lightness: calc(
+    var(--context-base-lightness) + (0.2 * var(--context-contrast-direction))
+  );
+
+  color: oklch(var(--lightness) 0 0);
+}
+```
+
+## Why This Matters
+
+1.  **Inversion is Free**: To create a "Dark Mode" section inside Light Mode, we just flip the `Context` variables. All children (`.text-subtle`, `.border-muted`) automatically recalculate.
+2.  **Infinite Nesting**: You can nest cards inside cards inside sidebars. The contrast ratios are preserved mathematically.
+3.  **Component Portability**: A component doesn't need to know if it's on a dark background or a light one. It just asks for "Subtle Text", and the pipeline delivers the correct accessible color.
+
+## The "Weirdness" Budget
+
+This approach requires a mental shift. You stop thinking about "What color is this?" and start thinking "What is the relationship between this element and its container?".
+
+It feels "weird" because CSS has historically been static. But just as React made UI reactive, Axiomatic makes Color reactive. The result is a system that is robust, maintainable, and mathematically accessible by default.
 
 ---
 
@@ -2568,6 +2639,92 @@ _Note: A dedicated Tailwind plugin is on the roadmap._
 
 ---
 
+## guides/linting.mdx
+
+The Axiomatic Color System provides an ESLint plugin to help you maintain a clean, consistent codebase. The plugin enforces the "Code is Truth" axiom by flagging hardcoded colors and ensuring semantic token usage.
+
+## Installation
+
+```bash
+pnpm add -D @axiomatic-design/eslint-plugin
+```
+
+## Configuration
+
+Add the plugin to your `eslint.config.js` (flat config):
+
+```javascript
+
+
+export default [
+  {
+    plugins: {
+      "@axiomatic-design": axiomatic,
+    },
+    rules: {
+      // Warn on hardcoded colors (hex, rgb, etc.)
+      "@axiomatic-design/no-hardcoded-colors": "warn",
+
+      // Error on invalid or internal token usage
+      "@axiomatic-design/no-raw-tokens": "error",
+    },
+  },
+];
+```
+
+## Rules
+
+### `no-hardcoded-colors`
+
+This rule flags usage of hardcoded color values (Hex, RGB, HSL, named colors) in your code. It supports JSX `style` props, Svelte, Vue, and Ember (GTS) templates.
+
+**Why?**
+Hardcoded colors break the system's ability to adapt to themes and modes. They are "Magic Numbers" that should be replaced with semantic tokens.
+
+**Example:**
+
+```jsx
+// ❌ Invalid
+<div style={{ color: "#ff0000" }}>Error</div>
+
+// ✅ Valid
+<div style={{ color: "var(--axm-text-high-token)" }}>Error</div>
+```
+
+**Auto-Fix:**
+The rule provides auto-fix suggestions to replace hardcoded colors with the closest matching semantic token from your generated theme.
+
+### `no-raw-tokens`
+
+This rule flags usage of internal tokens, non-existent tokens, or tokens that should be applied via utility classes.
+
+**Why?**
+
+- **Internal Tokens**: Tokens like `--scale-gray-500` are implementation details and may change. Use semantic tokens like `--surface-sunken` instead.
+- **Utility Classes**: Some tokens (like shadows or surfaces) carry extra properties or side effects. Using the utility class ensures consistent behavior.
+
+**Example:**
+
+```javascript
+// ❌ Invalid (Internal Token)
+const color = "var(--scale-gray-500)";
+
+// ❌ Invalid (Should use class)
+const bg = "var(--surface-card)";
+
+// ✅ Valid
+const color = "var(--axm-text-high-token)";
+<div className="surface-card" />;
+```
+
+## Config Awareness
+
+The plugin is "Config Aware". It automatically detects your `color-config.json` and generated CSS files (`css/theme.css`, `css/utilities.css`) to validate tokens and provide accurate suggestions.
+
+Ensure these files are present in your project root or build output for the linter to work correctly.
+
+---
+
 ## guides/quick-start.mdx
 
 This guide will walk you through setting up the Axiomatic Color and building your first themed component.
@@ -3148,88 +3305,9 @@ You may see these tokens in the generated CSS, but they are generally intended f
 
 ```json
 {
-  "$ref": "#/definitions/SolverConfig",
+  "$ref": "#/definitions/UserConfig",
   "$schema": "http://json-schema.org/draft-07/schema#",
   "definitions": {
-    "AnchorValue": {
-      "additionalProperties": false,
-      "properties": {
-        "adjustable": {
-          "type": "boolean"
-        },
-        "background": {
-          "type": "number"
-        }
-      },
-      "required": ["background"],
-      "type": "object"
-    },
-    "Anchors": {
-      "additionalProperties": false,
-      "properties": {
-        "dark": {
-          "$ref": "#/definitions/ModeAnchors"
-        },
-        "light": {
-          "$ref": "#/definitions/ModeAnchors"
-        }
-      },
-      "required": ["light", "dark"],
-      "type": "object"
-    },
-    "BezierCurve": {
-      "additionalProperties": false,
-      "properties": {
-        "p1": {
-          "items": {
-            "type": "number"
-          },
-          "maxItems": 2,
-          "minItems": 2,
-          "type": "array"
-        },
-        "p2": {
-          "items": {
-            "type": "number"
-          },
-          "maxItems": 2,
-          "minItems": 2,
-          "type": "array"
-        }
-      },
-      "required": ["p1", "p2"],
-      "type": "object"
-    },
-    "BorderTargets": {
-      "additionalProperties": false,
-      "properties": {
-        "critical": {
-          "type": "number"
-        },
-        "decorative": {
-          "type": "number"
-        },
-        "interactive": {
-          "type": "number"
-        }
-      },
-      "required": ["decorative", "interactive", "critical"],
-      "type": "object"
-    },
-    "ConfigOptions": {
-      "additionalProperties": false,
-      "properties": {
-        "prefix": {
-          "description": "The prefix to use for CSS variables. Defaults to \"color-sys\".",
-          "type": "string"
-        },
-        "selector": {
-          "description": "The CSS selector to scope the variables to. Defaults to \":root\".",
-          "type": "string"
-        }
-      },
-      "type": "object"
-    },
     "ContrastOffsets": {
       "additionalProperties": false,
       "properties": {
@@ -3242,32 +3320,142 @@ You may see these tokens in the generated CSS, but they are generally intended f
       },
       "type": "object"
     },
-    "HueShiftConfig": {
+    "DeepPartial<AnchorValue>": {
       "additionalProperties": false,
       "properties": {
-        "curve": {
-          "$ref": "#/definitions/BezierCurve"
+        "adjustable": {
+          "type": "boolean"
         },
-        "maxRotation": {
-          "description": "Maximum hue rotation in degrees.",
-          "type": "number"
+        "background": {
+          "$ref": "#/definitions/DeepPartial%3Cnumber%3E"
         }
       },
-      "required": ["curve", "maxRotation"],
       "type": "object"
     },
-    "ModeAnchors": {
+    "DeepPartial<Anchors>": {
+      "additionalProperties": false,
+      "properties": {
+        "dark": {
+          "$ref": "#/definitions/DeepPartial%3CModeAnchors%3E"
+        },
+        "light": {
+          "$ref": "#/definitions/DeepPartial%3CModeAnchors%3E"
+        }
+      },
+      "type": "object"
+    },
+    "DeepPartial<BezierCurve>": {
+      "additionalProperties": false,
+      "properties": {
+        "p1": {
+          "$ref": "#/definitions/DeepPartial%3C%5Bnumber%2Cnumber%5D%3E"
+        },
+        "p2": {
+          "$ref": "#/definitions/DeepPartial%3C%5Bnumber%2Cnumber%5D%3E"
+        }
+      },
+      "type": "object"
+    },
+    "DeepPartial<ModeAnchors>": {
       "additionalProperties": false,
       "properties": {
         "end": {
-          "$ref": "#/definitions/AnchorValue"
+          "$ref": "#/definitions/DeepPartial%3CAnchorValue%3E"
         },
         "start": {
-          "$ref": "#/definitions/AnchorValue"
+          "$ref": "#/definitions/DeepPartial%3CAnchorValue%3E"
         }
       },
-      "required": ["start", "end"],
       "type": "object"
+    },
+    "DeepPartial<PolarityAnchors>": {
+      "additionalProperties": false,
+      "properties": {
+        "inverted": {
+          "$ref": "#/definitions/DeepPartial%3CAnchors%3E"
+        },
+        "keyColors": {
+          "$ref": "#/definitions/DeepPartial%3Cindexed-type-1474508258-74242-74263-1474508258-74138-74264-1474508258-0-218439%3Cstring%2Cstring%3E1922313925%3E"
+        },
+        "page": {
+          "$ref": "#/definitions/DeepPartial%3CAnchors%3E"
+        }
+      },
+      "type": "object"
+    },
+    "DeepPartial<[number,number]>": {
+      "items": {
+        "type": [
+          "number"
+        ]
+      },
+      "type": "array"
+    },
+    "DeepPartial<def-alias-src_lib_types.ts-2338-2569-src_lib_types.ts-0-5941[]>": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "gapBefore": {
+            "description": "Extra spacing (in contrast steps) before this group starts. Used to create visual separation between groups.",
+            "type": "number"
+          },
+          "name": {
+            "type": "string"
+          },
+          "surfaces": {
+            "items": {
+              "$ref": "#/definitions/SurfaceConfig"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "name",
+          "surfaces"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "DeepPartial<def-alias-src_lib_types.ts-2569-2649-src_lib_types.ts-0-5941355102109>": {
+      "additionalProperties": false,
+      "properties": {
+        "p1": {
+          "$ref": "#/definitions/DeepPartial%3C%5Bnumber%2Cnumber%5D%3E"
+        },
+        "p2": {
+          "$ref": "#/definitions/DeepPartial%3C%5Bnumber%2Cnumber%5D%3E"
+        }
+      },
+      "type": "object"
+    },
+    "DeepPartial<indexed-type-1474508258-74242-74263-1474508258-74138-74264-1474508258-0-218439<string,string>1922313925>": {
+      "additionalProperties": {
+        "$ref": "#/definitions/DeepPartial%3Cstring%3E"
+      },
+      "type": "object"
+    },
+    "DeepPartial<number1805728063>": {
+      "description": "Maximum hue rotation in degrees.",
+      "type": "number"
+    },
+    "DeepPartial<number1808058353>": {
+      "description": "Number of sizes to generate (e.g. 5 for xs, sm, base, lg, xl).",
+      "type": "number"
+    },
+    "DeepPartial<number524178369>": {
+      "description": "Base size in rem (e.g. 0.75).",
+      "type": "number"
+    },
+    "DeepPartial<number686710375>": {
+      "description": "Max size in rem (e.g. 3.0).",
+      "type": "number"
+    },
+    "DeepPartial<number>": {
+      "type": "number"
+    },
+    "DeepPartial<string>": {
+      "type": "string"
     },
     "ModeSpec": {
       "additionalProperties": false,
@@ -3285,7 +3473,10 @@ You may see these tokens in the generated CSS, but they are generally intended f
               "type": "number"
             }
           },
-          "required": ["targetContrast", "clamped"],
+          "required": [
+            "targetContrast",
+            "clamped"
+          ],
           "type": "object"
         },
         "fg-baseline": {
@@ -3314,90 +3505,12 @@ You may see these tokens in the generated CSS, but they are generally intended f
       ],
       "type": "object"
     },
-    "PaletteConfig": {
-      "additionalProperties": false,
-      "properties": {
-        "hues": {
-          "description": "List of hues to use for the palette. Defaults to a standard 10-color categorical scale.",
-          "items": {
-            "type": "number"
-          },
-          "type": "array"
-        },
-        "targetChroma": {
-          "description": "Target chroma for chart colors. Defaults to ~0.12 (vibrant but not neon). Can be set to 'auto' to match the Action color.",
-          "type": "number"
-        },
-        "targetContrast": {
-          "description": "Target contrast against the page background (APCA). Lower values (e.g. 45-60) result in lighter colors in light mode (more pastel/vibrant) and darker colors in dark mode. Defaults to 60.",
-          "type": "number"
-        }
-      },
-      "type": "object"
-    },
     "Polarity": {
-      "enum": ["page", "inverted"],
+      "enum": [
+        "page",
+        "inverted"
+      ],
       "type": "string"
-    },
-    "PolarityAnchors": {
-      "additionalProperties": false,
-      "properties": {
-        "inverted": {
-          "$ref": "#/definitions/Anchors"
-        },
-        "keyColors": {
-          "additionalProperties": {
-            "type": "string"
-          },
-          "description": "A map of key color names to their values. Values can be:\n- A hex color string (e.g. \"#ff0000\")\n- A reference to another key color (e.g. \"danger\")",
-          "type": "object"
-        },
-        "page": {
-          "$ref": "#/definitions/Anchors"
-        }
-      },
-      "required": ["page", "inverted", "keyColors"],
-      "type": "object"
-    },
-    "PresetsConfig": {
-      "additionalProperties": false,
-      "properties": {
-        "typography": {
-          "$ref": "#/definitions/TypographyConfig"
-        }
-      },
-      "type": "object"
-    },
-    "SolverConfig": {
-      "additionalProperties": false,
-      "properties": {
-        "anchors": {
-          "$ref": "#/definitions/PolarityAnchors"
-        },
-        "borderTargets": {
-          "$ref": "#/definitions/BorderTargets"
-        },
-        "groups": {
-          "items": {
-            "$ref": "#/definitions/SurfaceGroup"
-          },
-          "type": "array"
-        },
-        "hueShift": {
-          "$ref": "#/definitions/HueShiftConfig"
-        },
-        "options": {
-          "$ref": "#/definitions/ConfigOptions"
-        },
-        "palette": {
-          "$ref": "#/definitions/PaletteConfig"
-        },
-        "presets": {
-          "$ref": "#/definitions/PresetsConfig"
-        }
-      },
-      "required": ["anchors", "groups"],
-      "type": "object"
     },
     "StateDefinition": {
       "additionalProperties": false,
@@ -3410,7 +3523,10 @@ You may see these tokens in the generated CSS, but they are generally intended f
           "type": "number"
         }
       },
-      "required": ["name", "offset"],
+      "required": [
+        "name",
+        "offset"
+      ],
       "type": "object"
     },
     "SurfaceConfig": {
@@ -3426,7 +3542,10 @@ You may see these tokens in the generated CSS, but they are generally intended f
               "$ref": "#/definitions/ModeSpec"
             }
           },
-          "required": ["light", "dark"],
+          "required": [
+            "light",
+            "dark"
+          ],
           "type": "object"
         },
         "contrastOffset": {
@@ -3438,7 +3557,10 @@ You may see these tokens in the generated CSS, but they are generally intended f
         },
         "hue": {
           "description": "Target hue for this surface. Can be a number (0-360) or a reference to a key color (e.g. \"brand\").",
-          "type": ["number", "string"]
+          "type": [
+            "number",
+            "string"
+          ]
         },
         "label": {
           "type": "string"
@@ -3474,85 +3596,142 @@ You may see these tokens in the generated CSS, but they are generally intended f
           "type": "number"
         }
       },
-      "required": ["slug", "label", "polarity"],
+      "required": [
+        "slug",
+        "label",
+        "polarity"
+      ],
       "type": "object"
     },
-    "SurfaceGroup": {
+    "UserConfig": {
       "additionalProperties": false,
       "properties": {
-        "gapBefore": {
-          "description": "Extra spacing (in contrast steps) before this group starts. Used to create visual separation between groups.",
-          "type": "number"
-        },
-        "name": {
+        "$schema": {
           "type": "string"
         },
-        "surfaces": {
-          "items": {
-            "$ref": "#/definitions/SurfaceConfig"
+        "anchors": {
+          "$ref": "#/definitions/DeepPartial%3CPolarityAnchors%3E"
+        },
+        "borderTargets": {
+          "additionalProperties": false,
+          "properties": {
+            "critical": {
+              "$ref": "#/definitions/DeepPartial%3Cnumber%3E"
+            },
+            "decorative": {
+              "$ref": "#/definitions/DeepPartial%3Cnumber%3E"
+            },
+            "interactive": {
+              "$ref": "#/definitions/DeepPartial%3Cnumber%3E"
+            }
           },
-          "type": "array"
+          "type": "object"
+        },
+        "groups": {
+          "$ref": "#/definitions/DeepPartial%3Cdef-alias-src_lib_types.ts-2338-2569-src_lib_types.ts-0-5941%5B%5D%3E"
+        },
+        "hueShift": {
+          "additionalProperties": false,
+          "properties": {
+            "curve": {
+              "$ref": "#/definitions/DeepPartial%3CBezierCurve%3E"
+            },
+            "maxRotation": {
+              "$ref": "#/definitions/DeepPartial%3Cnumber1805728063%3E"
+            }
+          },
+          "type": "object"
+        },
+        "options": {
+          "additionalProperties": false,
+          "properties": {
+            "prefix": {
+              "type": "string"
+            },
+            "selector": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "palette": {
+          "additionalProperties": false,
+          "properties": {
+            "hues": {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            "targetChroma": {
+              "type": "number"
+            },
+            "targetContrast": {
+              "type": "number"
+            }
+          },
+          "type": "object"
+        },
+        "presets": {
+          "additionalProperties": false,
+          "properties": {
+            "typography": {
+              "additionalProperties": false,
+              "properties": {
+                "fonts": {
+                  "additionalProperties": {
+                    "$ref": "#/definitions/DeepPartial%3Cstring%3E"
+                  },
+                  "type": "object"
+                },
+                "scale": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "curve": {
+                      "$ref": "#/definitions/DeepPartial%3Cdef-alias-src_lib_types.ts-2569-2649-src_lib_types.ts-0-5941355102109%3E"
+                    },
+                    "maxSize": {
+                      "$ref": "#/definitions/DeepPartial%3Cnumber686710375%3E"
+                    },
+                    "minSize": {
+                      "$ref": "#/definitions/DeepPartial%3Cnumber524178369%3E"
+                    },
+                    "steps": {
+                      "$ref": "#/definitions/DeepPartial%3Cnumber1808058353%3E"
+                    }
+                  },
+                  "type": "object"
+                },
+                "sizes": {
+                  "additionalProperties": {
+                    "$ref": "#/definitions/DeepPartial%3Cstring%3E"
+                  },
+                  "type": "object"
+                },
+                "weights": {
+                  "additionalProperties": {
+                    "$ref": "#/definitions/DeepPartial%3Cnumber%3E"
+                  },
+                  "type": "object"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "vibe": {
+          "$ref": "#/definitions/VibeName"
         }
       },
-      "required": ["name", "surfaces"],
       "type": "object"
     },
-    "TypeScaleConfig": {
-      "additionalProperties": false,
-      "properties": {
-        "curve": {
-          "$ref": "#/definitions/BezierCurve",
-          "description": "Control points for the scaling curve."
-        },
-        "maxSize": {
-          "description": "Max size in rem (e.g. 3.0).",
-          "type": "number"
-        },
-        "minSize": {
-          "description": "Base size in rem (e.g. 0.75).",
-          "type": "number"
-        },
-        "steps": {
-          "description": "Number of sizes to generate (e.g. 5 for xs, sm, base, lg, xl).",
-          "type": "number"
-        }
-      },
-      "required": ["steps", "minSize", "maxSize", "curve"],
-      "type": "object"
-    },
-    "TypographyConfig": {
-      "additionalProperties": false,
-      "properties": {
-        "fonts": {
-          "additionalProperties": {
-            "type": "string"
-          },
-          "description": "Font families. e.g. { mono: \"ui-monospace, ...\", sans: \"system-ui, ...\" }",
-          "type": "object"
-        },
-        "scale": {
-          "$ref": "#/definitions/TypeScaleConfig",
-          "description": "Configuration for generating a type scale. If provided, this will override the `sizes` map."
-        },
-        "sizes": {
-          "additionalProperties": {
-            "type": "string"
-          },
-          "description": "Font sizes. e.g. { sm: \"0.875rem\", lg: \"1.125rem\" }",
-          "type": "object"
-        },
-        "weights": {
-          "additionalProperties": {
-            "type": "number"
-          },
-          "description": "Font weights. e.g. { medium: 500, bold: 700 }",
-          "type": "object"
-        }
-      },
-      "type": "object"
+    "VibeName": {
+      "type": [
+        "string"
+      ]
     }
   }
 }
-
 ```
 

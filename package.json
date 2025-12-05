@@ -33,7 +33,7 @@
     "audit:theme": "node src/cli/index.ts audit",
     "sketch": "node scripts/lightness-lut-sketch.ts",
     "build": "tsup && pnpm schema",
-    "schema": "ts-json-schema-generator --path 'src/lib/types.ts' --type 'SolverConfig' --out 'color-config.schema.json'",
+    "schema": "ts-json-schema-generator --path 'src/lib/types.ts' --type 'UserConfig' --out 'color-config.schema.json'",
     "prepack": "pnpm build",
     "prepublishOnly": "pnpm test && pnpm build",
     "test": "vitest --run",

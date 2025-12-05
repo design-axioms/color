@@ -2,7 +2,7 @@ import Ajv from "ajv";
 import { readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { solve } from "../../lib/index.ts";
+import { resolveConfig, solve } from "../../lib/index.ts";
 import { contrastForPair, solveForegroundSpec } from "../../lib/math.ts";
 import type { SolverConfig } from "../../lib/types.ts";
 
@@ -110,7 +110,7 @@ export function auditCommand(args: string[], cwd: string): void {
     process.exit(1);
   }
 
-  const config = rawConfig as SolverConfig;
+  const config = resolveConfig(rawConfig as Partial<SolverConfig>);
 
   console.log("Running logic audit...");
 

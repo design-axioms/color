@@ -180,6 +180,6 @@
   - **Phase 2: Token Reorganization (Completed)**
     - **Goal**: Reorganize the system's own token exports to align with ecosystem standards (Primitives vs. Semantic, Mode Splitting).
     - **Design Doc**: [Token Reorganization](../design/token-reorganization.md)
-  - **Phase 3: High-Level Presets ("Vibes")**
+  - **Phase 3: High-Level Presets ("Vibes") (Completed)**
     - **Goal**: Reduce configuration complexity by providing curated "Vibe" presets that configure the physics engine for specific aesthetics.
-    - **Design Doc**: [High-Level Presets](../design/high-level-presets.md)
+    - **Design Doc**: [High-Level Presets](../design/vibes.md)

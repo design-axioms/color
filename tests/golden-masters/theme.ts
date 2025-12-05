@@ -4,37 +4,37 @@
 export const tokens = {
   /** Global shadow tokens */
   shadow: {
-    sm: "var(--shadow-sm)",
-    md: "var(--shadow-md)",
-    lg: "var(--shadow-lg)",
-    xl: "var(--shadow-xl)",
+    sm: "var(--axm-shadow-sm)",
+    md: "var(--axm-shadow-md)",
+    lg: "var(--axm-shadow-lg)",
+    xl: "var(--axm-shadow-xl)",
   },
   /** Global focus ring color */
-  focus: "var(--focus-ring-color)",
+  focus: "var(--axm-focus-ring-color)",
   /** Data visualization palette */
   chart: {
-    "1": "var(--chart-1)",
-    "2": "var(--chart-2)",
-    "3": "var(--chart-3)",
-    "4": "var(--chart-4)",
-    "5": "var(--chart-5)",
-    "6": "var(--chart-6)",
-    "7": "var(--chart-7)",
-    "8": "var(--chart-8)",
-    "9": "var(--chart-9)",
-    "10": "var(--chart-10)",
+    "1": "var(--axm-chart-1)",
+    "2": "var(--axm-chart-2)",
+    "3": "var(--axm-chart-3)",
+    "4": "var(--axm-chart-4)",
+    "5": "var(--axm-chart-5)",
+    "6": "var(--axm-chart-6)",
+    "7": "var(--axm-chart-7)",
+    "8": "var(--axm-chart-8)",
+    "9": "var(--axm-chart-9)",
+    "10": "var(--axm-chart-10)",
   },
   /** Context-aware tokens (available inside a surface) */
   context: {
-    surface: "var(--surface-token)",
+    surface: "var(--axm-surface-token)",
     text: {
-      high: "var(--text-high-token)",
-      subtle: "var(--text-subtle-token)",
-      subtlest: "var(--text-subtlest-token)",
+      high: "var(--axm-text-high-token)",
+      subtle: "var(--axm-text-subtle-token)",
+      subtlest: "var(--axm-text-subtlest-token)",
     },
     border: {
-      decorative: "var(--border-dec-token)",
-      interactive: "var(--border-int-token)",
+      decorative: "var(--axm-border-dec-token)",
+      interactive: "var(--axm-border-int-token)",
     },
   },
   /** Surface utility classes */

@@ -1,7 +1,7 @@
 import { readFileSync, watch, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { generateTokensCss, toHighContrast } from "../../lib/generator.ts";
-import { solve } from "../../lib/index.ts";
+import { resolveConfig, solve } from "../../lib/index.ts";
 import type { SolverConfig } from "../../lib/types.ts";
 
 export function buildCommand(args: string[], cwd: string): void {
@@ -27,14 +27,18 @@ export function buildCommand(args: string[], cwd: string): void {
 
   const build = (): void => {
     console.log(`Reading config from: ${absConfigPath}`);
-    let config: SolverConfig;
+    let rawConfig: Partial<SolverConfig>;
     try {
-      config = JSON.parse(readFileSync(absConfigPath, "utf8")) as SolverConfig;
+      rawConfig = JSON.parse(
+        readFileSync(absConfigPath, "utf8"),
+      ) as Partial<SolverConfig>;
     } catch (e) {
       console.error(`Error reading config file: ${String(e)}`);
       if (!isWatch) process.exit(1);
       return;
     }
+
+    const config = resolveConfig(rawConfig);
 
     console.log("Solving surfaces...");
     const theme = solve(config);

@@ -7,16 +7,17 @@ import { describe, expect, it } from "vitest";
 import { toDTCG } from "../src/lib/exporters/dtcg";
 import { toTailwind } from "../src/lib/exporters/tailwind";
 import { toTypeScript } from "../src/lib/exporters/typescript";
+import { resolveConfig } from "../src/lib/resolve";
 import { generateTheme } from "../src/lib/runtime";
 import { solve } from "../src/lib/solver";
-import type { SolverConfig } from "../src/lib/types";
 
 const CWD = process.cwd();
 const CONFIG_PATH = resolve(CWD, "color-config.json");
 const GOLDEN_MASTERS_DIR = resolve(CWD, "tests/golden-masters");
 
 describe("Golden Master Tests", () => {
-  const config = JSON.parse(readFileSync(CONFIG_PATH, "utf8")) as SolverConfig;
+  const rawConfig = JSON.parse(readFileSync(CONFIG_PATH, "utf8"));
+  const config = resolveConfig(rawConfig);
   const theme = solve(config);
 
   it("should generate deterministic CSS", async () => {
@@ -27,7 +28,7 @@ describe("Golden Master Tests", () => {
   });
 
   it("should generate deterministic DTCG tokens", async () => {
-    const tokens = toDTCG(theme);
+    const tokens = toDTCG(theme, config);
     const json = JSON.stringify(tokens, null, 2);
     await expect(json).toMatchFileSnapshot(
       resolve(GOLDEN_MASTERS_DIR, "tokens.json"),

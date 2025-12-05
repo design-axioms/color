@@ -1,7 +1,8 @@
 import {
   DEFAULT_CONFIG,
-  PRESETS,
+  VIBES,
   generateTheme,
+  resolveConfig,
   solve,
   syncDarkToLight,
 } from "@axiomatic-design/color";
@@ -16,12 +17,12 @@ import type {
 
 const STORAGE_KEY = "axiomatic-config";
 const CUSTOM_STORAGE_KEY = "axiomatic-custom-config";
-const PRESET_ID_KEY = "axiomatic-preset-id";
+const VIBE_ID_KEY = "axiomatic-vibe-id";
 const SYNC_DARK_KEY = "axiomatic-sync-dark";
 
 export class ConfigState {
   config = $state<SolverConfig>(DEFAULT_CONFIG);
-  presetId = $state<string>("");
+  vibeId = $state<string>("");
   syncDark = $state<boolean>(true);
 
   constructor() {
@@ -54,9 +55,9 @@ export class ConfigState {
           typeof localStorage.setItem === "function"
         ) {
           try {
-            localStorage.setItem(PRESET_ID_KEY, this.presetId);
+            localStorage.setItem(VIBE_ID_KEY, this.vibeId);
           } catch (e) {
-            console.error("Failed to save presetId to localStorage", e);
+            console.error("Failed to save vibeId to localStorage", e);
           }
         }
       });
@@ -106,9 +107,9 @@ export class ConfigState {
 
   private loadFromStorage(): void {
     try {
-      const storedPresetId = localStorage.getItem(PRESET_ID_KEY);
-      if (storedPresetId) {
-        this.presetId = storedPresetId;
+      const storedVibeId = localStorage.getItem(VIBE_ID_KEY);
+      if (storedVibeId) {
+        this.vibeId = storedVibeId;
       }
 
       const storedSyncDark = localStorage.getItem(SYNC_DARK_KEY);
@@ -135,8 +136,8 @@ export class ConfigState {
   }
 
   markAsCustom(): void {
-    if (this.presetId !== "") {
-      this.presetId = "";
+    if (this.vibeId !== "") {
+      this.vibeId = "";
     }
   }
 
@@ -147,13 +148,13 @@ export class ConfigState {
       )
     ) {
       this.config = DEFAULT_CONFIG;
-      this.presetId = "";
+      this.vibeId = "";
     }
   }
 
-  loadPreset(newPresetId: string): void {
+  loadVibe(newVibeId: string): void {
     // 1. If currently Custom, save to Custom Storage
-    if (this.presetId === "") {
+    if (this.vibeId === "") {
       try {
         localStorage.setItem(CUSTOM_STORAGE_KEY, JSON.stringify(this.config));
       } catch (e) {
@@ -162,7 +163,7 @@ export class ConfigState {
     }
 
     // 2. Load new config
-    if (newPresetId === "") {
+    if (newVibeId === "") {
       // Loading Custom
       try {
         const stored = localStorage.getItem(CUSTOM_STORAGE_KEY);
@@ -177,15 +178,14 @@ export class ConfigState {
         this.config = DEFAULT_CONFIG;
       }
     } else {
-      // Loading a Preset
-      const preset = PRESETS.find((p) => p.id === newPresetId);
-      if (preset) {
-        this.config = preset.config;
+      // Loading a Vibe
+      if (newVibeId in VIBES) {
+        this.config = resolveConfig({ vibe: newVibeId });
       }
     }
 
     // 3. Update State
-    this.presetId = newPresetId;
+    this.vibeId = newVibeId;
   }
 
   async loadConfigFromFile(file: File): Promise<void> {
@@ -194,7 +194,7 @@ export class ConfigState {
       const parsed = JSON.parse(text) as SolverConfig;
       // TODO: Validate schema?
       this.config = parsed;
-      this.presetId = ""; // Treat as custom
+      this.vibeId = ""; // Treat as custom
     } catch (e) {
       console.error("Failed to load config file", e);
       alert("Failed to load configuration file. Please check the format.");

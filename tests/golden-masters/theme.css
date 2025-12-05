@@ -4,21 +4,21 @@
   --axm-key-brand-color: oklch(0.5417 0.179 288.0332);
   --axm-hue-brand: 288.0332;
   --axm-chroma-brand: 0.179;
-  --axm-key-highlight-color: oklch(0.6002 0.2504 319.8501);
-  --axm-hue-highlight: 319.8501;
-  --axm-chroma-highlight: 0.2504;
   --axm-key-success-color: oklch(0.6222 0.1661 146.2209);
   --axm-hue-success: 146.2209;
   --axm-chroma-success: 0.1661;
   --axm-key-warning-color: oklch(0.5542 0.1169 75.0084);
   --axm-hue-warning: 75.0084;
   --axm-chroma-warning: 0.1169;
-  --axm-key-danger-color: oklch(0.5879 0.1927 20.4694);
-  --axm-hue-danger: 20.4694;
-  --axm-chroma-danger: 0.1927;
   --axm-key-error-color: var(--axm-key-danger-color);
   --axm-hue-error: var(--axm-hue-danger);
   --axm-chroma-error: var(--axm-chroma-danger);
+  --axm-key-highlight-color: oklch(0.6002 0.2504 319.8501);
+  --axm-hue-highlight: 319.8501;
+  --axm-chroma-highlight: 0.2504;
+  --axm-key-danger-color: oklch(0.5879 0.1927 20.4694);
+  --axm-hue-danger: 20.4694;
+  --axm-chroma-danger: 0.1927;
   --axm-key-blue-color: oklch(0.5299 0.1896 257.4102);
   --axm-hue-blue: 257.4102;
   --axm-chroma-blue: 0.1896;
@@ -420,20 +420,6 @@ body {
   --text-chroma-source: var(--context-chroma);
 }
 
-.hue-highlight {
-  --context-hue: var(--axm-hue-highlight);
-  --context-chroma: var(--axm-chroma-highlight);
-
-  /* 1. Surface Tinting */
-  --base-hue: var(--context-hue);
-  --hue-adjust: 0;
-  --base-chroma: calc(var(--context-chroma) * 0.1);
-
-  /* 2. Text Tinting (Indirection) */
-  --text-hue-source: var(--context-hue);
-  --text-chroma-source: var(--context-chroma);
-}
-
 .hue-success {
   --context-hue: var(--axm-hue-success);
   --context-chroma: var(--axm-chroma-success);
@@ -462,9 +448,9 @@ body {
   --text-chroma-source: var(--context-chroma);
 }
 
-.hue-danger {
-  --context-hue: var(--axm-hue-danger);
-  --context-chroma: var(--axm-chroma-danger);
+.hue-error {
+  --context-hue: var(--axm-hue-error);
+  --context-chroma: var(--axm-chroma-error);
 
   /* 1. Surface Tinting */
   --base-hue: var(--context-hue);
@@ -476,9 +462,23 @@ body {
   --text-chroma-source: var(--context-chroma);
 }
 
-.hue-error {
-  --context-hue: var(--axm-hue-error);
-  --context-chroma: var(--axm-chroma-error);
+.hue-highlight {
+  --context-hue: var(--axm-hue-highlight);
+  --context-chroma: var(--axm-chroma-highlight);
+
+  /* 1. Surface Tinting */
+  --base-hue: var(--context-hue);
+  --hue-adjust: 0;
+  --base-chroma: calc(var(--context-chroma) * 0.1);
+
+  /* 2. Text Tinting (Indirection) */
+  --text-hue-source: var(--context-hue);
+  --text-chroma-source: var(--context-chroma);
+}
+
+.hue-danger {
+  --context-hue: var(--axm-hue-danger);
+  --context-chroma: var(--axm-chroma-danger);
 
   /* 1. Surface Tinting */
   --base-hue: var(--context-hue);

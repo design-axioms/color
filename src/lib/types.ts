@@ -213,7 +213,16 @@ export interface ColorSpec {
   h: number;
 }
 
+import type { VibeName } from "./vibes.ts";
+
+export type DeepPartial<T> = T extends (infer U)[]
+  ? U[]
+  : T extends object
+    ? { [P in keyof T]?: DeepPartial<T[P]> }
+    : T;
+
 export type SolverConfig = {
+  vibe?: VibeName;
   anchors: PolarityAnchors;
   groups: SurfaceGroup[];
   hueShift?: HueShiftConfig;
@@ -222,6 +231,8 @@ export type SolverConfig = {
   presets?: PresetsConfig;
   options?: ConfigOptions;
 };
+
+export type UserConfig = DeepPartial<SolverConfig> & { $schema?: string };
 
 export type SurfaceDefinition = {
   slug: string;

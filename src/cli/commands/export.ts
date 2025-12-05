@@ -3,7 +3,7 @@ import { extname, join, resolve } from "node:path";
 import { toDTCG } from "../../lib/exporters/dtcg.ts";
 import { toTailwind } from "../../lib/exporters/tailwind.ts";
 import { toTypeScript } from "../../lib/exporters/typescript.ts";
-import { solve } from "../../lib/index.ts";
+import { resolveConfig, solve } from "../../lib/index.ts";
 import type { SolverConfig } from "../../lib/types.ts";
 
 export function exportCommand(args: string[], cwd: string): void {
@@ -50,13 +50,17 @@ export function exportCommand(args: string[], cwd: string): void {
   }
 
   console.log(`Reading config from: ${absConfigPath}`);
-  let config: SolverConfig;
+  let rawConfig: Partial<SolverConfig>;
   try {
-    config = JSON.parse(readFileSync(absConfigPath, "utf8")) as SolverConfig;
+    rawConfig = JSON.parse(
+      readFileSync(absConfigPath, "utf8"),
+    ) as Partial<SolverConfig>;
   } catch (e) {
     console.error(`Error reading config file: ${String(e)}`);
     process.exit(1);
   }
+
+  const config = resolveConfig(rawConfig);
 
   console.log("Solving theme...");
   const theme = solve(config);
