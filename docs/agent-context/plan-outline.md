@@ -17,9 +17,9 @@
 
 - **Goal**: Execute the remediation plan from Epoch 33, focusing on infrastructure robustness, token simplification, and interactive education.
 - **Phases**:
-  - **Phase 1: Infrastructure (Active)**
+  - **Phase 1: Infrastructure (Completed)**
     - **Goal**: Replace the fragile `cat` build script with **Lightning CSS** to enable robust bundling, minification, and standard CSS enforcement.
-  - **Phase 2: Token Simplification**
+  - **Phase 2: Token Simplification (Next)**
     - **Goal**: Reduce the API surface area by hiding internal tokens and exposing only semantic intents.
   - **Phase 3: Interactive Tutorials**
     - **Goal**: Create "Learn by Doing" tutorials to guide users through the system's concepts.

@@ -658,3 +658,13 @@ This file tracks key architectural and design decisions made throughout the proj
   - **Longevity**: Standard CSS is forever. Proprietary syntax (Sass, Less, non-standard extensions) creates technical debt and lock-in.
   - **Portability**: Our CSS should be usable without a build step if necessary (e.g., via CDN).
   - **Clarity**: Users should be able to read the source code and understand it without knowing a specific tool's syntax.
+
+### [2025-12-06] Lightning CSS for Bundling
+
+- **Context**: The project relied on a fragile `cat`-based shell script for bundling CSS files. This lacked minification, syntax checking, and vendor prefixing.
+- **Decision**: Adopt **Lightning CSS** as the official bundler.
+- **Rationale**:
+  - **Performance**: Lightning CSS is written in Rust and is extremely fast.
+  - **Standards Compliance**: It strictly enforces CSS syntax (e.g., requiring `initial-value` for `@property`), which caught bugs in our codebase.
+  - **Features**: Provides minification, bundling, and automatic vendor prefixing out of the box without complex configuration.
+  - **Alignment**: Fits our "Standard CSS First" axiom by acting as a transparent optimizer rather than a transpiler for a custom language.

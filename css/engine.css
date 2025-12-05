@@ -50,17 +50,19 @@
    If we registered them with an initial-value, the fallback would never trigger.
 */
 
+/*
 @property --surface-lightness {
   syntax: "<number>";
   inherits: true;
-  /* initial-value: 1; */
+  initial-value: 1;
 }
 
 @property --surface-text-lightness {
   syntax: "<number>";
   inherits: true;
-  /* initial-value: 0; */
+  initial-value: 0;
 }
+*/
 
 @property --computed-surface {
   syntax: "<color>";
@@ -74,11 +76,13 @@
   initial-value: transparent;
 }
 
+/*
 @property --computed-border-color {
   syntax: "<color>";
   inherits: true;
-  /* initial-value: transparent; */
+  initial-value: transparent;
 }
+*/
 
 @property --computed-surface-C {
   syntax: "<number>";
@@ -130,31 +134,37 @@
 @property --axm-surface-token {
   syntax: "<color>";
   inherits: true;
+  initial-value: transparent;
 }
 
 @property --axm-text-high-token {
   syntax: "<color>";
   inherits: true;
+  initial-value: transparent;
 }
 
 @property --axm-text-subtle-token {
   syntax: "<color>";
   inherits: true;
+  initial-value: transparent;
 }
 
 @property --axm-text-subtlest-token {
   syntax: "<color>";
   inherits: true;
+  initial-value: transparent;
 }
 
 @property --axm-border-dec-token {
   syntax: "<color>";
   inherits: true;
+  initial-value: transparent;
 }
 
 @property --axm-border-int-token {
   syntax: "<color>";
   inherits: true;
+  initial-value: transparent;
 }
 
 @property --computed-border-dec-color {

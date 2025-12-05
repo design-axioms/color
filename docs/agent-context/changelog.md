@@ -1047,3 +1047,23 @@
 - **Axiom 10**: Added "Standard CSS First" to the Constitution (`docs/design/axioms/04-integration.md`).
 - **Constraint**: Explicitly forbade the use of Sass, Less, or non-standard CSS extensions. Build tools (like Lightning CSS) are restricted to bundling, minification, and polyfilling future standards.
 - **Verification**: Updated Golden Master snapshots to reflect the current state of the system.
+
+## Epoch 34: Phase 1 - Infrastructure (2025-12-06)
+
+**Goal**: Replace the fragile, ad-hoc CSS build scripts with a robust, standard-compliant toolchain using Lightning CSS.
+
+**Completed Work**:
+
+- **Lightning CSS Integration**:
+  - Replaced `cat`-based concatenation with `lightningcss` for bundling and minification.
+  - Configured strict `@property` syntax validation (enforcing `initial-value`).
+  - Enabled automatic vendor prefixing and syntax lowering for broader browser support.
+- **Build Pipeline**:
+  - Created `scripts/build-css.ts` to orchestrate the build process.
+  - Updated `package.json` to include `build:css` and export `./style.css`.
+- **Codebase Hardening**:
+  - Fixed invalid `@property` definitions in `css/engine.css` (added `initial-value: transparent`).
+  - Cleaned up unused TypeScript directives in `src/lib/resolve.ts`.
+- **Verification**:
+  - Updated Golden Master snapshots to reflect the optimized CSS output.
+  - Verified that the build produces a valid, minified CSS bundle.

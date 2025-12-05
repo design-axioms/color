@@ -21,10 +21,9 @@ function deepMerge<T extends Record<string, unknown>>(
       const targetValue = target[key];
 
       if (isObject(sourceValue) && key in target && isObject(targetValue)) {
-        // @ts-expect-error - we know this is safe because we checked isObject
+        // @ts-expect-error - deepMerge types are hard
         output[key as keyof T] = deepMerge(targetValue, sourceValue);
       } else if (sourceValue !== undefined) {
-        // @ts-expect-error - we know this is safe
         output[key as keyof T] = sourceValue as T[keyof T];
       }
     });
@@ -47,7 +46,6 @@ export function resolveConfig(userConfig: Partial<SolverConfig>): SolverConfig {
   }
 
   // 3. Apply User Config
-  // @ts-expect-error - deepMerge types are hard
   config = deepMerge(config, userConfig);
 
   return config;
