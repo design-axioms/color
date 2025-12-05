@@ -1,6 +1,6 @@
-import { findContextRoot } from "./walker.ts";
 import { resolveTokens } from "./resolver.ts";
 import type { DebugContext, ResolvedToken } from "./types.ts";
+import { findContextRoot } from "./walker.ts";
 
 const STYLES = `
   :host {

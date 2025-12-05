@@ -1,44 +1,23 @@
 {
-  "$schema": "./node_modules/@axiomatic-design/color/color-config.schema.json",
   "anchors": {
     "page": {
       "light": {
-        "start": {
-          "background": 1
-        },
-        "end": {
-          "adjustable": true,
-          "background": 0.9
-        }
+        "start": { "background": 1 },
+        "end": { "adjustable": true, "background": 0.9 }
       },
       "dark": {
-        "start": {
-          "background": 0.1
-        },
-        "end": {
-          "adjustable": true,
-          "background": 0.4
-        }
+        "start": { "background": 0.1 },
+        "end": { "adjustable": true, "background": 0.4 }
       }
     },
     "inverted": {
       "light": {
-        "start": {
-          "adjustable": true,
-          "background": 0.1
-        },
-        "end": {
-          "background": 0
-        }
+        "start": { "adjustable": true, "background": 0.1 },
+        "end": { "background": 0 }
       },
       "dark": {
-        "start": {
-          "adjustable": true,
-          "background": 0.9
-        },
-        "end": {
-          "background": 1
-        }
+        "start": { "adjustable": true, "background": 0.9 },
+        "end": { "background": 1 }
       }
     },
     "keyColors": {
@@ -53,10 +32,7 @@
     }
   },
   "hueShift": {
-    "curve": {
-      "p1": [0.5, 0],
-      "p2": [0.5, 1]
-    },
+    "curve": { "p1": [0.5, 0], "p2": [0.5, 1] },
     "maxRotation": 5
   },
   "borderTargets": {
@@ -95,39 +71,32 @@
           "label": "Surface Card",
           "description": "A card-like element.",
           "polarity": "page",
-          "contrastOffset": {
-            "light": 15,
-            "dark": 15
-          },
+          "contrastOffset": { "light": 15, "dark": 15 },
           "states": [
-            {
-              "name": "hover",
-              "offset": -5
-            },
-            {
-              "name": "active",
-              "offset": -10
-            }
+            { "name": "hover", "offset": -5 },
+            { "name": "active", "offset": -10 }
           ]
         },
         {
           "slug": "action",
           "label": "Surface Action",
           "description": "A clickable action surface (e.g. button).",
-          "polarity": "page",
-          "contrastOffset": {
-            "light": 25,
-            "dark": 25
-          },
+          "polarity": "inverted",
+          "contrastOffset": { "light": 0, "dark": 0 },
           "states": [
-            {
-              "name": "hover",
-              "offset": -5
-            },
-            {
-              "name": "active",
-              "offset": -10
-            }
+            { "name": "hover", "offset": -5 },
+            { "name": "active", "offset": -10 }
+          ]
+        },
+        {
+          "slug": "action-soft",
+          "label": "Surface Action Soft",
+          "description": "A lower-emphasis interactive surface.",
+          "polarity": "page",
+          "contrastOffset": { "light": 25, "dark": 25 },
+          "states": [
+            { "name": "hover", "offset": -5 },
+            { "name": "active", "offset": -10 }
           ]
         }
       ]
@@ -140,6 +109,35 @@
           "label": "Surface Spotlight",
           "description": "The darkest surface.",
           "polarity": "inverted"
+        }
+      ]
+    },
+    {
+      "name": "Status",
+      "surfaces": [
+        {
+          "slug": "status-success",
+          "label": "Success",
+          "description": "Positive status feedback.",
+          "polarity": "page",
+          "hue": "success",
+          "targetChroma": 0.15
+        },
+        {
+          "slug": "status-warning",
+          "label": "Warning",
+          "description": "Warning status feedback.",
+          "polarity": "page",
+          "hue": "warning",
+          "targetChroma": 0.15
+        },
+        {
+          "slug": "status-error",
+          "label": "Error",
+          "description": "Error status feedback.",
+          "polarity": "page",
+          "hue": "error",
+          "targetChroma": 0.2
         }
       ]
     }

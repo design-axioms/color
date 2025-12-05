@@ -43,7 +43,11 @@ export const tokens = {
     workspace: "surface-workspace",
     card: "surface-card",
     action: "surface-action",
+    "action-soft": "surface-action-soft",
     spotlight: "surface-spotlight",
+    "status-success": "surface-status-success",
+    "status-warning": "surface-status-warning",
+    "status-error": "surface-status-error",
   },
 } as const;
 

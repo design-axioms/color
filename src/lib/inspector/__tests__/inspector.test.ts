@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
-import { describe, it, expect, beforeEach } from "vitest";
-import { findContextRoot } from "../walker.ts";
+import { beforeEach, describe, expect, it } from "vitest";
 import { resolveTokens } from "../resolver.ts";
+import { findContextRoot } from "../walker.ts";
 
 describe("Inspector", () => {
   let container: HTMLElement;

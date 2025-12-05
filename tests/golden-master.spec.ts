@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { generateTheme } from "../src/lib/runtime";
-import { solve } from "../src/lib/solver";
+import { describe, expect, it } from "vitest";
 import { toDTCG } from "../src/lib/exporters/dtcg";
 import { toTailwind } from "../src/lib/exporters/tailwind";
 import { toTypeScript } from "../src/lib/exporters/typescript";
+import { generateTheme } from "../src/lib/runtime";
+import { solve } from "../src/lib/solver";
 import type { SolverConfig } from "../src/lib/types";
 
 const CWD = process.cwd();

@@ -4,6 +4,7 @@ import eslintPluginAstro from "eslint-plugin-astro";
 import eslintPluginSvelte from "eslint-plugin-svelte";
 import globals from "globals";
 import tseslint from "typescript-eslint";
+import axiomaticPlugin from "./packages/eslint-plugin/dist/index.mjs";
 
 // eslint-disable-next-line @typescript-eslint/no-deprecated
 export default tseslint.config(
@@ -11,6 +12,15 @@ export default tseslint.config(
   ...tseslint.configs.strictTypeChecked,
   ...eslintPluginAstro.configs.recommended,
   ...eslintPluginSvelte.configs["flat/recommended"],
+  {
+    plugins: {
+      "@axiomatic-design": axiomaticPlugin,
+    },
+    rules: {
+      "@axiomatic-design/no-hardcoded-colors": "warn",
+      "@axiomatic-design/no-raw-tokens": "warn",
+    },
+  },
   {
     languageOptions: {
       parserOptions: {
@@ -290,6 +300,13 @@ export default tseslint.config(
     },
   },
   {
+    files: ["**/tests/**", "**/*.test.ts", "**/*.spec.ts"],
+    rules: {
+      "@axiomatic-design/no-raw-tokens": "off",
+      "@axiomatic-design/no-hardcoded-colors": "off",
+    },
+  },
+  {
     files: ["site/src/**/*.{ts,svelte}"],
     rules: {
       "no-restricted-imports": [
@@ -310,6 +327,7 @@ export default tseslint.config(
     ignores: [
       "node_modules/**",
       "dist/**",
+      "**/dist/**",
       "coverage/**",
       "**/*.config.ts",
       "**/__tests__/**",
@@ -317,6 +335,7 @@ export default tseslint.config(
       "**/.astro/**",
       "**/*.d.ts",
       "check-repro.cjs",
+      "debug-gts-ast-2.js",
       "examples/grand-simulation/tailwind.preset.js",
       "examples/zero-to-one-simulation/**",
       "packages/vscode-extension/scripts/**",

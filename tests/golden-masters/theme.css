@@ -1,5 +1,5 @@
 :root {
-  --axm-inverted-surfaces: ".surface-spotlight";
+  --axm-inverted-surfaces: ".surface-action, .surface-spotlight";
   /* Key Colors */
   --axm-key-brand-color: oklch(0.5417 0.179 288.0332);
   --axm-hue-brand: 288.0332;
@@ -103,90 +103,32 @@ body {
 }
 
 .surface-workspace {
-  --local-light-h: 293.0304;
+  --local-light-h: 293.0325;
   --local-light-c: 0;
-  --local-dark-h: 288.5778;
+  --local-dark-h: 288.4172;
   --local-dark-c: 0;
   --surface-light-h: var(--base-hue, var(--local-light-h));
   --surface-light-c: var(--base-chroma, var(--local-light-c));
   --surface-dark-h: var(--base-hue, var(--local-dark-h));
   --surface-dark-c: var(--base-chroma, var(--local-dark-c));
   --axm-surface-token: light-dark(
-    oklch(0.9806 var(--surface-light-c) var(--surface-light-h)),
-    oklch(0.2541 var(--surface-dark-c) var(--surface-dark-h))
+    oklch(0.9896 var(--surface-light-c) var(--surface-light-h)),
+    oklch(0.2156 var(--surface-dark-c) var(--surface-dark-h))
   );
   --axm-text-high-token: light-dark(oklch(0 0 0), oklch(1 0 0));
-  --axm-text-subtle-token: light-dark(oklch(0.4184 0 0), oklch(0.9052 0 0));
-  --axm-text-subtlest-token: light-dark(oklch(0.5085 0 0), oklch(0.8561 0 0));
+  --axm-text-subtle-token: light-dark(oklch(0.4404 0 0), oklch(0.8991 0 0));
+  --axm-text-subtlest-token: light-dark(oklch(0.5261 0 0), oklch(0.8468 0 0));
   --axm-border-dec-token: light-dark(
-    oklch(0 0 0 / 0.0676),
-    oklch(0.9985 0 0 / 0.2157)
+    oklch(0 0 0 / 0.0638),
+    oklch(0.9926 0 0 / 0.2371)
   );
   --axm-border-int-token: light-dark(
-    oklch(0 0 0 / 0.1778),
-    oklch(0.9985 0 0 / 0.444)
+    oklch(0 0 0 / 0.1726),
+    oklch(0.9926 0 0 / 0.4618)
   );
 }
 
 .surface-card {
-  --local-light-h: 293.0296;
-  --local-light-c: 0;
-  --local-dark-h: 288.1078;
-  --local-dark-c: 0;
-  --surface-light-h: var(--base-hue, var(--local-light-h));
-  --surface-light-c: var(--base-chroma, var(--local-light-c));
-  --surface-dark-h: var(--base-hue, var(--local-dark-h));
-  --surface-dark-c: var(--base-chroma, var(--local-dark-c));
-  --axm-surface-token: light-dark(
-    oklch(0.9776 var(--surface-light-c) var(--surface-light-h)),
-    oklch(0.1 var(--surface-dark-c) var(--surface-dark-h))
-  );
-  --axm-text-high-token: light-dark(oklch(0 0 0), oklch(1 0 0));
-  --axm-text-subtle-token: light-dark(oklch(0.4147 0 0), oklch(0.893 0 0));
-  --axm-text-subtlest-token: light-dark(oklch(0.5015 0 0), oklch(0.8406 0 0));
-  --axm-border-dec-token: light-dark(
-    oklch(0 0 0 / 0.0679),
-    oklch(0.9866 0 0 / 0.3254)
-  );
-  --axm-border-int-token: light-dark(
-    oklch(0 0 0 / 0.1785),
-    oklch(0.9866 0 0 / 0.5235)
-  );
-}
-.surface-card:hover {
-  --local-light-h: 293.0189;
-  --local-light-c: 0;
-  --local-dark-h: 288.8814;
-  --local-dark-c: 0;
-  --axm-surface-token: light-dark(
-    oklch(
-      0.9536 var(--base-chroma, var(--local-light-c))
-        var(--base-hue, var(--local-light-h))
-    ),
-    oklch(
-      0.3072 var(--base-chroma, var(--local-dark-c))
-        var(--base-hue, var(--local-dark-h))
-    )
-  );
-}
-.surface-card:active {
-  --local-light-h: 292.9944;
-  --local-light-c: 0;
-  --local-dark-h: 289.3469;
-  --local-dark-c: 0;
-  --axm-surface-token: light-dark(
-    oklch(
-      0.9265 var(--base-chroma, var(--local-light-c))
-        var(--base-hue, var(--local-light-h))
-    ),
-    oklch(
-      0.3734 var(--base-chroma, var(--local-dark-c))
-        var(--base-hue, var(--local-dark-h))
-    )
-  );
-}
-
-.surface-action {
   --local-light-h: 293.0332;
   --local-light-c: 0;
   --local-dark-h: 288.1078;
@@ -211,7 +153,7 @@ body {
     oklch(0.9866 0 0 / 0.5235)
   );
 }
-.surface-action:hover {
+.surface-card:hover {
   --local-light-h: 293.0286;
   --local-light-c: 0;
   --local-dark-h: 288.8814;
@@ -227,7 +169,7 @@ body {
     )
   );
 }
-.surface-action:active {
+.surface-card:active {
   --local-light-h: 293.0161;
   --local-light-c: 0;
   --local-dark-h: 289.3469;
@@ -244,7 +186,7 @@ body {
   );
 }
 
-.surface-spotlight {
+.surface-action {
   --local-light-h: 288.1078;
   --local-light-c: 0;
   --local-dark-h: 292.9586;
@@ -267,6 +209,200 @@ body {
   --axm-border-int-token: light-dark(
     oklch(0.9866 0 0 / 0.5235),
     oklch(0 0 0 / 0.2032)
+  );
+}
+.surface-action:hover {
+  --local-light-h: 288.8814;
+  --local-light-c: 0;
+  --local-dark-h: 292.9145;
+  --local-dark-c: 0;
+  --axm-surface-token: light-dark(
+    oklch(
+      0.3072 var(--context-chroma, var(--local-light-c))
+        var(--base-hue, var(--local-light-h))
+    ),
+    oklch(
+      0.8746 var(--context-chroma, var(--local-dark-c))
+        var(--base-hue, var(--local-dark-h))
+    )
+  );
+}
+.surface-action:active {
+  --local-light-h: 289.3469;
+  --local-light-c: 0;
+  --local-dark-h: 292.8523;
+  --local-dark-c: 0;
+  --axm-surface-token: light-dark(
+    oklch(
+      0.3734 var(--context-chroma, var(--local-light-c))
+        var(--base-hue, var(--local-light-h))
+    ),
+    oklch(
+      0.8468 var(--context-chroma, var(--local-dark-c))
+        var(--base-hue, var(--local-dark-h))
+    )
+  );
+}
+
+.surface-action-soft {
+  --local-light-h: 293.0332;
+  --local-light-c: 0;
+  --local-dark-h: 288.1078;
+  --local-dark-c: 0;
+  --surface-light-h: var(--base-hue, var(--local-light-h));
+  --surface-light-c: var(--base-chroma, var(--local-light-c));
+  --surface-dark-h: var(--base-hue, var(--local-dark-h));
+  --surface-dark-c: var(--base-chroma, var(--local-dark-c));
+  --axm-surface-token: light-dark(
+    oklch(1 var(--surface-light-c) var(--surface-light-h)),
+    oklch(0.1 var(--surface-dark-c) var(--surface-dark-h))
+  );
+  --axm-text-high-token: light-dark(oklch(0 0 0), oklch(1 0 0));
+  --axm-text-subtle-token: light-dark(oklch(0.4586 0 0), oklch(0.893 0 0));
+  --axm-text-subtlest-token: light-dark(oklch(0.54 0 0), oklch(0.8406 0 0));
+  --axm-border-dec-token: light-dark(
+    oklch(0.1935 0 0 / 0.0799),
+    oklch(0.9866 0 0 / 0.3254)
+  );
+  --axm-border-int-token: light-dark(
+    oklch(0.1935 0 0 / 0.2093),
+    oklch(0.9866 0 0 / 0.5235)
+  );
+}
+.surface-action-soft:hover {
+  --local-light-h: 293.0286;
+  --local-light-c: 0;
+  --local-dark-h: 288.8814;
+  --local-dark-c: 0;
+  --axm-surface-token: light-dark(
+    oklch(
+      0.9746 var(--base-chroma, var(--local-light-c))
+        var(--base-hue, var(--local-light-h))
+    ),
+    oklch(
+      0.3072 var(--base-chroma, var(--local-dark-c))
+        var(--base-hue, var(--local-dark-h))
+    )
+  );
+}
+.surface-action-soft:active {
+  --local-light-h: 293.0161;
+  --local-light-c: 0;
+  --local-dark-h: 289.3469;
+  --local-dark-c: 0;
+  --axm-surface-token: light-dark(
+    oklch(
+      0.9506 var(--base-chroma, var(--local-light-c))
+        var(--base-hue, var(--local-light-h))
+    ),
+    oklch(
+      0.3734 var(--base-chroma, var(--local-dark-c))
+        var(--base-hue, var(--local-dark-h))
+    )
+  );
+}
+
+.surface-spotlight {
+  --local-light-h: 291.0858;
+  --local-light-c: 0;
+  --local-dark-h: 291.0858;
+  --local-dark-c: 0;
+  --surface-light-h: var(--base-hue, var(--local-light-h));
+  --surface-light-c: var(--context-chroma, var(--local-light-c));
+  --surface-dark-h: var(--base-hue, var(--local-dark-h));
+  --surface-dark-c: var(--base-chroma, var(--local-dark-c));
+  --axm-surface-token: light-dark(
+    oklch(0.5554 var(--surface-light-c) var(--surface-light-h)),
+    oklch(0.5554 var(--surface-dark-c) var(--surface-dark-h))
+  );
+  --axm-text-high-token: light-dark(oklch(1 0 0), oklch(1 0 0));
+  --axm-text-subtle-token: light-dark(oklch(1 0 0), oklch(1 0 0));
+  --axm-text-subtlest-token: light-dark(oklch(0.9836 0 0), oklch(0.9836 0 0));
+  --axm-border-dec-token: light-dark(
+    oklch(1 0 0 / 0.1718),
+    oklch(1 0 0 / 0.1718)
+  );
+  --axm-border-int-token: light-dark(
+    oklch(1 0 0 / 0.4503),
+    oklch(1 0 0 / 0.4503)
+  );
+}
+
+.surface-status-success {
+  --local-light-h: 151.1464;
+  --local-light-c: 0.15;
+  --local-dark-h: 147.7619;
+  --local-dark-c: 0.15;
+  --surface-light-h: var(--base-hue, var(--local-light-h));
+  --surface-light-c: var(--base-chroma, var(--local-light-c));
+  --surface-dark-h: var(--base-hue, var(--local-dark-h));
+  --surface-dark-c: var(--base-chroma, var(--local-dark-c));
+  --axm-surface-token: light-dark(
+    oklch(0.9 var(--surface-light-c) var(--surface-light-h)),
+    oklch(0.4 var(--surface-dark-c) var(--surface-dark-h))
+  );
+  --axm-text-high-token: light-dark(oklch(0 0 0), oklch(1 0 0));
+  --axm-text-subtle-token: light-dark(oklch(0.2156 0 0), oklch(0.9536 0 0));
+  --axm-text-subtlest-token: light-dark(oklch(0.3696 0 0), oklch(0.9052 0 0));
+  --axm-border-dec-token: light-dark(
+    oklch(0 0 0 / 0.0729),
+    oklch(1 0 0 / 0.175)
+  );
+  --axm-border-int-token: light-dark(
+    oklch(0 0 0 / 0.2032),
+    oklch(1 0 0 / 0.4195)
+  );
+}
+
+.surface-status-warning {
+  --local-light-h: 79.9338;
+  --local-light-c: 0.15;
+  --local-dark-h: 76.5494;
+  --local-dark-c: 0.15;
+  --surface-light-h: var(--base-hue, var(--local-light-h));
+  --surface-light-c: var(--base-chroma, var(--local-light-c));
+  --surface-dark-h: var(--base-hue, var(--local-dark-h));
+  --surface-dark-c: var(--base-chroma, var(--local-dark-c));
+  --axm-surface-token: light-dark(
+    oklch(0.9 var(--surface-light-c) var(--surface-light-h)),
+    oklch(0.4 var(--surface-dark-c) var(--surface-dark-h))
+  );
+  --axm-text-high-token: light-dark(oklch(0 0 0), oklch(1 0 0));
+  --axm-text-subtle-token: light-dark(oklch(0.2156 0 0), oklch(0.9536 0 0));
+  --axm-text-subtlest-token: light-dark(oklch(0.3696 0 0), oklch(0.9052 0 0));
+  --axm-border-dec-token: light-dark(
+    oklch(0 0 0 / 0.0729),
+    oklch(1 0 0 / 0.175)
+  );
+  --axm-border-int-token: light-dark(
+    oklch(0 0 0 / 0.2032),
+    oklch(1 0 0 / 0.4195)
+  );
+}
+
+.surface-status-error {
+  --local-light-h: 292.9586;
+  --local-light-c: 0.2;
+  --local-dark-h: 289.5742;
+  --local-dark-c: 0.2;
+  --surface-light-h: var(--base-hue, var(--local-light-h));
+  --surface-light-c: var(--base-chroma, var(--local-light-c));
+  --surface-dark-h: var(--base-hue, var(--local-dark-h));
+  --surface-dark-c: var(--base-chroma, var(--local-dark-c));
+  --axm-surface-token: light-dark(
+    oklch(0.9 var(--surface-light-c) var(--surface-light-h)),
+    oklch(0.4 var(--surface-dark-c) var(--surface-dark-h))
+  );
+  --axm-text-high-token: light-dark(oklch(0 0 0), oklch(1 0 0));
+  --axm-text-subtle-token: light-dark(oklch(0.2156 0 0), oklch(0.9536 0 0));
+  --axm-text-subtlest-token: light-dark(oklch(0.3696 0 0), oklch(0.9052 0 0));
+  --axm-border-dec-token: light-dark(
+    oklch(0 0 0 / 0.0729),
+    oklch(1 0 0 / 0.175)
+  );
+  --axm-border-int-token: light-dark(
+    oklch(0 0 0 / 0.2032),
+    oklch(1 0 0 / 0.4195)
   );
 }
 

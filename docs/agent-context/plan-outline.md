@@ -166,15 +166,15 @@
   - **Phase 1: Golden Master Tests (Completed)**
     - **Goal**: Implement full-system snapshot testing to guarantee bit-for-bit determinism across releases.
     - **Design Doc**: [Determinism & Golden Masters](../design/determinism.md)
-  - **Phase 2: Usage Linter (Active)**
+  - **Phase 2: Usage Linter (Completed)**
     - **Goal**: Create `eslint-plugin-axiomatic` to flag "Magic Numbers" and enforce semantic token usage.
     - **Design Doc**: [Usage Enforcement](../design/usage-enforcement.md)
 
-## Epoch 32: Ecosystem Expansion (Planned)
+## Epoch 32: Ecosystem Expansion (Active)
 
 - **Goal**: Expand the system's reach beyond the web and into the broader design ecosystem.
 - **Phases**:
-  - **Phase 1: Round-Trip DTCG**
+  - **Phase 1: Round-Trip DTCG (Active)**
     - **Goal**: Enable importing configuration from standard DTCG token files, allowing interoperability with Figma and other tools.
     - **Design Doc**: [Interoperability Strategy](../design/interoperability-strategy.md)
   - **Phase 2: High-Level Presets ("Vibes")**

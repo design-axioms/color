@@ -964,3 +964,22 @@
 - **Determinism**:
   - Verified that the core logic is deterministic and free of random seeds or environment dependencies.
   - Confirmed that tests pass reliably in CI.
+
+## Epoch 31: Phase 2 - Usage Linter (2025-12-04)
+
+**Goal**: Create `eslint-plugin-axiomatic` to flag "Magic Numbers" and enforce semantic token usage.
+
+**Completed Work**:
+
+- **Plugin Scaffolding**:
+  - Initialized `@axiomatic-design/eslint-plugin` in `packages/eslint-plugin`.
+  - Configured `tsup` for bundling and `vitest` for testing.
+- **Rule Implementation**:
+  - **`no-hardcoded-colors`**: Detects hex, rgb, hsl, and named colors in style attributes (JSX, Svelte, Vue, Glimmer). Suggests semantic tokens based on property context (e.g., `background` -> `surface`).
+  - **`no-raw-tokens`**: Detects usage of internal tokens (`--color-sys-*`) and suggests semantic tokens. Enforces utility class usage for surfaces.
+- **Dynamic Context**:
+  - Implemented dynamic loading of `theme.css` and `utilities.css` from the user's project to ensure suggestions are always up-to-date with the generated system.
+- **Verification**:
+  - Verified rules against React (JSX), Svelte, Vue, and Ember (GTS) test cases.
+  - Added smoke tests to ensure integration works in real-world scenarios.
+  - Achieved 100% pass rate on strict linting of the plugin codebase itself.

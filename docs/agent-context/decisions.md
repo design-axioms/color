@@ -606,3 +606,28 @@ This file tracks key architectural and design decisions made throughout the proj
 - **Rationale**:
   - **Agility**: Users can update their CLI (and thus the schema) without waiting for an extension update.
   - **Correctness**: Ensures validation matches the version of the CLI installed in the project.
+
+### [2025-12-04] Dynamic Theme Loading for Linter
+
+- **Context**: The ESLint plugin needs to know which tokens and utility classes exist to provide accurate suggestions. We considered hardcoding the token list or reading the source config.
+- **Decision**: Read the _generated_ `css/theme.css` and `css/utilities.css` files from the user's project.
+- **Rationale**:
+  - **Source of Truth**: The generated CSS is the ultimate source of truth for what is available in the runtime.
+  - **Simplicity**: Parsing CSS variables is simpler and more robust than trying to interpret the `color-config.json` logic (which involves complex math) inside the linter.
+  - **Decoupling**: The linter doesn't need to know _how_ the tokens were generated, only that they exist.
+
+### [2025-12-04] Heuristic Suggestions for Hardcoded Colors
+
+- **Context**: When a user hardcodes a color (e.g., `#ffffff`), we want to suggest a semantic token. However, `#ffffff` could be `surface.card`, `text.high`, or `border.token`.
+- **Decision**: Use the CSS property name as a heuristic to filter suggestions.
+- **Rationale**:
+  - **Relevance**: If the property is `background-color`, suggesting a `text` token is unhelpful.
+  - **UX**: Reduces the noise in the suggestion list, making it more likely the user will pick the correct semantic role.
+
+### [2025-12-04] Strict Typing for Plugin
+
+- **Context**: ESLint plugins are often untyped or loosely typed.
+- **Decision**: Enforce strict TypeScript typing and linting for the plugin codebase itself.
+- **Rationale**:
+  - **Reliability**: Prevents runtime errors in the linter, which can crash the user's IDE or build.
+  - **Maintainability**: Makes the complex AST traversal logic easier to understand and refactor.

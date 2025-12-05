@@ -16,10 +16,19 @@ module.exports = {
         surface: {
           page: "light-dark(oklch(1 0 293.0332), oklch(0.1 0 288.1078))",
           workspace:
-            "light-dark(oklch(0.9806 0 293.0304), oklch(0.2541 0 288.5778))",
-          card: "light-dark(oklch(0.9776 0 293.0296), oklch(0.1 0 288.1078))",
-          action: "light-dark(oklch(1 0 293.0332), oklch(0.1 0 288.1078))",
-          spotlight: "light-dark(oklch(0.1 0 288.1078), oklch(0.9 0 292.9586))",
+            "light-dark(oklch(0.9896 0 293.0325), oklch(0.2156 0 288.4172))",
+          card: "light-dark(oklch(1 0 293.0332), oklch(0.1 0 288.1078))",
+          action: "light-dark(oklch(0.1 0 288.1078), oklch(0.9 0 292.9586))",
+          "action-soft":
+            "light-dark(oklch(1 0 293.0332), oklch(0.1 0 288.1078))",
+          spotlight:
+            "light-dark(oklch(0.5554 0 291.0858), oklch(0.5554 0 291.0858))",
+          "status-success":
+            "light-dark(oklch(0.9 0.15 151.1464), oklch(0.4 0.15 147.7619))",
+          "status-warning":
+            "light-dark(oklch(0.9 0.15 79.9338), oklch(0.4 0.15 76.5494))",
+          "status-error":
+            "light-dark(oklch(0.9 0.2 292.9586), oklch(0.4 0.2 289.5742))",
         },
         chart: {
           1: "light-dark(oklch(0.6484 0.14 25), oklch(0.7588 0.14 25))",

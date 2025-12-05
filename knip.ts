@@ -35,6 +35,7 @@ const config: KnipConfig = {
         "prettier-plugin-astro",
         "prettier-plugin-svelte",
         "globals",
+        "@glimmer/env",
       ],
     },
     site: {
