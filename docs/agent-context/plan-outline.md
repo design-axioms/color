@@ -155,18 +155,18 @@
     - **Goal**: Harden the `axiomatic audit` command with JSON Schema validation for CI safety.
   - **Phase 3: The Editor Companion (VS Code Extension) (Completed)**
     - **Goal**: Build a VS Code extension for autocompletion and visual feedback using `web-tree-sitter`.
-  - **Phase 4: The Runtime Debugger (Active)**
+  - **Phase 4: The Runtime Debugger (Completed)**
     - **Goal**: Provide a "X-Ray" view of the Axiomatic system in the browser, visualizing the invisible context (Polarity, Mode, Surface) that drives the reactive pipeline.
     - **Design Doc**: [Runtime Debugging](../design/runtime-debugging.md)
 
-## Epoch 31: System Hardening (Determinism & Enforcement) (Planned)
+## Epoch 31: System Hardening (Determinism & Enforcement) (Active)
 
 - **Goal**: Ensure the system is robust, deterministic, and enforces its own rules in user code.
 - **Phases**:
-  - **Phase 1: Golden Master Tests**
+  - **Phase 1: Golden Master Tests (Completed)**
     - **Goal**: Implement full-system snapshot testing to guarantee bit-for-bit determinism across releases.
     - **Design Doc**: [Determinism & Golden Masters](../design/determinism.md)
-  - **Phase 2: Usage Linter**
+  - **Phase 2: Usage Linter (Active)**
     - **Goal**: Create `eslint-plugin-axiomatic` to flag "Magic Numbers" and enforce semantic token usage.
     - **Design Doc**: [Usage Enforcement](../design/usage-enforcement.md)
 

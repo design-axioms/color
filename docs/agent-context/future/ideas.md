@@ -29,3 +29,4 @@
   - **Features**: Show current Surface Color, Intent, Context (Hue/Chroma), and Polarity.
   - **Goal**: Help users build a mental model of how concepts compose in real-time.
   - **Portability**: Design it as a standalone tool/component that can be dropped into any app.
+  - **Status**: Moved to Epoch 30 Phase 4 (Active).

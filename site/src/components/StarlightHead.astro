@@ -25,4 +25,13 @@ import "../styles/fonts.css";
     }
   }
 </script>
+<script>
+  import "@axiomatic-design/color/inspector";
+
+  // Auto-inject the debugger element
+  if (!document.querySelector("axiomatic-debugger")) {
+    const el = document.createElement("axiomatic-debugger");
+    document.body.appendChild(el);
+  }
+</script>
 <DefaultHead {...Astro.props} />

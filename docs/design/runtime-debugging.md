@@ -44,7 +44,44 @@ We need a tool that visualizes the "Invisible Context".
       - `surface-card` (set base hue to 240)
       - `theme-dark` (inverted polarity)
 
-### Implementation
+### Implementation Architecture
+
+The tool will be composed of two distinct layers to ensure portability and separation of concerns.
+
+#### Layer 1: The Inspector (Headless)
+
+This layer is responsible for "detecting the element" and "producing the data". It is purely functional and framework-agnostic.
+
+- **Input**: `HTMLElement` (the target under the cursor).
+- **Logic**:
+  - **Context Walking**: Traverses up the DOM to find the nearest "Context Root" (an element defining `--bg-surface`).
+  - **Variable Resolution**: Reads `getComputedStyle` to resolve "Indirection Variables" (e.g., `--text-lightness-source`).
+  - **Reverse Solving**: Maps the resolved values back to the semantic tokens (e.g., "This is `text-subtle` because lightness is `0.6`").
+- **Output**: A `DebugContext` object containing:
+  - `surface`: The name of the surface (e.g., "card").
+  - `polarity`: "light" or "dark".
+  - `intent`: The semantic intent (e.g., "subtle").
+  - `value`: The resolved color.
+
+#### Layer 2: The Overlay (UI)
+
+This layer handles the user interaction and visualization. It is "glued" on top of the application.
+
+- **Activation**: A global toggle (keyboard shortcut or API call) that enables the event listeners.
+- **Interaction**:
+  - Listens for `mousemove` to identify the target element.
+  - **Inline Handling**: Uses `element.getClientRects()` to correctly highlight multi-line inline elements (text wrapping), drawing a box around each line fragment if necessary.
+- **Rendering**:
+  - **Web Component**: Implemented as a custom element (`<axiomatic-debugger>`) with Shadow DOM to ensure complete style isolation from the host app.
+  - **Anchor Positioning**: Uses native CSS Anchor Positioning to tether the results box to the highlighted element, ensuring it stays on screen and follows the target.
+
+### Integration Strategy
+
+By separating the **Inspector** from the **Overlay**, we enable multiple use cases:
+
+1.  **Standard Debugger**: The default `<axiomatic-debugger>` overlay for general use.
+2.  **DevTools Extension**: The **Inspector** logic can be run in the content script of a browser extension, piping data to a custom DevTools panel.
+3.  **Framework Adapters**: A React/Svelte/Vue wrapper can trigger the **Inspector** and render its own framework-native tooltip if desired.
 
 - **Standalone Component**: A Svelte 5 component that can be injected into the app (like the Theme Builder).
 - **Toggle**: Activated via keyboard shortcut or UI toggle.

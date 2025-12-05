@@ -943,3 +943,24 @@
   - **Grammar**: Defined Tree-sitter queries for detecting class names in HTML, JSX, Svelte, and Vue.
   - **Infrastructure**: Set up `web-tree-sitter` and WASM grammar loading.
   - **Features**: Implemented Autocomplete (`CompletionItemProvider`) and Color Decorators (`AxiomaticDecorator`) for system tokens.
+
+- **Phase 4: The Runtime Debugger**:
+  - **Core Logic**: Implemented headless DOM traversal (`walker.ts`) and variable resolution (`resolver.ts`) to identify surface context and resolve late-binding variables.
+  - **Web Component**: Created `<axiomatic-debugger>`, a vanilla Web Component with Shadow DOM for style-isolated visualization.
+  - **Tree-Shaking**: Exported the debugger as a separate entry point (`@axiomatic-design/color/inspector`) to ensure it can be excluded from production bundles.
+  - **Integration**: Integrated the debugger into the documentation site for "dogfooding" and verification.
+
+## Epoch 31: Phase 1 - Golden Master Tests (2025-12-04)
+
+**Goal**: Implement full-system snapshot testing to guarantee bit-for-bit determinism across releases.
+
+**Completed Work**:
+
+- **Infrastructure**:
+  - Created `tests/golden-masters/` to store canonical outputs.
+  - Configured `vitest` to run snapshot tests.
+- **Snapshot Generation**:
+  - Implemented tests to snapshot CSS (`theme.css`), DTCG (`tokens.json`), Tailwind (`tailwind.preset.js`), and TypeScript (`theme.ts`) outputs.
+- **Determinism**:
+  - Verified that the core logic is deterministic and free of random seeds or environment dependencies.
+  - Confirmed that tests pass reliably in CI.
