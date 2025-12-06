@@ -1,9 +1,9 @@
 # Phase 1: Feedback Implementation
 
-- [ ] **Layout Fixes**
-  - [ ] Fix Context Tree Truncation (Left Sidebar).
-  - [ ] Fix Inspector Clipping (Right Sidebar).
-- [ ] **Data Investigation**
-  - [ ] Investigate "Spotlight" delta (108).
-- [ ] **Color Tuning**
-  - [ ] Tune "Action" surface colors.
+- [x] **Layout Fixes**
+  - [x] Fix Context Tree Truncation (Left Sidebar).
+  - [x] Fix Inspector Clipping (Right Sidebar).
+- [x] **Data Investigation**
+  - [x] Investigate "Spotlight" delta (108).
+- [x] **Color Tuning**
+  - [x] Tune "Action" surface colors.
