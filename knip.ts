@@ -41,6 +41,7 @@ const config: KnipConfig = {
         ".astro/**",
         "src/components/builder/ColorPicker.svelte",
         "src/components/builder/SurfaceManager.svelte",
+        "src/components/builder/SurfaceRow.svelte",
         "src/components/algebra/OrthogonalityDemo.svelte",
         "src/components/algebra/StateVectorDemo.svelte",
         "src/components/builder-v2/stage/ExportView.svelte",

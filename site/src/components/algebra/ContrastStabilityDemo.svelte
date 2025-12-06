@@ -1,6 +1,6 @@
 <script lang="ts">
   import { calcAPCA } from "apca-w3";
-  import { converter } from "culori";
+  import { converter, type Color } from "culori";
   import { onMount } from "svelte";
 
   let hue = $state(0);
@@ -47,10 +47,12 @@
     updateScores();
   });
 
-  function getContrast(bg: object, text: object): number {
+  function getContrast(bg: Color | string, text: Color | string): number {
     const bgRgb = converter("rgb")(bg);
     const textRgb = converter("rgb")(text);
-    return Math.abs(calcAPCA(colorToInt(textRgb), colorToInt(bgRgb)));
+    if (!bgRgb || !textRgb) return 0;
+    const apca = calcAPCA(colorToInt(textRgb), colorToInt(bgRgb));
+    return Math.abs(typeof apca === "number" ? apca : parseFloat(apca));
   }
 
   function colorToInt(c: { r: number; g: number; b: number }): number {
