@@ -59,13 +59,11 @@ This audit adopts the perspective of our five personas to identify "missing feat
 ## Summary of Priorities
 
 1.  **High (Friction)**:
-
     - **Prefix/Scoping** (Marcus): Essential for integration.
     - **Snippet/Component Examples** (Sarah): Essential for adoption.
     - **Audit Report** (Jordan): High value differentiator.
 
 2.  **Medium (Power)**:
-
     - **TypeScript Export** (Marcus).
     - **Texture/Gradient Support** (Alex).
 
@@ -78,19 +76,16 @@ This audit adopts the perspective of our five personas to identify "missing feat
 To address these gaps, we propose the following roadmap for the next Epoch:
 
 1.  **Phase 1: The "Marcus" Update (Integration)**
-
     - Expose `prefix` and `selector` options in `color-config.json`.
     - Implement `typescript` export format.
     - Add `exclude` pattern to config to allow partial builds.
 
 2.  **Phase 2: The "Sarah" Update (Usability)**
-
     - Create a `snippets/` directory in the repo with copy-pasteable HTML/CSS examples.
     - Add a "Component Gallery" page to the docs.
     - Publish a `@algebraic-systems/web-components` package (or just a script) for the Theme Toggle.
 
 3.  **Phase 3: The "Jordan" Update (Compliance)**
-
     - Implement `color-system audit` command.
     - Add `--debug` flag to `build` to inject contrast metadata into CSS comments.
 

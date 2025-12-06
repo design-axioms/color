@@ -1,23 +1,54 @@
-# Walkthrough - Epoch 36: Website Polish
+# Phase 2 Walkthrough: Proactive Polish
 
-## Phase 1: Feedback Implementation
+## Overview
 
-### Summary
+This phase focused on a proactive audit of the codebase to identify and fix potential layout and visual issues before they become user-facing bugs. We performed a static code audit and a limited visual audit (constrained by tooling).
 
-Addressed user feedback regarding layout issues in the Theme Builder (Studio) and the visual appearance of the primary action button.
+## Key Findings & Fixes
 
-### Key Actions
+### 1. Hardcoded Dimensions in Inspector
 
-- **Layout Fixes**:
-  - **Context Tree**: Reduced indentation depth in `ContextTreeNode.svelte` and increased the sidebar width in `ThemeBuilder.css` to prevent text truncation.
-  - **Inspector**: Added horizontal padding to `LuminanceSpectrum.svelte` to prevent the slider handles from being clipped at the edges.
+**Issue**: The `InspectorPanel` component had a hardcoded width of `500px`.
+**Impact**: This would cause overflow and horizontal scrolling on mobile devices or narrow viewports (< 500px).
+**Fix**: Updated the width to `min(500px, 90vw)` to ensure responsiveness while maintaining the desired width on desktop.
 
-- **Color Tuning**:
-  - **Action Surface**: Updated `src/lib/defaults.ts` to give the "Action" surface a "Brand" hue and a target chroma of `0.12` by default. This addresses the feedback that the button looked "washed out" (previously it was grayscale).
+```css
+/* Before */
+width: 500px;
 
-- **Data Investigation**:
-  - **Spotlight Delta (108)**: Investigated the "108" value seen in the screenshot. Confirmed it represents the APCA contrast between the Page (White) and the Spotlight surface (Black/Inverted). The value is correct for an inverted surface.
+/* After */
+width: min(500px, 90vw);
+```
 
-### Outcome
+### 2. Z-Index Layering Confusion
 
-The Studio UI is now more robust against truncation and clipping. The default theme is more vibrant and aligned with the "Brand" color.
+**Issue**: Conflicting comments in `StudioWrapper` and `StudioLayout` regarding z-index relative to the Starlight navigation bar.
+
+- `StudioWrapper`: `z-index: 100; /* Higher than Starlight nav */`
+- `StudioLayout`: `z-index: 10; /* Lower than Starlight nav */`
+
+**Analysis**: If `StudioWrapper` (the container) were truly higher than the nav, it would block interactions with the nav bar since it covers the entire viewport (`top: 0`). The intent is clearly for the Studio to sit _below_ the nav bar visually and interactively.
+
+**Fix**: Updated the comment in `StudioWrapper` to clarify the intent: `/* High z-index, but below Starlight nav */`. We assume Starlight's nav has a z-index > 100 (typically 1000).
+
+### 3. Documentation Cleanup
+
+**Issue**: Duplicate and broken documentation files for "The Algebra of Color Design" following a directory restructure.
+
+- `docs/design/theory/composition-algebra.md` (Kept, Fixed LaTeX)
+- `docs/design/theory/algebras/composition-algebra.md` (Deleted Duplicate)
+
+**Fix**:
+
+- Fixed the LaTeX syntax errors (replaced asterisk-brace with underscore-brace) in `docs/design/theory/composition-algebra.md`.
+- Added `<!-- prettier-ignore -->` to prevent Prettier from re-breaking the math blocks.
+- Deleted the duplicate file in `docs/design/theory/algebras/`.
+
+## Verification
+
+- **Static Analysis**: Grep searches confirmed no other critical hardcoded `px` dimensions in layout components.
+- **Z-Index**: Verified that `StudioLayout` creates a stacking context that should play nicely with the rest of the app, provided Starlight's nav is indeed high enough.
+
+## Next Steps
+
+- Proceed to Phase 3 (if defined) or close the epoch.

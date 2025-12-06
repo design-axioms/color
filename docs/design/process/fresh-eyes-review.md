@@ -2,7 +2,7 @@
 
 **Date:** October 26, 2023
 **Reviewer:** GitHub Copilot (Agent)
-**Context:** A simulated audit based on the 5 User Personas defined in `docs/design/personas.md`.
+**Context:** A simulated audit based on the 5 User Personas defined in `docs/design/meta/personas.md`.
 
 ---
 

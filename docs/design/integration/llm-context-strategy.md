@@ -17,12 +17,12 @@ The `llms.txt` should be composed of the following sections:
 
 ### A. The Constitution (Axioms)
 
-- **Source**: `docs/design/axioms.md`
+- **Source**: `docs/design/theory/axioms.md`
 - **Purpose**: Establish the fundamental constraints (e.g., "Never hardcode colors", "Always use semantic tokens").
 
 ### B. Core Concepts
 
-- **Source**: `docs/concepts/thinking-in-surfaces.mdx`, `docs/concepts/reactive-pipeline.md`
+- **Source**: `docs/concepts/thinking-in-surfaces.mdx`, `docs/design/architecture/reactive-pipeline.md`
 - **Purpose**: Explain the mental model (Surfaces, Context, Late-Binding).
 
 ### C. Configuration Schema

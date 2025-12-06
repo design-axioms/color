@@ -29,7 +29,7 @@ function cubicBezier(t: number, p1: number, p2: number): number {
 
 export function calculateHueShift(
   lightness: number,
-  config?: HueShiftConfig
+  config?: HueShiftConfig,
 ): number {
   if (!config) return 0;
   const { curve, maxRotation } = config;

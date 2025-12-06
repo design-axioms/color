@@ -12,7 +12,6 @@
 **How to use this system:**
 
 1.  **Pick a Surface Role (The Taxonomy):**
-
     - **The Canvas (Foundations):**
       - `surface-page`: The infinite backdrop.
       - `surface-workspace`: A slightly elevated area for the main work.
@@ -26,7 +25,6 @@
       - `surface-soft-spotlight`: A softer version of the spotlight.
 
 2.  **Pick a Text Role:**
-
     - `text-high`: Primary content.
     - `text-subtle`: Secondary metadata.
     - `text-subtler`: Tertiary details.

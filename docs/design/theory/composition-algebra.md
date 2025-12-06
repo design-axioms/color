@@ -1,6 +1,6 @@
 # The Algebra of Continuous Color Design
 
-> **Context**: The physics and grammar of the Axiomatic Color system. ([View Changelog](./composition-algebra-changelog.md))
+> **Context**: The physics and grammar of the Axiomatic Color system. ([View Changelog](./algebras/composition-algebra-changelog.md))
 
 This document defines the "Physics" of the Axiomatic Color system. It replaces the previous static heuristic model with a **Reactive Physics Model** based on continuous state interpolation.
 

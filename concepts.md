@@ -2,7 +2,7 @@
 
 This document explains the high-level concepts of Axiomatic Color.
 
-> **Note**: For the foundational laws and philosophy governing the system, see [The Constitution (Axioms)](docs/design/axioms.md).
+> **Note**: For the foundational laws and philosophy governing the system, see [The Constitution (Axioms)](docs/design/theory/axioms.md).
 
 ## Core Philosophy
 
