@@ -39,5 +39,5 @@
 
 - **Goal**: Polish the website based on user feedback to improve usability and aesthetics.
 - **Phases**:
-  - **Phase 1: Feedback Implementation (Active)**
+  - **Phase 1: Feedback Implementation (Completed)**
     - **Goal**: Address specific user feedback items one by one.

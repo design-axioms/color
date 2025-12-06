@@ -1102,6 +1102,20 @@
 - **Real-time Validation**: Schema validation in the UI was deferred.
 - **ESLint Svelte Support**: Deferred full implementation/verification beyond basic smoke tests.
 
+## Epoch 36: Phase 1 - Feedback Implementation (2025-12-06)
+
+**Goal**: Address specific user feedback items regarding the Theme Builder layout and default colors.
+
+**Completed Work**:
+
+- **Layout Fixes**:
+  - **Context Tree**: Reduced indentation and increased sidebar width to prevent text truncation.
+  - **Inspector**: Added padding to `LuminanceSpectrum` to prevent slider handle clipping.
+- **Color Tuning**:
+  - **Action Surface**: Updated library defaults to use "Brand" hue and `0.12` chroma, fixing the "washed out" appearance.
+- **Data Investigation**:
+  - Confirmed that the "Spotlight" delta of 108 is mathematically correct for an inverted surface.
+
 ## Epoch 35: Deployment & Release (Completed)
 
 **Goal**: Deploy the updated system to production and verify the live site.
