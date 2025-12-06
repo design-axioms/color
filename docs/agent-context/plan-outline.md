@@ -41,3 +41,5 @@
 - **Phases**:
   - **Phase 1: Feedback Implementation (Completed)**
     - **Goal**: Address specific user feedback items one by one.
+  - **Phase 2: Proactive Polish (Active)**
+    - **Goal**: Self-audit the site using browser automation and static analysis to find and fix latent visual issues.
