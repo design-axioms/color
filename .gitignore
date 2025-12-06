@@ -6,4 +6,6 @@ dist/
 demo/dist/
 docs/guide/book/
 coverage/
-.DS_Store
+.DS_Store.astro/
+check-repro.cjs
+.locald/

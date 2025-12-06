@@ -1,19 +1,19 @@
 ---
-title: The Theme Builder
-description: How to use the visual Theme Builder to generate your configuration.
+title: The Theme Studio
+description: How to use the visual Theme Studio to generate your configuration.
 ---
 
-The **Theme Builder** is a web-based tool that allows you to visually design your theme and export the configuration for your project.
+The **Theme Studio** is a web-based tool that allows you to visually design your theme and export the configuration for your project.
 
 <div class="docs-cta-container">
-  <a href="/builder/" class="docs-cta-button">
-    Launch Theme Builder →
+  <a href="/studio/" class="docs-cta-button">
+    Launch Theme Studio →
   </a>
 </div>
 
 ## Workflow
 
-The Theme Builder is designed to work hand-in-hand with the CLI.
+The Theme Studio is designed to work hand-in-hand with the CLI.
 
 1.  **Design**: Use the visual controls to adjust anchors, key colors, and surfaces.
 2.  **Export**: Click the "Export Config" button to get your JSON.
@@ -24,7 +24,7 @@ The Theme Builder is designed to work hand-in-hand with the CLI.
 
 ### 1. Anchor Tuning
 
-The most powerful feature of the builder is the **Anchor Tuner**.
+The most powerful feature of the studio is the **Anchor Tuner**.
 
 - **Background Anchors**: Drag the sliders to change the "start" (page background) and "end" (highest surface) lightness. Watch how every surface in the preview updates instantly.
 - **Foreground Anchors**: Adjust the contrast range for text.
@@ -39,11 +39,11 @@ You can define your semantic hues (Brand, Success, Danger, etc.) and see how the
 
 ### 3. Real-time Accessibility Check
 
-As you drag sliders, the builder runs the **APCA Solver** in real-time.
+As you drag sliders, the studio runs the **APCA Solver** in real-time.
 
 - If you make the background too dark for the text, the text will automatically lighten to maintain readability.
-- If you create a combination that is mathematically impossible to solve (e.g., low contrast background + low contrast text), the builder will warn you.
+- If you create a combination that is mathematically impossible to solve (e.g., low contrast background + low contrast text), the studio will warn you.
 
 ## Importing an Existing Config
 
-If you already have a `color-config.json`, you can paste it into the "Import" tab of the Theme Builder to visualize your current theme and make adjustments.
+If you already have a `color-config.json`, you can paste it into the "Import" tab of the Theme Studio to visualize your current theme and make adjustments.

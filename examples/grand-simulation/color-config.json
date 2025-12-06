@@ -1,0 +1,125 @@
+{
+  "$schema": "node_modules/@axiomatic-design/color/color-config.schema.json",
+  "anchors": {
+    "page": {
+      "light": {
+        "start": {
+          "background": 0.98
+        },
+        "end": {
+          "adjustable": true,
+          "background": 0.9
+        }
+      },
+      "dark": {
+        "start": {
+          "background": 0.0
+        },
+        "end": {
+          "adjustable": true,
+          "background": 0.15
+        }
+      }
+    },
+    "inverted": {
+      "light": {
+        "start": {
+          "adjustable": true,
+          "background": 0.1
+        },
+        "end": {
+          "background": 0
+        }
+      },
+      "dark": {
+        "start": {
+          "adjustable": true,
+          "background": 0.9
+        },
+        "end": {
+          "background": 1
+        }
+      }
+    },
+    "keyColors": {
+      "brand": "#FF00FF",
+      "success": "#00FF00",
+      "warning": "#FFFF00",
+      "error": "#FF0000"
+    },
+    "neutral": "#111111"
+  },
+  "hueShift": {
+    "curve": {
+      "p1": [0.2, 0],
+      "p2": [0.8, 1]
+    },
+    "maxRotation": 45
+  },
+  "borderTargets": {
+    "decorative": 20,
+    "interactive": 50,
+    "critical": 90
+  },
+  "palette": {
+    "targetChroma": 0.25,
+    "targetContrast": 75,
+    "hues": [300, 180, 60, 0, 120, 240]
+  },
+  "options": {
+    "prefix": "cyber",
+    "selector": ":root"
+  },
+  "groups": [
+    {
+      "name": "Base",
+      "surfaces": [
+        {
+          "slug": "page",
+          "label": "Surface Page",
+          "description": "The base background of the application.",
+          "polarity": "page"
+        },
+        {
+          "slug": "panel",
+          "label": "Surface Panel",
+          "description": "A dark panel.",
+          "polarity": "page",
+          "contrastOffset": {
+            "light": 5,
+            "dark": 5
+          }
+        }
+      ]
+    },
+    {
+      "name": "Content",
+      "surfaces": [
+        {
+          "slug": "card",
+          "label": "Surface Card",
+          "description": "A card-like element.",
+          "polarity": "page",
+          "contrastOffset": {
+            "light": 10,
+            "dark": 10
+          },
+          "states": [
+            {
+              "name": "hover",
+              "offset": -5
+            }
+          ]
+        },
+        {
+          "slug": "neon-button",
+          "label": "Neon Button",
+          "description": "A high-chroma action button.",
+          "polarity": "inverted",
+          "hue": "brand",
+          "targetChroma": 0.3
+        }
+      ]
+    }
+  ]
+}

@@ -92,13 +92,17 @@
 
 <dialog
   bind:this={dialog}
-  class="inspector-panel"
+  class="inspector-panel surface-card bordered shadow-xl"
   popover="manual"
   onclose={onClose}
 >
   <div class="header">
-    <h4 class="title">Token Inspector</h4>
-    <button class="close-btn" onclick={onClose} aria-label="Close inspector">
+    <h4 class="title text-subtle">Token Inspector</h4>
+    <button
+      class="close-btn text-subtle"
+      onclick={onClose}
+      aria-label="Close inspector"
+    >
       &times;
     </button>
   </div>
@@ -106,7 +110,7 @@
   <div class="tokens-container">
     {#each groups as group (group.title)}
       <div class="group-section">
-        <div class="group-title">{group.title}</div>
+        <div class="group-title text-subtle">{group.title}</div>
         <div class="tokens-list">
           {#each group.tokens as token (token.name)}
             <div class="token-row">
@@ -128,24 +132,26 @@
 
               <div class="token-info">
                 <div class="token-name-row">
-                  <span class="token-name">{token.name}</span>
+                  <span class="token-name text-subtle">{token.name}</span>
                 </div>
 
                 {#if !token.isLightDark}
                   <div class="value-row">
-                    <span class="resolved-value">{token.resolvedColor}</span>
+                    <span class="resolved-value text-strong"
+                      >{token.resolvedColor}</span
+                    >
                   </div>
                 {/if}
 
                 {#if token.isLightDark && token.lightValue && token.darkValue}
                   <div class="adaptive-values">
                     <div class="value-item">
-                      <span class="label">L</span>
-                      <span class="value">{token.lightValue}</span>
+                      <span class="label text-subtler">L</span>
+                      <span class="value text-strong">{token.lightValue}</span>
                     </div>
                     <div class="value-item">
-                      <span class="label">D</span>
-                      <span class="value">{token.darkValue}</span>
+                      <span class="label text-subtler">D</span>
+                      <span class="value text-strong">{token.darkValue}</span>
                     </div>
                   </div>
                 {/if}
@@ -175,11 +181,9 @@
     max-height: 60vh;
     width: 500px;
 
-    background: var(--surface-token);
-    border: 1px solid var(--border-subtle-token);
     border-radius: 8px;
     padding: 1rem;
-    box-shadow: var(--shadow-xl);
+    /* box-shadow: var(--shadow-xl); */
     overflow-y: auto;
 
     opacity: 0;
@@ -205,7 +209,7 @@
     align-items: center;
     margin-bottom: 1rem;
     padding-bottom: 0.5rem;
-    border-bottom: 1px solid var(--border-subtle-token);
+    border-bottom: 1px solid var(--computed-border-dec-color);
   }
 
   .title {
@@ -214,7 +218,6 @@
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: var(--text-subtle-token);
   }
 
   .close-btn {
@@ -222,13 +225,12 @@
     border: none;
     font-size: 1.25rem;
     line-height: 1;
-    color: var(--text-subtle-token);
     cursor: pointer;
     padding: 0 0.25rem;
   }
 
   .close-btn:hover {
-    color: var(--text-high-token);
+    color: var(--computed-fg-color);
   }
 
   .tokens-container {
@@ -240,7 +242,6 @@
   .group-title {
     font-size: 0.7rem;
     font-weight: 700;
-    color: var(--text-subtle-token);
     margin-bottom: 0.5rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -256,7 +257,7 @@
     align-items: center;
     gap: 0.75rem;
     padding: 0.375rem 0;
-    border-bottom: 1px solid var(--border-subtle-token);
+    border-bottom: 1px solid var(--computed-border-dec-color);
   }
 
   .token-row:last-child {
@@ -271,7 +272,7 @@
     width: 24px;
     height: 24px;
     border-radius: 50%;
-    border: 1px solid var(--border-subtle-token);
+    border: 1px solid var(--computed-border-dec-color);
     box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.05);
   }
 
@@ -294,7 +295,6 @@
   }
 
   .token-name {
-    color: var(--text-subtle-token);
     font-family: monospace;
     font-size: 0.8rem;
   }
@@ -302,7 +302,6 @@
   .resolved-value {
     font-family: monospace;
     font-size: 0.8rem;
-    color: var(--text-high-token);
     white-space: nowrap;
   }
 
@@ -323,12 +322,10 @@
 
   .value-item .value {
     font-size: 0.8rem;
-    color: var(--text-high-token);
   }
 
   .label {
     font-weight: 700;
-    color: var(--text-subtlest-token);
     font-size: 0.65rem;
   }
 </style>

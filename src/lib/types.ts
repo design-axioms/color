@@ -30,6 +30,12 @@ export interface Anchors {
 export interface PolarityAnchors {
   readonly page: Anchors;
   readonly inverted: Anchors;
+  /**
+   * A map of key color names to their values.
+   * Values can be:
+   * - A hex color string (e.g. "#ff0000")
+   * - A reference to another key color (e.g. "danger")
+   */
   readonly keyColors: Record<string, string>;
 }
 
@@ -44,6 +50,10 @@ export type ModeSpec = {
   "fg-baseline": number;
   "fg-subtle": number;
   "fg-subtlest": number;
+  debug?: {
+    targetContrast: number;
+    clamped: boolean;
+  };
 };
 
 export type ContrastOffsets = Partial<Record<Mode, number>>;
@@ -76,6 +86,11 @@ export type SurfaceConfig = {
    * If set, the solver will adjust Lightness to compensate for the HK effect.
    */
   targetChroma?: number;
+  /**
+   * Target hue for this surface.
+   * Can be a number (0-360) or a reference to a key color (e.g. "brand").
+   */
+  hue?: number | string;
   /**
    * Derivative surfaces (states) that are solved relative to this surface.
    */
@@ -146,20 +161,78 @@ export interface ConfigOptions {
   selector?: string;
 }
 
+export interface TypeScaleConfig {
+  /**
+   * Number of sizes to generate (e.g. 5 for xs, sm, base, lg, xl).
+   */
+  steps: number;
+  /**
+   * Base size in rem (e.g. 0.75).
+   */
+  minSize: number;
+  /**
+   * Max size in rem (e.g. 3.0).
+   */
+  maxSize: number;
+  /**
+   * Control points for the scaling curve.
+   */
+  curve: BezierCurve;
+}
+
+export interface TypographyConfig {
+  /**
+   * Font families.
+   * e.g. { mono: "ui-monospace, ...", sans: "system-ui, ..." }
+   */
+  fonts?: Record<string, string>;
+  /**
+   * Font weights.
+   * e.g. { medium: 500, bold: 700 }
+   */
+  weights?: Record<string, number>;
+  /**
+   * Font sizes.
+   * e.g. { sm: "0.875rem", lg: "1.125rem" }
+   */
+  sizes?: Record<string, string>;
+  /**
+   * Configuration for generating a type scale.
+   * If provided, this will override the `sizes` map.
+   */
+  scale?: TypeScaleConfig;
+}
+
+export interface PresetsConfig {
+  typography?: TypographyConfig;
+}
+
 export interface ColorSpec {
   l: number;
   c: number;
   h: number;
 }
 
+import type { VibeName } from "./vibes.ts";
+
+export type DeepPartial<T> = T extends (infer U)[]
+  ? U[]
+  : T extends object
+    ? { [P in keyof T]?: DeepPartial<T[P]> }
+    : T;
+
 export type SolverConfig = {
+  vibe?: VibeName;
   anchors: PolarityAnchors;
   groups: SurfaceGroup[];
   hueShift?: HueShiftConfig;
   borderTargets?: BorderTargets;
   palette?: PaletteConfig;
+  presets?: PresetsConfig;
   options?: ConfigOptions;
 };
+
+export type UserConfig = DeepPartial<SolverConfig> & { $schema?: string };
 
 export type SurfaceDefinition = {
   slug: string;
@@ -181,6 +254,10 @@ export interface Primitives {
   };
   focus: {
     ring: { light: string; dark: string };
+  };
+  highlight: {
+    ring: { light: string; dark: string };
+    surface: { light: string; dark: string };
   };
 }
 

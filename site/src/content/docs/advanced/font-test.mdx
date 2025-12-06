@@ -1,0 +1,28 @@
+---
+title: Font Test
+---
+
+import MathFontComparison from "../../../components/algebra/MathFontComparison.svelte";
+
+<div style="font-family: 'STIX Two Math', serif; font-size: 2em; border: 1px solid red; padding: 10px;">
+  Direct: ∑ = ⟨ Hue, Chroma, Intent, Polarity ⟩
+</div>
+
+<div style="font-family: var(--font-stix-two-math), serif; font-size: 2em; border: 1px solid blue; padding: 10px;">
+  Variable: ∑ = ⟨ Hue, Chroma, Intent, Polarity ⟩
+</div>
+
+## MathML Test
+
+$$
+\sum = \langle \text{Hue}, \text{Chroma}, \text{Intent}, \text{Polarity} \rangle
+$$
+
+$$
+x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}
+$$
+
+## Font Comparison Lab
+
+<MathFontComparison client:load />
+

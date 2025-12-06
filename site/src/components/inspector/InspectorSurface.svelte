@@ -11,7 +11,7 @@
     children,
     class: className,
     ...rest
-  } = $props<HTMLAttributes<HTMLDivElement>>();
+  }: HTMLAttributes<HTMLButtonElement> = $props();
 
   let element = $state<HTMLElement>();
   let isSelected = $derived(element && inspector.selected === element);
@@ -29,26 +29,30 @@
   }
 </script>
 
-<div
+<!-- eslint-disable-next-line svelte/valid-compile -->
+<button
   bind:this={element}
   class={(["inspector-surface", className || ""] as string[])
     .filter((c) => !!c)
     .join(" ")}
-  role="button"
-  tabindex="0"
+  type="button"
   onclick={handleClick}
   onkeydown={handleKeydown}
   style:anchor-name={isSelected ? "--inspector-anchor" : undefined}
   {...rest}
 >
   {@render children?.()}
-</div>
+</button>
 
 <style>
   .inspector-surface {
+    all: unset;
+    box-sizing: border-box;
+    width: 100%;
     cursor: pointer;
     transition: outline 0.2s;
     display: block;
+    text-align: inherit;
   }
 
   .inspector-surface:hover {

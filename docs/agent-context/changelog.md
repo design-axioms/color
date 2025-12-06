@@ -702,6 +702,415 @@
   - Fixed floating promises and return types in `scripts/check-links.ts`.
 - **Library Fixes**:
   - Removed unnecessary conditional checks for mandatory properties (`charts`, `primitives`) in `dtcg.ts` and `tailwind.ts` exporters.
+- **CI/CD & Documentation**:
+  - **CI Fixes**: Updated `.github/workflows/ci.yml` to run `pnpm --filter site astro sync` before linting and removed redundant `--run` flag from test command.
+  - **Documentation**: Added `CONTRIBUTING.md` to document the PR workflow, CI checks, and development guidelines.
+  - **Deployment**: Successfully deployed to Vercel (Production) after merging PR #9.
 - **Verification**:
   - Achieved 0 errors in `pnpm lint`.
   - Verified successful build with `pnpm build`.
+
+## Epoch 21: Phase 1 - Config State & Live Preview (2025-12-02)
+
+**Goal**: Connect the Theme Builder UI to a reactive configuration state and enable live preview in the browser.
+
+**Completed Work**:
+
+- **Package Refactoring**:
+  - Refactored `@axiomatic-design/color` to support browser-side solving.
+  - Extracted `solver.ts` to resolve circular dependencies.
+  - Exported `generateTheme` and `injectTheme` via `runtime.ts`.
+- **State Management**:
+  - Implemented `ConfigState.svelte.ts` using Svelte 5 Runes.
+  - Added persistence via `localStorage`.
+  - Implemented live CSS generation via `$derived`.
+- **UI Integration**:
+  - Created `StyleInjector.svelte` to apply the generated theme.
+  - Bound `GlobalInspector` and `SurfaceInspector` to the reactive state.
+  - Verified live updates for anchors, key colors, and surface overrides.
+
+## Epoch 21: Phase 2 - Theme Builder Layout Polish (2025-12-02)
+
+**Goal**: Refine the Theme Builder layout for better responsiveness and isolation from documentation styles.
+
+**Completed Work**:
+
+- **Style Isolation**:
+  - Wrapped `StudioLayout` in `<Diagram>` to apply the `not-content` class, preventing Starlight's prose styles from interfering with the UI.
+- **Responsive Layout**:
+  - Updated `ComponentView` to use a responsive grid (`repeat(auto-fit, minmax(320px, 1fr))`) instead of a fixed 2-column layout.
+  - Optimized vertical alignment (`flex-start` + padding) to reduce whitespace on taller screens.
+  - Increased `max-width` to `1000px` for better space utilization.
+
+## Epoch 21: Phase 3 - Design & Concept (2025-12-02)
+
+**Goal**: Implement design and usability feedback to make the Theme Builder a more powerful, intuitive, and educational tool.
+
+**Completed Work**:
+
+- **UI/UX Refactoring**:
+  - **Inspector Panes**: Refactored the Inspector into collapsible panes (Accordion layout) for better organization.
+  - **Dual-Thumb Slider**: Implemented a custom dual-thumb slider for intuitive contrast range editing.
+  - **Context Tree Editing**: Enabled structural editing (Drag & Drop, Selection) in the Surface Manager.
+- **Advanced Features**:
+  - **Dark Mode Linking**: Implemented logic to link Dark Mode anchors to Light Mode, with a lock toggle.
+  - **Custom Color Picker**: Created a custom OKLCH color picker for precise color selection.
+  - **Hue Shift Editor**: Integrated an interactive Hue Shift Visualizer into the editor.
+- **Polish**:
+  - **Audit View**: Implemented a new view to audit contrast scores (APCA) and gamut issues.
+  - **Abstract View**: Refined the Graph view to visualize the lightness curve across nesting levels.
+  - **Prose**: Updated micro-copy and tooltips for better clarity.
+- **System Updates**:
+  - **Highlight Primitive**: Formalized `highlight` as the "Color of Attention" and mapped it to `<mark>` and `::selection`.
+  - **Multiple Key Colors**: Updated `ConfigState` to support multiple key colors.
+
+## Epoch 21: Phase 4 - V2 Implementation (2025-12-02)
+
+**Goal**: Implement the new "System Modeling" UI, transforming the Theme Builder from a form-filler into a powerful design tool.
+
+**Completed Work**:
+
+- **Context Tree (Surface Manager)**:
+  - Refactored the flat list into a hierarchical **Context Tree**.
+  - Implemented drag-and-drop nesting and reordering.
+  - Added inline actions and compact rows for better density.
+- **Context Graph**:
+  - Replaced disconnected sliders with a unified **Context Graph**.
+  - Visualized Light and Dark mode tracks together, showing the "Safe Zone" and contrast relationships.
+- **Gamut Slice**:
+  - Created a canvas-based **Gamut Slice** visualization (Lightness vs Chroma).
+  - Added a Hue slider to explore the color space boundaries.
+- **Selection System**:
+  - Implemented a robust selection state with a distinct `--highlight-ring-color` (Magenta).
+  - Applied selection rings consistently across the Tree, Preview, and Inspector.
+- **Token Cleanup**:
+  - Refactored all frontend components to remove raw `var(--*-token)` references.
+  - Enforced strict ESLint rules (no unused vars, no void returns) to ensure code quality.
+
+## Epoch 21: Phase 5 - Cleanup & Consolidation (2025-12-02)
+
+**Goal**: Refactor utility classes for consistency and consolidate the CSS architecture to simplify maintenance and reduce duplication.
+
+**Completed Work**:
+
+- **Utility Refactor**:
+  - Renamed `.focus-visible-ring` to `.ring-focus-visible` to align with the `ring-*` naming convention.
+  - Removed `.fill-subtlest` as it was redundant.
+- **CSS Consolidation**:
+  - Moved `site/src/styles/docs.css` to `css/utilities.css` (or merged relevant parts).
+  - Pointed Astro configuration to use the root `css/` directory instead of local styles.
+  - Ensured a single source of truth for all CSS utilities across the CLI, Demo, and Documentation.
+- **Verification**:
+  - Updated snapshots in `generator.test.ts` and `scoping.test.ts` to reflect the new class names.
+  - Verified that the documentation site builds and renders correctly with the consolidated CSS.
+
+## Epoch 23: Phase 1 - Reactive Pipeline Architecture (2025-12-03)
+
+**Goal**: Implement a "Late-Binding" architecture for CSS utilities, allowing them to be context-aware and composable without combinatorial class explosion.
+
+**Completed Work**:
+
+- **Architecture**:
+  - Designed the "Reactive Pipeline" model ($Color = f(Context, Intent, Modifier)$).
+  - Documented the architecture in `docs/design/reactive-pipeline.md`.
+  - Added "Axiom XII: The Law of Late Binding" to `docs/design/axioms.md`.
+- **Engine Refactor**:
+  - Updated `css/engine.css` to use **Indirection Variables** (`--text-lightness-source`, `--text-hue-source`, etc.) instead of direct token references.
+  - Updated the calculation logic to derive final colors from these sources.
+  - Added text utility selectors to the main calculation block to ensure they trigger color resolution.
+- **Generator Update**:
+  - Updated `src/lib/generator.ts` to generate utilities that set these indirection variables.
+  - `.text-subtle` now sets `--text-lightness-source`.
+  - `.hue-brand` now sets `--text-hue-source` and `--text-chroma-source`.
+- **Verification**:
+  - Regenerated `css/theme.css` and verified the output matches the new architecture.
+
+## Epoch 23: Phase 2 - Presets & Utilities (2025-12-03)
+
+**Goal**: Implement a robust system for presets (Typography, Borders) and refactor the CSS engine to support reactive composition.
+
+**Completed Work**:
+
+- **Typography Scale**:
+  - Implemented `TypeScaleConfig` and Cubic Bezier interpolation for fluid font scaling.
+  - Generated `--axm-preset-text-*` variables and utilities.
+- **Border Refactor**:
+  - Split border definitions into structural (`--axm-preset-border-*`) and cosmetic components.
+  - Created `.preset-bordered` (structure) and `.bordered` (color) utilities.
+- **Verification**:
+  - Updated `surface-lightness.config.json` with the new preset configuration.
+  - Verified the generated CSS contains the correct values.
+
+## Epoch 22: Phase 2 - Luminance Spectrum UI (2025-12-02)
+
+**Goal**: Replace the disconnected "Page Anchors" sliders with a unified **Luminance Spectrum** visualization to improve the mental model of lightness and contrast.
+
+**Completed Work**:
+
+- **New Components**:
+  - **`RangeSlider.svelte`**: Created a reusable dual-handle slider component with drag support and accessibility attributes.
+  - **`LuminanceSpectrum.svelte`**: Implemented the main visualization component that composes two range sliders on a single 0-100% lightness track.
+- **Integration**:
+  - Replaced the legacy "Page Context" section in `AnchorsEditor.svelte` with the new `LuminanceSpectrum`.
+  - Updated `ContextGraph.svelte` to allow selective rendering of the "Inverted Context" section.
+- **Features**:
+  - **Unified Axis**: Visualizes Light and Dark modes on the same physical track.
+  - **Contrast Feedback**: Displays real-time APCA contrast badges (Lc) with color-coded compliance indicators (Green/Yellow/Red).
+  - **Constraints**: Enforces logical constraints (Surface < Ink) via the UI interaction model.
+
+## Epoch 25: The Grand Simulation (2025-12-03)
+
+**Goal**: Validate the system's robustness by simulating the workflows of four key personas (Alex, Jordan, Dr. Chen, Marcus) in a realistic, isolated environment.
+
+**Completed Work**:
+
+- **Simulation Environment**:
+  - Created `examples/grand-simulation` as a standalone project.
+  - Initialized with a local build of `@axiomatic-design/color` (v0.1.0).
+- **CLI Fixes**:
+  - **Critical Bug Fix**: Patched `src/cli/index.ts` to correctly detect CLI arguments when running via `npx` or direct execution, resolving a silent failure in `axiomatic init`.
+- **Persona Validation**:
+  - **Alex (Tinkerer)**: Successfully configured an extreme "Cyberpunk" theme (Neon Pink/Green, High Chroma) to verify system flexibility.
+  - **Jordan (Audit)**: Verified `axiomatic audit` passes and confirmed `prefers-contrast: more` media queries generate maximized contrast (0/1 lightness).
+  - **Dr. Chen (Scientist)**: Confirmed P3 Gamut support by verifying `oklch` chroma values (> 0.3) are preserved in the generated CSS.
+  - **Marcus (Architect)**: Verified `axiomatic export` generates valid Tailwind presets and DTCG tokens.
+
+## Epoch 26: The Hard Flip (2025-12-03)
+
+**Goal**: Implement a "Hard Flip" mechanism to ensure native UI elements (scrollbars, checkboxes) invert correctly inside inverted surfaces.
+
+**Completed Work**:
+
+- **CSS Beacon**:
+  - Updated `src/lib/generator.ts` to emit `--axm-inverted-surfaces` in the `:root` block.
+  - This variable contains a comma-separated list of all inverted surface selectors.
+- **Runtime Observer**:
+  - Updated `ThemeManager` in `src/lib/browser.ts` to read the beacon and set up a `MutationObserver`.
+  - Implemented logic to force `style="color-scheme: dark/light"` on inverted surfaces based on the global mode.
+- **Cleanup**:
+  - Removed obsolete `constants.ts` generation logic from the CLI.
+
+## Epoch 27: Documentation Polish & MathML (2025-12-03)
+
+**Goal**: Refine the documentation's visual presentation and harden the project infrastructure.
+
+**Completed Work**:
+
+- **Native MathML**:
+  - Enabled native MathML rendering in Starlight.
+  - Implemented custom CSS overrides in `site/src/styles/starlight-custom.css` for consistent font stack and spacing.
+- **Content Restructuring**:
+  - Refined `composition-algebra.mdx` by removing redundant grids and adding "In Plain English" callouts.
+  - Moved the "Font Comparison Lab" to a dedicated test page.
+- **Infrastructure Hardening**:
+  - **Verification Script**: Fixed `scripts/agent/verify-phase.sh` to correctly locate the workspace root.
+  - **Linting**: Resolved 50+ ESLint errors across Svelte components and test files, enforcing strict type safety.
+  - **Testing**: Updated `src/lib/__tests__/browser.test.ts` to mock `getComputedStyle` correctly.
+  - **Configuration**: Updated `tsconfig.json` and `eslint.config.js` to properly handle test files and ignores.
+
+## Epoch 28: Code Review & Hardening (2025-12-03)
+
+**Goal**: Address "Source of Truth" violations and performance risks identified during code review to ensure a stable and maintainable codebase.
+
+**Completed Work**:
+
+- **Source of Truth Remediation**:
+  - **CSS**: Refactored `site/src/styles/starlight-custom.css` to remove hardcoded color tokens. It now maps Starlight's semantic variables (e.g., `--sl-color-bg`) directly to Axiomatic system variables (e.g., `--bg-surface-sunken`).
+  - **Configuration**: Updated `site/astro.config.mjs` to import the authoritative `../css/theme.css` instead of relying on implicit or duplicate styles.
+- **Performance Optimization**:
+  - **Runtime**: Optimized `ThemeManager` in `src/lib/browser.ts`. The `MutationObserver` now checks only `addedNodes` for inverted surfaces instead of re-scanning the entire document tree on every mutation.
+- **Verification**:
+  - Verified the build (`pnpm --filter site build`) passes with the new configuration.
+  - Confirmed that the documentation site renders correctly with the refactored styles.
+
+## Epoch 30: Developer Tooling (2025-12-04)
+
+**Goal**: Create a world-class developer experience for users of the Axiomatic Color system.
+
+**Completed Work**:
+
+- **Phase 1: AI Context (llms.txt)**:
+  - Implemented `scripts/generate-llms-txt.ts` to generate a standardized `llms.txt` file from the documentation.
+  - Integrated the generation into the build pipeline (`scripts/build-site.ts`).
+  - Verified the output via `tests/llm-context.spec.ts`.
+- **Phase 2: CI Gatekeeper (Audit Hardening)**:
+  - Hardened the `axiomatic audit` command (`src/cli/commands/audit.ts`) with robust JSON Schema validation.
+  - Integrated `ajv` for runtime validation of `color-config.json`.
+  - Implemented logic to patch the schema to allow `$schema` property, ensuring compatibility with editor tooling.
+  - Verified the audit command correctly identifies schema violations and logic errors.
+- **Phase 3: The Editor Companion (VS Code Extension)**:
+  - **Scaffold**: Initialized `@axiomatic-design/vscode-extension` in `packages/vscode-extension`.
+  - **Grammar**: Defined Tree-sitter queries for detecting class names in HTML, JSX, Svelte, and Vue.
+  - **Infrastructure**: Set up `web-tree-sitter` and WASM grammar loading.
+  - **Features**: Implemented Autocomplete (`CompletionItemProvider`) and Color Decorators (`AxiomaticDecorator`) for system tokens.
+
+- **Phase 4: The Runtime Debugger**:
+  - **Core Logic**: Implemented headless DOM traversal (`walker.ts`) and variable resolution (`resolver.ts`) to identify surface context and resolve late-binding variables.
+  - **Web Component**: Created `<axiomatic-debugger>`, a vanilla Web Component with Shadow DOM for style-isolated visualization.
+  - **Tree-Shaking**: Exported the debugger as a separate entry point (`@axiomatic-design/color/inspector`) to ensure it can be excluded from production bundles.
+  - **Integration**: Integrated the debugger into the documentation site for "dogfooding" and verification.
+
+## Epoch 31: Phase 1 - Golden Master Tests (2025-12-04)
+
+**Goal**: Implement full-system snapshot testing to guarantee bit-for-bit determinism across releases.
+
+**Completed Work**:
+
+- **Infrastructure**:
+  - Created `tests/golden-masters/` to store canonical outputs.
+  - Configured `vitest` to run snapshot tests.
+- **Snapshot Generation**:
+  - Implemented tests to snapshot CSS (`theme.css`), DTCG (`tokens.json`), Tailwind (`tailwind.preset.js`), and TypeScript (`theme.ts`) outputs.
+- **Determinism**:
+  - Verified that the core logic is deterministic and free of random seeds or environment dependencies.
+  - Confirmed that tests pass reliably in CI.
+
+## Epoch 31: Phase 2 - Usage Linter (2025-12-04)
+
+**Goal**: Create `eslint-plugin-axiomatic` to flag "Magic Numbers" and enforce semantic token usage.
+
+**Completed Work**:
+
+- **Plugin Scaffolding**:
+  - Initialized `@axiomatic-design/eslint-plugin` in `packages/eslint-plugin`.
+  - Configured `tsup` for bundling and `vitest` for testing.
+- **Rule Implementation**:
+  - **`no-hardcoded-colors`**: Detects hex, rgb, hsl, and named colors in style attributes (JSX, Svelte, Vue, Glimmer). Suggests semantic tokens based on property context (e.g., `background` -> `surface`).
+  - **`no-raw-tokens`**: Detects usage of internal tokens (`--color-sys-*`) and suggests semantic tokens. Enforces utility class usage for surfaces.
+- **Dynamic Context**:
+  - Implemented dynamic loading of `theme.css` and `utilities.css` from the user's project to ensure suggestions are always up-to-date with the generated system.
+- **Verification**:
+  - Verified rules against React (JSX), Svelte, Vue, and Ember (GTS) test cases.
+  - Added smoke tests to ensure integration works in real-world scenarios.
+  - Achieved 100% pass rate on strict linting of the plugin codebase itself.
+
+## Epoch 32: Phase 2 - Token Reorganization (2025-12-05)
+
+**Goal**: Align the DTCG export structure with ecosystem standards (Tokens Studio) by splitting tokens into Primitives, Light Mode, and Dark Mode sets.
+
+**Completed Work**:
+
+- **Exporter Refactor**:
+  - Updated `src/lib/exporters/dtcg.ts` to return a `DTCGExport` object containing a map of filenames to content.
+  - Split generation logic into `generatePrimitives` (Global) and `generateMode` (Light/Dark).
+- **CLI Update**:
+  - Updated `axiomatic export` to support directory output (`--out tokens/`).
+  - Implemented logic to write `primitives.json`, `light.json`, and `dark.json` when a directory is specified.
+  - Maintained backward compatibility for single-file export (`--out tokens.json`).
+- **Verification**:
+  - Verified the output structure matches the "Token Sets" model.
+  - Confirmed that `primitives.json` contains key colors and `light.json`/`dark.json` contain semantic tokens.
+
+## Epoch 32: Phase 3 - High-Level Presets ("Vibes") (2025-12-05)
+
+**Goal**: Introduce a high-level configuration layer ("Vibes") to allow users to quickly apply opinionated defaults (e.g., "Vibrant", "Corporate", "Academic") without manual tuning.
+
+**Completed Work**:
+
+- **Vibe Registry**:
+  - Created `src/lib/vibes.ts` defining the `Vibe` interface and `VibeConfig` (Deep Partial SolverConfig).
+  - Implemented initial vibes: **Default**, **Academic** (Serif, Low Chroma), **Vibrant** (High Chroma, Hue Shift), and **Corporate** (Safe, Standard).
+- **Resolution Logic**:
+  - Implemented `resolveConfig` in `src/lib/resolve.ts` to handle the 3-layer merge strategy: `System Defaults` < `Vibe Defaults` < `User Config`.
+  - Implemented a robust `deepMerge` utility to handle nested configuration overrides correctly.
+- **CLI Integration**:
+  - Updated `build`, `export`, and `audit` commands to use `resolveConfig`, ensuring all CLI operations respect the selected vibe.
+  - Updated `audit` command to validate against a `UserConfig` schema (where `anchors` and `groups` are optional), allowing minimal config files.
+- **UI Integration**:
+  - Updated `ConfigState` in the Theme Builder to support loading vibes.
+  - Implemented `VibePicker` component in the sidebar to allow users to switch vibes instantly.
+- **Fixes**:
+  - Corrected anchor value ranges in `vibes.ts` (switched from 0-100 to 0-1 to match system internals).
+  - Resolved TypeScript circular dependencies and type inference issues with `DeepPartial`.
+
+## Epoch 33: Phase 3 - Remediation Plan (2025-12-06)
+
+**Goal**: Analyze the root causes of the "Epoch 33" failures and create a concrete plan for remediation in Epoch 34.
+
+**Completed Work**:
+
+- **Analysis**: Identified key issues:
+  - **Build Tooling**: The `cat`-based build script is fragile and lacks minification/optimization.
+  - **Token Complexity**: The token surface area is too large, confusing users.
+  - **Documentation Gaps**: Tutorials are missing or outdated.
+- **Planning**: Created `docs/agent-context/remediation-plan.md` outlining the roadmap for Epoch 34:
+  - **Phase 1**: Infrastructure (Lightning CSS).
+  - **Phase 2**: Token Simplification.
+  - **Phase 3**: Interactive Tutorials.
+
+## Epoch 34: Phase 0 - Axiom Update (2025-12-06)
+
+**Goal**: Formalize the architectural decision to prioritize Standard CSS over proprietary extensions.
+
+**Completed Work**:
+
+- **Axiom 10**: Added "Standard CSS First" to the Constitution (`docs/design/axioms/04-integration.md`).
+- **Constraint**: Explicitly forbade the use of Sass, Less, or non-standard CSS extensions. Build tools (like Lightning CSS) are restricted to bundling, minification, and polyfilling future standards.
+- **Verification**: Updated Golden Master snapshots to reflect the current state of the system.
+
+## Epoch 34: Phase 1 - Infrastructure (2025-12-06)
+
+**Goal**: Replace the fragile, ad-hoc CSS build scripts with a robust, standard-compliant toolchain using Lightning CSS.
+
+**Completed Work**:
+
+- **Lightning CSS Integration**:
+  - Replaced `cat`-based concatenation with `lightningcss` for bundling and minification.
+  - Configured strict `@property` syntax validation (enforcing `initial-value`).
+  - Enabled automatic vendor prefixing and syntax lowering for broader browser support.
+- **Build Pipeline**:
+  - Created `scripts/build-css.ts` to orchestrate the build process.
+  - Updated `package.json` to include `build:css` and export `./style.css`.
+- **Codebase Hardening**:
+  - Fixed invalid `@property` definitions in `css/engine.css` (added `initial-value: transparent`).
+  - Cleaned up unused TypeScript directives in `src/lib/resolve.ts`.
+- **Verification**:
+  - Updated Golden Master snapshots to reflect the optimized CSS output.
+  - Verified that the build produces a valid, minified CSS bundle.
+
+## Epoch 34: Phase 2 - Token Simplification (2025-12-06)
+
+**Goal**: Reduce cognitive load by hiding internal "plumbing" tokens from the public API and exports.
+
+**Completed Work**:
+
+- **Token Classification**:
+  - Defined strict schema: Public (`--axm-*`) vs. Private (`--_axm-*`).
+  - Documented in `docs/agent-context/current/token-classification.md`.
+- **Exporter Updates**:
+  - Updated Tailwind, TypeScript, and DTCG exporters to filter out private tokens.
+  - Verified exports are clean via grep tests.
+- **Inspector Updates**:
+  - Updated `<axiomatic-debugger>` to hide private tokens by default.
+  - Added a "Show Internals" toggle for advanced debugging.
+  - Updated resolver logic to flag private tokens.
+- **Verification**:
+  - Ran visual regression tests (`pnpm test:visual`) to ensure no regressions.
+
+## Epoch 34: Phase 3 - Export & Validation
+
+**Goal**: Ensure the system is "Beta-Ready" by enabling live export previews in the Theme Builder and enforcing configuration validity.
+
+**Completed Work**:
+
+- **Theme Builder Export Preview**: Implemented a live preview of generated tokens in CSS, JSON (DTCG), Tailwind, and TypeScript formats.
+- **Quality Assurance**: Fixed test regressions caused by token simplification (renaming internal tokens to `_axm-`).
+- **Tooling**: Tuned `knip` configuration to reduce noise.
+
+**Deferred Work**:
+
+- **Real-time Validation**: Schema validation in the UI was deferred.
+- **ESLint Svelte Support**: Deferred full implementation/verification beyond basic smoke tests.
+
+## Epoch 35: Deployment & Release (Active)
+
+**Goal**: Deploy the updated system to production and verify the live site.
+
+**Phases**:
+
+- **Phase 1: Pre-Flight Verification (Completed)**:
+  - Verified local builds for both the library and the documentation site.
+  - Fixed critical build issues (missing CSS, broken imports).
+  - Resolved linting and security warnings.
+  - Updated test snapshots and verified all tests pass.
+- **Phase 2: Deployment (Active)**: Triggering and verifying the production deployment.

@@ -33,7 +33,6 @@
 }
 
 .docs-card {
-  background-color: var(--sl-color-gray-6);
   border: 1px solid var(--sl-color-gray-5);
   border-radius: 0.5rem;
   padding: 1rem;
@@ -41,6 +40,10 @@
   flex-direction: column;
   height: 100%;
   gap: 0.5rem; /* Use gap for internal spacing */
+}
+
+.docs-card:not([class*="surface-"]) {
+  background-color: var(--sl-color-gray-6);
 }
 
 .docs-card-header {
@@ -102,7 +105,7 @@
   grid-template-columns: repeat(5, 1fr);
   text-align: center;
   font-size: 0.8em;
-  color: var(--text-subtle-token);
+  color: var(--axm-text-subtle-token);
 }
 
 .docs-text-sm {
@@ -157,7 +160,7 @@
 .docs-text-subtle-sm {
   margin: 0;
   font-size: 0.9rem;
-  color: var(--text-subtle-token);
+  color: var(--axm-text-subtle-token);
 }
 
 .docs-flex-between {
@@ -177,7 +180,7 @@
   position: absolute;
   top: 0;
   bottom: 0;
-  background: var(--text-subtle-token);
+  background: var(--axm-text-subtle-token);
   opacity: 0.2;
   border-radius: 3px;
 }
@@ -189,7 +192,7 @@
   height: 16px;
   background: var(--text-strong-token);
   border-radius: 50%;
-  border: 2px solid var(--surface-token);
+  border: 2px solid var(--axm-surface-token);
 }
 
 .docs-slider-thumb.right {
@@ -212,8 +215,8 @@
 
 .docs-badge-pass {
   font-size: 0.8em;
-  border: 1px solid var(--chart-3);
-  color: var(--chart-3);
+  border: 1px solid var(--axm-chart-3);
+  color: var(--axm-chart-3);
   padding: 2px 6px;
   border-radius: 4px;
   font-weight: bold;
@@ -226,28 +229,28 @@
 }
 
 .docs-step-95 {
-  background: oklch(95% 0 0);
-  color: black;
+  background: oklch(0.95 0 0);
+  color: oklch(0 0 0);
 }
 .docs-step-85 {
-  background: oklch(85% 0 0);
-  color: black;
+  background: oklch(0.85 0 0);
+  color: oklch(0 0 0);
 }
 .docs-step-75 {
-  background: oklch(75% 0 0);
-  color: black;
+  background: oklch(0.75 0 0);
+  color: oklch(0 0 0);
 }
 .docs-step-65 {
-  background: oklch(65% 0 0);
-  color: white;
+  background: oklch(0.65 0 0);
+  color: oklch(1 0 0);
 }
 .docs-step-55 {
-  background: oklch(55% 0 0);
-  color: white;
+  background: oklch(0.55 0 0);
+  color: oklch(1 0 0);
 }
 
 .docs-code-block {
-  background: var(--surface-token);
+  background: var(--axm-surface-token);
   padding: 1rem;
   border-radius: 4px;
   overflow-x: auto;
@@ -323,8 +326,8 @@
 }
 
 .docs-cta-button {
-  background: var(--sl-color-accent-high);
-  color: var(--sl-color-black);
+  background: var(--axm-key-brand-color);
+  color: oklch(1 0 0); /* Always white text on brand color */
   padding: 0.75rem 1.5rem;
   border-radius: 6px;
   text-decoration: none;
@@ -359,3 +362,36 @@ mjx-container[display="true"] {
   margin: 1.5rem 0;
   text-align: center;
 }
+
+/* Utilities for Components to avoid raw token usage */
+
+.stroke-surface {
+  stroke: var(--axm-surface-token);
+}
+
+.border-surface {
+  border-color: var(--axm-surface-token);
+  border-style: solid;
+}
+
+.bg-surface {
+  background-color: var(--axm-surface-token);
+}
+
+.ring-focus {
+  outline: 2px solid var(--axm-focus-ring-color);
+}
+
+.ring-focus-visible:focus-visible {
+  outline: 2px solid var(--axm-focus-ring-color);
+  outline-offset: 2px;
+}
+
+.border-highlight {
+  border-color: var(--axm-highlight-ring-color);
+  border-style: solid;
+  border-width: 2px;
+}
+
+/* Graph Colors */
+/* Removed .graph-color-* in favor of .surface-action + .hue-* composition */

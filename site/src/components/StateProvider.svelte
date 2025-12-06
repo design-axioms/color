@@ -1,7 +1,8 @@
 <script lang="ts">
   import { setContext, type Snippet } from "svelte";
-  import { themeState } from "../lib/state/ThemeState.svelte";
+  import { builderState } from "../lib/state/BuilderState.svelte";
   import { configState } from "../lib/state/ConfigState.svelte";
+  import { themeState } from "../lib/state/ThemeState.svelte";
 
   let { children } = $props<{ children: Snippet }>();
 
@@ -10,6 +11,7 @@
   // while ensuring all instances share the same global state.
   setContext("theme", themeState);
   setContext("config", configState);
+  setContext("builder", builderState);
 </script>
 
 {@render children()}

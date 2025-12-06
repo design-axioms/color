@@ -9,6 +9,9 @@ const ROOT = path.resolve(__dirname, "..");
 const SITE_DIR = path.join(ROOT, "site");
 const OUTPUT_DIR = path.join(SITE_DIR, "dist");
 
+console.log("Generating LLM Context...");
+execSync("node scripts/generate-llms-txt.ts", { cwd: ROOT, stdio: "inherit" });
+
 console.log("Building Astro Site...");
 execSync("pnpm build", { cwd: SITE_DIR, stdio: "inherit" });
 

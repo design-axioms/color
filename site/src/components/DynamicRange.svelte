@@ -49,29 +49,27 @@
   {@const isLight = mode === "light"}
   {@const surfaces = getSurfaces(mode)}
   <div
-    class="docs-card"
+    class="docs-card surface-page bordered"
     style:color-scheme={mode}
-    style:border="1px solid var(--border-subtle-token)"
     style:border-radius="8px"
     style:overflow="hidden"
-    style:background="var(--surface-workspace)"
     style:box-shadow="var(--shadow-sm)"
   >
     <div
       style:padding="1rem"
-      style:border-bottom="1px solid var(--border-subtle-token)"
+      style:border-bottom="1px solid var(--computed-border-dec-color)"
     >
       <strong
+        class="text-strong"
         style:display="block"
         style:margin-bottom="0.5rem"
-        style:color="var(--text-token)"
       >
         {title}
       </strong>
       <p
+        class="text-subtle"
         style:margin="0"
         style:font-size="0.9em"
-        style:color="var(--text-subtle-token)"
         style:line-height="1.4"
       >
         {description}
@@ -79,11 +77,9 @@
     </div>
 
     <div
-      class="surface-page"
+      class="surface-page text-strong"
       style:position="relative"
       style:height="220px"
-      style:background="var(--surface-token)"
-      style:color="var(--text-high-token)"
       style:padding="2rem"
     >
       <!-- Range Indicator Line -->
@@ -93,30 +89,28 @@
         style:top="2.5rem"
         style:bottom="2.5rem"
         style:width="4px"
-        style:background="var(--border-dec-token)"
+        style:background="var(--computed-border-dec-color)"
         style:border-radius="2px"
       ></div>
 
       <!-- Anchors Labels -->
       <div
+        class="text-subtle font-mono"
         style:position="absolute"
         style:left="2.5rem"
         style:top="2rem"
         style:font-size="0.75em"
         style:font-weight="bold"
-        style:color="var(--text-subtle-token)"
-        style:font-family="var(--sl-font-mono)"
       >
         {isLight ? "Start" : "End"}
       </div>
       <div
+        class="text-subtle font-mono"
         style:position="absolute"
         style:left="2.5rem"
         style:bottom="2rem"
         style:font-size="0.75em"
         style:font-weight="bold"
-        style:color="var(--text-subtle-token)"
-        style:font-family="var(--sl-font-mono)"
       >
         {isLight ? "End" : "Start"}
       </div>
@@ -132,12 +126,9 @@
       >
         {#each surfaces as s (s.name)}
           <div
-            class={s.className}
-            style:background="var(--surface-token)"
-            style:border="1px solid var(--border-dec-token)"
+            class="{s.className} bordered text-strong"
             style:border-radius="6px"
             style:padding="0 1rem"
-            style:color="var(--text-high-token)"
             style:font-size="0.85em"
             style:font-weight="500"
             style:box-shadow="var(--shadow-sm)"
@@ -147,11 +138,7 @@
             style:flex="1"
           >
             <span>{s.name}</span>
-            <span
-              style:opacity="0.5"
-              style:font-size="0.9em"
-              style:font-family="var(--sl-font-mono)"
-            >
+            <span class="font-mono" style:opacity="0.5" style:font-size="0.9em">
               <!-- We don't have the exact L value available in CSS var -->
             </span>
           </div>

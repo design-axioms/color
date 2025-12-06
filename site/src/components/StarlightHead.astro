@@ -1,0 +1,37 @@
+---
+import DefaultHead from "@astrojs/starlight/components/Head.astro";
+import type { Props } from "@astrojs/starlight/props";
+
+import "../styles/fonts.css";
+---
+
+<link
+  rel="preload"
+  href="/fonts/Erewhon-Math.otf"
+  as="font"
+  type="font/otf"
+  crossorigin
+/>
+<script is:inline>
+  // Easter egg: Check for ?font=pennstander or ?fun=true to enable the handwritten font
+  if (typeof window !== "undefined") {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("font") === "pennstander" || params.get("fun") === "true") {
+      document.documentElement.classList.add("font-pennstander");
+      console.log(
+        "%cPennstander Mode Activated! 🖊️",
+        "font-family: 'Pennstander Math'; font-size: 20px; color: #ff007f;",
+      );
+    }
+  }
+</script>
+<script>
+  import "@axiomatic-design/color/inspector";
+
+  // Always inject the debugger (it starts in a dormant state with a toggle button)
+  if (!document.querySelector("axiomatic-debugger")) {
+    const el = document.createElement("axiomatic-debugger");
+    document.body.appendChild(el);
+  }
+</script>
+<DefaultHead {...Astro.props} />

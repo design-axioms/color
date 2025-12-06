@@ -1,5 +1,5 @@
 import { generateTokensCss } from "./generator.ts";
-import { getKeyColorStats, solve } from "./index.ts";
+import { solve } from "./solver.ts";
 import type { SolverConfig } from "./types.ts";
 
 export { toHighContrast } from "./generator.ts";
@@ -16,24 +16,17 @@ export { toHighContrast } from "./generator.ts";
  */
 export function generateTheme(config: SolverConfig, selector?: string): string {
   const theme = solve(config);
-  const stats = getKeyColorStats(config.anchors.keyColors);
 
-  let css = generateTokensCss(config.groups, theme, config.borderTargets, {
-    selector,
-  });
-
-  // Prepend variables if key colors exist
-  if (stats.chroma !== undefined || stats.hue !== undefined) {
-    const vars: string[] = [];
-    if (stats.chroma !== undefined)
-      vars.push(`  --chroma-brand: ${stats.chroma};`);
-    if (stats.hue !== undefined) vars.push(`  --hue-brand: ${stats.hue};`);
-
-    if (vars.length > 0) {
-      const scope = selector || ":root";
-      css = `${scope} {\n${vars.join("\n")}\n}\n\n` + css;
-    }
-  }
+  const css = generateTokensCss(
+    config.groups,
+    theme,
+    config.borderTargets,
+    {
+      selector,
+      prefix: "axm",
+    },
+    config.anchors.keyColors,
+  );
 
   return css;
 }
@@ -48,7 +41,7 @@ export function generateTheme(config: SolverConfig, selector?: string): string {
 export function injectTheme(
   css: string,
   target?: HTMLElement | ShadowRoot,
-  existingElement?: HTMLStyleElement
+  existingElement?: HTMLStyleElement,
 ): HTMLStyleElement {
   const style = existingElement || document.createElement("style");
   style.textContent = css;

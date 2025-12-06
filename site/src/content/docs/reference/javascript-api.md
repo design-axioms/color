@@ -51,6 +51,12 @@ Returns the actual active mode (`"light"` or `"dark"`). If mode is `"system"`, t
 
 Cleans up event listeners (e.g., for system preference changes). Call this when unmounting your app or component.
 
+### Interaction with Inverted Surfaces
+
+The `ThemeManager` sets the global theme state on the root element. The generated CSS uses this state to automatically flip the `color-scheme` for inverted surfaces (like `surface-spotlight`).
+
+No extra JavaScript is required to handle these local inversions.
+
 ## Helper Functions
 
 ### `updateThemeColor()`
@@ -75,6 +81,6 @@ updateFavicon(
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
     <circle cx="16" cy="16" r="14" fill="${color}" />
   </svg>
-`
+`,
 );
 ```

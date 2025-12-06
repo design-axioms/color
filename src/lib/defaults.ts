@@ -24,6 +24,9 @@ export const DEFAULT_CONFIG: SolverConfig = {
     },
     keyColors: {
       brand: "#6e56cf",
+      success: "#22c55e",
+      warning: "#eab308",
+      error: "#ef4444",
     },
   },
   hueShift: {
@@ -43,7 +46,7 @@ export const DEFAULT_CONFIG: SolverConfig = {
     hues: [25, 190, 45, 250, 85, 280, 125, 320, 150, 360],
   },
   options: {
-    prefix: "color-sys",
+    prefix: "axm",
     selector: ":root",
   },
   groups: [
@@ -100,6 +103,35 @@ export const DEFAULT_CONFIG: SolverConfig = {
           label: "Surface Spotlight",
           description: "The darkest surface.",
           polarity: "inverted",
+        },
+      ],
+    },
+    {
+      name: "Status",
+      surfaces: [
+        {
+          slug: "status-success",
+          label: "Success",
+          description: "Positive status feedback.",
+          polarity: "page",
+          hue: "success",
+          targetChroma: 0.15,
+        },
+        {
+          slug: "status-warning",
+          label: "Warning",
+          description: "Warning status feedback.",
+          polarity: "page",
+          hue: "warning",
+          targetChroma: 0.15,
+        },
+        {
+          slug: "status-error",
+          label: "Error",
+          description: "Error status feedback.",
+          polarity: "page",
+          hue: "error",
+          targetChroma: 0.2,
         },
       ],
     },

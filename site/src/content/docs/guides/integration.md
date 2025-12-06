@@ -87,6 +87,23 @@ If you want to offer a toggle button, you can force a specific mode by adding a 
 </body>
 ```
 
+## 5. Inverted Surfaces
+
+Some surfaces, like `surface-spotlight`, are defined as "Inverted". This means they automatically flip the theme context.
+
+- In **Light Mode**, a spotlight is **Dark**.
+- In **Dark Mode**, a spotlight is **Light**.
+
+The system achieves this using the standard `color-scheme` CSS property. This ensures that native browser controls (like scrollbars and checkboxes) inside the spotlight render with the correct contrast.
+
+```html
+<div class="surface-spotlight p-4">
+  <p class="text-strong">I am in a dark context (if the page is light)!</p>
+  <!-- Native checkbox will be dark-themed -->
+  <input type="checkbox" />
+</div>
+```
+
 ## Framework Examples
 
 ### React

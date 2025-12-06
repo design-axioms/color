@@ -4,20 +4,20 @@ title: The Solver
 
 The **Solver** is the engine that powers the color system. It takes your high-level **Intent** and turns it into precise **CSS Tokens**.
 
-You can interact with the Theme Builder in two ways:
+You can interact with the Theme Studio in two ways:
 
 1.  **The UI**: The interactive web interface (for exploration).
 2.  **The CLI**: The `axiomatic` command line tool (for production).
 
 Both use the exact same "Solver" logic under the hood.
 
-## The "Theme Builder" Model
+## The "Theme Studio" Model
 
-To understand the solver, it helps to think about the controls you see in the Theme Builder UI. The solver is simply the code that runs every time you move a slider or add a surface.
+To understand the solver, it helps to think about the controls you see in the Theme Studio UI. The solver is simply the code that runs every time you move a slider or add a surface.
 
 ### 1. Anchors: Defining the Playing Field
 
-In the Theme Builder, you set the **Anchors**. These are the boundaries of your color system.
+In the Theme Studio, you set the **Anchors**. These are the boundaries of your color system.
 
 <div class="not-content">
 <div class="surface-workspace docs-p-4 docs-rounded docs-border">
@@ -59,7 +59,7 @@ If the answer is "No" (and the anchor is adjustable), the solver **moves the sli
 
 ### 2. Surfaces: The "Steps"
 
-In the Theme Builder, you add **Surfaces** to a list.
+In the Theme Studio, you add **Surfaces** to a list.
 
 <div class="not-content">
 <div class="surface-workspace docs-p-4 docs-rounded docs-border">
@@ -129,7 +129,7 @@ If we just divided the lightness values evenly (Linear Lightness), the steps wou
 
 ### 3. The Result: Generated Tokens
 
-Finally, the solver outputs the CSS tokens that the Theme Builder (and your app) uses.
+Finally, the solver outputs the CSS tokens that the Theme Studio (and your app) uses.
 
 <div class="not-content">
 <div class="surface-workspace docs-p-4 docs-rounded docs-border">
@@ -142,7 +142,7 @@ Finally, the solver outputs the CSS tokens that the Theme Builder (and your app)
 
 ## The Pipeline
 
-When you run `npx axiomatic` (or change a setting in the Builder), this pipeline executes:
+When you run `npx axiomatic` (or change a setting in the Studio), this pipeline executes:
 
 1.  **Hydrate**: Read your `color-config.json`.
 2.  **Adjust Anchors**: Ensure the range supports High Contrast text.

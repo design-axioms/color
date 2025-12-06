@@ -1,49 +1,36 @@
 # Project Plan Outline
 
-[View Completed Epochs (1-16)](history/completed-epochs.md)
+[View Completed Epochs (1-32)](history/completed-epochs.md)
 
-## Epoch 17: Theme Builder V2 (Completed)
+## Epoch 33: Conceptual Integrity Review (Completed)
 
-- **Goal**: Create a UI that teaches the user how the system works while they use it, and fully integrate it into the Astro site architecture.
+- **Goal**: Conduct a thorough review of the entire project for conceptual integrity, ensuring alignment with the core axioms and identifying any architectural drift.
 - **Phases**:
-  - **Phase 1: Integration & Architecture (Completed)**
-    - **Goal**: Move the Theme Builder from `demo/` into the Astro site and establish the new data flow.
-  - **Phase 2: Visualization & Education (Completed)**
-    - **Goal**: Enhance the builder with educational visualizations.
-  - **Phase 3: Polish & Infrastructure (Completed)**
-    - **Goal**: Refine the UI, improve typography, and ensure robust deployment.
+  - **Phase 1: Architecture & Axiom Audit (Completed)**
+    - **Goal**: Review the codebase and documentation against the "Constitution" (Axioms) to ensure strict adherence to principles like Late Binding and Determinism.
+  - **Phase 2: Documentation Consistency (Completed)**
+    - **Goal**: Verify that the documentation accurately reflects the current state of the system and that the "User Journey" is coherent.
+  - **Phase 3: Remediation Plan (Completed)**
+    - **Goal**: Create a prioritized plan to address any conceptual gaps or inconsistencies found during the audit.
 
-## Epoch 18: Deployment & Sharing (Completed)
+## Epoch 34: Refinement & Education (Completed)
 
-- **Goal**: Deploy the unified site to production and ensure it is ready for external sharing and collaboration.
+- **Goal**: Execute the remediation plan from Epoch 33, focusing on infrastructure robustness, token simplification, and interactive education.
 - **Phases**:
-  - **Phase 1: Production Build & Deploy (Completed)**
-    - **Goal**: Verify the production build locally and deploy to GitHub Pages.
-    - **Key Deliverables**:
-      - Production URL verification.
-      - Fix any production-only bugs (base path, asset loading).
-  - **Phase 2: Sharing & Feedback (Completed)**
-    - **Goal**: Prepare the project for colleague review.
-    - **Key Deliverables**:
-      - "Read Me First" guide for reviewers.
-      - Known issues list.
+  - **Phase 1: Infrastructure (Completed)**
+    - **Goal**: Replace the fragile `cat` build script with **Lightning CSS** to enable robust bundling, minification, and standard CSS enforcement.
+  - **Phase 2: Token Simplification (Completed)**
+    - **Goal**: Reduce the API surface area by hiding internal tokens and exposing only semantic intents.
+  - **Phase 3: Export & Validation (Completed)**
+    - **Goal**: Ensure the system is "Beta-Ready" by enabling live export previews in the Theme Builder and enforcing configuration validity.
+  - **Phase 4: Interactive Tutorials (Deferred)**
+    - **Goal**: Create "Learn by Doing" tutorials to guide users through the system's concepts.
 
-## Epoch 19: Rebranding to Axiomatic Color (Completed)
+## Epoch 35: Deployment & Release (Active)
 
-- **Goal**: Rename and rebrand the project to "Axiomatic Color" (`@axiomatic-design/color`) to reflect its structural and deterministic nature.
+- **Goal**: Deploy the updated system to production and verify the live site.
 - **Phases**:
-  - **Phase 1: Package & CLI Updates (Completed)**
-    - **Goal**: Update package metadata, CLI commands, and internal references.
-  - **Phase 2: Documentation & Site Updates (Completed)**
-    - **Goal**: Update README, Personas, Concepts, and Site branding.
-  - **Phase 3: Verification & Publish (Completed)**
-    - **Goal**: Verify the new package name and publish the rebranded version.
-
-## Epoch 20: Linting & Quality Assurance (Completed)
-
-- **Goal**: Tighten up lints to get better feedback and fix existing issues.
-- **Phases**:
-  - **Phase 1: Lint Configuration**
-    - **Goal**: Review and tighten ESLint and Prettier configurations.
-  - **Phase 2: Fix Issues (Completed)**
-    - **Goal**: Resolve all linting errors and warnings.
+  - **Phase 1: Pre-Flight Verification (Completed)**
+    - **Goal**: Verify that the build works locally and all checks pass before deployment.
+  - **Phase 2: Deployment (Active)**
+    - **Goal**: Trigger the deployment and verify the live site.

@@ -1,0 +1,45 @@
+{
+  "name": "@axiomatic-design/vscode-extension",
+  "displayName": "Axiomatic Color",
+  "description": "Intelligent tooling for the Axiomatic Color system.",
+  "version": "0.0.1",
+  "publisher": "axiomatic-design",
+  "engines": {
+    "vscode": "^1.96.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Snippets"
+  ],
+  "main": "./dist/extension.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "axiomatic.helloWorld",
+        "title": "Hello World"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "pnpm run package",
+    "compile": "tsup",
+    "watch": "tsup --watch",
+    "package": "tsup --minify",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.96.0",
+    "eslint": "^9.0.0",
+    "tree-sitter-wasms": "^0.1.13",
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "web-tree-sitter": "^0.24.7"
+  }
+}

@@ -3,43 +3,43 @@
    The core logic for the "Reactive Pipeline".
 */
 
-@property --base-chroma {
+@property --_axm-base-chroma {
   syntax: "<number>";
   initial-value: 0.008;
   inherits: true;
 }
 
-@property --base-hue {
+@property --_axm-base-hue {
   syntax: "<number>";
   initial-value: 0;
   inherits: true;
 }
 
-@property --hue-brand {
+@property --_axm-hue-brand {
   syntax: "<number>";
   initial-value: 0;
   inherits: true;
 }
 
-@property --chroma-brand {
+@property --_axm-chroma-brand {
   syntax: "<number>";
   initial-value: 0;
   inherits: true;
 }
 
-@property --surface-transparency {
+@property --_axm-surface-transparency {
   syntax: "<percentage>";
   initial-value: 0%;
   inherits: true;
 }
 
-@property --surface-chroma-adjust {
+@property --_axm-surface-chroma-adjust {
   syntax: "<number>";
   initial-value: 0;
   inherits: true;
 }
 
-@property --hue-adjust {
+@property --_axm-hue-adjust {
   syntax: "<number>";
   initial-value: 0;
   inherits: true;
@@ -50,67 +50,71 @@
    If we registered them with an initial-value, the fallback would never trigger.
 */
 
+/*
 @property --surface-lightness {
-  syntax: "<number>";
-  inherits: true;
-  /* initial-value: 1; */
-}
-
-@property --surface-text-lightness {
-  syntax: "<number>";
-  inherits: true;
-  /* initial-value: 0; */
-}
-
-@property --computed-surface {
-  syntax: "<color>";
-  inherits: true;
-  initial-value: transparent;
-}
-
-@property --computed-fg-color {
-  syntax: "<color>";
-  inherits: true;
-  initial-value: transparent;
-}
-
-@property --computed-border-color {
-  syntax: "<color>";
-  inherits: true;
-  /* initial-value: transparent; */
-}
-
-@property --computed-surface-C {
-  syntax: "<number>";
-  inherits: true;
-  initial-value: 0;
-}
-
-@property --computed-surface-H {
-  syntax: "<number>";
-  inherits: true;
-  initial-value: 0;
-}
-
-@property --computed-fg-C {
-  syntax: "<number>";
-  inherits: true;
-  initial-value: 0;
-}
-
-@property --computed-fg-H {
-  syntax: "<number>";
-  inherits: true;
-  initial-value: 0;
-}
-
-@property --computed-border-alpha {
   syntax: "<number>";
   inherits: true;
   initial-value: 1;
 }
 
-@property --surface-border-alpha {
+@property --surface-text-lightness {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+*/
+
+@property --_axm-computed-surface {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --_axm-computed-fg-color {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+
+/*
+@property --computed-border-color {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+*/
+
+@property --_axm-computed-surface-C {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+@property --_axm-computed-surface-H {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+@property --_axm-computed-fg-C {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+@property --_axm-computed-fg-H {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+@property --_axm-computed-border-alpha {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
+
+@property --_axm-surface-border-alpha {
   syntax: "<number>";
   inherits: true;
   initial-value: 0;
@@ -118,46 +122,58 @@
 
 :root {
   color-scheme: light dark;
+
+  /* Public Shadow Aliases */
+  --shadow-sm: var(--axm-shadow-sm);
+  --shadow-md: var(--axm-shadow-md);
+  --shadow-lg: var(--axm-shadow-lg);
+  --shadow-xl: var(--axm-shadow-xl);
 }
 
 /* Proxy tokens that cascade from utilities */
-@property --surface-token {
-  syntax: "<color>";
-  inherits: true;
-}
-
-@property --text-high-token {
-  syntax: "<color>";
-  inherits: true;
-}
-
-@property --text-subtle-token {
-  syntax: "<color>";
-  inherits: true;
-}
-
-@property --text-subtlest-token {
-  syntax: "<color>";
-  inherits: true;
-}
-
-@property --border-dec-token {
-  syntax: "<color>";
-  inherits: true;
-}
-
-@property --border-int-token {
-  syntax: "<color>";
-  inherits: true;
-}
-
-@property --computed-border-dec-color {
+@property --axm-surface-token {
   syntax: "<color>";
   inherits: true;
   initial-value: transparent;
 }
 
-@property --computed-border-int-color {
+@property --axm-text-high-token {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --axm-text-subtle-token {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --axm-text-subtlest-token {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --axm-border-dec-token {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --axm-border-int-token {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --_axm-computed-border-dec-color {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --_axm-computed-border-int-color {
   syntax: "<color>";
   inherits: true;
   initial-value: transparent;
@@ -167,47 +183,59 @@
    THE SURFACE ENGINE
    Matches any element with a class starting with "surface-" or containing " surface-"
    Also matches body to apply the page surface globally.
+   Also matches text utilities to ensure they trigger the color calculation.
 */
-:where([class^="surface-"], [class*=" surface-"], body) {
-  /* --- 1. SURFACE CALCULATION --- */
+:where(
+  [class^="surface-"],
+  [class*=" surface-"],
+  [class^="text-"],
+  [class*=" text-"],
+  body
+) {
+  /* --- 1. TEXT CALCULATION --- */
 
-  /* Calculate Chroma */
-  --computed-surface-C: calc(
-    var(--base-chroma, 0) + var(--surface-chroma-adjust, 0)
-  );
+  /* 
+     Indirection: Lightness Source 
+     Defaults to the High Contrast Text Token.
+     Utilities like .text-subtle will override this variable.
+  */
+  --_axm-text-lightness-source: var(--axm-text-high-token);
 
-  /* Reify Surface Color */
-  /* Extract L and H (Shift) from token, combine with computed C and base hue */
-  --computed-surface: oklch(
-    from var(--surface-token) var(--override-surface-lightness, l)
-      var(--computed-surface-C)
-      calc(var(--base-hue, 0) + var(--hue-adjust, 0) + h)
-  );
+  /* 
+     Indirection: Chroma Source
+     Defaults to Base Chroma.
+     Utilities like .hue-brand will override this.
+  */
+  --_axm-text-chroma-source: var(--_axm-base-chroma, 0);
 
-  /* Apply Background */
-  background-color: var(--computed-surface);
-
-  /* Apply Scrollbar */
-  scrollbar-color: var(--text-subtle-token) var(--surface-token);
-
-  /* --- 2. TEXT CALCULATION --- */
+  /* 
+     Indirection: Hue Source
+     Defaults to Base Hue.
+     Utilities like .hue-brand will override this.
+  */
+  --_axm-text-hue-source: var(--_axm-base-hue, 0);
 
   /* Calculate Text Chroma */
-  --computed-fg-C: var(--override-fg-chroma, calc(var(--base-chroma, 0) * 0.5));
+  /* We use the source chroma, potentially scaled for text legibility if needed */
+  --_axm-computed-fg-C: var(
+    --_axm-override-fg-chroma,
+    calc(var(--_axm-text-chroma-source) * 0.5)
+  );
 
   /* Calculate Text Hue */
-  --computed-fg-H: var(--default-fg-hue, var(--base-hue, 0));
+  --_axm-computed-fg-H: var(--_axm-default-fg-hue, var(--_axm-text-hue-source));
 
   /* Reify Text Color */
-  /* Extract L from text token, apply computed C and H */
-  --computed-fg-color: oklch(
-    from var(--text-high-token) l var(--computed-fg-C) var(--computed-fg-H)
+  /* Extract L from the LIGHTNESS SOURCE, apply computed C and H */
+  --_axm-computed-fg-color: oklch(
+    from var(--_axm-text-lightness-source) l var(--_axm-computed-fg-C)
+      var(--_axm-computed-fg-H)
   );
 
   /* Apply Text Color */
-  color: var(--computed-fg-color);
+  color: var(--_axm-computed-fg-color);
 
-  /* --- 3. BORDER CALCULATION --- */
+  /* --- 2. BORDER CALCULATION --- */
 
   /* 
      Border Tokens are already valid oklch colors with Alpha.
@@ -220,19 +248,52 @@
 
   /* Decorative Border */
   /* Extract L and alpha from border token, apply text C and H */
-  --computed-border-dec-color: oklch(
-    from var(--border-dec-token) l var(--computed-fg-C) var(--computed-fg-H) /
-      alpha
+  --_axm-computed-border-dec-color: oklch(
+    from var(--axm-border-dec-token) l var(--_axm-computed-fg-C)
+      var(--_axm-computed-fg-H) / alpha
   );
 
   /* Interactive Border */
-  --computed-border-int-color: oklch(
-    from var(--border-int-token) l var(--computed-fg-C) var(--computed-fg-H) /
-      alpha
+  --_axm-computed-border-int-color: oklch(
+    from var(--axm-border-int-token) l var(--_axm-computed-fg-C)
+      var(--_axm-computed-fg-H) / alpha
   );
 
   /* Default to Decorative */
-  border-color: var(--computed-border-dec-color);
+  border-color: var(--_axm-computed-border-dec-color);
+}
+
+/* 
+   SURFACE ENGINE & APPLICATION
+   Matches ONLY Surfaces and Body.
+   Calculates Surface Color and applies Background.
+   This prevents text utilities from:
+   1. Painting a background.
+   2. Corrupting the surface context (Ghost Surfaces).
+*/
+:where([class^="surface-"], [class*=" surface-"], body) {
+  /* --- SURFACE CALCULATION --- */
+
+  /* Calculate Chroma */
+  --_axm-computed-surface-C: calc(
+    var(--_axm-base-chroma, 0) + var(--_axm-surface-chroma-adjust, 0)
+  );
+
+  /* Reify Surface Color */
+  /* Extract L and H (Shift) from token, combine with computed C and base hue */
+  --_axm-computed-surface: oklch(
+    from var(--axm-surface-token) var(--_axm-override-surface-lightness, l)
+      var(--_axm-computed-surface-C)
+      calc(var(--_axm-base-hue, 0) + var(--_axm-hue-adjust, 0) + h)
+  );
+
+  /* --- APPLICATION --- */
+
+  /* Apply Background */
+  background-color: var(--_axm-computed-surface);
+
+  /* Apply Scrollbar */
+  scrollbar-color: var(--axm-text-subtle-token) var(--axm-surface-token);
 }
 
 /* 
@@ -241,17 +302,18 @@
    The browser interpolates these numbers, and the :where rule recalculates the colors every frame.
 */
 :where(
-    [class^="surface-"],
-    [class*=" surface-"],
-    [class^="state-"],
-    [class*=" state-"],
-    [class^="text-"],
-    [class*=" text-"]
-  ) {
-  transition: --computed-surface 0.2s ease-in-out,
-    --computed-fg-color 0.2s ease-in-out,
-    --computed-border-dec-color 0.2s ease-in-out,
-    --computed-border-int-color 0.2s ease-in-out;
+  [class^="surface-"],
+  [class*=" surface-"],
+  [class^="state-"],
+  [class*=" state-"],
+  [class^="text-"],
+  [class*=" text-"]
+) {
+  transition:
+    --_axm-computed-surface 0.2s ease-in-out,
+    --_axm-computed-fg-color 0.2s ease-in-out,
+    --_axm-computed-border-dec-color 0.2s ease-in-out,
+    --_axm-computed-border-int-color 0.2s ease-in-out;
 }
 
 /* 
@@ -267,17 +329,23 @@
 
 :focus-visible {
   outline: 2px solid
-    oklch(from var(--computed-fg-color) l 0.2 var(--hue-brand, var(--base-hue)));
+    oklch(
+      from var(--_axm-computed-fg-color) l 0.2
+        var(--_axm-hue-brand, var(--_axm-base-hue))
+    );
   outline-offset: 2px;
 }
 
-/* --- SELECTION --- */
+/* --- HIGHLIGHT & SELECTION --- */
+
+mark {
+  background-color: var(--axm-highlight-surface-color);
+  color: var(--axm-text-high-token);
+}
 
 ::selection {
-  background-color: oklch(
-    from var(--computed-fg-color) l 0.15 var(--hue-brand, var(--base-hue)) / 0.2
-  );
-  color: inherit;
+  background-color: var(--axm-highlight-surface-color);
+  color: var(--axm-text-high-token);
 }
 
 /* --- FORCED COLORS (High Contrast) --- */
@@ -285,9 +353,9 @@
 @media (forced-colors: active) {
   :root {
     /* 1. Default Mappings (The "Canvas") */
-    --computed-surface: Canvas;
-    --computed-fg-color: CanvasText;
-    --computed-border-color: CanvasText;
+    --_axm-computed-surface: Canvas;
+    --_axm-computed-fg-color: CanvasText;
+    --_axm-computed-border-color: CanvasText;
   }
 
   /* 2. Surface Mappings */
@@ -304,9 +372,9 @@
     background-color: Canvas;
     color: CanvasText;
 
-    --computed-surface: Canvas;
-    --computed-fg-color: CanvasText;
-    --computed-border-color: CanvasText;
+    --_axm-computed-surface: Canvas;
+    --_axm-computed-fg-color: CanvasText;
+    --_axm-computed-border-color: CanvasText;
   }
 
   /* Actions (Buttons) */
@@ -315,9 +383,9 @@
     color: ButtonText;
     border: 1px solid ButtonText;
 
-    --computed-surface: ButtonFace;
-    --computed-fg-color: ButtonText;
-    --computed-border-color: ButtonText;
+    --_axm-computed-surface: ButtonFace;
+    --_axm-computed-fg-color: ButtonText;
+    --_axm-computed-border-color: ButtonText;
   }
 
   /* 3. Utility Mappings */
@@ -333,8 +401,8 @@
     opacity: 1; /* Opacity is ignored, so we rely on color */
     color: GrayText;
     border-color: GrayText;
-    --computed-fg-color: GrayText;
-    --computed-border-color: GrayText;
+    --_axm-computed-fg-color: GrayText;
+    --_axm-computed-border-color: GrayText;
   }
 
   /* Selected State */
@@ -343,13 +411,13 @@
     background-color: Highlight;
     color: HighlightText;
     border-color: Highlight;
-    --computed-surface: Highlight;
-    --computed-fg-color: HighlightText;
+    --_axm-computed-surface: Highlight;
+    --_axm-computed-fg-color: HighlightText;
   }
 
   /* Interactive Borders */
   .border-interactive {
-    --computed-border-color: Highlight;
+    --_axm-computed-border-color: Highlight;
   }
 
   /* 4. Global Overrides */
@@ -374,10 +442,10 @@
     color-scheme: light;
 
     /* Remove Chroma to save color ink */
-    --base-chroma: 0;
-    --surface-chroma-adjust: 0;
-    --hue-adjust: 0;
-    --chroma-brand: 0;
+    --_axm-base-chroma: 0;
+    --_axm-surface-chroma-adjust: 0;
+    --_axm-hue-adjust: 0;
+    --_axm-chroma-brand: 0;
   }
 
   /* Force white backgrounds for main surfaces */
@@ -390,10 +458,10 @@
        We do not use !important because the :where() block in the engine has 0 specificity.
     */
     background-color: white;
-    --computed-surface: white;
+    --_axm-computed-surface: white;
 
     /* Add a subtle border to define the surface since the background is gone */
-    border: 1px solid var(--text-subtlest-token);
+    border: 1px solid var(--axm-text-subtlest-token);
   }
 
   /* Ensure text is dark (Black ink) */

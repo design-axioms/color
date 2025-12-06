@@ -1,0 +1,614 @@
+---
+title: The Algebra of Color Design
+description: Formal definition of the Reactive Pipeline's composition logic.
+---
+
+import ContextVisualizer from "../../../components/ContextVisualizer.svelte";
+import DemoWrapper from "../../../components/DemoWrapper.svelte";
+import Diagram from "../../../components/Diagram.svelte";
+import ContrastStabilityDemo from "../../../components/algebra/ContrastStabilityDemo.svelte";
+import OrthogonalityGrid from "../../../components/algebra/OrthogonalityGrid.svelte";
+import PortalStack from "../../../components/algebra/PortalStack.svelte";
+import StateVectorExplainer from "../../../components/algebra/StateVectorExplainer.svelte";
+import SurfaceOperatorDemo from "../../../components/algebra/SurfaceOperatorDemo.svelte";
+
+> **Context**: The physics and grammar of the Axiomatic Color system.
+
+This document defines the "Physics" of the Axiomatic Color system. While the system is built on rigorous math, you can think of it using a simple grammatical analogy:
+
+- **Context (<math><mi>H</mi><mo>,</mo><mi>C</mi></math>) is the Setting**: It's the lighting in the room. If the room is red, everything inside is tinted red. This "atmosphere" permeates everything.
+- **Intent (<math><mi>L</mi></math>) is the Voice**: It's how loud you are speaking. You can whisper (Subtle) or shout (High).
+- **Surfaces are Scene Changes**: When you walk into a new room (a Card, a Sidebar), the conversation resets. You stop shouting, but the lighting might stay the same.
+
+Below, we formalize these intuitions into a set of rules that guarantee your UI always looks consistent.
+
+## 1. The State Space (<math><mi mathvariant="normal">Σ</mi></math>)
+
+The system state at any point in the DOM tree is defined by a vector <math><mi mathvariant="normal">Σ</mi></math>.
+
+<math display="block">
+  <mrow>
+    <mi mathvariant="normal">Σ</mi>
+    <mo>=</mo>
+    <mo stretchy="false">⟨</mo>
+    <mi>H</mi>
+    <mo>,</mo>
+    <mi>C</mi>
+    <mo>,</mo>
+    <msub>
+      <mi>L</mi>
+      <mi mathvariant="italic">src</mi>
+    </msub>
+    <mo>,</mo>
+    <mi>α</mi>
+    <mo stretchy="false">⟩</mo>
+  </mrow>
+</math>
+
+<DemoWrapper>
+  <Diagram>
+    <StateVectorExplainer client:load />
+  </Diagram>
+</DemoWrapper>
+
+:::tip[In Plain English]
+Think of <math><mi mathvariant="normal">Σ</mi></math> as the "DNA" of the current element. It carries four genes: what color family we are in (<math><mi>H</mi></math>), how vibrant it is (<math><mi>C</mi></math>), how bright the text should be (<math><msub><mi>L</mi><mi mathvariant="italic">src</mi></msub></math>), and whether we are in light or dark mode (<math><mi>α</mi></math>). Every element inherits this DNA from its parent.
+:::
+
+## 2. The Resolution Function (<math><mi mathvariant="normal">Φ</mi></math>)
+
+The CSS Engine acts as a projection function <math><mi mathvariant="normal">Φ</mi></math> that maps the state vector <math><mi mathvariant="normal">Σ</mi></math> to a concrete CSS color value.
+
+<math display="block">
+  <mrow>
+    <mi mathvariant="normal">Φ</mi>
+    <mo stretchy="false">(</mo>
+    <mi mathvariant="normal">Σ</mi>
+    <mo stretchy="false">)</mo>
+    <mo stretchy="false">↦</mo>
+    <mtext>ColorSpace</mtext>
+    <mo stretchy="false">(</mo>
+    <mtext>oklch</mtext>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>
+
+<math display="block">
+  <mrow>
+    <mi mathvariant="normal">Φ</mi>
+    <mo stretchy="false">(</mo>
+    <mo stretchy="false">⟨</mo>
+    <mi>H</mi>
+    <mo>,</mo>
+    <mi>C</mi>
+    <mo>,</mo>
+    <msub>
+      <mi>L</mi>
+      <mi mathvariant="italic">src</mi>
+    </msub>
+    <mo>,</mo>
+    <mi>α</mi>
+    <mo stretchy="false">⟩</mo>
+    <mo stretchy="false">)</mo>
+    <mo>=</mo>
+    <mtext>oklch</mtext>
+    <mo stretchy="false">(</mo>
+    <mtext>eval</mtext>
+    <mo stretchy="false">(</mo>
+    <msub>
+      <mi>L</mi>
+      <mi mathvariant="italic">src</mi>
+    </msub>
+    <mo>,</mo>
+    <mi>α</mi>
+    <mo stretchy="false">)</mo>
+    <mo>,</mo>
+    <mi>C</mi>
+    <mo>,</mo>
+    <mi>H</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>
+
+Where <math><mtext>eval</mtext><mo stretchy="false">(</mo><msub><mi>L</mi><mi mathvariant="italic">src</mi></msub><mo>,</mo><mi>α</mi><mo stretchy="false">)</mo></math> represents the **Late Binding** of the token. It is a lookup function into the token definition set:
+
+<math display="block">
+  <mrow>
+    <mo>∀</mo>
+    <mi>t</mi>
+    <mo>∈</mo>
+    <mtext>Tokens</mtext>
+    <mo>,</mo>
+    <mo>∃</mo>
+    <mo stretchy="false">(</mo>
+    <msub>
+      <mi>l</mi>
+      <mi mathvariant="italic">light</mi>
+    </msub>
+    <mo>,</mo>
+    <msub>
+      <mi>l</mi>
+      <mi mathvariant="italic">dark</mi>
+    </msub>
+    <mo stretchy="false">)</mo>
+    <mtext> s.t. </mtext>
+    <mtext>eval</mtext>
+    <mo stretchy="false">(</mo>
+    <mi>t</mi>
+    <mo>,</mo>
+    <mi>α</mi>
+    <mo stretchy="false">)</mo>
+    <mo>=</mo>
+    <mo stretchy="false">(</mo>
+    <mi>α</mi>
+    <mo>=</mo>
+    <mtext>Dark</mtext>
+    <mo stretchy="false">)</mo>
+    <mo>?</mo>
+    <msub>
+      <mi>l</mi>
+      <mi mathvariant="italic">dark</mi>
+    </msub>
+    <mo>:</mo>
+    <msub>
+      <mi>l</mi>
+      <mi mathvariant="italic">light</mi>
+    </msub>
+  </mrow>
+</math>
+
+:::tip[In Plain English]
+
+<math>
+  <mi mathvariant="normal">Φ</mi>
+</math>
+is the browser's rendering engine. It takes the DNA (
+<math>
+  <mi mathvariant="normal">Σ</mi>
+</math>
+) and turns it into actual pixels. Crucially, it decides the actual lightness
+_at the last moment_ based on whether we are in light or dark mode. :::
+
+## 3. The Operators
+
+Classes in the system are **Operators** that transform the state vector <math><mi mathvariant="normal">Σ</mi><mo stretchy="false">→</mo><msup><mi mathvariant="normal">Σ</mi><mo>′</mo></msup></math>.
+
+### 3.1. Surface Operator (<math><mi>S</mi></math>)
+
+A Surface establishes a new context. It acts as an **Identity** for Context (<math><mi>H</mi><mo>,</mo><mi>C</mi></math>) but a **Lossy Barrier** for Intent (<math><msub><mi>L</mi><mi mathvariant="italic">src</mi></msub></math>).
+
+<math display="block">
+  <mrow>
+    <msub>
+      <mi>S</mi>
+      <mi mathvariant="italic">type</mi>
+    </msub>
+    <mo stretchy="false">(</mo>
+    <mo stretchy="false">⟨</mo>
+    <mi>H</mi>
+    <mo>,</mo>
+    <mi>C</mi>
+    <mo>,</mo>
+    <msub>
+      <mi>L</mi>
+      <mi mathvariant="italic">src</mi>
+    </msub>
+    <mo>,</mo>
+    <mi>α</mi>
+    <mo stretchy="false">⟩</mo>
+    <mo stretchy="false">)</mo>
+    <mo>=</mo>
+    <mo stretchy="false">⟨</mo>
+    <mi>H</mi>
+    <mo>,</mo>
+    <mi>C</mi>
+    <mo>,</mo>
+    <msub>
+      <mi>L</mi>
+      <mi mathvariant="italic">high</mi>
+    </msub>
+    <mo>,</mo>
+    <msup>
+      <mi>α</mi>
+      <mo>′</mo>
+    </msup>
+    <mo stretchy="false">⟩</mo>
+  </mrow>
+</math>
+
+- **Context Stability**: <math><mi>H</mi></math> and <math><mi>C</mi></math> are preserved (Identity). The surface inherits the ambient atmosphere of its parent.
+- **Intent Erasure**: <math><msub><mi>L</mi><mi mathvariant="italic">src</mi></msub></math> is forcibly reset to <math><msub><mi>L</mi><mi mathvariant="italic">high</mi></msub></math>. This operation is **Non-Invertible** (you cannot "undo" a surface to recover the parent's text style).
+- **Polarity**: <math><mi>α</mi></math> is transformed. For standard surfaces, <math><msup><mi>α</mi><mo>′</mo></msup><mo>=</mo><mi>α</mi></math>. For inverted surfaces, <math><msup><mi>α</mi><mo>′</mo></msup><mo>=</mo><mo>¬</mo><mi>α</mi></math> (Hard Flip).
+
+:::tip[In Plain English]
+A Surface is like a glass box. It lets the "mood lighting" (Hue/Chroma) shine through from the outside, but it resets the "conversation" (Text). Inside the box, you start a new sentence with standard text color, even if the text outside was faint or bold.
+:::
+
+<DemoWrapper>
+  <Diagram>
+    <SurfaceOperatorDemo client:load />
+  </Diagram>
+</DemoWrapper>
+
+> **Rationalization: Ambient vs. Semantic State**
+>
+> We can rationalize this behavior by distinguishing between two types of state:
+>
+> 1.  **Environmental State (<math><mi>H</mi><mo>,</mo><mi>C</mi></math>)**: This behaves like **Ambient Light**. If a room is lit with red light, objects inside (Surfaces) should reflect that red tint. The atmosphere permeates boundaries.
+> 2.  **Semantic State (<math><msub><mi>L</mi><mi mathvariant="italic">src</mi></msub></math>)**: This behaves like **Grammar**. A "Card" is a new sentence. Just because the previous sentence ended quietly (Subtle) doesn't mean the new sentence (Card Title) should start quietly. The grammar resets at the boundary of the object.
+
+### 3.2. Intent Operator (<math><mi>I</mi></math>)
+
+Intent classes (e.g., `.text-subtle`) modify the Lightness Source.
+
+<math display="block">
+  <mrow>
+    <msub>
+      <mi>I</mi>
+      <mi mathvariant="italic">token</mi>
+    </msub>
+    <mo stretchy="false">(</mo>
+    <mo stretchy="false">⟨</mo>
+    <mi>H</mi>
+    <mo>,</mo>
+    <mi>C</mi>
+    <mo>,</mo>
+    <msub>
+      <mi>L</mi>
+      <mi mathvariant="italic">src</mi>
+    </msub>
+    <mo>,</mo>
+    <mi>α</mi>
+    <mo stretchy="false">⟩</mo>
+    <mo stretchy="false">)</mo>
+    <mo>=</mo>
+    <mo stretchy="false">⟨</mo>
+    <mi>H</mi>
+    <mo>,</mo>
+    <mi>C</mi>
+    <mo>,</mo>
+    <msub>
+      <mi>L</mi>
+      <mi mathvariant="italic">token</mi>
+    </msub>
+    <mo>,</mo>
+    <mi>α</mi>
+    <mo stretchy="false">⟩</mo>
+  </mrow>
+</math>
+
+- **Identity on Context**: <math><mi>H</mi></math> and <math><mi>C</mi></math> are preserved.
+- **Action**: Updates <math><msub><mi>L</mi><mi mathvariant="italic">src</mi></msub></math>.
+
+:::tip[In Plain English]
+Intent classes like `.text-subtle` only change _one_ thing: the lightness reference. They don't touch the color. They say "make this text dimmer," regardless of whether it's blue, red, or purple.
+:::
+
+### 3.3. Modifier Operator (<math><mi>M</mi></math>)
+
+Modifier classes (e.g., `.hue-brand`) modify the Context variables.
+
+<math display="block">
+  <mrow>
+    <msub>
+      <mi>M</mi>
+      <mi mathvariant="italic">brand</mi>
+    </msub>
+    <mo stretchy="false">(</mo>
+    <mo stretchy="false">⟨</mo>
+    <mi>H</mi>
+    <mo>,</mo>
+    <mi>C</mi>
+    <mo>,</mo>
+    <msub>
+      <mi>L</mi>
+      <mi mathvariant="italic">src</mi>
+    </msub>
+    <mo>,</mo>
+    <mi>α</mi>
+    <mo stretchy="false">⟩</mo>
+    <mo stretchy="false">)</mo>
+    <mo>=</mo>
+    <mo stretchy="false">⟨</mo>
+    <msub>
+      <mi>H</mi>
+      <mi mathvariant="italic">brand</mi>
+    </msub>
+    <mo>,</mo>
+    <msub>
+      <mi>C</mi>
+      <mi mathvariant="italic">ambient</mi>
+    </msub>
+    <mo>,</mo>
+    <msub>
+      <mi>L</mi>
+      <mi mathvariant="italic">src</mi>
+    </msub>
+    <mo>,</mo>
+    <mi>α</mi>
+    <mo stretchy="false">⟩</mo>
+  </mrow>
+</math>
+
+- **Identity on Intent**: <math><msub><mi>L</mi><mi mathvariant="italic">src</mi></msub></math> is preserved.
+- **Context Definition**: Updates <math><mi>H</mi></math> to the brand hue. Updates <math><mi>C</mi></math> to the **Ambient Chroma** (<math><msub><mi>C</mi><mi mathvariant="italic">ambient</mi></msub><mo>≈</mo><mn>0.1</mn><mo>×</mo><msub><mi>C</mi><mi mathvariant="italic">brand</mi></msub></math>).
+
+:::tip[In Plain English]
+Modifier classes like `.hue-brand` change the atmosphere. They say "everything inside here should be purple," but they don't touch the text hierarchy. A title is still a title, just purple now. This is also where the "Dampening" happens: the modifier takes a vibrant brand color and creates a soft ambient version for backgrounds.
+:::
+
+## 4. Laws of Composition
+
+### 4.1. Orthogonality (Commutativity of <math><mi>I</mi></math> and <math><mi>M</mi></math>)
+
+Because Intent (<math><mi>I</mi></math>) and Modifiers (<math><mi>M</mi></math>) operate on disjoint components of the state vector, they are commutative.
+
+<math display="block">
+  <mrow>
+    <mi>I</mi>
+    <mo stretchy="false">(</mo>
+    <mi>M</mi>
+    <mo stretchy="false">(</mo>
+    <mi mathvariant="normal">Σ</mi>
+    <mo stretchy="false">)</mo>
+    <mo stretchy="false">)</mo>
+    <mo>≡</mo>
+    <mi>M</mi>
+    <mo stretchy="false">(</mo>
+    <mi>I</mi>
+    <mo stretchy="false">(</mo>
+    <mi mathvariant="normal">Σ</mi>
+    <mo stretchy="false">)</mo>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>
+
+**Implication**: The order of classes in HTML (`class="text-subtle hue-brand"` vs `class="hue-brand text-subtle"`) does not matter for the resulting color.
+
+:::tip[In Plain English]
+Because `.text-subtle` only touches Lightness, and `.hue-brand` only touches Color, they don't step on each other's toes. You can combine them in any order, and the result is always "Subtle Brand Color".
+:::
+
+<DemoWrapper>
+  <Diagram>
+    <OrthogonalityGrid client:load />
+  </Diagram>
+</DemoWrapper>
+
+### 4.2. Surface Dominance
+
+A Surface (<math><mi>S</mi></math>) resets the local intent. Therefore, an Intent applied _outside_ a surface does not penetrate _into_ the surface's default text.
+
+<math display="block">
+  <mrow>
+    <mtext>Inside Surface: </mtext>
+    <mi mathvariant="normal">Φ</mi>
+    <mo stretchy="false">(</mo>
+    <mi>S</mi>
+    <mo stretchy="false">(</mo>
+    <mi>I</mi>
+    <mo stretchy="false">(</mo>
+    <mi mathvariant="normal">Σ</mi>
+    <mo stretchy="false">)</mo>
+    <mo stretchy="false">)</mo>
+    <mo stretchy="false">)</mo>
+    <mo>≠</mo>
+    <mi mathvariant="normal">Φ</mi>
+    <mo stretchy="false">(</mo>
+    <mi>I</mi>
+    <mo stretchy="false">(</mo>
+    <mi>S</mi>
+    <mo stretchy="false">(</mo>
+    <mi mathvariant="normal">Σ</mi>
+    <mo stretchy="false">)</mo>
+    <mo stretchy="false">)</mo>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>
+
+- <math>
+    <mi>S</mi>
+    <mo stretchy="false">(</mo>
+    <mi>I</mi>
+    <mo stretchy="false">(</mo>
+    <mi mathvariant="normal">Σ</mi>
+    <mo stretchy="false">)</mo>
+    <mo stretchy="false">)</mo>
+  </math>
+  : The surface resets the intent. The outer intent is lost.
+- <math>
+    <mi>I</mi>
+    <mo stretchy="false">(</mo>
+    <mi>S</mi>
+    <mo stretchy="false">(</mo>
+    <mi mathvariant="normal">Σ</mi>
+    <mo stretchy="false">)</mo>
+    <mo stretchy="false">)</mo>
+  </math>
+  : The intent is applied _to_ the surface's context.
+
+**Implication**: You must apply text utilities _inside_ or _on_ the element that needs them.
+
+:::tip[In Plain English]
+Surfaces are barriers. If you make a container "subtle", and then put a Card inside it, the text inside the Card goes back to normal. The Card protects its contents from the outside world's text styles.
+:::
+
+## 5. Invariants
+
+### 5.1. Contrast Preservation
+
+Modifiers (<math><mi>M</mi></math>) are **Contrast Preserving**.
+
+<math display="block">
+  <mrow>
+    <mtext>Contrast</mtext>
+    <mo stretchy="false">(</mo>
+    <mi mathvariant="normal">Φ</mi>
+    <mo stretchy="false">(</mo>
+    <mi mathvariant="normal">Σ</mi>
+    <mo stretchy="false">)</mo>
+    <mo>,</mo>
+    <mtext>Background</mtext>
+    <mo stretchy="false">)</mo>
+    <mo>≈</mo>
+    <mtext>Contrast</mtext>
+    <mo stretchy="false">(</mo>
+    <mi mathvariant="normal">Φ</mi>
+    <mo stretchy="false">(</mo>
+    <mi>M</mi>
+    <mo stretchy="false">(</mo>
+    <mi mathvariant="normal">Σ</mi>
+    <mo stretchy="false">)</mo>
+    <mo stretchy="false">)</mo>
+    <mo>,</mo>
+    <mtext>Background</mtext>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>
+
+Since <math><mi>M</mi></math> only changes <math><mi>H</mi></math> and <math><mi>C</mi></math>, and OKLCH is perceptually uniform, the perceived lightness (and thus contrast against the background) remains constant.
+
+:::tip[In Plain English]
+Changing the hue (e.g., adding `.hue-brand`) never breaks accessibility. If the text was readable before, it stays readable, because the system only changes the color, not the brightness.
+:::
+
+<DemoWrapper>
+  <Diagram>
+    <ContrastStabilityDemo client:load />
+  </Diagram>
+</DemoWrapper>
+
+### 5.2. Intent Stability
+
+Intent (<math><mi>I</mi></math>) is **Chromatically Transparent**.
+
+<math display="block">
+  <mrow>
+    <mtext>Hue</mtext>
+    <mo stretchy="false">(</mo>
+    <mi mathvariant="normal">Φ</mi>
+    <mo stretchy="false">(</mo>
+    <mi>I</mi>
+    <mo stretchy="false">(</mo>
+    <mi mathvariant="normal">Σ</mi>
+    <mo stretchy="false">)</mo>
+    <mo stretchy="false">)</mo>
+    <mo stretchy="false">)</mo>
+    <mo>=</mo>
+    <mtext>Hue</mtext>
+    <mo stretchy="false">(</mo>
+    <mi mathvariant="normal">Φ</mi>
+    <mo stretchy="false">(</mo>
+    <mi mathvariant="normal">Σ</mi>
+    <mo stretchy="false">)</mo>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>
+
+Changing the text importance (High -> Subtle) never shifts the hue.
+
+:::tip[In Plain English]
+Changing the text style (e.g., making it `.text-subtle`) never changes its color family. If you are in a "Brand" section, the subtle text will still be tinted with the brand color, just dimmer. The text style doesn't "reset" the color to gray.
+:::
+
+## 6. Practical Application
+
+This algebra proves that we can support <math><mi>N</mi></math> intents and <math><mi>M</mi></math> contexts with <math><mi>N</mi><mo>+</mo><mi>M</mi></math> classes, rather than <math><mi>N</mi><mo>×</mo><mi>M</mi></math> classes.
+
+- **Traditional**: `.text-subtle-on-brand`, `.text-subtle-on-neutral`
+- **Axiomatic**: `.text-subtle` + `.hue-brand`
+
+The resolution happens at render time via the <math><mi mathvariant="normal">Φ</mi></math> function (the CSS Engine).
+
+## 7. Implications & Corollaries
+
+### 7.1. Idempotency of Modifiers
+
+Applying the same modifier twice is equivalent to applying it once.
+
+<math display="block">
+  <mrow>
+    <msub>
+      <mi>M</mi>
+      <mi mathvariant="italic">brand</mi>
+    </msub>
+    <mo stretchy="false">(</mo>
+    <msub>
+      <mi>M</mi>
+      <mi mathvariant="italic">brand</mi>
+    </msub>
+    <mo stretchy="false">(</mo>
+    <mi mathvariant="normal">Σ</mi>
+    <mo stretchy="false">)</mo>
+    <mo stretchy="false">)</mo>
+    <mo>≡</mo>
+    <msub>
+      <mi>M</mi>
+      <mi mathvariant="italic">brand</mi>
+    </msub>
+    <mo stretchy="false">(</mo>
+    <mi mathvariant="normal">Σ</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>
+
+This means nesting a `.hue-brand` section inside another `.hue-brand` section is safe and redundant.
+
+### 7.2. The "Leakage" Corollary
+
+If a container does _not_ act as a Surface (<math><mi>S</mi></math>), it does not reset <math><msub><mi>L</mi><mi mathvariant="italic">src</mi></msub></math>.
+
+<math display="block">
+  <mrow>
+    <mtext>Container</mtext>
+    <mo stretchy="false">(</mo>
+    <msub>
+      <mi>I</mi>
+      <mi mathvariant="italic">subtle</mi>
+    </msub>
+    <mo stretchy="false">(</mo>
+    <mi mathvariant="normal">Σ</mi>
+    <mo stretchy="false">)</mo>
+    <mo stretchy="false">)</mo>
+    <mo stretchy="false">→</mo>
+    <mtext>Text is still subtle inside</mtext>
+  </mrow>
+</math>
+
+This distinguishes **Layout Containers** (divs, spans) from **Surfaces** (cards, sidebars). Surfaces are opaque boundaries for Intent; Containers are transparent.
+
+### 7.3. Universal Theming
+
+Since <math><mi>M</mi></math> operators control the environment (<math><mi>H</mi><mo>,</mo><mi>C</mi></math>) for all child elements, changing the top-level modifier effectively re-themes the entire subtree without requiring changes to the leaf nodes (text, borders).
+
+### 7.4. The Portal Effect (Subspace Involution)
+
+Because Inverted Surfaces perform a Hard Flip (<math><msup><mi>α</mi><mo>′</mo></msup><mo>=</mo><mo>¬</mo><mi>α</mi></math>), nesting them creates an alternating polarity stack. However, because <math><mi>S</mi></math> is lossy on Intent (<math><mi>L</mi></math>), this is not a true inverse of the state.
+
+<math display="block">
+  <mrow>
+    <msub>
+      <mi>S</mi>
+      <mi mathvariant="italic">inv</mi>
+    </msub>
+    <mo stretchy="false">(</mo>
+    <msub>
+      <mi>S</mi>
+      <mi mathvariant="italic">inv</mi>
+    </msub>
+    <mo stretchy="false">(</mo>
+    <mi mathvariant="normal">Σ</mi>
+    <mo stretchy="false">)</mo>
+    <mo stretchy="false">)</mo>
+    <mo>≠</mo>
+    <mi mathvariant="normal">Σ</mi>
+  </mrow>
+</math>
+
+While the polarity returns to the original (<math><mo>¬</mo><mo stretchy="false">(</mo><mo>¬</mo><mi>α</mi><mo stretchy="false">)</mo><mo>=</mo><mi>α</mi></math>), the Intent <math><msub><mi>L</mi><mi mathvariant="italic">src</mi></msub></math> is reset to <math><msub><mi>L</mi><mi mathvariant="italic">high</mi></msub></math> at each step. You recover the _mode_, but you lose the _semantic context_.
+
+<DemoWrapper>
+  <Diagram>
+    <PortalStack client:load />
+  </Diagram>
+</DemoWrapper>

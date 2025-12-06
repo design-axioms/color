@@ -59,6 +59,14 @@ To prepare for the next phase after a transition, use the `.github/prompts/prepa
 - The user may decide to defer work that was originally planned for the current phase. Document these in `docs/agent-context/future/deferred_work.md` for future consideration.
 <!-- core end -->
 
+## 📜 The Constitution (Axioms)
+
+The project is governed by a set of core principles defined in `docs/design/axioms/`. These are not suggestions; they are the laws of the system.
+
+- **Consult Early**: Before designing a feature, check the relevant axioms (e.g., `physics.md`, `architecture.md`).
+- **Verify Often**: During implementation, ask yourself: "Does this violate the Law of Late Binding? Is this deterministic?"
+- **Update**: If a new pattern emerges that contradicts an axiom, we must either refine the axiom or refactor the code. We do not ignore the contradiction.
+
 ## Tooling & Conventions
 
 ### Package Management (`pnpm`)
@@ -81,6 +89,12 @@ To prepare for the next phase after a transition, use the `.github/prompts/prepa
 - **Subdirectories**: If a command must run in a subdirectory, use chaining (e.g., `cd site && pnpm build`) or the `-C` / `--filter` flags where available.
 - **Paths**: Refer to files relative to the workspace root (e.g., `docs/agent-context/task-list.md`).
 
+### Development Environment
+
+- **Server**: The development server is managed by `locald` and is always running.
+- **URL**: Access the site at `https://color-system.localhost/`.
+- **No Manual Start**: Do NOT run `pnpm docs:dev` or `pnpm dev` manually. Assume the server is up.
+
 ### Project Structure
 
 - **`src/lib/`**: Core logic for the color system (solvers, math, types).
@@ -93,6 +107,7 @@ To prepare for the next phase after a transition, use the `.github/prompts/prepa
 - **Context**: The combination of `Polarity` (page/inverted) and `Mode` (light/dark). Most math functions now operate on a `Context` object.
 - **Surfaces**: The fundamental building blocks. Surfaces create context for the content inside them.
 - **Anchors**: Fixed points (lightness values) that define the start and end of the contrast range for a given mode/polarity.
+- **Reactive Pipeline**: The CSS engine uses "Late-Binding" variables (e.g., `--text-lightness-source`) to allow utilities to compose dynamically with context.
 
 ## 📖 Documentation
 

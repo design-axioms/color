@@ -77,6 +77,8 @@ export class ThemeManager {
   private faviconGenerator?: (color: string) => string;
   private _mode: ThemeMode = "system";
   private mediaQuery: MediaQueryList | null = null;
+  private invertedSelectors: string[] = [];
+  private observer: MutationObserver | null = null;
 
   constructor(options: ThemeManagerOptions = {}) {
     if (typeof document !== "undefined") {
@@ -86,10 +88,103 @@ export class ThemeManager {
       this.faviconGenerator = options.faviconGenerator;
       this.mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
       this.mediaQuery.addEventListener("change", this.handleSystemChange);
+
+      // Initialize inverted surfaces logic
+      // We use requestAnimationFrame to give CSS a chance to load if it's close
+      requestAnimationFrame(() => {
+        this.initInvertedSurfaces();
+      });
     } else {
       // Fallback for SSR/testing
       this.root = null;
     }
+  }
+
+  private initInvertedSurfaces(): void {
+    if (!this.root) return;
+
+    const style = getComputedStyle(this.root);
+    const invertedList = style
+      .getPropertyValue("--axm-inverted-surfaces")
+      .trim();
+
+    if (invertedList) {
+      // Remove quotes if they exist
+      const cleanList = invertedList.replace(/^['"]|['"]$/g, "");
+      this.invertedSelectors = cleanList
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean);
+
+      if (this.invertedSelectors.length > 0) {
+        this.setupObserver();
+        this.updateInvertedSurfaces();
+      }
+    }
+  }
+
+  private setupObserver(): void {
+    if (typeof MutationObserver === "undefined") return;
+
+    this.observer = new MutationObserver((mutations) => {
+      const elementsToUpdate = new Set<HTMLElement>();
+      const selector = this.invertedSelectors.join(",");
+
+      for (const mutation of mutations) {
+        if (mutation.type === "childList") {
+          for (const node of mutation.addedNodes) {
+            if (node instanceof HTMLElement) {
+              if (node.matches(selector)) {
+                elementsToUpdate.add(node);
+              }
+              const descendants = node.querySelectorAll(selector);
+              descendants.forEach((d) =>
+                elementsToUpdate.add(d as HTMLElement),
+              );
+            }
+          }
+        } else if (
+          mutation.type === "attributes" &&
+          mutation.attributeName === "class"
+        ) {
+          if (
+            mutation.target instanceof HTMLElement &&
+            mutation.target.matches(selector)
+          ) {
+            elementsToUpdate.add(mutation.target);
+          }
+        }
+      }
+
+      if (elementsToUpdate.size > 0) {
+        const targetScheme = this.resolvedMode === "light" ? "dark" : "light";
+        elementsToUpdate.forEach((el) => {
+          el.style.setProperty("color-scheme", targetScheme);
+        });
+      }
+    });
+
+    this.observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+  }
+
+  private updateInvertedSurfaces(): void {
+    if (this.invertedSelectors.length === 0) return;
+
+    const selector = this.invertedSelectors.join(",");
+    const elements = document.querySelectorAll(selector);
+    // Inverted means opposite of the resolved mode
+    const targetScheme = this.resolvedMode === "light" ? "dark" : "light";
+
+    elements.forEach((el) => {
+      if (el instanceof HTMLElement) {
+        el.style.setProperty("color-scheme", targetScheme);
+      }
+    });
   }
 
   get mode(): ThemeMode {
@@ -142,6 +237,8 @@ export class ThemeManager {
         this.root.style.setProperty("color-scheme", "dark");
       }
     }
+
+    this.updateInvertedSurfaces();
   }
 
   private sync(): void {
@@ -159,6 +256,9 @@ export class ThemeManager {
   dispose(): void {
     if (this.mediaQuery) {
       this.mediaQuery.removeEventListener("change", this.handleSystemChange);
+    }
+    if (this.observer) {
+      this.observer.disconnect();
     }
   }
 }

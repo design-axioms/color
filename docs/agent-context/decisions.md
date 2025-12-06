@@ -437,3 +437,234 @@ This file tracks key architectural and design decisions made throughout the proj
 - **Rationale**:
   - **Pragmatism**: It was the only way to break the deadlock.
   - **One-Time Cost**: This is only required for the very first publish. Subsequent releases will use the automated OIDC pipeline.
+
+### [2025-12-02] CI Workflow Optimization
+
+- **Context**: The CI pipeline was failing due to missing Astro types during linting and redundant test flags.
+- **Decision**:
+  - Run `astro sync` before linting in CI.
+  - Remove redundant `--run` flag from `pnpm test` in CI (since it's already in `package.json`).
+- **Rationale**:
+  - **Correctness**: Astro types are generated code; they must exist for the linter to validate imports correctly.
+  - **Efficiency**: Fixing the configuration prevents false negatives in the CI pipeline.
+
+### [2025-12-02] Contributing Documentation
+
+- **Context**: As we move to a public release, we need to standardize the contribution workflow.
+- **Decision**: Create `CONTRIBUTING.md` documenting the PR workflow, CI checks, and development environment.
+- **Rationale**:
+  - **Onboarding**: Helps new contributors (and AI agents) understand the expected workflow.
+  - **Standardization**: Explicitly stating the "Branch -> PR -> Merge" flow reduces ambiguity.
+
+### [2025-12-02] Style Isolation for Theme Builder
+
+- **Context**: The Theme Builder UI, embedded within the Starlight documentation site, was inheriting prose styles (like margins on lists) that broke its layout.
+- **Decision**: Wrap the entire `StudioLayout` in a `<Diagram>` component, which applies the `not-content` class.
+- **Rationale**:
+  - **Isolation**: The `not-content` class is Starlight's standard mechanism for opting out of typography styles.
+  - **Simplicity**: Avoids writing complex CSS resets or using Shadow DOM.
+  - **Consistency**: Reuses an existing component (`Diagram`) designed for this exact purpose.
+
+### [2025-12-02] Unified Context Graph
+
+- **Context**: The previous "Anchor Graph" consisted of 4 disconnected sliders, making it impossible to visualize the relationship between Light and Dark modes.
+- **Decision**: Create a single `ContextGraph` component that stacks Light and Dark tracks vertically within each Context (Page/Inverted).
+- **Rationale**:
+  - **Mental Model**: Reinforces that Light and Dark modes are two sides of the same coin (Context).
+  - **Contrast**: Allows visualizing the "Safe Zone" (the gap between background and text) directly on the graph.
+
+### [2025-12-02] Context Tree for Surface Management
+
+- **Context**: The "Surface Manager" was a flat list of cards, which failed to represent the hierarchical nature of the system (surfaces nest inside surfaces).
+- **Decision**: Refactor the UI into a nested **Context Tree**.
+- **Rationale**:
+  - **Axiom Alignment**: "Context is King". The tree visualizes how context flows down the hierarchy.
+  - **Scalability**: A tree view handles many surfaces better than a grid of large cards.
+
+### [2025-12-02] Strict Token Compliance
+
+- **Context**: We found raw CSS variable references (e.g., `var(--bg-surface-sunken-token)`) in the codebase, which bypassed our type-safe `theme.ts` system.
+- **Decision**: Ban raw token usage in frontend components and enforce it via `check-tokens.sh`.
+- **Rationale**:
+  - **Maintainability**: If we rename a token in the generator, the type system will catch it. Raw strings would break silently.
+  - **Consistency**: Ensures all UI components use the same source of truth for values.
+
+### [2025-12-02] CSS Consolidation
+
+- **Context**: We had duplicate utility classes in `site/src/styles/docs.css` and `css/utilities.css`, leading to confusion about which file to edit and potential inconsistencies.
+- **Decision**: Consolidate all CSS utilities into the root `css/` directory and point the Astro configuration to use these shared files.
+- **Rationale**:
+  - **Single Source of Truth**: Ensures that the CLI, Demo, and Documentation all use the exact same CSS engine.
+  - **Maintainability**: Reduces code duplication and makes it easier to update utilities globally.
+  - **Consistency**: Guarantees that a utility class like `.ring-focus-visible` behaves identically in every environment.
+
+### [2025-12-02] Utility Class Renaming
+
+- **Context**: The utility class `.focus-visible-ring` was inconsistent with other ring utilities (e.g., Tailwind's `ring-*` convention).
+- **Decision**: Rename `.focus-visible-ring` to `.ring-focus-visible`.
+- **Rationale**:
+  - **Consistency**: Aligns with the standard "property-modifier" naming convention used elsewhere in the system.
+  - **Predictability**: Makes it easier for developers to guess the class name.
+
+### [2025-12-03] Reactive Pipeline Architecture
+
+- **Context**: We needed utilities like `.text-subtle` to work correctly inside context modifiers like `.hue-brand`. Previously, utilities set `color` directly, which overwrote the hue modification.
+- **Decision**: Implement a "Late-Binding" architecture where utilities set "Source Variables" (`--text-lightness-source`, `--text-hue-source`) and the engine calculates the final color.
+- **Rationale**:
+  - **Composability**: Allows orthogonal concerns (Lightness vs Hue) to be composed without combinatorial CSS classes.
+  - **Simplicity**: Reduces the number of generated CSS rules.
+  - **Power**: Enables complex context interactions that were previously impossible with static CSS.
+
+### [2025-12-03] Bezier Typography Scale
+
+- **Context**: We needed a typography scale. We considered a static map (t-shirt sizes) vs a mathematical scale.
+- **Decision**: Use **Cubic Bezier Interpolation** to generate font sizes from a `min` to `max` range over `n` steps.
+- **Rationale**:
+  - **Fluidity**: Allows for non-linear scaling (e.g., larger steps at the top end) that feels more natural than a linear scale.
+  - **Control**: A single curve controls the entire system, making it easy to adjust the "drama" of the typography globally.
+  - **Axiomatic**: Aligns with our philosophy of using math to derive values rather than hardcoding magic numbers.
+
+### [2025-12-03] Grand Simulation for Validation
+
+- **Context**: We needed to verify the system's robustness across different personas and workflows. Unit tests were insufficient for testing the end-to-end "feel" and integration.
+- **Decision**: Create a "Grand Simulation" project (`examples/grand-simulation`) that mimics a real user's environment.
+- **Rationale**:
+  - **Realism**: Forces us to use the published package (via `pnpm pack`) and public documentation, exposing friction points that internal tests miss.
+  - **Isolation**: Ensures that the system works without the dev-time tooling and symlinks of the monorepo.
+
+### [2025-12-03] CSS Variable Beacon for Runtime Config
+
+- **Context**: The runtime (`ThemeManager`) needed to know which surfaces were "inverted" to apply the Hard Flip logic. We considered generating a `constants.ts` file.
+- **Decision**: Emit a CSS variable (`--axm-inverted-surfaces`) containing the selector list.
+- **Rationale**:
+  - **Coupling**: Keeps the configuration coupled to the CSS artifact, which is the source of truth for styling.
+  - **Simplicity**: Removes the need for a separate build step or artifact for the JS runtime. The CSS _is_ the config.
+
+### [2025-12-03] MutationObserver for Hard Flip
+
+- **Context**: Native UI elements (checkboxes, scrollbars) inside inverted surfaces didn't respect the theme because `color-scheme` wasn't set on the element.
+- **Decision**: Use a `MutationObserver` to watch for inverted surfaces and force the `color-scheme` style property.
+- **Rationale**:
+  - **Dynamism**: Handles dynamic content (SPAs, modals) where surfaces appear after page load.
+  - **Correctness**: It's the only way to force the browser to render native controls correctly in a nested context that differs from the document root.
+
+### [2025-12-03] Native MathML with CSS Overrides
+
+- **Context**: We needed to render complex algebraic formulas in the documentation.
+- **Decision**: Use native MathML with custom CSS overrides (`site/src/styles/starlight-custom.css`).
+- **Rationale**:
+  - **Performance**: Zero JS overhead compared to MathJax or KaTeX.
+  - **Accessibility**: Native support in modern browsers is excellent and accessible to screen readers.
+  - **Control**: CSS overrides allow us to match the font stack and spacing exactly to our design system.
+
+### [2025-12-03] Single Source of Truth for Docs Theme
+
+- **Context**: The documentation site was defining its own color tokens in `starlight-custom.css`, duplicating values from the generated `theme.css`. This led to maintenance issues where the docs didn't reflect the actual system state.
+- **Decision**: Refactor `starlight-custom.css` to map Starlight variables _to_ Axiomatic variables (e.g., `--sl-color-bg: var(--bg-surface-sunken)`).
+- **Rationale**:
+  - **Consistency**: Ensures the docs always look exactly like the system they document.
+  - **Maintainability**: Changing a system token automatically updates the docs theme without manual intervention.
+
+### [2025-12-03] Targeted MutationObserver
+
+- **Context**: The `ThemeManager` was scanning the entire `document.body` on every DOM mutation to find inverted surfaces. This is a potential performance bottleneck for large applications.
+- **Decision**: Optimize the observer to check only `mutation.addedNodes`.
+- **Rationale**:
+  - **Performance**: Drastically reduces the work done during DOM updates.
+  - **Correctness**: We only need to apply the "Hard Flip" fix to _new_ elements entering the DOM; existing elements are already handled.
+
+### [2025-12-04] Prioritize Fresh Eyes Review
+
+- **Context**: We planned to start Developer Tooling (VS Code extension, etc.) in Epoch 29.
+- **Decision**: Insert a "Fresh Eyes & Zero-to-One Review" epoch before Developer Tooling.
+- **Rationale**:
+  - **Validation First**: We need to ensure the core system is usable before building tools on top of it.
+  - **Foundation**: Tooling should be built on a stable, user-tested foundation.
+
+### [2025-12-04] Tree-sitter for Class Extraction
+
+- **Context**: We needed to extract class names from HTML, TSX, and Svelte files to provide autocompletion and hover information in the VS Code extension.
+- **Decision**: Use `web-tree-sitter` with WASM grammars instead of Regular Expressions.
+- **Rationale**:
+  - **Robustness**: Regex is fragile for parsing nested structures and complex template syntax (like Svelte blocks or JSX expressions). Tree-sitter provides a true AST.
+  - **Accuracy**: Allows us to distinguish between a class string and other string literals, reducing false positives.
+  - **Performance**: WASM-based parsing is extremely fast and runs efficiently within the VS Code extension host.
+
+### [2025-12-04] LSP Architecture for Extension
+
+- **Context**: We needed to implement language features like completion and hover. We considered a simple extension vs. a full Language Server Protocol (LSP) implementation.
+- **Decision**: Implement a lightweight LSP architecture (Client/Server split).
+- **Rationale**:
+  - **Scalability**: Keeps the heavy lifting (parsing, analysis) separate from the UI thread.
+  - **Portability**: The server logic can theoretically be reused in other editors (Neovim, Zed) in the future.
+  - **Standardization**: Follows VS Code best practices for language extensions.
+
+### [2025-12-04] Dynamic Schema Loading
+
+- **Context**: The extension needs to validate `color-config.json` files. Hardcoding the schema would require releasing a new extension version every time the config format evolves.
+- **Decision**: Load the schema dynamically from the workspace or a bundled fallback.
+- **Rationale**:
+  - **Agility**: Users can update their CLI (and thus the schema) without waiting for an extension update.
+  - **Correctness**: Ensures validation matches the version of the CLI installed in the project.
+
+### [2025-12-04] Dynamic Theme Loading for Linter
+
+- **Context**: The ESLint plugin needs to know which tokens and utility classes exist to provide accurate suggestions. We considered hardcoding the token list or reading the source config.
+- **Decision**: Read the _generated_ `css/theme.css` and `css/utilities.css` files from the user's project.
+- **Rationale**:
+  - **Source of Truth**: The generated CSS is the ultimate source of truth for what is available in the runtime.
+  - **Simplicity**: Parsing CSS variables is simpler and more robust than trying to interpret the `color-config.json` logic (which involves complex math) inside the linter.
+  - **Decoupling**: The linter doesn't need to know _how_ the tokens were generated, only that they exist.
+
+### [2025-12-04] Heuristic Suggestions for Hardcoded Colors
+
+- **Context**: When a user hardcodes a color (e.g., `#ffffff`), we want to suggest a semantic token. However, `#ffffff` could be `surface.card`, `text.high`, or `border.token`.
+- **Decision**: Use the CSS property name as a heuristic to filter suggestions.
+- **Rationale**:
+  - **Relevance**: If the property is `background-color`, suggesting a `text` token is unhelpful.
+  - **UX**: Reduces the noise in the suggestion list, making it more likely the user will pick the correct semantic role.
+
+### [2025-12-04] Strict Typing for Plugin
+
+- **Context**: ESLint plugins are often untyped or loosely typed.
+- **Decision**: Enforce strict TypeScript typing and linting for the plugin codebase itself.
+- **Rationale**:
+  - **Reliability**: Prevents runtime errors in the linter, which can crash the user's IDE or build.
+  - **Maintainability**: Makes the complex AST traversal logic easier to understand and refactor.
+
+### [2025-12-05] Heuristic DTCG Import
+
+- **Context**: We wanted to allow users to import existing design tokens (DTCG format) into Axiomatic. However, most existing token sets are "flat" palettes (e.g., `blue.500`) rather than semantic systems.
+- **Decision**: Implement a "Heuristic Importer" that infers semantic intent from common naming conventions (e.g., `brand`, `neutral`, `surface`) and color properties (Chroma, Lightness).
+- **Rationale**:
+  - **Low Friction**: Allows users to get started with their existing brand colors without manually mapping every single token.
+  - **Intelligence**: By analyzing the color values (e.g., finding the neutral scale range), we can configure the physics engine to match the original system's contrast feel automatically.
+  - **Fallback**: If heuristics fail, we map to safe defaults, ensuring a valid configuration is always produced.
+
+### [2025-12-05] CLI Import Command
+
+- **Context**: We needed a way to expose the importer functionality.
+- **Decision**: Add a dedicated `import` command to the CLI: `axiomatic import <file>`.
+- **Rationale**:
+  - **Discoverability**: A top-level command makes the feature easy to find.
+  - **Workflow**: Fits naturally into the "init -> import -> build" lifecycle.
+  - **Safety**: Supports `--dry-run` to let users preview the changes before overwriting their config.
+
+### [2025-12-06] Standard CSS First
+
+- **Context**: We are migrating the build system to Lightning CSS. We need to decide whether to leverage its non-standard features (like nesting or custom media queries) or stick to standard CSS.
+- **Decision**: We will write **Standard CSS** exclusively. Build tools are for optimization and bundling only.
+- **Rationale**:
+  - **Longevity**: Standard CSS is forever. Proprietary syntax (Sass, Less, non-standard extensions) creates technical debt and lock-in.
+  - **Portability**: Our CSS should be usable without a build step if necessary (e.g., via CDN).
+  - **Clarity**: Users should be able to read the source code and understand it without knowing a specific tool's syntax.
+
+### [2025-12-06] Lightning CSS for Bundling
+
+- **Context**: The project relied on a fragile `cat`-based shell script for bundling CSS files. This lacked minification, syntax checking, and vendor prefixing.
+- **Decision**: Adopt **Lightning CSS** as the official bundler.
+- **Rationale**:
+  - **Performance**: Lightning CSS is written in Rust and is extremely fast.
+  - **Standards Compliance**: It strictly enforces CSS syntax (e.g., requiring `initial-value` for `@property`), which caught bugs in our codebase.
+  - **Features**: Provides minification, bundling, and automatic vendor prefixing out of the box without complex configuration.
+  - **Alignment**: Fits our "Standard CSS First" axiom by acting as a transparent optimizer rather than a transpiler for a custom language.

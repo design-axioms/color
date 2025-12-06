@@ -1,29 +1,37 @@
 pre-commit:
-  parallel: true
+  parallel: false
   commands:
     sync-lockfile:
-      run: pnpm install && git add pnpm-lock.yaml
+      run: echo "Ensuring lockfile is up to date..." && pnpm install && git add pnpm-lock.yaml
     format:
       glob: "*.{ts,js,json,md,yml,css,svelte,astro}"
+      exclude: "dist/**/*"
       run: pnpm format {staged_files} && git add {staged_files}
     lint:
       glob: "*.{ts,js,svelte,astro}"
-      run: pnpm eslint {staged_files}
+      exclude: "dist/**/*"
+      run: pnpm eslint --fix {staged_files} && git add {staged_files}
     security:
       glob: "*"
       run: pnpm lint:security {staged_files}
+    tokens:
+      glob: "site/src/components/builder-v2/**/*"
+      run: pnpm lint:tokens
+    math:
+      glob: "*.{md,mdx}"
+      run: pnpm lint:math
     knip:
       run: pnpm knip
     test:
-      run: pnpm test
+      run: pnpm -r test
 
 pre-push:
   parallel: false
   commands:
     typecheck:
-      run: tsc --noEmit
+      run: tsc --noEmit && pnpm --filter @axiomatic-design/vscode-extension typecheck
     site-check:
-      run: pnpm --filter site astro check
+      run: pnpm --filter site astro check && pnpm --filter site exec svelte-check
     build:
       run: pnpm build
     publint:

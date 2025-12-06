@@ -1,26 +1,28 @@
 import {
   DEFAULT_CONFIG,
-  PRESETS,
+  VIBES,
+  generateTheme,
+  resolveConfig,
   solve,
   syncDarkToLight,
 } from "@axiomatic-design/color";
 import type {
   AnchorValue,
+  Mode,
   Mutable,
   SolverConfig,
   SurfaceConfig,
   SurfaceGroup,
-  Theme,
 } from "@axiomatic-design/color/types";
 
 const STORAGE_KEY = "axiomatic-config";
 const CUSTOM_STORAGE_KEY = "axiomatic-custom-config";
-const PRESET_ID_KEY = "axiomatic-preset-id";
+const VIBE_ID_KEY = "axiomatic-vibe-id";
 const SYNC_DARK_KEY = "axiomatic-sync-dark";
 
 export class ConfigState {
   config = $state<SolverConfig>(DEFAULT_CONFIG);
-  presetId = $state<string>("");
+  vibeId = $state<string>("");
   syncDark = $state<boolean>(true);
 
   constructor() {
@@ -53,9 +55,9 @@ export class ConfigState {
           typeof localStorage.setItem === "function"
         ) {
           try {
-            localStorage.setItem(PRESET_ID_KEY, this.presetId);
+            localStorage.setItem(VIBE_ID_KEY, this.vibeId);
           } catch (e) {
-            console.error("Failed to save presetId to localStorage", e);
+            console.error("Failed to save vibeId to localStorage", e);
           }
         }
       });
@@ -75,25 +77,39 @@ export class ConfigState {
     });
   }
 
-  get solved(): Theme | null {
+  solved = $derived.by(() => {
     try {
       // Clone to avoid mutation during solve (which aligns anchors)
       // We use JSON parse/stringify as a simple way to deep clone and strip proxies
       const configClone = JSON.parse(
-        JSON.stringify(this.config)
+        JSON.stringify(this.config),
       ) as SolverConfig;
       return solve(configClone);
     } catch (e) {
       console.error(e);
       return null;
     }
-  }
+  });
+
+  css = $derived.by(() => {
+    try {
+      // generateTheme also calls solve internally, but we need the CSS string
+      // We pass the raw config proxy; generateTheme should handle it or we clone it
+      const configClone = JSON.parse(
+        JSON.stringify(this.config),
+      ) as SolverConfig;
+      return generateTheme(configClone);
+    } catch (e) {
+      console.error("Failed to generate theme CSS", e);
+      return "";
+    }
+  });
 
   private loadFromStorage(): void {
     try {
-      const storedPresetId = localStorage.getItem(PRESET_ID_KEY);
-      if (storedPresetId) {
-        this.presetId = storedPresetId;
+      const storedVibeId = localStorage.getItem(VIBE_ID_KEY);
+      if (storedVibeId) {
+        this.vibeId = storedVibeId;
       }
 
       const storedSyncDark = localStorage.getItem(SYNC_DARK_KEY);
@@ -119,26 +135,26 @@ export class ConfigState {
     }
   }
 
-  private markAsCustom(): void {
-    if (this.presetId !== "") {
-      this.presetId = "";
+  markAsCustom(): void {
+    if (this.vibeId !== "") {
+      this.vibeId = "";
     }
   }
 
   resetConfig(): void {
     if (
       confirm(
-        "Are you sure you want to reset to the default configuration? All changes will be lost."
+        "Are you sure you want to reset to the default configuration? All changes will be lost.",
       )
     ) {
       this.config = DEFAULT_CONFIG;
-      this.presetId = "";
+      this.vibeId = "";
     }
   }
 
-  loadPreset(newPresetId: string): void {
+  loadVibe(newVibeId: string): void {
     // 1. If currently Custom, save to Custom Storage
-    if (this.presetId === "") {
+    if (this.vibeId === "") {
       try {
         localStorage.setItem(CUSTOM_STORAGE_KEY, JSON.stringify(this.config));
       } catch (e) {
@@ -147,7 +163,7 @@ export class ConfigState {
     }
 
     // 2. Load new config
-    if (newPresetId === "") {
+    if (newVibeId === "") {
       // Loading Custom
       try {
         const stored = localStorage.getItem(CUSTOM_STORAGE_KEY);
@@ -162,15 +178,14 @@ export class ConfigState {
         this.config = DEFAULT_CONFIG;
       }
     } else {
-      // Loading a Preset
-      const preset = PRESETS.find((p) => p.id === newPresetId);
-      if (preset) {
-        this.config = preset.config;
+      // Loading a Vibe
+      if (newVibeId in VIBES) {
+        this.config = resolveConfig({ vibe: newVibeId });
       }
     }
 
     // 3. Update State
-    this.presetId = newPresetId;
+    this.vibeId = newVibeId;
   }
 
   async loadConfigFromFile(file: File): Promise<void> {
@@ -179,7 +194,7 @@ export class ConfigState {
       const parsed = JSON.parse(text) as SolverConfig;
       // TODO: Validate schema?
       this.config = parsed;
-      this.presetId = ""; // Treat as custom
+      this.vibeId = ""; // Treat as custom
     } catch (e) {
       console.error("Failed to load config file", e);
       alert("Failed to load configuration file. Please check the format.");
@@ -190,7 +205,7 @@ export class ConfigState {
     polarity: "page" | "inverted",
     mode: "light" | "dark",
     position: "start" | "end",
-    value: number
+    value: number,
   ): void {
     this.markAsCustom();
     // Cast to Mutable to bypass readonly check (we are the state manager, we can mutate)
@@ -211,10 +226,61 @@ export class ConfigState {
     this.config.anchors.keyColors[key] = value;
   }
 
+  addKeyColor(key: string, value: string): void {
+    this.markAsCustom();
+    if (key in this.config.anchors.keyColors) {
+      throw new Error(`Key color "${key}" already exists.`);
+    }
+    this.config.anchors.keyColors[key] = value;
+  }
+
+  removeKeyColor(key: string): void {
+    this.markAsCustom();
+    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+    delete this.config.anchors.keyColors[key];
+  }
+
   updateHueShiftRotation(degrees: number): void {
     this.markAsCustom();
     if (this.config.hueShift) {
       this.config.hueShift.maxRotation = degrees;
+    }
+  }
+
+  updateSurfaceOverride(
+    surfaceId: string,
+    mode: Mode,
+    color: string | undefined,
+  ): void {
+    this.markAsCustom();
+    for (const group of this.config.groups) {
+      const surface = group.surfaces.find((s) => s.slug === surfaceId);
+      if (surface) {
+        if (!surface.override) surface.override = {};
+        if (color) {
+          surface.override[mode] = color;
+        } else {
+          // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+          delete surface.override[mode];
+        }
+        return;
+      }
+    }
+  }
+
+  updateSurfaceContrastOffset(
+    surfaceId: string,
+    mode: Mode,
+    offset: number,
+  ): void {
+    this.markAsCustom();
+    for (const group of this.config.groups) {
+      const surface = group.surfaces.find((s) => s.slug === surfaceId);
+      if (surface) {
+        if (!surface.contrastOffset) surface.contrastOffset = {};
+        surface.contrastOffset[mode] = offset;
+        return;
+      }
     }
   }
 
@@ -261,7 +327,7 @@ export class ConfigState {
   updateSurface(
     groupIndex: number,
     surfaceIndex: number,
-    surface: Partial<SurfaceConfig>
+    surface: Partial<SurfaceConfig>,
   ): void {
     this.markAsCustom();
     if (surface.slug) {
@@ -270,8 +336,8 @@ export class ConfigState {
         g.surfaces.some(
           (s, sIdx) =>
             (gIdx !== groupIndex || sIdx !== surfaceIndex) &&
-            s.slug === surface.slug
-        )
+            s.slug === surface.slug,
+        ),
       );
       if (isDuplicate) {
         throw new Error(`Surface slug "${surface.slug}" already exists.`);
@@ -280,7 +346,7 @@ export class ConfigState {
 
     Object.assign(
       this.config.groups[groupIndex].surfaces[surfaceIndex],
-      surface
+      surface,
     );
   }
 
@@ -288,7 +354,7 @@ export class ConfigState {
     fromGroupIndex: number,
     fromSurfaceIndex: number,
     toGroupIndex: number,
-    toSurfaceIndex: number
+    toSurfaceIndex: number,
   ): void {
     this.markAsCustom();
     const surface =
@@ -308,7 +374,7 @@ export class ConfigState {
     // Ensure targetIndex is within bounds (0 to length)
     targetIndex = Math.max(
       0,
-      Math.min(targetIndex, this.config.groups[toGroupIndex].surfaces.length)
+      Math.min(targetIndex, this.config.groups[toGroupIndex].surfaces.length),
     );
 
     this.config.groups[toGroupIndex].surfaces.splice(targetIndex, 0, surface);

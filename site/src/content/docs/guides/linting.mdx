@@ -1,0 +1,86 @@
+---
+title: Linting & Enforcement
+description: How to enforce the Axiomatic Color System using ESLint.
+---
+
+The Axiomatic Color System provides an ESLint plugin to help you maintain a clean, consistent codebase. The plugin enforces the "Code is Truth" axiom by flagging hardcoded colors and ensuring semantic token usage.
+
+## Installation
+
+```bash
+pnpm add -D @axiomatic-design/eslint-plugin
+```
+
+## Configuration
+
+Add the plugin to your `eslint.config.js` (flat config):
+
+```javascript
+import axiomatic from "@axiomatic-design/eslint-plugin";
+
+export default [
+  {
+    plugins: {
+      "@axiomatic-design": axiomatic,
+    },
+    rules: {
+      // Warn on hardcoded colors (hex, rgb, etc.)
+      "@axiomatic-design/no-hardcoded-colors": "warn",
+
+      // Error on invalid or internal token usage
+      "@axiomatic-design/no-raw-tokens": "error",
+    },
+  },
+];
+```
+
+## Rules
+
+### `no-hardcoded-colors`
+
+This rule flags usage of hardcoded color values (Hex, RGB, HSL, named colors) in your code. It supports JSX `style` props, Svelte, Vue, and Ember (GTS) templates.
+
+**Why?**
+Hardcoded colors break the system's ability to adapt to themes and modes. They are "Magic Numbers" that should be replaced with semantic tokens.
+
+**Example:**
+
+```jsx
+// ❌ Invalid
+<div style={{ color: "#ff0000" }}>Error</div>
+
+// ✅ Valid
+<div style={{ color: "var(--axm-text-high-token)" }}>Error</div>
+```
+
+**Auto-Fix:**
+The rule provides auto-fix suggestions to replace hardcoded colors with the closest matching semantic token from your generated theme.
+
+### `no-raw-tokens`
+
+This rule flags usage of internal tokens, non-existent tokens, or tokens that should be applied via utility classes.
+
+**Why?**
+
+- **Internal Tokens**: Tokens like `--scale-gray-500` are implementation details and may change. Use semantic tokens like `--surface-sunken` instead.
+- **Utility Classes**: Some tokens (like shadows or surfaces) carry extra properties or side effects. Using the utility class ensures consistent behavior.
+
+**Example:**
+
+```javascript
+// ❌ Invalid (Internal Token)
+const color = "var(--scale-gray-500)";
+
+// ❌ Invalid (Should use class)
+const bg = "var(--surface-card)";
+
+// ✅ Valid
+const color = "var(--axm-text-high-token)";
+<div className="surface-card" />;
+```
+
+## Config Awareness
+
+The plugin is "Config Aware". It automatically detects your `color-config.json` and generated CSS files (`css/theme.css`, `css/utilities.css`) to validate tokens and provide accurate suggestions.
+
+Ensure these files are present in your project root or build output for the linter to work correctly.

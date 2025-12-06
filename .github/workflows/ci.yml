@@ -33,6 +33,9 @@ jobs:
       - name: Sync Astro Types
         run: pnpm --filter site astro sync
 
+      - name: Build ESLint Plugin
+        run: pnpm --filter @axiomatic-design/eslint-plugin build
+
       - name: Lint
         run: pnpm lint
 

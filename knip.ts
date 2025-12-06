@@ -9,13 +9,8 @@ const config: KnipConfig = {
       ignoreDependencies: [
         // Used in scripts or config files but not imported in code
         "ts-json-schema-generator",
-        "tsup",
-        "vitest",
         "@vitest/coverage-v8",
         "@vitest/ui",
-        "lefthook",
-        "publint",
-        "glob",
         "http-proxy",
         "@types/http-proxy",
         "@types/node",
@@ -35,15 +30,25 @@ const config: KnipConfig = {
         "prettier-plugin-astro",
         "prettier-plugin-svelte",
         "globals",
+        "@glimmer/env",
       ],
     },
     site: {
       entry: ["astro.config.mjs", "src/content.config.ts"],
       project: ["src/**/*.{ts,tsx,astro,svelte,mdx}"],
-      ignore: ["dist/**", ".astro/**"],
+      ignore: [
+        "dist/**",
+        ".astro/**",
+        "src/components/builder/ColorPicker.svelte",
+        "src/components/builder/SurfaceManager.svelte",
+        "src/components/builder/SurfaceRow.svelte",
+        "src/components/algebra/OrthogonalityDemo.svelte",
+        "src/components/algebra/StateVectorDemo.svelte",
+        "src/components/builder-v2/stage/ExportView.svelte",
+      ],
       ignoreDependencies: [
-        "astro",
         "@astrojs/check",
+        "svelte-check",
         "typescript",
         "sharp", // Used by Astro image optimization
         "@fontsource-variable/inter",
@@ -51,6 +56,17 @@ const config: KnipConfig = {
         "@fontsource-variable/space-grotesk",
         "apca-w3", // Used in components
         "lucide-preact", // Used in components
+        "katex",
+      ],
+    },
+    "packages/vscode-extension": {
+      entry: ["src/extension.ts", "scripts/*.js"],
+      project: ["src/**/*.ts", "scripts/*.js"],
+      ignoreDependencies: [
+        "@types/vscode",
+        "@types/node",
+        "tsup",
+        "tree-sitter-wasms",
       ],
     },
     // demo: {

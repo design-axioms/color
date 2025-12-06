@@ -1,0 +1,991 @@
+# Axiomatic Color - AI Context
+
+This file contains a condensed overview of the Axiomatic Color system, designed for LLMs.
+
+## Axioms (The Constitution)
+
+# The Constitution (Axioms)
+
+> **Status**: Living Document
+> **Version**: 2.0 (Epoch 30)
+
+This document serves as the "Constitution" for Axiomatic Color. It consolidates the core philosophy, physical laws, and architectural rules that govern the system. All design decisions and code changes must align with these axioms.
+
+## Vision
+
+**Axiomatic Color is a Physics Engine for Design.**
+
+We are not building a "Paint Set" (a collection of static colors). We are building a **Deterministic System** that generates accessible, harmonious, and adaptive interfaces from semantic intent.
+
+- **Input**: Semantic Intent + Context.
+- **Process**: Algorithmic Solver (Accessibility Constraints + Optical Physics).
+- **Output**: Adaptive, Accessible, Harmonious UI.
+
+## The Axioms
+
+The axioms are organized into domains:
+
+### [0. The Fundamental Theorem](axioms/00-fundamental-theorem.md)
+
+**Color = f(Context, Intent)**
+Color is not a static value; it is a function. The system is a reactive dependency graph that resolves pixel values based on semantic intent and environmental context.
+
+### [I. The Prime Directive](axioms/01-accessibility.md)
+
+**Accessibility is the Foundation of Aesthetics.**
+We reject the idea that accessibility and aesthetics are in conflict. Accessibility is the mathematical constraint solver that generates the palette.
+
+### [II. The Laws of Physics (Light)](axioms/02-physics.md)
+
+**Lightness is Relative. Chroma is Expensive. Hue Rotates.**
+We model color as a physical phenomenon, respecting the non-linear nature of human perception (Bezold-Brücke effect, Gamut Cusps).
+
+### [III. The Laws of Architecture (Surfaces)](axioms/03-architecture.md)
+
+**Surfaces are Containers. Context Flows Down. Text is Relative.**
+We organize UI elements into a strict taxonomy of Surfaces that establish Context for their children.
+
+### [IV. The Laws of Integration](axioms/04-integration.md)
+
+**Code is Truth. No Magic Numbers. Baseline Newly Available.**
+We ensure consistency and interoperability by deriving everything from configuration and targeting modern web standards.
+
+### [V. The Laws of Engineering](axioms/05-engineering.md)
+
+**State is a Domain Model. Testing is a Ratchet. Late Binding.**
+We build maintainable, testable software that leverages the power of the browser's CSS engine for dynamic resolution.
+
+### [VI. The Law of Static Projection](axioms/06-projection.md)
+
+**Static exports are snapshots.**
+Since the system is dynamic, any static export (JSON, PDF) is a lossy projection of the system's state at a specific moment. We must enumerate states explicitly in these formats.
+
+## Missing / Implicit Axioms (To Be Formalized)
+
+The following principles guide our work but have not yet been codified into Law:
+
+- **The Law of Determinism**: Given the same configuration, the output must be bit-for-bit identical.
+- **The Law of Lossless Interoperability**: We export to other formats (Tailwind, DTCG) without losing semantic meaning.
+- **The Law of "Just Enough" Configuration**: We expose knobs for _intent_, not _implementation_.
+
+---
+
+## Thinking in Surfaces
+
+<DemoWrapper>
+
+**Static palettes are not enough for modern interfaces.**
+
+In a dynamic UI, colors change based on where they live. A "gray" text needs to be dark on a white card, but light on a dark tooltip.
+
+Axiomatic Color acts as a **Context Engine**. Instead of giving you a fixed list of colors, it gives you **Surfaces** that automatically adjust their content to fit the environment.
+
+## The Core Concept
+
+A **Surface** is not just a background color. It **sets the rules** for everything inside it.
+
+When you place an element on a surface, you aren't just painting pixels. You are entering a new **Context**.
+
+### 1. Surfaces Create Context
+
+Every surface acts as a "Context Provider." It automatically sets a suite of CSS variables that determine how text, borders, and other elements should look _when sitting on that specific surface_.
+
+<Diagram>
+  <div class="mb-4 text-sm text-text-subtle">
+    Click on any surface below to inspect its active tokens.
+  </div>
+  <ContextVisualizer client:load />
+</Diagram>
+
+In the visualization above:
+
+1.  The **Page** sets the baseline context (Light Mode).
+2.  The **Card** sits on the Page. It might be slightly lighter or darker, but it maintains the same "Polarity" (Light text on Dark, or Dark text on Light).
+3.  The **Spotlight** (the dark box) _inverts_ the polarity. It tells its children: "I am dark. You must be light."
+
+### 2. Content Adapts to Context
+
+Because of this architecture, your components become **portable**.
+
+You don't write CSS like `.card .text` or `.footer .text`. You just write `.text-strong`.
+
+- If `.text-strong` is on a white card, it resolves to black.
+- If `.text-strong` is on a black tooltip, it resolves to white.
+
+The component doesn't know where it is. The _Surface_ tells it how to render.
+
+## The Hierarchy of Surfaces
+
+We categorize surfaces based on their physical role in the UI, not their color.
+
+### The Canvas
+
+These are the foundations. They recede into the background.
+
+- **Page**: The infinite backdrop.
+- **Workspace**: A dedicated area for tools or navigation.
+
+### The Objects
+
+These sit _on top_ of the canvas. They hold your content.
+
+- **Card**: The primary container for information.
+- **Tinted**: A subtle grouping mechanism, often used to highlight a section without a hard border.
+
+### The Interactors
+
+These are actionable. They invite touch.
+
+- **Action**: Buttons, toggles, and controls.
+
+### The Spotlights
+
+These demand attention. They often break the current polarity to stand out.
+
+- **Spotlight**: Tooltips, toasts, and primary calls-to-action.
+
+**Note on Inversion**: Spotlight surfaces perform a "Hard Flip" of the theme. If your app is in Light Mode, a Spotlight surface forces its internals into Dark Mode (and vice versa). This ensures that native browser controls (like scrollbars and checkboxes) render correctly inside the inverted area.
+
+## Why This Matters
+
+By thinking in surfaces, you stop fighting with contrast ratios.
+
+1.  **Guaranteed Contrast**: The system calculates the foreground colors based on the background surface. If the surface changes, the text changes.
+2.  **Automatic Dark Mode**: You don't design "Dark Mode" separately. You just define your surfaces, and the system flips the context.
+3.  **Infinite Nesting**: You can put a Card inside a Sidebar inside a Page. The system handles the math to ensure distinctness at every level.
+
+</DemoWrapper>
+
+---
+
+## Accessibility First
+
+In most design systems, accessibility is a step you take _after_ you choose your colors. You pick a palette, check the contrast ratios, and then tweak them until they pass.
+
+In the Axiomatic Color, accessibility is the **input**, not the output.
+
+## The Solver is an Accessibility Engine
+
+When you configure the system, you don't say "I want this specific shade of gray for my text."
+
+You say: **"I want my text to be readable."**
+
+The solver takes that intent and calculates the exact lightness value needed to achieve it. If it's mathematically impossible to achieve that contrast with your current background color, the solver will warn you or adjust the background to make it work.
+
+### APCA: The Future of Contrast
+
+We use the **Advanced Perceptual Contrast Algorithm (APCA)**, the candidate method for WCAG 3.0.
+
+Old contrast ratios (like 4.5:1) are simple math, but they don't match how human eyes work. They often fail to predict readability in Dark Mode.
+
+APCA models **human perception**. It understands that:
+
+1.  **Polarity Matters**: White text on black looks different than black text on white.
+2.  **Weight Matters**: Thinner fonts need more contrast than bold fonts.
+3.  **Context Matters**: The surrounding light affects how you see a specific element.
+
+By using APCA, the system ensures your text is _actually_ readable, not just technically compliant.
+
+### Mapping APCA to WCAG 2.1
+
+While APCA is the future, we understand that many teams are legally required to meet WCAG 2.1 standards (AA or AAA).
+
+
+
+
+The Axiomatic Color targets APCA values that **exceed** standard WCAG requirements. Here is a rough equivalence guide for compliance auditing:
+
+<Diagram>
+  <TokenLevelVisualizer />
+</Diagram>
+
+> **Note:** Because APCA is context-aware, these mappings are approximations. However, our baseline target of $L^c 75$ for even the subtlest text ensures that you are safely within the "accessible" range for almost all use cases.
+
+## Automated High Contrast
+
+Some users need more than just "good" contrast. They need **High Contrast**.
+
+Usually, supporting this requires a separate "High Contrast Theme" that you have to maintain manually.
+
+The Axiomatic Color generates this for you automatically. When you build your theme, it creates a `@media (prefers-contrast: more)` block that:
+
+1.  **Maximizes Range**: Pushes the Page background to pure Black/White.
+2.  **Increases Contrast**: Bumps up the target contrast ratios for all text.
+3.  **Reduces Noise**: Desaturates colors to reduce visual vibration.
+
+The browser applies this automatically based on the user's OS settings.
+
+## Forced Colors (Windows High Contrast)
+
+For users with severe visual impairments who use "Forced Colors Mode" (like on Windows), the system maps your semantic surfaces to system colors.
+
+| Surface          | Maps To      |
+| :--------------- | :----------- |
+| `surface-card`   | `Canvas`     |
+| `text-strong`    | `CanvasText` |
+| `surface-action` | `ButtonFace` |
+| `text-link`      | `LinkText`   |
+| `state-selected` | `Highlight`  |
+
+This ensures that your app behaves like a native application for users who rely on these tools.
+
+## Print is an Accessibility Feature
+
+We treat "Print" as just another mode.
+
+When a user prints your page, the system:
+
+1.  **Forces Light Mode**: To save ink and ensure legibility on paper.
+2.  **Removes Backgrounds**: Sets backgrounds to `white` (paper color).
+3.  **Adds Borders**: Since backgrounds are gone, it adds borders to `surface-card` and other containers so the structure remains visible.
+
+You don't need to write a print stylesheet. The system's "Physics" just adapt to the medium of "Ink on Paper."
+
+---
+
+## Quick Start
+
+This guide will walk you through setting up the Axiomatic Color and building your first themed component.
+
+## 1. Install & Initialize
+
+Run the following commands in your project root:
+
+
+  
+    ```bash npm install -D @axiomatic-design/color npx axiomatic init ```
+  
+  
+    ```bash pnpm add -D @axiomatic-design/color pnpm exec axiomatic init ```
+  
+
+
+This creates a `color-config.json` file with default settings.
+
+## 2. Generate Assets
+
+Now, generate the CSS and TypeScript definitions.
+
+
+  
+    ```bash npx axiomatic build --out ./src/theme.css npx axiomatic export
+    --format typescript --out ./src/theme.ts ```
+  
+  
+    ```bash pnpm exec axiomatic build --out ./src/theme.css pnpm exec axiomatic
+    export --format typescript --out ./src/theme.ts ```
+  
+
+
+## 3. Build a Card
+
+Let's build a simple "Card" component to see the system in action.
+
+
+  
+  
+  First, import the CSS in your app entry point:
+  ```tsx
+  import './theme.css';
+  ```
+
+Then, create a Card component:
+
+```tsx
+
+
+export function Card() {
+  return (
+    <div
+      className={tokens.surface.card}
+      style={{ padding: "2rem", borderRadius: "8px" }}
+    >
+      <h2 style={{ color: tokens.context.text.high }}>Hello World</h2>
+      <p style={{ color: tokens.context.text.subtle }}>I am a themed card.</p>
+    </div>
+  );
+}
+```
+
+  
+
+  
+  
+  First, import the CSS in your root layout:
+  ```svelte
+  <script>
+    import '../theme.css';
+  </script>
+  <slot />
+  ```
+
+Then, create a Card component:
+
+```svelte
+<script>
+  import { tokens } from "$lib/theme";
+</script>
+
+<div class={tokens.surface.card} style="padding: 2rem; border-radius: 8px;">
+  <h2 style="color: {tokens.context.text.high}">Hello World</h2>
+  <p style="color: {tokens.context.text.subtle}">I am a themed card.</p>
+</div>
+```
+
+  
+
+  
+  
+  Link the CSS in your `<head>`:
+  
+  > **Note**: If you are using a bundler (like Vite, Webpack, or Astro), you should import the CSS file in your JavaScript/TypeScript entry point instead (e.g. `import './theme.css'`).
+
+```html
+<link rel="stylesheet" href="/theme.css" />
+```
+
+Then, write the markup using the utility classes:
+
+```html
+<div class="surface-card" style="padding: 2rem; border-radius: 8px;">
+  <h2 class="text-strong">Hello World</h2>
+  <p class="text-subtle">I am a themed card.</p>
+</div>
+```
+
+  
+
+
+## 4. Next Steps
+
+You now have a working theme system!
+
+- **[React Integration](./frameworks/react)**: Deep dive into React patterns.
+- **[Svelte Integration](./frameworks/svelte)**: Deep dive into Svelte patterns.
+- **[The Theme Studio](./theme-builder)**: Customize your colors visually.
+
+---
+
+## CLI Reference
+
+The `axiomatic` CLI is the primary tool for generating your theme tokens.
+
+## Installation
+
+```bash
+pnpm add -D @axiomatic-design/color
+# or
+npm install -D @axiomatic-design/color
+```
+
+## Usage
+
+```bash
+npx axiomatic [command] [options]
+```
+
+## Commands
+
+### `init`
+
+Scaffolds a new configuration file in your project.
+
+```bash
+npx axiomatic init
+```
+
+**Behavior:**
+
+- Checks if `color-config.json` exists.
+- If not, creates it with the default configuration.
+- If it exists, exits with an error to prevent overwriting.
+
+### `generate` (Default)
+
+Generates the CSS tokens based on your configuration. If no command is specified, this is the default behavior.
+
+```bash
+npx axiomatic [config-file] [output-file]
+```
+
+**Arguments:**
+
+1.  **`config-file`** (Optional)
+
+    - Path to your JSON configuration file.
+    - **Default**: `./color-config.json`
+
+2.  **`output-file`** (Optional)
+    - Path where the generated CSS will be written.
+    - **Default**: `./theme.css`
+
+**Examples:**
+
+```bash
+# Use defaults
+npx axiomatic
+
+# Custom config, default output
+npx axiomatic ./design/my-colors.json
+
+# Custom config and output
+npx axiomatic ./design/my-colors.json ./src/styles/variables.css
+```
+
+## Output
+
+The CLI generates a CSS file containing:
+
+1.  **:root Variables**: Global tokens like shadows, focus rings, and data viz colors.
+2.  **Surface Classes**: Classes for each surface defined in your config (e.g., `.surface-card`).
+3.  **High Contrast Media Query**: A `@media (prefers-contrast: more)` block with accessible overrides.
+
+### Integration
+
+Import the generated file in your main CSS entry point:
+
+```css
+@import "./theme.css";
+```
+
+---
+
+## JavaScript API
+
+The Runtime API allows you to manage the theme mode and sync it with the browser environment.
+
+## `ThemeManager`
+
+The `ThemeManager` class is the main entry point for runtime theme control.
+
+```typescript
+
+```
+
+### Constructor
+
+```typescript
+const themeManager = new ThemeManager(options?: ThemeManagerOptions);
+```
+
+**Options:**
+
+| Option             | Type                        | Default                    | Description                                                                 |
+| :----------------- | :-------------------------- | :------------------------- | :-------------------------------------------------------------------------- |
+| `root`             | `HTMLElement`               | `document.documentElement` | The element to apply the theme to.                                          |
+| `lightClass`       | `string`                    | `undefined`                | Class to add in light mode. If omitted, sets `style="color-scheme: light"`. |
+| `darkClass`        | `string`                    | `undefined`                | Class to add in dark mode. If omitted, sets `style="color-scheme: dark"`.   |
+| `faviconGenerator` | `(color: string) => string` | `undefined`                | Function to generate an SVG favicon based on the current theme color.       |
+
+### Methods
+
+#### `setMode(mode: ThemeMode)`
+
+Sets the active theme mode.
+
+- **`mode`**: `"light" | "dark" | "system"`
+
+```typescript
+themeManager.setMode("dark");
+```
+
+#### `get mode()`
+
+Returns the current configured mode (e.g., `"system"`).
+
+#### `get resolvedMode()`
+
+Returns the actual active mode (`"light"` or `"dark"`). If mode is `"system"`, this returns the OS preference.
+
+#### `dispose()`
+
+Cleans up event listeners (e.g., for system preference changes). Call this when unmounting your app or component.
+
+### Interaction with Inverted Surfaces
+
+The `ThemeManager` sets the global theme state on the root element. The generated CSS uses this state to automatically flip the `color-scheme` for inverted surfaces (like `surface-spotlight`).
+
+No extra JavaScript is required to handle these local inversions.
+
+## Helper Functions
+
+### `updateThemeColor()`
+
+Updates the `<meta name="theme-color">` tag to match the computed background color of the document body. This is called automatically by `ThemeManager`, but you can export and use it manually if needed.
+
+```typescript
+
+
+updateThemeColor();
+```
+
+### `updateFavicon(generator)`
+
+Updates the favicon dynamically.
+
+```typescript
+
+
+updateFavicon(
+  (color) => `
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+    <circle cx="16" cy="16" r="14" fill="${color}" />
+  </svg>
+`,
+);
+```
+
+---
+
+## CSS Utilities Reference
+
+```css
+/*
+ * Shared Utilities
+ *
+ * This file is intended for manual utility classes that are shared across
+ * the documentation and other consumers.
+ *
+ * Currently, most utilities are generated into theme.css or located in site/src/styles/docs.css.
+ */
+
+```
+
+---
+
+## Configuration Schema
+
+```json
+{
+  "$ref": "#/definitions/UserConfig",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "ContrastOffsets": {
+      "additionalProperties": false,
+      "properties": {
+        "dark": {
+          "type": "number"
+        },
+        "light": {
+          "type": "number"
+        }
+      },
+      "type": "object"
+    },
+    "DeepPartial<AnchorValue>": {
+      "additionalProperties": false,
+      "properties": {
+        "adjustable": {
+          "type": "boolean"
+        },
+        "background": {
+          "$ref": "#/definitions/DeepPartial%3Cnumber%3E"
+        }
+      },
+      "type": "object"
+    },
+    "DeepPartial<Anchors>": {
+      "additionalProperties": false,
+      "properties": {
+        "dark": {
+          "$ref": "#/definitions/DeepPartial%3CModeAnchors%3E"
+        },
+        "light": {
+          "$ref": "#/definitions/DeepPartial%3CModeAnchors%3E"
+        }
+      },
+      "type": "object"
+    },
+    "DeepPartial<BezierCurve>": {
+      "additionalProperties": false,
+      "properties": {
+        "p1": {
+          "$ref": "#/definitions/DeepPartial%3C%5Bnumber%2Cnumber%5D%3E"
+        },
+        "p2": {
+          "$ref": "#/definitions/DeepPartial%3C%5Bnumber%2Cnumber%5D%3E"
+        }
+      },
+      "type": "object"
+    },
+    "DeepPartial<ModeAnchors>": {
+      "additionalProperties": false,
+      "properties": {
+        "end": {
+          "$ref": "#/definitions/DeepPartial%3CAnchorValue%3E"
+        },
+        "start": {
+          "$ref": "#/definitions/DeepPartial%3CAnchorValue%3E"
+        }
+      },
+      "type": "object"
+    },
+    "DeepPartial<PolarityAnchors>": {
+      "additionalProperties": false,
+      "properties": {
+        "inverted": {
+          "$ref": "#/definitions/DeepPartial%3CAnchors%3E"
+        },
+        "keyColors": {
+          "$ref": "#/definitions/DeepPartial%3Cindexed-type-1474508258-74242-74263-1474508258-74138-74264-1474508258-0-218439%3Cstring%2Cstring%3E1922313925%3E"
+        },
+        "page": {
+          "$ref": "#/definitions/DeepPartial%3CAnchors%3E"
+        }
+      },
+      "type": "object"
+    },
+    "DeepPartial<[number,number]>": {
+      "items": {
+        "type": [
+          "number"
+        ]
+      },
+      "type": "array"
+    },
+    "DeepPartial<def-alias-src_lib_types.ts-2338-2569-src_lib_types.ts-0-5941[]>": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "gapBefore": {
+            "description": "Extra spacing (in contrast steps) before this group starts. Used to create visual separation between groups.",
+            "type": "number"
+          },
+          "name": {
+            "type": "string"
+          },
+          "surfaces": {
+            "items": {
+              "$ref": "#/definitions/SurfaceConfig"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "name",
+          "surfaces"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "DeepPartial<def-alias-src_lib_types.ts-2569-2649-src_lib_types.ts-0-5941355102109>": {
+      "additionalProperties": false,
+      "properties": {
+        "p1": {
+          "$ref": "#/definitions/DeepPartial%3C%5Bnumber%2Cnumber%5D%3E"
+        },
+        "p2": {
+          "$ref": "#/definitions/DeepPartial%3C%5Bnumber%2Cnumber%5D%3E"
+        }
+      },
+      "type": "object"
+    },
+    "DeepPartial<indexed-type-1474508258-74242-74263-1474508258-74138-74264-1474508258-0-218439<string,string>1922313925>": {
+      "additionalProperties": {
+        "$ref": "#/definitions/DeepPartial%3Cstring%3E"
+      },
+      "type": "object"
+    },
+    "DeepPartial<number1805728063>": {
+      "description": "Maximum hue rotation in degrees.",
+      "type": "number"
+    },
+    "DeepPartial<number1808058353>": {
+      "description": "Number of sizes to generate (e.g. 5 for xs, sm, base, lg, xl).",
+      "type": "number"
+    },
+    "DeepPartial<number524178369>": {
+      "description": "Base size in rem (e.g. 0.75).",
+      "type": "number"
+    },
+    "DeepPartial<number686710375>": {
+      "description": "Max size in rem (e.g. 3.0).",
+      "type": "number"
+    },
+    "DeepPartial<number>": {
+      "type": "number"
+    },
+    "DeepPartial<string>": {
+      "type": "string"
+    },
+    "ModeSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "background": {
+          "type": "number"
+        },
+        "debug": {
+          "additionalProperties": false,
+          "properties": {
+            "clamped": {
+              "type": "boolean"
+            },
+            "targetContrast": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "targetContrast",
+            "clamped"
+          ],
+          "type": "object"
+        },
+        "fg-baseline": {
+          "type": "number"
+        },
+        "fg-high": {
+          "type": "number"
+        },
+        "fg-strong": {
+          "type": "number"
+        },
+        "fg-subtle": {
+          "type": "number"
+        },
+        "fg-subtlest": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "background",
+        "fg-high",
+        "fg-strong",
+        "fg-baseline",
+        "fg-subtle",
+        "fg-subtlest"
+      ],
+      "type": "object"
+    },
+    "Polarity": {
+      "enum": [
+        "page",
+        "inverted"
+      ],
+      "type": "string"
+    },
+    "StateDefinition": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "offset": {
+          "description": "Contrast offset relative to the parent surface. Positive = more contrast against text (lighter in light mode, darker in dark mode).",
+          "type": "number"
+        }
+      },
+      "required": [
+        "name",
+        "offset"
+      ],
+      "type": "object"
+    },
+    "SurfaceConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "computed": {
+          "additionalProperties": false,
+          "properties": {
+            "dark": {
+              "$ref": "#/definitions/ModeSpec"
+            },
+            "light": {
+              "$ref": "#/definitions/ModeSpec"
+            }
+          },
+          "required": [
+            "light",
+            "dark"
+          ],
+          "type": "object"
+        },
+        "contrastOffset": {
+          "$ref": "#/definitions/ContrastOffsets",
+          "description": "Shifts the surface's target contrast relative to its position in the sequence."
+        },
+        "description": {
+          "type": "string"
+        },
+        "hue": {
+          "description": "Target hue for this surface. Can be a number (0-360) or a reference to a key color (e.g. \"brand\").",
+          "type": [
+            "number",
+            "string"
+          ]
+        },
+        "label": {
+          "type": "string"
+        },
+        "override": {
+          "additionalProperties": false,
+          "description": "Manual hex override for the surface background color. If set, the solver will use this color instead of the calculated one.",
+          "properties": {
+            "dark": {
+              "type": "string"
+            },
+            "light": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "polarity": {
+          "$ref": "#/definitions/Polarity"
+        },
+        "slug": {
+          "type": "string"
+        },
+        "states": {
+          "description": "Derivative surfaces (states) that are solved relative to this surface.",
+          "items": {
+            "$ref": "#/definitions/StateDefinition"
+          },
+          "type": "array"
+        },
+        "targetChroma": {
+          "description": "Target chroma for this surface. If set, the solver will adjust Lightness to compensate for the HK effect.",
+          "type": "number"
+        }
+      },
+      "required": [
+        "slug",
+        "label",
+        "polarity"
+      ],
+      "type": "object"
+    },
+    "UserConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "$schema": {
+          "type": "string"
+        },
+        "anchors": {
+          "$ref": "#/definitions/DeepPartial%3CPolarityAnchors%3E"
+        },
+        "borderTargets": {
+          "additionalProperties": false,
+          "properties": {
+            "critical": {
+              "$ref": "#/definitions/DeepPartial%3Cnumber%3E"
+            },
+            "decorative": {
+              "$ref": "#/definitions/DeepPartial%3Cnumber%3E"
+            },
+            "interactive": {
+              "$ref": "#/definitions/DeepPartial%3Cnumber%3E"
+            }
+          },
+          "type": "object"
+        },
+        "groups": {
+          "$ref": "#/definitions/DeepPartial%3Cdef-alias-src_lib_types.ts-2338-2569-src_lib_types.ts-0-5941%5B%5D%3E"
+        },
+        "hueShift": {
+          "additionalProperties": false,
+          "properties": {
+            "curve": {
+              "$ref": "#/definitions/DeepPartial%3CBezierCurve%3E"
+            },
+            "maxRotation": {
+              "$ref": "#/definitions/DeepPartial%3Cnumber1805728063%3E"
+            }
+          },
+          "type": "object"
+        },
+        "options": {
+          "additionalProperties": false,
+          "properties": {
+            "prefix": {
+              "type": "string"
+            },
+            "selector": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "palette": {
+          "additionalProperties": false,
+          "properties": {
+            "hues": {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            "targetChroma": {
+              "type": "number"
+            },
+            "targetContrast": {
+              "type": "number"
+            }
+          },
+          "type": "object"
+        },
+        "presets": {
+          "additionalProperties": false,
+          "properties": {
+            "typography": {
+              "additionalProperties": false,
+              "properties": {
+                "fonts": {
+                  "additionalProperties": {
+                    "$ref": "#/definitions/DeepPartial%3Cstring%3E"
+                  },
+                  "type": "object"
+                },
+                "scale": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "curve": {
+                      "$ref": "#/definitions/DeepPartial%3Cdef-alias-src_lib_types.ts-2569-2649-src_lib_types.ts-0-5941355102109%3E"
+                    },
+                    "maxSize": {
+                      "$ref": "#/definitions/DeepPartial%3Cnumber686710375%3E"
+                    },
+                    "minSize": {
+                      "$ref": "#/definitions/DeepPartial%3Cnumber524178369%3E"
+                    },
+                    "steps": {
+                      "$ref": "#/definitions/DeepPartial%3Cnumber1808058353%3E"
+                    }
+                  },
+                  "type": "object"
+                },
+                "sizes": {
+                  "additionalProperties": {
+                    "$ref": "#/definitions/DeepPartial%3Cstring%3E"
+                  },
+                  "type": "object"
+                },
+                "weights": {
+                  "additionalProperties": {
+                    "$ref": "#/definitions/DeepPartial%3Cnumber%3E"
+                  },
+                  "type": "object"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "vibe": {
+          "$ref": "#/definitions/VibeName"
+        }
+      },
+      "type": "object"
+    },
+    "VibeName": {
+      "type": [
+        "string"
+      ]
+    }
+  }
+}
+```
+
+---
+

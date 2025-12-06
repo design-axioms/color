@@ -1,10 +1,15 @@
 #!/bin/bash
 
+# Ensure we are running from the workspace root
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+WORKSPACE_ROOT="$(dirname "$(dirname "$SCRIPT_DIR")")"
+cd "$WORKSPACE_ROOT" || exit 1
+
 echo "=== Running Verification ==="
 if [ -f "scripts/check" ]; then
     ./scripts/check
 else
-    echo "Error: scripts/check not found."
+    echo "Error: scripts/check not found in $WORKSPACE_ROOT"
     exit 1
 fi
 

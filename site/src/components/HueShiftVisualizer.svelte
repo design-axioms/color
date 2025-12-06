@@ -76,14 +76,21 @@
     return factor * maxRotation;
   }
 
-  // State
-  let p1x = $state(0.33);
-  let p1y = $state(0.0);
-  let p2x = $state(0.67);
-  let p2y = $state(1.0);
-  let maxRotation = $state(60);
-  let baseHue = $state(270); // Purple
-  let showControls = $state(true);
+  interface Props {
+    curve?: { p1: [number, number]; p2: [number, number] };
+    maxRotation?: number;
+    baseHue?: number;
+    showControls?: boolean;
+    onUpdate?: () => void;
+  }
+
+  let {
+    curve = $bindable({ p1: [0.33, 0.0], p2: [0.67, 1.0] }),
+    maxRotation = $bindable(60),
+    baseHue = $bindable(270),
+    showControls = $bindable(true),
+    onUpdate,
+  }: Props = $props();
 
   // Dragging State
   let dragging = $state<"p1" | "p2" | null>(null);
@@ -96,7 +103,7 @@
     for (let i = 0; i <= steps; i++) {
       const l = i / steps;
       const shift = calculateHueShift(l, {
-        curve: { p1: [p1x, p1y], p2: [p2x, p2y] },
+        curve,
         maxRotation,
       });
       pts.push({ l, shift });
@@ -173,10 +180,10 @@
     const endX = toSvgX(1);
     const endY = toSvgY(1);
 
-    const cp1x = toSvgX(p1x);
-    const cp1y = toSvgY(p1y);
-    const cp2x = toSvgX(p2x);
-    const cp2y = toSvgY(p2y);
+    const cp1x = toSvgX(curve.p1[0]);
+    const cp1y = toSvgY(curve.p1[1]);
+    const cp2x = toSvgX(curve.p2[0]);
+    const cp2y = toSvgY(curve.p2[1]);
 
     return `M ${startX} ${startY} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${endX} ${endY}`;
   });
@@ -208,17 +215,21 @@
     const y = fromSvgY(svgY);
 
     if (dragging === "p1") {
-      p1x = x;
-      p1y = y;
+      curve.p1[0] = x;
+      curve.p1[1] = y;
     } else {
-      p2x = x;
-      p2y = y;
+      curve.p2[0] = x;
+      curve.p2[1] = y;
     }
+    onUpdate?.();
   }
 
   function handleMouseUp(): void {
     dragging = null;
   }
+
+  const sliderGradient =
+    "linear-gradient(to right, oklch(0.6 0.2 0), oklch(0.6 0.2 90), oklch(0.6 0.2 180), oklch(0.6 0.2 270), oklch(0.6 0.2 360))";
 </script>
 
 <svelte:window
@@ -228,7 +239,7 @@
   ontouchmove={handleMouseMove}
 />
 
-<div class="visualizer-container not-content">
+<div class="visualizer-container not-content surface-card bordered">
   <div class="visualizer-header">
     <h3 class="text-strong">Hue Shift Playground</h3>
     <p class="text-subtle">
@@ -239,7 +250,7 @@
   <div class="visualizer-grid">
     <!-- Graph Section -->
     <div class="graph-section">
-      <div class="graph-container">
+      <div class="graph-container surface-workspace bordered">
         <svg
           bind:this={svgElement}
           viewBox="0 0 100 100"
@@ -256,7 +267,7 @@
               <path
                 d="M 10 0 L 0 0 0 10"
                 fill="none"
-                stroke="var(--border-subtle-token)"
+                stroke="var(--computed-border-dec-color)"
                 stroke-width="0.5"
               />
             </pattern>
@@ -272,7 +283,7 @@
           <path
             d={svgPath}
             fill="none"
-            stroke="var(--text-high-token)"
+            stroke="var(--computed-fg-color)"
             stroke-width="3"
             stroke-linecap="round"
             vector-effect="non-scaling-stroke"
@@ -284,9 +295,9 @@
             <line
               x1={toSvgX(0)}
               y1={toSvgY(0)}
-              x2={toSvgX(p1x)}
-              y2={toSvgY(p1y)}
-              stroke="var(--text-subtle-token)"
+              x2={toSvgX(curve.p1[0])}
+              y2={toSvgY(curve.p1[1])}
+              stroke="var(--computed-fg-color)"
               stroke-width="1"
               stroke-dasharray="2 2"
               vector-effect="non-scaling-stroke"
@@ -296,58 +307,38 @@
             <line
               x1={toSvgX(1)}
               y1={toSvgY(1)}
-              x2={toSvgX(p2x)}
-              y2={toSvgY(p2y)}
-              stroke="var(--text-subtle-token)"
+              x2={toSvgX(curve.p2[0])}
+              y2={toSvgY(curve.p2[1])}
+              stroke="var(--computed-fg-color)"
               stroke-width="1"
               stroke-dasharray="2 2"
               vector-effect="non-scaling-stroke"
               opacity="0.5"
             />
 
-            <!-- Control Points (Interactive) -->
+            <!-- Control Points (Visual Only) -->
             <!-- P1 -->
             <circle
-              cx={toSvgX(p1x)}
-              cy={toSvgY(p1y)}
+              cx={toSvgX(curve.p1[0])}
+              cy={toSvgY(curve.p1[1])}
               r="4"
-              fill="var(--surface-token)"
-              stroke="var(--text-high-token)"
+              fill="var(--computed-bg-color)"
+              stroke="var(--computed-fg-color)"
               stroke-width="2"
               vector-effect="non-scaling-stroke"
               class="control-point"
-              role="button"
-              tabindex="0"
-              aria-label="Control Point 1"
-              onmousedown={() => {
-                handleMouseDown("p1");
-              }}
-              ontouchstart={() => {
-                handleMouseDown("p1");
-              }}
-              style:cursor={dragging ? "grabbing" : "grab"}
             />
 
             <!-- P2 -->
             <circle
-              cx={toSvgX(p2x)}
-              cy={toSvgY(p2y)}
+              cx={toSvgX(curve.p2[0])}
+              cy={toSvgY(curve.p2[1])}
               r="4"
-              fill="var(--surface-token)"
-              stroke="var(--text-high-token)"
+              fill="var(--computed-bg-color)"
+              stroke="var(--computed-fg-color)"
               stroke-width="2"
               vector-effect="non-scaling-stroke"
               class="control-point"
-              role="button"
-              tabindex="0"
-              aria-label="Control Point 2"
-              onmousedown={() => {
-                handleMouseDown("p2");
-              }}
-              ontouchstart={() => {
-                handleMouseDown("p2");
-              }}
-              style:cursor={dragging ? "grabbing" : "grab"}
             />
           {/if}
 
@@ -356,42 +347,83 @@
             cx={toSvgX(0)}
             cy={toSvgY(0)}
             r="2"
-            fill="var(--text-subtle-token)"
+            fill="var(--computed-fg-color)"
             vector-effect="non-scaling-stroke"
           />
           <circle
             cx={toSvgX(1)}
             cy={toSvgY(1)}
             r="2"
-            fill="var(--text-subtle-token)"
+            fill="var(--computed-fg-color)"
             vector-effect="non-scaling-stroke"
           />
         </svg>
 
+        {#if showControls}
+          <!-- Interactive Overlay -->
+          <div class="controls-overlay">
+            <!-- P1 Button -->
+            <button
+              type="button"
+              class="control-handle ring-focus-visible"
+              style:left="{toSvgX(curve.p1[0])}%"
+              style:top="{toSvgY(curve.p1[1])}%"
+              style:cursor={dragging ? "grabbing" : "grab"}
+              aria-label="Control Point 1"
+              onmousedown={() => {
+                handleMouseDown("p1");
+              }}
+              ontouchstart={() => {
+                handleMouseDown("p1");
+              }}
+            ></button>
+
+            <!-- P2 Button -->
+            <button
+              type="button"
+              class="control-handle ring-focus-visible"
+              style:left="{toSvgX(curve.p2[0])}%"
+              style:top="{toSvgY(curve.p2[1])}%"
+              style:cursor={dragging ? "grabbing" : "grab"}
+              aria-label="Control Point 2"
+              onmousedown={() => {
+                handleMouseDown("p2");
+              }}
+              ontouchstart={() => {
+                handleMouseDown("p2");
+              }}
+            ></button>
+          </div>
+        {/if}
+
         <!-- Axis Labels -->
-        <div class="axis-label x-axis">Lightness (0 → 100)</div>
-        <div class="axis-label y-axis">Rotation (0° → {maxRotation}°)</div>
+        <div class="axis-label x-axis text-subtle">Lightness (0 → 100)</div>
+        <div class="axis-label y-axis text-subtle">
+          Rotation (0° → {maxRotation}°)
+        </div>
       </div>
 
       <!-- Gradient Strip -->
       <div class="gradient-preview">
         <div class="preview-row">
-          <span class="preview-label">Result</span>
+          <span class="preview-label text-subtle">Result</span>
           <div
             class="gradient-strip"
             style:background="linear-gradient(to right, {gradientStops})"
           ></div>
         </div>
         <div class="preview-row">
-          <span class="preview-label">Hue Only</span>
+          <span class="preview-label text-subtle">Hue Only</span>
           <div
             class="gradient-strip"
             style:background="linear-gradient(to right, {hueGradientStops})"
           ></div>
         </div>
-        <div class="gradient-labels">
+        <div class="gradient-labels text-subtle">
           <span>Black</span>
-          <span class="mid-label">Hue at 50% L: {midPointHue.toFixed(1)}°</span>
+          <span class="mid-label text-strong"
+            >Hue at 50% L: {midPointHue.toFixed(1)}°</span
+          >
           <span>White</span>
         </div>
       </div>
@@ -400,10 +432,10 @@
     <!-- Controls Section -->
     <div class="controls-section">
       <div class="control-group">
-        <h4 class="control-title">Global Parameters</h4>
+        <h4 class="control-title text-subtle">Global Parameters</h4>
 
         <div class="control-item">
-          <label class="checkbox-label">
+          <label class="checkbox-label text-strong">
             <input type="checkbox" bind:checked={showControls} />
             Show Control Points
           </label>
@@ -411,8 +443,10 @@
 
         <div class="control-item">
           <div class="control-header">
-            <label for="maxRotation-{uid}">Max Rotation</label>
-            <span class="control-value">{maxRotation}°</span>
+            <label for="maxRotation-{uid}" class="text-strong"
+              >Max Rotation</label
+            >
+            <span class="control-value text-subtle">{maxRotation}°</span>
           </div>
           <div class="slider-container">
             <div class="slider-track"></div>
@@ -430,16 +464,11 @@
 
         <div class="control-item">
           <div class="control-header">
-            <label for="baseHue-{uid}">Base Hue</label>
-            <span class="control-value">{baseHue}°</span>
+            <label for="baseHue-{uid}" class="text-strong">Base Hue</label>
+            <span class="control-value text-subtle">{baseHue}°</span>
           </div>
           <div class="slider-container">
-            <div
-              class="slider-track"
-              style:background="linear-gradient(to right, oklch(0.6 0.2 0),
-              oklch(0.6 0.2 90), oklch(0.6 0.2 180), oklch(0.6 0.2 270),
-              oklch(0.6 0.2 360))"
-            ></div>
+            <div class="slider-track" style:background={sliderGradient}></div>
             <input
               type="range"
               id="baseHue-{uid}"
@@ -455,18 +484,22 @@
 
       <!-- Bezier Sliders Removed in favor of direct manipulation -->
       <div class="control-group">
-        <h4 class="control-title">Curve Values</h4>
+        <h4 class="control-title text-subtle">Curve Values</h4>
         <div class="values-grid">
-          <div class="value-item">
-            <span class="label">P1</span>
-            <span class="value">({p1x.toFixed(2)}, {p1y.toFixed(2)})</span>
+          <div class="value-item surface-workspace bordered">
+            <span class="label text-subtle">P1</span>
+            <span class="value text-strong"
+              >({curve.p1[0].toFixed(2)}, {curve.p1[1].toFixed(2)})</span
+            >
           </div>
-          <div class="value-item">
-            <span class="label">P2</span>
-            <span class="value">({p2x.toFixed(2)}, {p2y.toFixed(2)})</span>
+          <div class="value-item surface-workspace bordered">
+            <span class="label text-subtle">P2</span>
+            <span class="value text-strong"
+              >({curve.p2[0].toFixed(2)}, {curve.p2[1].toFixed(2)})</span
+            >
           </div>
         </div>
-        <p class="hint-text">
+        <p class="hint-text text-subtle">
           Drag the points on the graph to adjust the curve.
         </p>
       </div>
@@ -476,8 +509,6 @@
 
 <style>
   .visualizer-container {
-    background: var(--surface-token);
-    border: 1px solid var(--border-subtle-token);
     border-radius: 8px;
     padding: 1.5rem;
     display: flex;
@@ -488,13 +519,11 @@
   .visualizer-header h3 {
     margin: 0 0 0.25rem 0;
     font-size: 1.1rem;
-    color: var(--text-high-token);
   }
 
   .visualizer-header p {
     margin: 0;
     font-size: 0.9rem;
-    color: var(--text-subtle-token);
   }
 
   .visualizer-grid {
@@ -513,8 +542,6 @@
   .graph-container {
     position: relative;
     height: 250px;
-    background: var(--surface-page-token, #f8f9fa); /* Fallback */
-    border: 1px solid var(--border-subtle-token);
     border-radius: 6px;
     overflow: hidden;
     touch-action: none; /* Prevent scrolling while dragging */
@@ -537,7 +564,6 @@
   .axis-label {
     position: absolute;
     font-size: 0.75rem;
-    color: var(--text-subtlest-token);
     font-family: monospace;
   }
 
@@ -549,6 +575,25 @@
   .y-axis {
     top: 4px;
     left: 8px;
+  }
+
+  .controls-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .control-handle {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    transform: translate(-50%, -50%);
+    background: transparent;
+    border: none;
+    border-radius: 50%;
+    cursor: grab;
+    pointer-events: auto;
+    padding: 0;
   }
 
   /* Gradient Preview */
@@ -567,26 +612,23 @@
 
   .preview-label {
     font-size: 0.75rem;
-    color: var(--text-subtle-token);
     font-weight: 600;
   }
 
   .gradient-strip {
     height: 32px;
     border-radius: 4px;
-    border: 1px solid var(--border-subtle-token);
+    border: 1px solid var(--computed-border-dec-color);
   }
 
   .gradient-labels {
     display: flex;
     justify-content: space-between;
     font-size: 0.75rem;
-    color: var(--text-subtle-token);
   }
 
   .mid-label {
     font-family: monospace;
-    color: var(--text-high-token);
   }
 
   /* Controls */
@@ -607,8 +649,7 @@
     font-size: 0.85rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: var(--text-subtle-token);
-    border-bottom: 1px solid var(--border-subtle-token);
+    border-bottom: 1px solid var(--computed-border-dec-color);
     padding-bottom: 0.5rem;
   }
 
@@ -625,14 +666,9 @@
     font-size: 0.9rem;
   }
 
-  .control-header label {
-    color: var(--text-strong-token);
-  }
-
   .control-value {
     font-family: monospace;
     font-size: 0.85rem;
-    color: var(--text-subtle-token);
   }
 
   /* Values Grid */
@@ -646,27 +682,22 @@
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
-    background: var(--surface-page-token);
     padding: 0.5rem;
     border-radius: 4px;
-    border: 1px solid var(--border-subtle-token);
   }
 
   .value-item .label {
     font-size: 0.75rem;
-    color: var(--text-subtle-token);
     font-weight: 600;
   }
 
   .value-item .value {
     font-family: monospace;
     font-size: 0.9rem;
-    color: var(--text-high-token);
   }
 
   .hint-text {
     font-size: 0.8rem;
-    color: var(--text-subtle-token);
     font-style: italic;
     margin: 0;
   }
@@ -676,7 +707,6 @@
     align-items: center;
     gap: 0.5rem;
     font-size: 0.9rem;
-    color: var(--text-strong-token);
     cursor: pointer;
     user-select: none;
   }
@@ -693,7 +723,7 @@
     position: absolute;
     width: 100%;
     height: 4px;
-    background: var(--border-subtle-token);
+    background: var(--computed-border-dec-color);
     border-radius: 2px;
     pointer-events: none;
   }
@@ -721,8 +751,8 @@
     width: 16px;
     height: 16px;
     border-radius: 50%;
-    background: var(--text-high-token);
-    border: 2px solid var(--surface-token);
+    background: var(--computed-fg-color);
+    border: 2px solid var(--computed-bg-color);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
     margin-top: -6px; /* Center vertically relative to track if needed, but flex handles it */
   }
@@ -731,8 +761,8 @@
     width: 16px;
     height: 16px;
     border-radius: 50%;
-    background: var(--text-high-token);
-    border: 2px solid var(--surface-token);
+    background: var(--computed-fg-color);
+    border: 2px solid var(--computed-bg-color);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
   }
 </style>

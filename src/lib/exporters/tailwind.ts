@@ -1,4 +1,4 @@
-import type { ColorSpec, Theme } from "../types.ts";
+import type { ColorSpec, ConfigOptions, Theme } from "../types.ts";
 
 const toNumber = (n: number): number => parseFloat(n.toFixed(4));
 
@@ -6,21 +6,27 @@ const formatOklch = (spec: ColorSpec): string => {
   return `oklch(${toNumber(spec.l)} ${toNumber(spec.c)} ${toNumber(spec.h)})`;
 };
 
-export function toTailwind(theme: Theme): Record<string, unknown> {
+export function toTailwind(
+  theme: Theme,
+  options?: ConfigOptions,
+): Record<string, unknown> {
+  const prefix = options?.prefix ? `${options.prefix}-` : "";
+  const v = (name: string): string => `var(--${prefix}${name})`;
+
   const colors: Record<string, unknown> = {
     // Contextual Text Colors (map to CSS variables)
     text: {
-      high: "var(--text-high-token)",
-      subtle: "var(--text-subtle-token)",
-      subtlest: "var(--text-subtlest-token)",
+      high: v("text-high-token"),
+      subtle: v("text-subtle-token"),
+      subtlest: v("text-subtlest-token"),
     },
     // Contextual Border Colors (map to CSS variables)
     border: {
-      dec: "var(--border-dec-token)",
-      int: "var(--border-int-token)",
+      dec: v("border-dec-token"),
+      int: v("border-int-token"),
     },
     // Global Focus Ring
-    focus: "var(--focus-ring-color)",
+    focus: v("focus-ring-color"),
     // Surface Colors (map to light-dark values)
     surface: {} as Record<string, string>,
     // Chart Colors (map to CSS variables)

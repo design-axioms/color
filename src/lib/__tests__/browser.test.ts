@@ -30,6 +30,7 @@ describe("ThemeManager", () => {
     global.getComputedStyle = vi.fn(() => ({
       backgroundColor: "red",
       color: "blue",
+      getPropertyValue: vi.fn(() => ""),
     })) as any;
 
     mockMediaQueryList = {
@@ -65,7 +66,7 @@ describe("ThemeManager", () => {
     expect(manager.mode).toBe("light");
     expect(mockRoot.style.setProperty).toHaveBeenCalledWith(
       "color-scheme",
-      "light"
+      "light",
     );
   });
 
@@ -75,7 +76,7 @@ describe("ThemeManager", () => {
     expect(manager.mode).toBe("dark");
     expect(mockRoot.style.setProperty).toHaveBeenCalledWith(
       "color-scheme",
-      "dark"
+      "dark",
     );
   });
 
@@ -89,14 +90,14 @@ describe("ThemeManager", () => {
     expect(mockRoot.classList.add).toHaveBeenCalledWith("light-theme");
     expect(mockRoot.style.setProperty).not.toHaveBeenCalledWith(
       "color-scheme",
-      "light"
+      "light",
     );
 
     manager.setMode("dark");
     expect(mockRoot.classList.add).toHaveBeenCalledWith("dark-theme");
     expect(mockRoot.style.setProperty).not.toHaveBeenCalledWith(
       "color-scheme",
-      "dark"
+      "dark",
     );
   });
 

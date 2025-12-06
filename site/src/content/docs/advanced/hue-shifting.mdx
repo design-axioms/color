@@ -2,10 +2,10 @@
 title: Hue Shifting
 ---
 
-import DemoWrapper from "../../../components/DemoWrapper.svelte";
 import DebugVisualizer from "../../../components/DebugVisualizer.svelte";
-import HueShiftVisualizer from "../../../components/HueShiftVisualizer.svelte";
+import DemoWrapper from "../../../components/DemoWrapper.svelte";
 import Diagram from "../../../components/Diagram.svelte";
+import HueShiftVisualizer from "../../../components/HueShiftVisualizer.svelte";
 
 ## Why Shift Hues?
 
@@ -105,7 +105,7 @@ function cubicBezier(t: number, p1: number, p2: number): number {
 
 export function calculateHueShift(
   lightness: number,
-  config?: HueShiftConfig
+  config?: HueShiftConfig,
 ): number {
   if (!config) return 0;
   const { curve, maxRotation } = config;
@@ -221,7 +221,7 @@ You can customize the curve by adjusting the control points:
 - Moving P1/P2 vertically to create asymmetric curves
 - Adjusting `maxRotation` for subtler or more dramatic effects
 
-**Tip:** You can also adjust these settings visually in the **Theme Builder**. The UI provides a curve editor where you can drag the control points and see the color palette update in real-time.
+**Tip:** You can also adjust these settings visually in the **Theme Studio**. The UI provides a curve editor where you can drag the control points and see the color palette update in real-time.
 
 ### Implementation Note
 

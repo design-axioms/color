@@ -1,0 +1,127 @@
+---
+title: The Reactive Pipeline
+description: Understanding Color as a Function of Context
+---
+
+import Diagram from "../../../components/Diagram.svelte";
+
+# The Reactive Pipeline
+
+Most color systems are **Static Maps**. You define a palette (`blue-500`), assign it to a variable (`--primary`), and use it.
+
+Axiomatic Color is different. It is a **Reactive Pipeline**.
+
+## The Core Equation
+
+If you are familiar with React, you know the formula:
+
+$$
+UI = f(State)
+$$
+
+In Axiomatic Color, we apply this same principle to design tokens:
+
+$$
+Color = f(Context, Intent)
+$$
+
+- **Context**: Where is this element? (Light Mode? Dark Mode? Inside a Card? On a Brand Surface?)
+- **Intent**: What is this element? (Text? Border? Background?)
+- **Color**: The final pixel value.
+
+## Static vs. Reactive
+
+### The Static Model (Traditional)
+
+In a traditional system, tokens are **Values**.
+
+```css
+:root {
+  --text-primary: #111827;
+  --bg-card: #ffffff;
+}
+
+.dark {
+  --text-primary: #f9fafb;
+  --bg-card: #1f2937;
+}
+```
+
+This works for simple Light/Dark switching. But what happens when you put a card _inside_ a dark section in Light Mode? You have to manually override the tokens or use complex CSS cascades.
+
+### The Reactive Model (Axiomatic)
+
+In Axiomatic, tokens are **Functions**.
+
+We don't just swap values; we swap the **calculation**.
+
+```css
+/* Simplified for explanation */
+.surface-card {
+  /* 1. Establish Context */
+  --context-lightness: var(--anchor-page-lightness);
+
+  /* 2. Define the Function */
+  background: oklch(var(--context-lightness) 0 0);
+  color: oklch(from var(--context-lightness) calc(1 - l) 0 0);
+}
+```
+
+When you nest a surface, the `Context` changes. The `Intent` (Text, Background) remains the same, but because the input `Context` changed, the output `Color` automatically updates.
+
+## How It Works: Late Binding
+
+To make this work in standard CSS, we use a technique called **Late Binding**.
+
+Instead of resolving colors at build time (Sass/PostCSS), we resolve them at **Runtime** (Browser) using CSS Custom Properties.
+
+### 1. The Inputs (Primitives)
+
+We start with the raw ingredients. These are global and immutable.
+
+```css
+:root {
+  --primitive-brand-500: oklch(0.6 0.2 250);
+  --primitive-neutral-0: oklch(1 0 0);
+  --primitive-neutral-1000: oklch(0 0 0);
+}
+```
+
+### 2. The Context (State)
+
+When you enter a surface, it sets local variables that describe the environment.
+
+```css
+.surface-sunken {
+  /* I am a slightly darker surface */
+  --context-base-lightness: 0.95;
+  --context-contrast-direction: -1; /* Get darker for contrast */
+}
+```
+
+### 3. The Resolution (Function)
+
+Utility classes don't point to fixed colors. They point to **Logic**.
+
+```css
+.text-subtle {
+  /* Calculate lightness based on the CURRENT context */
+  --lightness: calc(
+    var(--context-base-lightness) + (0.2 * var(--context-contrast-direction))
+  );
+
+  color: oklch(var(--lightness) 0 0);
+}
+```
+
+## Why This Matters
+
+1.  **Inversion is Free**: To create a "Dark Mode" section inside Light Mode, we just flip the `Context` variables. All children (`.text-subtle`, `.border-muted`) automatically recalculate.
+2.  **Infinite Nesting**: You can nest cards inside cards inside sidebars. The contrast ratios are preserved mathematically.
+3.  **Component Portability**: A component doesn't need to know if it's on a dark background or a light one. It just asks for "Subtle Text", and the pipeline delivers the correct accessible color.
+
+## The "Weirdness" Budget
+
+This approach requires a mental shift. You stop thinking about "What color is this?" and start thinking "What is the relationship between this element and its container?".
+
+It feels "weird" because CSS has historically been static. But just as React made UI reactive, Axiomatic makes Color reactive. The result is a system that is robust, maintainable, and mathematically accessible by default.

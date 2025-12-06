@@ -11,6 +11,8 @@ const WHITELIST = [
 
 const IGNORE_PATTERNS = [
   "node_modules/**",
+  "**/node_modules/**",
+  "vendor/**",
   "dist/**",
   "coverage/**",
   ".git/**",
@@ -32,6 +34,7 @@ const IGNORE_PATTERNS = [
   "**/*.eot",
   "**/*.mp4",
   "**/*.webm",
+  "**/*.otf",
 ];
 
 async function checkSecurity(): Promise<void> {
@@ -54,6 +57,17 @@ async function checkSecurity(): Promise<void> {
 
   for (const file of files) {
     try {
+      // Check if file matches any ignore pattern (simple extension check)
+      const isIgnored = IGNORE_PATTERNS.some((pattern) => {
+        if (pattern.startsWith("**/*.")) {
+          const ext = pattern.substring(4);
+          return file.endsWith(ext);
+        }
+        return false;
+      });
+
+      if (isIgnored) continue;
+
       // Skip if it looks like a binary file based on extension (simple check)
       // The glob ignore handles most, but just in case
 

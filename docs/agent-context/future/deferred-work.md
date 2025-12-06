@@ -17,3 +17,16 @@ We encountered an issue where applying a brand hue to an inverted `surface-actio
 - Is unregistering properties the right approach, or does it break the "Typed CSS" philosophy?
 - Should the "Brand Action" be a distinct surface type in the config rather than a CSS modifier class?
 - Does the current approach scale to other surface types that might need similar overrides?
+
+## Epoch 22: Fresh Eyes Audit
+
+### Luminance Spectrum UI
+
+**Context:**
+We planned to replace the disconnected "Page Anchors" sliders with a unified "Luminance Spectrum" visualization to improve the mental model of lightness and contrast.
+
+**Status:**
+Deferred to prioritize the "Fresh Eyes" audit and simulation.
+
+**Goal:**
+Implement a unified slider/graph that visualizes the entire lightness spectrum (0-100) and allows manipulating anchors directly on it, showing the "Safe Zone" and contrast relationships.

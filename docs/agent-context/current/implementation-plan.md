@@ -1,54 +1,28 @@
-# Implementation Plan - Epoch 20: Linting & Quality Assurance (Phase 2)
+# Implementation Plan - Epoch 35: Deployment & Release
 
-**Goal**: Systematically resolve the ~130 linting errors identified in Phase 1 to achieve a clean, zero-error codebase.
+## Phase 1: Pre-Flight Verification
 
-## 1. Svelte Component Fixes
+**Goal**: Ensure the codebase is in a deployable state.
 
-- [ ] **Missing Keys**: Fix `svelte/require-each-key` errors in `#each` blocks.
-  - [ ] `DataVizDemo.svelte`
-  - [ ] `DynamicRange.svelte`
-  - [ ] `KeyColorsEditor.svelte`
-  - [ ] `VisualizerGraph.svelte`
-  - [ ] `TokenLevelVisualizer.svelte`
-  - [ ] `InspectorPanel.svelte`
-- [ ] **Return Types**: Add explicit return types to functions in components.
-  - [ ] `DebugVisualizer.svelte`
-  - [ ] `Diagram.svelte`
-  - [ ] `DynamicRange.svelte`
-  - [ ] `HueShiftVisualizer.svelte`
-  - [ ] `AnchorGraph.svelte`
-  - [ ] `SurfaceManager.svelte`
-  - [ ] `SurfaceRow.svelte`
-  - [ ] `VisualizerGraph.svelte`
-  - [ ] `InspectorSurface.svelte`
-  - [ ] `TokenInspector.svelte`
-- [ ] **Type Safety**: Resolve `no-unsafe-*` and `no-explicit-any` errors.
-  - [ ] `Diagram.svelte`
-  - [ ] `SurfaceManager.svelte` (heavy usage of `any`)
-  - [ ] `SurfaceRow.svelte` (heavy usage of `any`)
-  - [ ] `ThemeBuilder.svelte`
-- [ ] **Void Expressions**: Fix `no-confusing-void-expression` in arrow functions.
-  - [ ] `HueShiftVisualizer.svelte`
-  - [ ] `ThemeToggle.svelte`
-  - [ ] `AnchorGraph.svelte`
-  - [ ] `KeyColorsEditor.svelte`
-  - [ ] `SurfaceManager.svelte`
-  - [ ] `SurfaceRow.svelte`
-  - [ ] `ThemeBuilder.svelte`
-  - [ ] `TokenInspector.svelte`
-- [ ] **Mustache Interpolation**: Fix `svelte/no-useless-mustaches`.
-  - [ ] `HueShiftVisualizer.svelte`
-  - [ ] `ThemeBuilder.svelte`
+1.  **Build Verification**:
+    - Execute the full build pipeline locally to catch any environment-specific issues.
+    - Specifically check the `site` build as it's the deployment target.
 
-## 2. Script Fixes
+2.  **Quality Assurance**:
+    - Run the full suite of linters (including the new math linter) and tests.
 
-- [ ] **Check Links**: Fix `scripts/check-links.ts` (return types, floating promises).
+3.  **Documentation**:
+    - Review the changelog to ensure it captures the recent major changes (Lightning CSS, Token Simplification).
 
-## 3. Library Fixes
+## Phase 2: Deployment
 
-- [ ] **Exporters**: Fix `no-unnecessary-condition` in `dtcg.ts` and `tailwind.ts`.
+**Goal**: Push to production.
 
-## 4. Verification
+1.  **Trigger Deployment**:
+    - Pushing to `main` should trigger Vercel.
+    - Monitor the Vercel dashboard (if accessible) or check the deployment URL.
 
-- [ ] Run `pnpm lint` to confirm 0 errors.
-- [ ] Run `pnpm test:coverage` to ensure no regressions.
+2.  **Live Verification**:
+    - Visit the live site.
+    - Check the Theme Builder.
+    - Check the Documentation pages.

@@ -1,0 +1,3737 @@
+# Axiomatic Color - Full Documentation
+
+## Axioms
+
+# The Constitution (Axioms)
+
+> **Status**: Living Document
+> **Version**: 2.0 (Epoch 30)
+
+This document serves as the "Constitution" for Axiomatic Color. It consolidates the core philosophy, physical laws, and architectural rules that govern the system. All design decisions and code changes must align with these axioms.
+
+## Vision
+
+**Axiomatic Color is a Physics Engine for Design.**
+
+We are not building a "Paint Set" (a collection of static colors). We are building a **Deterministic System** that generates accessible, harmonious, and adaptive interfaces from semantic intent.
+
+- **Input**: Semantic Intent + Context.
+- **Process**: Algorithmic Solver (Accessibility Constraints + Optical Physics).
+- **Output**: Adaptive, Accessible, Harmonious UI.
+
+## The Axioms
+
+The axioms are organized into domains:
+
+### [0. The Fundamental Theorem](axioms/00-fundamental-theorem.md)
+
+**Color = f(Context, Intent)**
+Color is not a static value; it is a function. The system is a reactive dependency graph that resolves pixel values based on semantic intent and environmental context.
+
+### [I. The Prime Directive](axioms/01-accessibility.md)
+
+**Accessibility is the Foundation of Aesthetics.**
+We reject the idea that accessibility and aesthetics are in conflict. Accessibility is the mathematical constraint solver that generates the palette.
+
+### [II. The Laws of Physics (Light)](axioms/02-physics.md)
+
+**Lightness is Relative. Chroma is Expensive. Hue Rotates.**
+We model color as a physical phenomenon, respecting the non-linear nature of human perception (Bezold-Brücke effect, Gamut Cusps).
+
+### [III. The Laws of Architecture (Surfaces)](axioms/03-architecture.md)
+
+**Surfaces are Containers. Context Flows Down. Text is Relative.**
+We organize UI elements into a strict taxonomy of Surfaces that establish Context for their children.
+
+### [IV. The Laws of Integration](axioms/04-integration.md)
+
+**Code is Truth. No Magic Numbers. Baseline Newly Available.**
+We ensure consistency and interoperability by deriving everything from configuration and targeting modern web standards.
+
+### [V. The Laws of Engineering](axioms/05-engineering.md)
+
+**State is a Domain Model. Testing is a Ratchet. Late Binding.**
+We build maintainable, testable software that leverages the power of the browser's CSS engine for dynamic resolution.
+
+### [VI. The Law of Static Projection](axioms/06-projection.md)
+
+**Static exports are snapshots.**
+Since the system is dynamic, any static export (JSON, PDF) is a lossy projection of the system's state at a specific moment. We must enumerate states explicitly in these formats.
+
+## Missing / Implicit Axioms (To Be Formalized)
+
+The following principles guide our work but have not yet been codified into Law:
+
+- **The Law of Determinism**: Given the same configuration, the output must be bit-for-bit identical.
+- **The Law of Lossless Interoperability**: We export to other formats (Tailwind, DTCG) without losing semantic meaning.
+- **The Law of "Just Enough" Configuration**: We expose knobs for _intent_, not _implementation_.
+
+---
+
+## advanced/composition-algebra.mdx
+
+> **Context**: The physics and grammar of the Axiomatic Color system.
+
+This document defines the "Physics" of the Axiomatic Color system. While the system is built on rigorous math, you can think of it using a simple grammatical analogy:
+
+- **Context (<math><mi>H</mi><mo>,</mo><mi>C</mi></math>) is the Setting**: It's the lighting in the room. If the room is red, everything inside is tinted red. This "atmosphere" permeates everything.
+- **Intent (<math><mi>L</mi></math>) is the Voice**: It's how loud you are speaking. You can whisper (Subtle) or shout (High).
+- **Surfaces are Scene Changes**: When you walk into a new room (a Card, a Sidebar), the conversation resets. You stop shouting, but the lighting might stay the same.
+
+Below, we formalize these intuitions into a set of rules that guarantee your UI always looks consistent.
+
+## 1. The State Space (<math><mi mathvariant="normal">Σ</mi></math>)
+
+The system state at any point in the DOM tree is defined by a vector <math><mi mathvariant="normal">Σ</mi></math>.
+
+<math display="block">
+  <mrow>
+    <mi mathvariant="normal">Σ</mi>
+    <mo>=</mo>
+    <mo stretchy="false">⟨</mo>
+    <mi>H</mi>
+    <mo>,</mo>
+    <mi>C</mi>
+    <mo>,</mo>
+    <msub>
+      <mi>L</mi>
+      <mi mathvariant="italic">src</mi>
+    </msub>
+    <mo>,</mo>
+    <mi>α</mi>
+    <mo stretchy="false">⟩</mo>
+  </mrow>
+</math>
+
+<DemoWrapper>
+  <Diagram>
+    <StateVectorExplainer client:load />
+  </Diagram>
+</DemoWrapper>
+
+:::tip[In Plain English]
+Think of <math><mi mathvariant="normal">Σ</mi></math> as the "DNA" of the current element. It carries four genes: what color family we are in (<math><mi>H</mi></math>), how vibrant it is (<math><mi>C</mi></math>), how bright the text should be (<math><msub><mi>L</mi><mi mathvariant="italic">src</mi></msub></math>), and whether we are in light or dark mode (<math><mi>α</mi></math>). Every element inherits this DNA from its parent.
+:::
+
+## 2. The Resolution Function (<math><mi mathvariant="normal">Φ</mi></math>)
+
+The CSS Engine acts as a projection function <math><mi mathvariant="normal">Φ</mi></math> that maps the state vector <math><mi mathvariant="normal">Σ</mi></math> to a concrete CSS color value.
+
+<math display="block">
+  <mrow>
+    <mi mathvariant="normal">Φ</mi>
+    <mo stretchy="false">(</mo>
+    <mi mathvariant="normal">Σ</mi>
+    <mo stretchy="false">)</mo>
+    <mo stretchy="false">↦</mo>
+    <mtext>ColorSpace</mtext>
+    <mo stretchy="false">(</mo>
+    <mtext>oklch</mtext>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>
+
+<math display="block">
+  <mrow>
+    <mi mathvariant="normal">Φ</mi>
+    <mo stretchy="false">(</mo>
+    <mo stretchy="false">⟨</mo>
+    <mi>H</mi>
+    <mo>,</mo>
+    <mi>C</mi>
+    <mo>,</mo>
+    <msub>
+      <mi>L</mi>
+      <mi mathvariant="italic">src</mi>
+    </msub>
+    <mo>,</mo>
+    <mi>α</mi>
+    <mo stretchy="false">⟩</mo>
+    <mo stretchy="false">)</mo>
+    <mo>=</mo>
+    <mtext>oklch</mtext>
+    <mo stretchy="false">(</mo>
+    <mtext>eval</mtext>
+    <mo stretchy="false">(</mo>
+    <msub>
+      <mi>L</mi>
+      <mi mathvariant="italic">src</mi>
+    </msub>
+    <mo>,</mo>
+    <mi>α</mi>
+    <mo stretchy="false">)</mo>
+    <mo>,</mo>
+    <mi>C</mi>
+    <mo>,</mo>
+    <mi>H</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>
+
+Where <math><mtext>eval</mtext><mo stretchy="false">(</mo><msub><mi>L</mi><mi mathvariant="italic">src</mi></msub><mo>,</mo><mi>α</mi><mo stretchy="false">)</mo></math> represents the **Late Binding** of the token. It is a lookup function into the token definition set:
+
+<math display="block">
+  <mrow>
+    <mo>∀</mo>
+    <mi>t</mi>
+    <mo>∈</mo>
+    <mtext>Tokens</mtext>
+    <mo>,</mo>
+    <mo>∃</mo>
+    <mo stretchy="false">(</mo>
+    <msub>
+      <mi>l</mi>
+      <mi mathvariant="italic">light</mi>
+    </msub>
+    <mo>,</mo>
+    <msub>
+      <mi>l</mi>
+      <mi mathvariant="italic">dark</mi>
+    </msub>
+    <mo stretchy="false">)</mo>
+    <mtext> s.t. </mtext>
+    <mtext>eval</mtext>
+    <mo stretchy="false">(</mo>
+    <mi>t</mi>
+    <mo>,</mo>
+    <mi>α</mi>
+    <mo stretchy="false">)</mo>
+    <mo>=</mo>
+    <mo stretchy="false">(</mo>
+    <mi>α</mi>
+    <mo>=</mo>
+    <mtext>Dark</mtext>
+    <mo stretchy="false">)</mo>
+    <mo>?</mo>
+    <msub>
+      <mi>l</mi>
+      <mi mathvariant="italic">dark</mi>
+    </msub>
+    <mo>:</mo>
+    <msub>
+      <mi>l</mi>
+      <mi mathvariant="italic">light</mi>
+    </msub>
+  </mrow>
+</math>
+
+:::tip[In Plain English]
+
+<math>
+  <mi mathvariant="normal">Φ</mi>
+</math>
+is the browser's rendering engine. It takes the DNA (
+<math>
+  <mi mathvariant="normal">Σ</mi>
+</math>
+) and turns it into actual pixels. Crucially, it decides the actual lightness
+_at the last moment_ based on whether we are in light or dark mode. :::
+
+## 3. The Operators
+
+Classes in the system are **Operators** that transform the state vector <math><mi mathvariant="normal">Σ</mi><mo stretchy="false">→</mo><msup><mi mathvariant="normal">Σ</mi><mo>′</mo></msup></math>.
+
+### 3.1. Surface Operator (<math><mi>S</mi></math>)
+
+A Surface establishes a new context. It acts as an **Identity** for Context (<math><mi>H</mi><mo>,</mo><mi>C</mi></math>) but a **Lossy Barrier** for Intent (<math><msub><mi>L</mi><mi mathvariant="italic">src</mi></msub></math>).
+
+<math display="block">
+  <mrow>
+    <msub>
+      <mi>S</mi>
+      <mi mathvariant="italic">type</mi>
+    </msub>
+    <mo stretchy="false">(</mo>
+    <mo stretchy="false">⟨</mo>
+    <mi>H</mi>
+    <mo>,</mo>
+    <mi>C</mi>
+    <mo>,</mo>
+    <msub>
+      <mi>L</mi>
+      <mi mathvariant="italic">src</mi>
+    </msub>
+    <mo>,</mo>
+    <mi>α</mi>
+    <mo stretchy="false">⟩</mo>
+    <mo stretchy="false">)</mo>
+    <mo>=</mo>
+    <mo stretchy="false">⟨</mo>
+    <mi>H</mi>
+    <mo>,</mo>
+    <mi>C</mi>
+    <mo>,</mo>
+    <msub>
+      <mi>L</mi>
+      <mi mathvariant="italic">high</mi>
+    </msub>
+    <mo>,</mo>
+    <msup>
+      <mi>α</mi>
+      <mo>′</mo>
+    </msup>
+    <mo stretchy="false">⟩</mo>
+  </mrow>
+</math>
+
+- **Context Stability**: <math><mi>H</mi></math> and <math><mi>C</mi></math> are preserved (Identity). The surface inherits the ambient atmosphere of its parent.
+- **Intent Erasure**: <math><msub><mi>L</mi><mi mathvariant="italic">src</mi></msub></math> is forcibly reset to <math><msub><mi>L</mi><mi mathvariant="italic">high</mi></msub></math>. This operation is **Non-Invertible** (you cannot "undo" a surface to recover the parent's text style).
+- **Polarity**: <math><mi>α</mi></math> is transformed. For standard surfaces, <math><msup><mi>α</mi><mo>′</mo></msup><mo>=</mo><mi>α</mi></math>. For inverted surfaces, <math><msup><mi>α</mi><mo>′</mo></msup><mo>=</mo><mo>¬</mo><mi>α</mi></math> (Hard Flip).
+
+:::tip[In Plain English]
+A Surface is like a glass box. It lets the "mood lighting" (Hue/Chroma) shine through from the outside, but it resets the "conversation" (Text). Inside the box, you start a new sentence with standard text color, even if the text outside was faint or bold.
+:::
+
+<DemoWrapper>
+  <Diagram>
+    <SurfaceOperatorDemo client:load />
+  </Diagram>
+</DemoWrapper>
+
+> **Rationalization: Ambient vs. Semantic State**
+>
+> We can rationalize this behavior by distinguishing between two types of state:
+>
+> 1.  **Environmental State (<math><mi>H</mi><mo>,</mo><mi>C</mi></math>)**: This behaves like **Ambient Light**. If a room is lit with red light, objects inside (Surfaces) should reflect that red tint. The atmosphere permeates boundaries.
+> 2.  **Semantic State (<math><msub><mi>L</mi><mi mathvariant="italic">src</mi></msub></math>)**: This behaves like **Grammar**. A "Card" is a new sentence. Just because the previous sentence ended quietly (Subtle) doesn't mean the new sentence (Card Title) should start quietly. The grammar resets at the boundary of the object.
+
+### 3.2. Intent Operator (<math><mi>I</mi></math>)
+
+Intent classes (e.g., `.text-subtle`) modify the Lightness Source.
+
+<math display="block">
+  <mrow>
+    <msub>
+      <mi>I</mi>
+      <mi mathvariant="italic">token</mi>
+    </msub>
+    <mo stretchy="false">(</mo>
+    <mo stretchy="false">⟨</mo>
+    <mi>H</mi>
+    <mo>,</mo>
+    <mi>C</mi>
+    <mo>,</mo>
+    <msub>
+      <mi>L</mi>
+      <mi mathvariant="italic">src</mi>
+    </msub>
+    <mo>,</mo>
+    <mi>α</mi>
+    <mo stretchy="false">⟩</mo>
+    <mo stretchy="false">)</mo>
+    <mo>=</mo>
+    <mo stretchy="false">⟨</mo>
+    <mi>H</mi>
+    <mo>,</mo>
+    <mi>C</mi>
+    <mo>,</mo>
+    <msub>
+      <mi>L</mi>
+      <mi mathvariant="italic">token</mi>
+    </msub>
+    <mo>,</mo>
+    <mi>α</mi>
+    <mo stretchy="false">⟩</mo>
+  </mrow>
+</math>
+
+- **Identity on Context**: <math><mi>H</mi></math> and <math><mi>C</mi></math> are preserved.
+- **Action**: Updates <math><msub><mi>L</mi><mi mathvariant="italic">src</mi></msub></math>.
+
+:::tip[In Plain English]
+Intent classes like `.text-subtle` only change _one_ thing: the lightness reference. They don't touch the color. They say "make this text dimmer," regardless of whether it's blue, red, or purple.
+:::
+
+### 3.3. Modifier Operator (<math><mi>M</mi></math>)
+
+Modifier classes (e.g., `.hue-brand`) modify the Context variables.
+
+<math display="block">
+  <mrow>
+    <msub>
+      <mi>M</mi>
+      <mi mathvariant="italic">brand</mi>
+    </msub>
+    <mo stretchy="false">(</mo>
+    <mo stretchy="false">⟨</mo>
+    <mi>H</mi>
+    <mo>,</mo>
+    <mi>C</mi>
+    <mo>,</mo>
+    <msub>
+      <mi>L</mi>
+      <mi mathvariant="italic">src</mi>
+    </msub>
+    <mo>,</mo>
+    <mi>α</mi>
+    <mo stretchy="false">⟩</mo>
+    <mo stretchy="false">)</mo>
+    <mo>=</mo>
+    <mo stretchy="false">⟨</mo>
+    <msub>
+      <mi>H</mi>
+      <mi mathvariant="italic">brand</mi>
+    </msub>
+    <mo>,</mo>
+    <msub>
+      <mi>C</mi>
+      <mi mathvariant="italic">ambient</mi>
+    </msub>
+    <mo>,</mo>
+    <msub>
+      <mi>L</mi>
+      <mi mathvariant="italic">src</mi>
+    </msub>
+    <mo>,</mo>
+    <mi>α</mi>
+    <mo stretchy="false">⟩</mo>
+  </mrow>
+</math>
+
+- **Identity on Intent**: <math><msub><mi>L</mi><mi mathvariant="italic">src</mi></msub></math> is preserved.
+- **Context Definition**: Updates <math><mi>H</mi></math> to the brand hue. Updates <math><mi>C</mi></math> to the **Ambient Chroma** (<math><msub><mi>C</mi><mi mathvariant="italic">ambient</mi></msub><mo>≈</mo><mn>0.1</mn><mo>×</mo><msub><mi>C</mi><mi mathvariant="italic">brand</mi></msub></math>).
+
+:::tip[In Plain English]
+Modifier classes like `.hue-brand` change the atmosphere. They say "everything inside here should be purple," but they don't touch the text hierarchy. A title is still a title, just purple now. This is also where the "Dampening" happens: the modifier takes a vibrant brand color and creates a soft ambient version for backgrounds.
+:::
+
+## 4. Laws of Composition
+
+### 4.1. Orthogonality (Commutativity of <math><mi>I</mi></math> and <math><mi>M</mi></math>)
+
+Because Intent (<math><mi>I</mi></math>) and Modifiers (<math><mi>M</mi></math>) operate on disjoint components of the state vector, they are commutative.
+
+<math display="block">
+  <mrow>
+    <mi>I</mi>
+    <mo stretchy="false">(</mo>
+    <mi>M</mi>
+    <mo stretchy="false">(</mo>
+    <mi mathvariant="normal">Σ</mi>
+    <mo stretchy="false">)</mo>
+    <mo stretchy="false">)</mo>
+    <mo>≡</mo>
+    <mi>M</mi>
+    <mo stretchy="false">(</mo>
+    <mi>I</mi>
+    <mo stretchy="false">(</mo>
+    <mi mathvariant="normal">Σ</mi>
+    <mo stretchy="false">)</mo>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>
+
+**Implication**: The order of classes in HTML (`class="text-subtle hue-brand"` vs `class="hue-brand text-subtle"`) does not matter for the resulting color.
+
+:::tip[In Plain English]
+Because `.text-subtle` only touches Lightness, and `.hue-brand` only touches Color, they don't step on each other's toes. You can combine them in any order, and the result is always "Subtle Brand Color".
+:::
+
+<DemoWrapper>
+  <Diagram>
+    <OrthogonalityGrid client:load />
+  </Diagram>
+</DemoWrapper>
+
+### 4.2. Surface Dominance
+
+A Surface (<math><mi>S</mi></math>) resets the local intent. Therefore, an Intent applied _outside_ a surface does not penetrate _into_ the surface's default text.
+
+<math display="block">
+  <mrow>
+    <mtext>Inside Surface: </mtext>
+    <mi mathvariant="normal">Φ</mi>
+    <mo stretchy="false">(</mo>
+    <mi>S</mi>
+    <mo stretchy="false">(</mo>
+    <mi>I</mi>
+    <mo stretchy="false">(</mo>
+    <mi mathvariant="normal">Σ</mi>
+    <mo stretchy="false">)</mo>
+    <mo stretchy="false">)</mo>
+    <mo stretchy="false">)</mo>
+    <mo>≠</mo>
+    <mi mathvariant="normal">Φ</mi>
+    <mo stretchy="false">(</mo>
+    <mi>I</mi>
+    <mo stretchy="false">(</mo>
+    <mi>S</mi>
+    <mo stretchy="false">(</mo>
+    <mi mathvariant="normal">Σ</mi>
+    <mo stretchy="false">)</mo>
+    <mo stretchy="false">)</mo>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>
+
+- <math>
+    <mi>S</mi>
+    <mo stretchy="false">(</mo>
+    <mi>I</mi>
+    <mo stretchy="false">(</mo>
+    <mi mathvariant="normal">Σ</mi>
+    <mo stretchy="false">)</mo>
+    <mo stretchy="false">)</mo>
+  </math>
+  : The surface resets the intent. The outer intent is lost.
+- <math>
+    <mi>I</mi>
+    <mo stretchy="false">(</mo>
+    <mi>S</mi>
+    <mo stretchy="false">(</mo>
+    <mi mathvariant="normal">Σ</mi>
+    <mo stretchy="false">)</mo>
+    <mo stretchy="false">)</mo>
+  </math>
+  : The intent is applied _to_ the surface's context.
+
+**Implication**: You must apply text utilities _inside_ or _on_ the element that needs them.
+
+:::tip[In Plain English]
+Surfaces are barriers. If you make a container "subtle", and then put a Card inside it, the text inside the Card goes back to normal. The Card protects its contents from the outside world's text styles.
+:::
+
+## 5. Invariants
+
+### 5.1. Contrast Preservation
+
+Modifiers (<math><mi>M</mi></math>) are **Contrast Preserving**.
+
+<math display="block">
+  <mrow>
+    <mtext>Contrast</mtext>
+    <mo stretchy="false">(</mo>
+    <mi mathvariant="normal">Φ</mi>
+    <mo stretchy="false">(</mo>
+    <mi mathvariant="normal">Σ</mi>
+    <mo stretchy="false">)</mo>
+    <mo>,</mo>
+    <mtext>Background</mtext>
+    <mo stretchy="false">)</mo>
+    <mo>≈</mo>
+    <mtext>Contrast</mtext>
+    <mo stretchy="false">(</mo>
+    <mi mathvariant="normal">Φ</mi>
+    <mo stretchy="false">(</mo>
+    <mi>M</mi>
+    <mo stretchy="false">(</mo>
+    <mi mathvariant="normal">Σ</mi>
+    <mo stretchy="false">)</mo>
+    <mo stretchy="false">)</mo>
+    <mo>,</mo>
+    <mtext>Background</mtext>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>
+
+Since <math><mi>M</mi></math> only changes <math><mi>H</mi></math> and <math><mi>C</mi></math>, and OKLCH is perceptually uniform, the perceived lightness (and thus contrast against the background) remains constant.
+
+:::tip[In Plain English]
+Changing the hue (e.g., adding `.hue-brand`) never breaks accessibility. If the text was readable before, it stays readable, because the system only changes the color, not the brightness.
+:::
+
+<DemoWrapper>
+  <Diagram>
+    <ContrastStabilityDemo client:load />
+  </Diagram>
+</DemoWrapper>
+
+### 5.2. Intent Stability
+
+Intent (<math><mi>I</mi></math>) is **Chromatically Transparent**.
+
+<math display="block">
+  <mrow>
+    <mtext>Hue</mtext>
+    <mo stretchy="false">(</mo>
+    <mi mathvariant="normal">Φ</mi>
+    <mo stretchy="false">(</mo>
+    <mi>I</mi>
+    <mo stretchy="false">(</mo>
+    <mi mathvariant="normal">Σ</mi>
+    <mo stretchy="false">)</mo>
+    <mo stretchy="false">)</mo>
+    <mo stretchy="false">)</mo>
+    <mo>=</mo>
+    <mtext>Hue</mtext>
+    <mo stretchy="false">(</mo>
+    <mi mathvariant="normal">Φ</mi>
+    <mo stretchy="false">(</mo>
+    <mi mathvariant="normal">Σ</mi>
+    <mo stretchy="false">)</mo>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>
+
+Changing the text importance (High -> Subtle) never shifts the hue.
+
+:::tip[In Plain English]
+Changing the text style (e.g., making it `.text-subtle`) never changes its color family. If you are in a "Brand" section, the subtle text will still be tinted with the brand color, just dimmer. The text style doesn't "reset" the color to gray.
+:::
+
+## 6. Practical Application
+
+This algebra proves that we can support <math><mi>N</mi></math> intents and <math><mi>M</mi></math> contexts with <math><mi>N</mi><mo>+</mo><mi>M</mi></math> classes, rather than <math><mi>N</mi><mo>×</mo><mi>M</mi></math> classes.
+
+- **Traditional**: `.text-subtle-on-brand`, `.text-subtle-on-neutral`
+- **Axiomatic**: `.text-subtle` + `.hue-brand`
+
+The resolution happens at render time via the <math><mi mathvariant="normal">Φ</mi></math> function (the CSS Engine).
+
+## 7. Implications & Corollaries
+
+### 7.1. Idempotency of Modifiers
+
+Applying the same modifier twice is equivalent to applying it once.
+
+<math display="block">
+  <mrow>
+    <msub>
+      <mi>M</mi>
+      <mi mathvariant="italic">brand</mi>
+    </msub>
+    <mo stretchy="false">(</mo>
+    <msub>
+      <mi>M</mi>
+      <mi mathvariant="italic">brand</mi>
+    </msub>
+    <mo stretchy="false">(</mo>
+    <mi mathvariant="normal">Σ</mi>
+    <mo stretchy="false">)</mo>
+    <mo stretchy="false">)</mo>
+    <mo>≡</mo>
+    <msub>
+      <mi>M</mi>
+      <mi mathvariant="italic">brand</mi>
+    </msub>
+    <mo stretchy="false">(</mo>
+    <mi mathvariant="normal">Σ</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>
+
+This means nesting a `.hue-brand` section inside another `.hue-brand` section is safe and redundant.
+
+### 7.2. The "Leakage" Corollary
+
+If a container does _not_ act as a Surface (<math><mi>S</mi></math>), it does not reset <math><msub><mi>L</mi><mi mathvariant="italic">src</mi></msub></math>.
+
+<math display="block">
+  <mrow>
+    <mtext>Container</mtext>
+    <mo stretchy="false">(</mo>
+    <msub>
+      <mi>I</mi>
+      <mi mathvariant="italic">subtle</mi>
+    </msub>
+    <mo stretchy="false">(</mo>
+    <mi mathvariant="normal">Σ</mi>
+    <mo stretchy="false">)</mo>
+    <mo stretchy="false">)</mo>
+    <mo stretchy="false">→</mo>
+    <mtext>Text is still subtle inside</mtext>
+  </mrow>
+</math>
+
+This distinguishes **Layout Containers** (divs, spans) from **Surfaces** (cards, sidebars). Surfaces are opaque boundaries for Intent; Containers are transparent.
+
+### 7.3. Universal Theming
+
+Since <math><mi>M</mi></math> operators control the environment (<math><mi>H</mi><mo>,</mo><mi>C</mi></math>) for all child elements, changing the top-level modifier effectively re-themes the entire subtree without requiring changes to the leaf nodes (text, borders).
+
+### 7.4. The Portal Effect (Subspace Involution)
+
+Because Inverted Surfaces perform a Hard Flip (<math><msup><mi>α</mi><mo>′</mo></msup><mo>=</mo><mo>¬</mo><mi>α</mi></math>), nesting them creates an alternating polarity stack. However, because <math><mi>S</mi></math> is lossy on Intent (<math><mi>L</mi></math>), this is not a true inverse of the state.
+
+<math display="block">
+  <mrow>
+    <msub>
+      <mi>S</mi>
+      <mi mathvariant="italic">inv</mi>
+    </msub>
+    <mo stretchy="false">(</mo>
+    <msub>
+      <mi>S</mi>
+      <mi mathvariant="italic">inv</mi>
+    </msub>
+    <mo stretchy="false">(</mo>
+    <mi mathvariant="normal">Σ</mi>
+    <mo stretchy="false">)</mo>
+    <mo stretchy="false">)</mo>
+    <mo>≠</mo>
+    <mi mathvariant="normal">Σ</mi>
+  </mrow>
+</math>
+
+While the polarity returns to the original (<math><mo>¬</mo><mo stretchy="false">(</mo><mo>¬</mo><mi>α</mi><mo stretchy="false">)</mo><mo>=</mo><mi>α</mi></math>), the Intent <math><msub><mi>L</mi><mi mathvariant="italic">src</mi></msub></math> is reset to <math><msub><mi>L</mi><mi mathvariant="italic">high</mi></msub></math> at each step. You recover the _mode_, but you lose the _semantic context_.
+
+<DemoWrapper>
+  <Diagram>
+    <PortalStack client:load />
+  </Diagram>
+</DemoWrapper>
+
+---
+
+## advanced/custom-surfaces.md
+
+Coming soon: How to define your own semantic surfaces.
+
+---
+
+## advanced/font-test.mdx
+
+<div style="font-family: 'STIX Two Math', serif; font-size: 2em; border: 1px solid red; padding: 10px;">
+  Direct: ∑ = ⟨ Hue, Chroma, Intent, Polarity ⟩
+</div>
+
+<div style="font-family: var(--font-stix-two-math), serif; font-size: 2em; border: 1px solid blue; padding: 10px;">
+  Variable: ∑ = ⟨ Hue, Chroma, Intent, Polarity ⟩
+</div>
+
+## MathML Test
+
+$$
+\sum = \langle \text{Hue}, \text{Chroma}, \text{Intent}, \text{Polarity} \rangle
+$$
+
+$$
+x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}
+$$
+
+## Font Comparison Lab
+
+<MathFontComparison client:load />
+
+---
+
+## advanced/hue-shifting.mdx
+
+## Why Shift Hues?
+
+In the real world, objects rarely stay the same hue as they get lighter or darker.
+
+- **Natural Light**: Shadows are often cooler (bluer) due to ambient skylight, while direct highlights are warmer (yellower) from the sun.
+- **The Bezold–Brücke Effect**: As light intensity increases, our perception of hue shifts. Reds become yellower, and violets become bluer.
+
+If you create a color palette by simply changing lightness (e.g., `oklch(0.5 0.2 260)` → `oklch(0.9 0.2 260)`), the result can feel "synthetic" or "flat". The shadows might look muddy, or the highlights might look washed out.
+
+**Hue Shifting** mimics natural light physics by rotating the hue as lightness changes. This creates palettes that feel:
+
+1.  **More Dynamic**: Colors feel alive rather than static.
+2.  **More Natural**: Mimics the way light interacts with surfaces in the real world.
+3.  **More Distinct**: Helps differentiate surfaces that are close in lightness.
+
+<Diagram>
+  <div class="docs-grid docs-mb-4">
+    <div class="docs-card">
+      <strong class="docs-card-header">Static Hue (Boring)</strong>
+      <div class="docs-gradient-bar docs-gradient-static"></div>
+      <div class="text-subtle docs-mt-2 docs-text-sm">
+        Just changing lightness. The result feels mechanical and flat.
+      </div>
+    </div>
+    <div class="docs-card">
+      <strong class="docs-card-header">Shifted Hue (Dynamic)</strong>
+      <div class="docs-gradient-bar docs-gradient-shifted"></div>
+      <div class="text-subtle docs-mt-2 docs-text-sm">
+        Rotating hue from Blue (260) to Purple (320) as lightness increases. The
+        result feels more vibrant and natural.
+      </div>
+    </div>
+  </div>
+</Diagram>
+
+## Why Non-Linear Hue Shifting?
+
+The color system supports optional **hue rotation** across the lightness spectrum. This feature allows surfaces to shift from cooler tones in darker regions to warmer tones in lighter regions (or vice versa), creating a more dynamic and perceptually harmonious color palette.
+
+### The Problem with Linear Shifting
+
+A naive implementation might apply hue rotation linearly. However, this doesn't match human perception. Our eyes perceive warmth and coolness non-linearly across the lightness spectrum.
+
+<Diagram>
+  <div class="docs-grid docs-mb-4">
+    <div class="docs-card">
+      <strong class="docs-card-header">No Shift (Static Hue)</strong>
+      <div class="docs-gradient-bar docs-gradient-static"></div>
+      <div class="text-subtle docs-mt-2 docs-text-sm">
+        Shadows can feel "muddy" or flat because they lack the natural coolness
+        of ambient light.
+      </div>
+    </div>
+    <div class="docs-card">
+      <strong class="docs-card-header">Linear Shift</strong>
+      <div class="docs-gradient-bar docs-gradient-shifted"></div>
+      <div class="text-subtle docs-mt-2 docs-text-sm">
+        A linear shift (0° to 60°) can feel abrupt in the mid-tones, making the
+        color change too noticeable.
+      </div>
+    </div>
+  </div>
+</Diagram>
+
+## Cubic Bezier Solution
+
+Instead, we use a **cubic Bezier curve** to map lightness values (0-1) to hue rotation factors (0-1). This allows us to keep the hue stable in the deep shadows and bright highlights, while concentrating the shift in the mid-tones where it adds the most vibrancy.
+
+<Diagram>
+  <div class="docs-grid docs-mb-4">
+    <div class="docs-card">
+      <strong class="docs-card-header">No Shift</strong>
+      <div class="docs-gradient-bar docs-gradient-static"></div>
+      <div class="text-subtle docs-mt-2 docs-text-sm">Static hue.</div>
+    </div>
+    <div class="docs-card">
+      <strong class="docs-card-header">Linear Shift</strong>
+      <div class="docs-gradient-bar docs-gradient-shifted"></div>
+      <div class="text-subtle docs-mt-2 docs-text-sm">Abrupt mid-tones.</div>
+    </div>
+    <div class="docs-card">
+      <strong class="docs-card-header">Bezier Shift</strong>
+      <div class="docs-gradient-bar docs-gradient-bezier"></div>
+      <div class="text-subtle docs-mt-2 docs-text-sm">Smooth S-curve.</div>
+    </div>
+  </div>
+</Diagram>
+
+```typescript
+function cubicBezier(t: number, p1: number, p2: number): number {
+  const oneMinusT = 1 - t;
+  return (
+    3 * oneMinusT * oneMinusT * t * p1 + 3 * oneMinusT * t * t * p2 + t * t * t
+  );
+}
+
+export function calculateHueShift(
+  lightness: number,
+  config?: HueShiftConfig,
+): number {
+  if (!config) return 0;
+  const { curve, maxRotation } = config;
+  const factor = cubicBezier(lightness, curve.p1[1], curve.p2[1]);
+  return factor * maxRotation;
+}
+```
+
+### Interactive Playground
+
+Experiment with the Bezier curve control points to see how they affect the hue shift across the lightness spectrum.
+
+<HueShiftVisualizer client:load />
+
+### Control Points
+
+The default configuration uses control points that create an S-curve:
+
+```json
+{
+  "hueShift": {
+    "curve": {
+      "p1": [0.5, 0],
+      "p2": [0.5, 1]
+    },
+    "maxRotation": 180
+  }
+}
+```
+
+#### What These Mean
+
+- **P1: `[0.5, 0]`**: First control point at 50% horizontally, 0% vertically
+- **P2: `[0.5, 1]`**: Second control point at 50% horizontally, 100% vertically
+
+This creates a **smooth S-curve** that:
+
+1. **Starts slowly** at lightness = 0 (minimal hue shift in darks)
+2. **Accelerates through mid-tones** (where our eyes are most sensitive)
+3. **Finishes smoothly** at lightness = 1 (full rotation in lights)
+
+### Visual Comparison
+
+Here is how the hue rotation (0° to 180°) is applied across the lightness spectrum (0.1 to 0.9).
+
+<Diagram>
+  <div class="docs-grid-comparison">
+    {/* Linear Row */}
+    <div class="text-subtle text-right">Linear</div>
+    <div class="docs-swatch-grid">
+      <div class="docs-swatch docs-swatch-linear-1" title="L=0.1, H=278 (+18°)"></div>
+      <div class="docs-swatch docs-swatch-linear-2" title="L=0.3, H=314 (+54°)"></div>
+      <div class="docs-swatch docs-swatch-linear-3" title="L=0.5, H=350 (+90°)"></div>
+      <div class="docs-swatch docs-swatch-linear-4" title="L=0.7, H=26 (+126°)"></div>
+      <div class="docs-swatch docs-swatch-linear-5" title="L=0.9, H=62 (+162°)"></div>
+    </div>
+
+    {/* Bezier Row */}
+    <div class="text-subtle text-right">Bezier</div>
+    <div class="docs-swatch-grid">
+      <div class="docs-swatch docs-swatch-bezier-1" title="L=0.1, H=265 (+5°)"></div>
+      <div class="docs-swatch docs-swatch-bezier-2" title="L=0.3, H=299 (+39°)"></div>
+      <div class="docs-swatch docs-swatch-bezier-3" title="L=0.5, H=350 (+90°)"></div>
+      <div class="docs-swatch docs-swatch-bezier-4" title="L=0.7, H=41 (+141°)"></div>
+      <div class="docs-swatch docs-swatch-bezier-5" title="L=0.9, H=75 (+175°)"></div>
+    </div>
+
+    {/* Labels */}
+    <div></div>
+    <div class="docs-grid-labels">
+      <div>Dark</div>
+      <div></div>
+      <div>Mid</div>
+      <div></div>
+      <div>Light</div>
+    </div>
+
+  </div>
+</Diagram>
+
+Notice how the Bezier curve:
+
+- **Flattens** at the extremes (smoother transitions in very dark/light)
+- **Steepens** in the middle (more dramatic shift where it matters)
+
+### Perceptual Benefits
+
+1. **Natural Warmth Progression**: Mimics how we perceive natural lighting (cool shadows → neutral midtones → warm highlights)
+
+2. **Better Mid-Tone Separation**: The steeper middle section ensures distinct hue differences between closely-spaced surfaces in the mid-lightness range (where most UI elements live)
+
+3. **Smooth Extremes**: The flatter curves at 0 and 1 prevent jarring hue jumps in already-extreme lightness values
+
+### Customization
+
+You can customize the curve by adjusting the control points:
+
+```json
+{
+  "hueShift": {
+    "curve": {
+      "p1": [0.3, 0], // Shift acceleration point earlier
+      "p2": [0.7, 1] // Shift deceleration point later
+    },
+    "maxRotation": 120 // Less dramatic overall shift
+  }
+}
+```
+
+**Experiment with:**
+
+- Moving P1/P2 horizontally to change where the acceleration happens
+- Moving P1/P2 vertically to create asymmetric curves
+- Adjusting `maxRotation` for subtler or more dramatic effects
+
+**Tip:** You can also adjust these settings visually in the **Theme Studio**. The UI provides a curve editor where you can drag the control points and see the color palette update in real-time.
+
+### Implementation Note
+
+The cubic Bezier implementation assumes the curve starts at `(0,0)` and ends at `(1,1)`, with only the middle two control points configurable. This constraint ensures the hue shift is always 0° at lightness 0 and `maxRotation` at lightness 1, providing predictable behavior while allowing artistic control over the interpolation.
+
+## Related Concepts
+
+- **OKLCH Color Space**: Hue rotations happen in the perceptually uniform OKLCH space, ensuring equal visual impact across the spectrum
+- **Chroma Independence**: Hue shifts don't affect saturation, maintaining consistent vibrancy
+- **CSS `@property`**: Registered custom properties allow smooth animated transitions between hue-shifted values
+
+---
+
+## advanced/reactive-pipeline.mdx
+
+# The Reactive Pipeline
+
+Most color systems are **Static Maps**. You define a palette (`blue-500`), assign it to a variable (`--primary`), and use it.
+
+Axiomatic Color is different. It is a **Reactive Pipeline**.
+
+## The Core Equation
+
+If you are familiar with React, you know the formula:
+
+$$
+UI = f(State)
+$$
+
+In Axiomatic Color, we apply this same principle to design tokens:
+
+$$
+Color = f(Context, Intent)
+$$
+
+- **Context**: Where is this element? (Light Mode? Dark Mode? Inside a Card? On a Brand Surface?)
+- **Intent**: What is this element? (Text? Border? Background?)
+- **Color**: The final pixel value.
+
+## Static vs. Reactive
+
+### The Static Model (Traditional)
+
+In a traditional system, tokens are **Values**.
+
+```css
+:root {
+  --text-primary: #111827;
+  --bg-card: #ffffff;
+}
+
+.dark {
+  --text-primary: #f9fafb;
+  --bg-card: #1f2937;
+}
+```
+
+This works for simple Light/Dark switching. But what happens when you put a card _inside_ a dark section in Light Mode? You have to manually override the tokens or use complex CSS cascades.
+
+### The Reactive Model (Axiomatic)
+
+In Axiomatic, tokens are **Functions**.
+
+We don't just swap values; we swap the **calculation**.
+
+```css
+/* Simplified for explanation */
+.surface-card {
+  /* 1. Establish Context */
+  --context-lightness: var(--anchor-page-lightness);
+
+  /* 2. Define the Function */
+  background: oklch(var(--context-lightness) 0 0);
+  color: oklch(from var(--context-lightness) calc(1 - l) 0 0);
+}
+```
+
+When you nest a surface, the `Context` changes. The `Intent` (Text, Background) remains the same, but because the input `Context` changed, the output `Color` automatically updates.
+
+## How It Works: Late Binding
+
+To make this work in standard CSS, we use a technique called **Late Binding**.
+
+Instead of resolving colors at build time (Sass/PostCSS), we resolve them at **Runtime** (Browser) using CSS Custom Properties.
+
+### 1. The Inputs (Primitives)
+
+We start with the raw ingredients. These are global and immutable.
+
+```css
+:root {
+  --primitive-brand-500: oklch(0.6 0.2 250);
+  --primitive-neutral-0: oklch(1 0 0);
+  --primitive-neutral-1000: oklch(0 0 0);
+}
+```
+
+### 2. The Context (State)
+
+When you enter a surface, it sets local variables that describe the environment.
+
+```css
+.surface-sunken {
+  /* I am a slightly darker surface */
+  --context-base-lightness: 0.95;
+  --context-contrast-direction: -1; /* Get darker for contrast */
+}
+```
+
+### 3. The Resolution (Function)
+
+Utility classes don't point to fixed colors. They point to **Logic**.
+
+```css
+.text-subtle {
+  /* Calculate lightness based on the CURRENT context */
+  --lightness: calc(
+    var(--context-base-lightness) + (0.2 * var(--context-contrast-direction))
+  );
+
+  color: oklch(var(--lightness) 0 0);
+}
+```
+
+## Why This Matters
+
+1.  **Inversion is Free**: To create a "Dark Mode" section inside Light Mode, we just flip the `Context` variables. All children (`.text-subtle`, `.border-muted`) automatically recalculate.
+2.  **Infinite Nesting**: You can nest cards inside cards inside sidebars. The contrast ratios are preserved mathematically.
+3.  **Component Portability**: A component doesn't need to know if it's on a dark background or a light one. It just asks for "Subtle Text", and the pipeline delivers the correct accessible color.
+
+## The "Weirdness" Budget
+
+This approach requires a mental shift. You stop thinking about "What color is this?" and start thinking "What is the relationship between this element and its container?".
+
+It feels "weird" because CSS has historically been static. But just as React made UI reactive, Axiomatic makes Color reactive. The result is a system that is robust, maintainable, and mathematically accessible by default.
+
+---
+
+## advanced/solver-internals.md
+
+The **Solver** is the engine that powers the color system. It takes your high-level **Intent** and turns it into precise **CSS Tokens**.
+
+You can interact with the Theme Studio in two ways:
+
+1.  **The UI**: The interactive web interface (for exploration).
+2.  **The CLI**: The `axiomatic` command line tool (for production).
+
+Both use the exact same "Solver" logic under the hood.
+
+## The "Theme Studio" Model
+
+To understand the solver, it helps to think about the controls you see in the Theme Studio UI. The solver is simply the code that runs every time you move a slider or add a surface.
+
+### 1. Anchors: Defining the Playing Field
+
+In the Theme Studio, you set the **Anchors**. These are the boundaries of your color system.
+
+<div class="not-content">
+<div class="surface-workspace docs-p-4 docs-rounded docs-border">
+<div class="docs-mb-4">
+<h4 class="text-strong docs-mb-2">Page Anchors</h4>
+<p class="docs-text-subtle-sm">
+Defines the lightness range for the "Page" polarity.
+</p>
+</div>
+
+<!-- Start Slider -->
+<div class="docs-mb-4">
+<div class="docs-flex-between docs-mb-2">
+<span class="text-subtle">Start (Background)</span>
+<span class="text-strong">0.98</span>
+</div>
+<div class="docs-slider-track">
+<div class="docs-slider-fill" style="left: 0; width: 98%;"></div>
+<div class="docs-slider-thumb right" style="right: 2%;"></div>
+</div>
+</div>
+
+<!-- End Slider -->
+<div>
+<div class="docs-flex-between docs-mb-2">
+<span class="text-subtle">End (Elevated)</span>
+<span class="text-strong">0.12</span>
+</div>
+<div class="docs-slider-track">
+<div class="docs-slider-fill" style="left: 0; width: 12%;"></div>
+<div class="docs-slider-thumb left" style="left: 12%;"></div>
+</div>
+</div>
+</div>
+</div>
+
+The solver takes these values and asks: **"Can I fit readable text inside this range?"**
+If the answer is "No" (and the anchor is adjustable), the solver **moves the slider for you** until the text is readable.
+
+### 2. Surfaces: The "Steps"
+
+In the Theme Studio, you add **Surfaces** to a list.
+
+<div class="not-content">
+<div class="surface-workspace docs-p-4 docs-rounded docs-border">
+<h4 class="text-strong docs-mb-4">Surfaces</h4>
+
+<div class="docs-col">
+<!-- Surface Item 1 -->
+<div class="surface-card docs-p-2 docs-rounded docs-border docs-flex-center-gap">
+<span class="text-strong docs-flex-1">Page</span>
+<code class="text-subtle">.surface-page</code>
+<span class="docs-badge-pass">Passes</span>
+</div>
+
+<!-- Surface Item 2 -->
+<div class="surface-card docs-p-2 docs-rounded docs-border docs-flex-center-gap">
+<span class="text-strong docs-flex-1">Card</span>
+<code class="text-subtle">.surface-card</code>
+<span class="docs-badge-pass">Passes</span>
+</div>
+
+<!-- Surface Item 3 -->
+<div class="surface-card docs-p-2 docs-rounded docs-border docs-flex-center-gap">
+<span class="text-strong docs-flex-1">Sidebar</span>
+<code class="text-subtle">.surface-sidebar</code>
+<span class="docs-badge-pass">Passes</span>
+</div>
+
+</div>
+</div>
+</div>
+
+The solver's job is to place these surfaces evenly between your Start and End anchors.
+It doesn't just divide the lightness evenly (e.g., 10%, 20%, 30%). It divides the **Contrast Space** evenly. This ensures that the visual "step" from Page to Card looks the same as the step from Card to Sidebar.
+
+#### Why Contrast Space?
+
+If we just divided the lightness values evenly (Linear Lightness), the steps would look uneven to the human eye. Dark colors bunch up, and light colors spread out. By dividing by **Contrast** (Linear Perception), every step feels visually consistent.
+
+<div class="not-content">
+<div class="docs-grid">
+
+<!-- Linear Lightness -->
+<div class="surface-workspace docs-p-4 docs-rounded docs-border">
+<h4 class="text-strong docs-mb-4">Linear Lightness (Bad)</h4>
+<div class="docs-col-gap-0">
+<div class="docs-p-2 docs-step-95">Step 1 (95%)</div>
+<div class="docs-p-2 docs-step-85">Step 2 (85%)</div>
+<div class="docs-p-2 docs-step-75">Step 3 (75%)</div>
+<div class="docs-p-2 docs-step-65">Step 4 (65%)</div>
+<div class="docs-p-2 docs-step-55">Step 5 (55%)</div>
+</div>
+</div>
+
+<!-- Linear Contrast -->
+<div class="surface-workspace docs-p-4 docs-rounded docs-border">
+<h4 class="text-strong docs-mb-4">Linear Contrast (Good)</h4>
+<div class="docs-col-gap-0">
+<div class="surface-page docs-p-2">Page (Start)</div>
+<div class="surface-workspace docs-p-2">Workspace</div>
+<div class="surface-card docs-p-2">Card</div>
+<div class="surface-action docs-p-2">Action (End)</div>
+</div>
+</div>
+
+</div>
+</div>
+
+### 3. The Result: Generated Tokens
+
+Finally, the solver outputs the CSS tokens that the Theme Studio (and your app) uses.
+
+<div class="not-content">
+<div class="surface-workspace docs-p-4 docs-rounded docs-border">
+<h4 class="text-strong docs-mb-4">Generated CSS</h4>
+<pre class="docs-code-block"><code>--lightness-surface-page: light-dark(0.98, 0.12);
+--lightness-surface-card: light-dark(0.95, 0.15);
+--lightness-surface-sidebar: light-dark(0.92, 0.18);</code></pre>
+</div>
+</div>
+
+## The Pipeline
+
+When you run `npx axiomatic` (or change a setting in the Studio), this pipeline executes:
+
+1.  **Hydrate**: Read your `color-config.json`.
+2.  **Adjust Anchors**: Ensure the range supports High Contrast text.
+3.  **Distribute**: Calculate the target contrast for each surface based on the available range and any `gapBefore` settings.
+4.  **Solve Lightness**: Use binary search to find the exact lightness value that hits that contrast target.
+5.  **Solve Text**: Find the text colors that sit accessibly on top of those surfaces (APCA-compliant).
+6.  **Generate**: Write the CSS tokens.
+
+### High Contrast Generation
+
+The solver runs a second pass to generate a **High Contrast** variant (`@media (prefers-contrast: more)`).
+In this pass:
+
+- **Key Colors** are removed (forced to grayscale).
+- **Anchors** are pushed to pure Black (0) and White (1).
+- **Chroma** is disabled.
+
+This ensures that users who need maximum legibility get a strictly accessible, high-contrast version of your theme automatically.
+
+---
+
+## catalog/actions.mdx
+
+Actions are surfaces that invite user interaction. They are the "buttons" and "controls" of your interface.
+
+## Action Surfaces
+
+### `surface-action`
+
+The primary interactive surface. Used for buttons, toggles, and active states.
+
+<Diagram class="surface-card docs-p-4 docs-rounded">
+  <button class="surface-action docs-p-2 docs-rounded">Default Action</button>
+  <button class="surface-action hue-brand docs-p-2 docs-rounded">
+    Brand Action
+  </button>
+  <button class="surface-action hue-danger docs-p-2 docs-rounded">
+    Danger Action
+  </button>
+</Diagram>
+
+### `surface-action-soft`
+
+A lower-emphasis interactive surface. Useful for secondary buttons or ghost buttons.
+
+<Diagram class="surface-card docs-p-4 docs-rounded">
+  <button class="surface-action-soft docs-p-2 docs-rounded">Soft Action</button>
+  <button class="surface-action-soft hue-brand docs-p-2 docs-rounded">
+    Brand Soft
+  </button>
+</Diagram>
+
+## States
+
+Interactive elements have standard states that work across all surfaces.
+
+### Hover & Active
+
+The system automatically generates hover and active states for all action surfaces.
+
+### `state-selected`
+
+Used to indicate that an item is currently chosen (e.g., a selected item in a list). This maps to the system's "Highlight" color.
+
+<Diagram class="surface-card docs-p-4 docs-rounded">
+  <div class="surface-action state-selected docs-p-2 docs-rounded">
+    Selected Item
+  </div>
+</Diagram>
+
+### `state-disabled`
+
+Used for non-interactive items. This maps to the system's "GrayText" color and reduces contrast while maintaining legibility.
+
+<Diagram class="surface-card docs-p-4 docs-rounded">
+  <button class="surface-action state-disabled docs-p-2 docs-rounded" disabled>
+    Disabled Action
+  </button>
+</Diagram>
+
+## Focus Indicators
+
+Accessible focus indicators are critical for keyboard navigation. The system provides a universal focus ring that adapts to the brand color and ensures contrast.
+
+<Diagram class="surface-card bordered docs-flex-demo">
+  <button class="surface-action focus-ring docs-btn">Focus Me</button>
+  <input
+    class="surface-workspace focus-ring bordered docs-input"
+    placeholder="Focus Me"
+  />
+</Diagram>
+
+### Usage
+
+Apply the `.focus-ring` utility class to interactive elements. It applies styles on `:focus-visible`.
+
+```html
+<button class="surface-action focus-ring">Click Me</button>
+```
+
+## Token Reference
+
+Interactive elements use the standard surface tokens, plus specific tokens for states and focus.
+
+| Token Variable       | Description                     | Usage                                    |
+| :------------------- | :------------------------------ | :--------------------------------------- |
+| `--axm-focus-ring-color` | The universal focus ring color. | `outline-color: var(--axm-focus-ring-color)` |
+| `--axm-surface-token`    | The background of the action.   | `background: var(--axm-surface-token)`       |
+| `--axm-text-high-token`  | The text color of the action.   | `color: var(--axm-text-high-token)`          |
+
+---
+
+## catalog/data-viz.mdx
+
+<DemoWrapper>
+
+The Color System includes a built-in engine for generating categorical color palettes that harmonize with your theme. These palettes are designed for data visualization (charts, graphs, maps) where you need distinct colors to represent different categories.
+
+## The Problem
+
+Standard color palettes (like "Tableau 10" or "D3 Category 10") are great, but they often clash with your custom theme.
+
+- If your theme is "Soft Pastel", a neon chart looks out of place.
+- If your theme is "High Contrast", a subtle chart might be illegible.
+- In Dark Mode, standard colors often lose contrast or look muddy.
+
+## The Solution: Harmonized Fixed Hues
+
+Instead of using a fixed set of hex codes, we use a **Harmonized Fixed Hues** strategy:
+
+1.  **Fixed Hues**: We start with a curated list of distinct hues (Red, Orange, Yellow, Green, etc.) to ensure every color is nameable and distinct.
+2.  **Solved Lightness**: We **solve** the lightness of each color against your page background to ensure it meets accessibility targets (APCA ~105).
+3.  **Shared Chroma**: We apply a consistent chroma (vibrancy) across the palette, which you can tune to match your brand.
+
+<DataVizDemo />
+
+## Usage
+
+The system generates CSS variables in the format `--axm-chart-N`:
+
+```css
+.my-chart {
+  color: var(--axm-chart-1); /* First color in the palette */
+}
+
+.my-chart-bar:nth-child(2) {
+  background-color: var(--axm-chart-2);
+}
+```
+
+### Configuration
+
+You can customize the palette in your `color-config.json`:
+
+```json
+{
+  "palette": {
+    "targetChroma": 0.12,
+    "hues": [25, 45, 85, 125, 150, 190, 250, 280, 320, 360]
+  }
+}
+```
+
+- **targetChroma**: Controls the vibrancy. `0.12` is a safe default. Higher values (e.g., `0.18`) are more vibrant but might be harder to balance in Light Mode.
+- **hues**: An array of hue angles (0-360) to use for the palette.
+
+## Accessibility
+
+Because the lightness is **solved** relative to the background:
+
+- In **Light Mode**, the colors will be darker (like text) to stand out against the white page.
+- In **Dark Mode**, the colors will automatically flip to be lighter (pastels) to stand out against the dark page.
+
+This ensures your charts are always legible, regardless of the user's theme preference.
+
+</DemoWrapper>
+
+---
+
+## catalog/surfaces.mdx
+
+<DemoWrapper>
+
+Surfaces are the containers that hold your content. They define the background color, border color, and text context for everything inside them.
+
+## The Canvas
+
+These surfaces form the backdrop of your application.
+
+### `surface-page`
+
+The infinite background. This is usually applied to the `<body>` tag.
+
+<Diagram class="surface-page docs-p-4 docs-rounded docs-border">
+  This is the Page surface.
+</Diagram>
+
+### `surface-workspace`
+
+A slightly elevated area, often used for sidebars, navigation rails, or the main content area in a dashboard.
+
+<Diagram class="surface-page docs-p-4 docs-rounded docs-border">
+  <div class="surface-workspace docs-p-4 docs-rounded docs-border">
+    This is the Workspace surface.
+  </div>
+</Diagram>
+
+## The Containers
+
+These surfaces sit _on top_ of the canvas.
+
+### `surface-card`
+
+The primary container for grouped content. It has a distinct background color that separates it from the canvas.
+
+<Diagram class="surface-page docs-p-4 docs-rounded docs-border">
+  <div class="surface-card docs-p-4 docs-rounded">This is a Card.</div>
+</Diagram>
+
+### `surface-tinted`
+
+A subtle grouping mechanism. It usually has a slight tint of the brand color (or another semantic color) to highlight a section without a hard boundary.
+
+<Diagram class="surface-card docs-p-4 docs-rounded">
+  <div class="surface-tinted docs-p-4 docs-rounded">
+    This is a Tinted surface inside a Card.
+  </div>
+</Diagram>
+
+## The Spotlights
+
+These surfaces demand attention. They often use **Inverted Polarity** (Dark on Light, or Light on Dark) to stand out.
+
+### `surface-spotlight`
+
+High contrast. Used for tooltips, toasts, and primary call-to-actions.
+
+<Diagram class="surface-page docs-p-4 docs-rounded docs-border">
+  <div class="surface-spotlight docs-p-4 docs-rounded">
+    This is a Spotlight.
+  </div>
+</Diagram>
+
+### `surface-soft-spotlight`
+
+A softer version of the spotlight. Useful for badges or indicators that need to be distinct but not shouting.
+
+<Diagram class="surface-page docs-p-4 docs-rounded docs-border">
+  <div class="surface-soft-spotlight docs-p-4 docs-rounded">
+    This is a Soft Spotlight.
+  </div>
+</Diagram>
+
+## Elevation (Shadows)
+
+Shadows provide depth and hierarchy. The system generates a semantic scale of shadows that are subtle in Light Mode and stronger in Dark Mode to ensure visibility.
+
+<Diagram class="surface-card bordered docs-shadow-grid">
+  <div class="surface-card shadow-sm bordered docs-shadow-box">shadow-sm</div>
+  <div class="surface-card shadow-md bordered docs-shadow-box">shadow-md</div>
+  <div class="surface-card shadow-lg bordered docs-shadow-box">shadow-lg</div>
+  <div class="surface-card shadow-xl bordered docs-shadow-box">shadow-xl</div>
+</Diagram>
+
+## Token Reference
+
+Every surface exposes a standard set of CSS variables (tokens) that adapt to the surface's background.
+
+| Token Variable          | Description                                 | Usage                                   |
+| :---------------------- | :------------------------------------------ | :-------------------------------------- |
+| `--axm-surface-token`       | The background color of the surface.        | `background: var(--axm-surface-token)`      |
+| `--axm-text-high-token`     | High contrast text color.                   | `color: var(--axm-text-high-token)`         |
+| `--axm-text-subtle-token`   | Medium contrast text color.                 | `color: var(--axm-text-subtle-token)`       |
+| `--axm-text-subtlest-token` | Low contrast text color.                    | `color: var(--axm-text-subtlest-token)`     |
+| `--axm-border-dec-token`    | Decorative border color (low contrast).     | `border-color: var(--axm-border-dec-token)` |
+| `--axm-border-int-token`    | Interactive border color (higher contrast). | `border-color: var(--axm-border-int-token)` |
+
+</DemoWrapper>
+
+---
+
+## catalog/typography.mdx
+
+In the Axiomatic Color, you don't pick text colors. You pick **Text Hierarchy**.
+
+The system automatically calculates the correct color for each level of hierarchy based on the surface it sits on, ensuring APCA compliance.
+
+## Text Hierarchy
+
+### `text-strong` (Primary)
+
+Used for headings, titles, and primary content. This has the highest contrast against the background.
+
+<Diagram class="surface-card docs-p-4 docs-rounded">
+  <h1 class="text-strong">This is Strong Text</h1>
+</Diagram>
+
+### `text-subtle` (Secondary)
+
+Used for body text, descriptions, and secondary content. It has lower contrast than strong text but is still fully readable.
+
+<Diagram class="surface-card docs-p-4 docs-rounded">
+  <p class="text-subtle">
+    This is subtle text. It is easier on the eyes for long reading.
+  </p>
+</Diagram>
+
+### `text-subtler` (Tertiary)
+
+Used for metadata, captions, and low-emphasis content.
+
+<Diagram class="surface-card docs-p-4 docs-rounded">
+  <span class="text-subtler">Posted 2 hours ago</span>
+</Diagram>
+
+### `text-link` (Interactive)
+
+Used for hyperlinks and interactive text elements. It uses the brand hue (or a specific link hue) and ensures contrast.
+
+<Diagram class="surface-card docs-p-4 docs-rounded">
+  <a href="#" class="text-link">
+    Read more ->
+  </a>
+</Diagram>
+
+## Context Adaptation
+
+The power of these classes is that they adapt to their container.
+
+<Diagram class="docs-grid">
+  <div class="surface-card docs-p-4 docs-rounded">
+    <strong>Light Context</strong>
+    <div class="text-strong">Strong</div>
+    <div class="text-subtle">Subtle</div>
+  </div>
+  <div class="surface-spotlight docs-p-4 docs-rounded">
+    <strong>Dark Context</strong>
+    <div class="text-strong">Strong</div>
+    <div class="text-subtle">Subtle</div>
+  </div>
+</Diagram>
+
+Notice how `text-strong` is dark on the card but light on the spotlight. You didn't have to change the class name.
+
+---
+
+## concepts/accessibility-first.mdx
+
+In most design systems, accessibility is a step you take _after_ you choose your colors. You pick a palette, check the contrast ratios, and then tweak them until they pass.
+
+In the Axiomatic Color, accessibility is the **input**, not the output.
+
+## The Solver is an Accessibility Engine
+
+When you configure the system, you don't say "I want this specific shade of gray for my text."
+
+You say: **"I want my text to be readable."**
+
+The solver takes that intent and calculates the exact lightness value needed to achieve it. If it's mathematically impossible to achieve that contrast with your current background color, the solver will warn you or adjust the background to make it work.
+
+### APCA: The Future of Contrast
+
+We use the **Advanced Perceptual Contrast Algorithm (APCA)**, the candidate method for WCAG 3.0.
+
+Old contrast ratios (like 4.5:1) are simple math, but they don't match how human eyes work. They often fail to predict readability in Dark Mode.
+
+APCA models **human perception**. It understands that:
+
+1.  **Polarity Matters**: White text on black looks different than black text on white.
+2.  **Weight Matters**: Thinner fonts need more contrast than bold fonts.
+3.  **Context Matters**: The surrounding light affects how you see a specific element.
+
+By using APCA, the system ensures your text is _actually_ readable, not just technically compliant.
+
+### Mapping APCA to WCAG 2.1
+
+While APCA is the future, we understand that many teams are legally required to meet WCAG 2.1 standards (AA or AAA).
+
+
+
+
+The Axiomatic Color targets APCA values that **exceed** standard WCAG requirements. Here is a rough equivalence guide for compliance auditing:
+
+<Diagram>
+  <TokenLevelVisualizer />
+</Diagram>
+
+> **Note:** Because APCA is context-aware, these mappings are approximations. However, our baseline target of $L^c 75$ for even the subtlest text ensures that you are safely within the "accessible" range for almost all use cases.
+
+## Automated High Contrast
+
+Some users need more than just "good" contrast. They need **High Contrast**.
+
+Usually, supporting this requires a separate "High Contrast Theme" that you have to maintain manually.
+
+The Axiomatic Color generates this for you automatically. When you build your theme, it creates a `@media (prefers-contrast: more)` block that:
+
+1.  **Maximizes Range**: Pushes the Page background to pure Black/White.
+2.  **Increases Contrast**: Bumps up the target contrast ratios for all text.
+3.  **Reduces Noise**: Desaturates colors to reduce visual vibration.
+
+The browser applies this automatically based on the user's OS settings.
+
+## Forced Colors (Windows High Contrast)
+
+For users with severe visual impairments who use "Forced Colors Mode" (like on Windows), the system maps your semantic surfaces to system colors.
+
+| Surface          | Maps To      |
+| :--------------- | :----------- |
+| `surface-card`   | `Canvas`     |
+| `text-strong`    | `CanvasText` |
+| `surface-action` | `ButtonFace` |
+| `text-link`      | `LinkText`   |
+| `state-selected` | `Highlight`  |
+
+This ensures that your app behaves like a native application for users who rely on these tools.
+
+## Print is an Accessibility Feature
+
+We treat "Print" as just another mode.
+
+When a user prints your page, the system:
+
+1.  **Forces Light Mode**: To save ink and ensure legibility on paper.
+2.  **Removes Backgrounds**: Sets backgrounds to `white` (paper color).
+3.  **Adds Borders**: Since backgrounds are gone, it adds borders to `surface-card` and other containers so the structure remains visible.
+
+You don't need to write a print stylesheet. The system's "Physics" just adapt to the medium of "Ink on Paper."
+
+---
+
+## concepts/physics-of-light.mdx
+
+<DemoWrapper>
+
+If "Surfaces" are the atoms of the system, **Anchors** are the laws of physics that govern them.
+
+The Axiomatic Color doesn't store a list of colors for every surface. Instead, it calculates them dynamically based on a set of boundary conditions.
+
+## The Dynamic Range
+
+Imagine a vertical axis representing Lightness, from 0% (Absolute Black) to 100% (Absolute White). Every theme is defined by a **Dynamic Range** on this axis.
+
+### Anchors: The Boundary Conditions
+
+An **Anchor** is a fixed point on this scale. It tells the solver: _"This is where the world begins, and this is where it ends."_
+
+
+
+
+<Diagram>
+  <DynamicRange />
+</Diagram>
+
+## The "Rubber Band" Effect
+
+The most powerful aspect of this physics model is that surfaces are **relative**, not absolute.
+
+If you decide your Dark Mode is too dark, you don't have to manually adjust every single card, sidebar, and button. You simply move the **Start Anchor**.
+
+Imagine all your surfaces are attached to a rubber band stretched between the Start and End anchors.
+
+1.  **Move the Start Anchor up**: The entire rubber band compresses. Every surface gets lighter, but they maintain their relative order and separation.
+2.  **Move the End Anchor down**: The range compresses. Surfaces get closer together in lightness.
+
+### Why is this better?
+
+In a traditional system (Hex codes), changing the background color breaks everything.
+
+- "I made the background darker, now the cards are invisible."
+- "I made the background lighter, now the text contrast is failing."
+
+In the Axiomatic System, the solver **re-runs the physics simulation** every time you change an anchor. It guarantees that:
+
+1.  Surfaces stay visible against the background.
+2.  Text stays readable against the surfaces (by adjusting text colors if needed).
+
+## Contrast Distribution
+
+The system doesn't just place surfaces linearly (e.g., 10%, 20%, 30%). It distributes them based on **Perceptual Contrast**.
+
+The human eye is more sensitive to changes in dark colors than light colors. A 5% change in lightness is very noticeable in dark mode, but barely visible in light mode.
+
+The solver accounts for this. It ensures that the **visual step** from Page to Card looks the same in Dark Mode as it does in Light Mode, even if the actual math values are different.
+
+</DemoWrapper>
+
+---
+
+## concepts/thinking-in-surfaces.mdx
+
+<DemoWrapper>
+
+**Static palettes are not enough for modern interfaces.**
+
+In a dynamic UI, colors change based on where they live. A "gray" text needs to be dark on a white card, but light on a dark tooltip.
+
+Axiomatic Color acts as a **Context Engine**. Instead of giving you a fixed list of colors, it gives you **Surfaces** that automatically adjust their content to fit the environment.
+
+## The Core Concept
+
+A **Surface** is not just a background color. It **sets the rules** for everything inside it.
+
+When you place an element on a surface, you aren't just painting pixels. You are entering a new **Context**.
+
+### 1. Surfaces Create Context
+
+Every surface acts as a "Context Provider." It automatically sets a suite of CSS variables that determine how text, borders, and other elements should look _when sitting on that specific surface_.
+
+<Diagram>
+  <div class="mb-4 text-sm text-text-subtle">
+    Click on any surface below to inspect its active tokens.
+  </div>
+  <ContextVisualizer client:load />
+</Diagram>
+
+In the visualization above:
+
+1.  The **Page** sets the baseline context (Light Mode).
+2.  The **Card** sits on the Page. It might be slightly lighter or darker, but it maintains the same "Polarity" (Light text on Dark, or Dark text on Light).
+3.  The **Spotlight** (the dark box) _inverts_ the polarity. It tells its children: "I am dark. You must be light."
+
+### 2. Content Adapts to Context
+
+Because of this architecture, your components become **portable**.
+
+You don't write CSS like `.card .text` or `.footer .text`. You just write `.text-strong`.
+
+- If `.text-strong` is on a white card, it resolves to black.
+- If `.text-strong` is on a black tooltip, it resolves to white.
+
+The component doesn't know where it is. The _Surface_ tells it how to render.
+
+## The Hierarchy of Surfaces
+
+We categorize surfaces based on their physical role in the UI, not their color.
+
+### The Canvas
+
+These are the foundations. They recede into the background.
+
+- **Page**: The infinite backdrop.
+- **Workspace**: A dedicated area for tools or navigation.
+
+### The Objects
+
+These sit _on top_ of the canvas. They hold your content.
+
+- **Card**: The primary container for information.
+- **Tinted**: A subtle grouping mechanism, often used to highlight a section without a hard border.
+
+### The Interactors
+
+These are actionable. They invite touch.
+
+- **Action**: Buttons, toggles, and controls.
+
+### The Spotlights
+
+These demand attention. They often break the current polarity to stand out.
+
+- **Spotlight**: Tooltips, toasts, and primary calls-to-action.
+
+**Note on Inversion**: Spotlight surfaces perform a "Hard Flip" of the theme. If your app is in Light Mode, a Spotlight surface forces its internals into Dark Mode (and vice versa). This ensures that native browser controls (like scrollbars and checkboxes) render correctly inside the inverted area.
+
+## Why This Matters
+
+By thinking in surfaces, you stop fighting with contrast ratios.
+
+1.  **Guaranteed Contrast**: The system calculates the foreground colors based on the background surface. If the surface changes, the text changes.
+2.  **Automatic Dark Mode**: You don't design "Dark Mode" separately. You just define your surfaces, and the system flips the context.
+3.  **Infinite Nesting**: You can put a Card inside a Sidebar inside a Page. The system handles the math to ensure distinctness at every level.
+
+</DemoWrapper>
+
+---
+
+## demo-test.mdx
+
+<DemoComposition client:load />
+
+---
+
+## guides/ecosystem/figma.mdx
+
+The Axiomatic Color is designed to be the "Source of Truth" for your color palette. However, we know that design happens in tools like Figma. This guide explains how to bridge the gap.
+
+## The Workflow
+
+1.  **Configure & Solve**: Use the [Theme Studio](/guides/theme-builder) or edit `color-config.json` to define your system.
+2.  **Export**: Run the CLI to generate a W3C Design Tokens (DTCG) file.
+3.  **Import**: Load the tokens into Figma using a plugin like **Tokens Studio**.
+
+:::caution[Code First]
+The flow is **unidirectional**. You should treat your `color-config.json` as the source of truth. If you make changes in Figma, they will be lost the next time you import tokens. Always update the config first, then re-export.
+:::
+
+## Exporting Tokens
+
+To generate a DTCG-compatible JSON file, use the `export` command:
+
+```bash
+pnpm axiomatic export --format dtcg > tokens.json
+```
+
+This will output a JSON file containing your entire theme (Light and Dark modes) in the standard format.
+
+## Importing into Figma
+
+### Using Tokens Studio (Recommended)
+
+[Tokens Studio for Figma](https://tokens.studio/) is the industry standard for managing design tokens in Figma. It fully supports the W3C format.
+
+1.  Open the **Tokens Studio** plugin in Figma.
+2.  Go to the **Tools** tab (or Settings).
+3.  Click **Load from file/folder** or **Import**.
+4.  Select your generated `tokens.json`.
+5.  The plugin will create token sets for `light` and `dark`.
+
+### Using Native Figma Variables
+
+Native Figma Variables are powerful but have a stricter structure. Currently, the best way to import DTCG tokens into native variables is via a plugin that handles the conversion, or by using Tokens Studio's "Create Variables" feature.
+
+1.  Import tokens into **Tokens Studio** (as above).
+2.  Click **Create Variables** in the plugin.
+3.  Map the `light` and `dark` sets to a Figma Mode (e.g., "Color Mode").
+
+## Token Structure
+
+The exported tokens follow this structure:
+
+- **Surfaces**: `light.surface.brand`, `dark.surface.brand`
+- **Foregrounds**: `light.on-surface.brand.high`, `dark.on-surface.brand.high`
+
+This structure ensures that you can bind your Figma layers to semantic tokens (like "Brand Surface") rather than raw hex values.
+
+---
+
+## guides/example.md
+
+Guides lead a user through a specific task they want to accomplish, often with a sequence of steps.
+Writing a good guide requires thinking about what your users are trying to do.
+
+## Further reading
+
+- Read [about how-to guides](https://diataxis.fr/how-to-guides/) in the Diátaxis framework
+
+---
+
+## guides/frameworks/custom.mdx
+
+If we don't have a guide for your specific framework, don't worry! The Axiomatic Color system is designed to be framework-agnostic. This guide covers the core concepts and APIs you need to build your own integration.
+
+## Core Concepts
+
+There are three main pieces you need to implement:
+
+1.  **Theme Management**: Handling light/dark mode and system preferences.
+2.  **Surfaces**: A component to apply surface styles and nest contexts.
+3.  **Tokens**: Accessing the design tokens in your components.
+
+## 1. Theme Management
+
+The library provides a `ThemeManager` class that handles the complexity of:
+
+- Detecting system color preferences.
+- Listening for changes (e.g., when the user changes their OS theme).
+- Syncing the `meta[name="theme-color"]` tag.
+- Updating the `data-theme` attribute on the root element.
+
+### The `ThemeManager` Class
+
+```typescript
+
+
+// 1. Initialize
+const manager = new ThemeManager();
+
+// 2. Get current state
+console.log(manager.mode); // 'light' | 'dark' | 'system'
+console.log(manager.resolvedMode); // 'light' | 'dark' (resolves 'system')
+
+// 3. Change mode
+manager.setMode("dark");
+
+// 4. Cleanup (if needed)
+manager.dispose();
+```
+
+### Implementing a Store/Context
+
+Most frameworks have a way to share state (Context in React, Stores in Svelte, Services in Ember). You should wrap the `ThemeManager` in your framework's state management primitive.
+
+**Requirements for your wrapper:**
+
+1.  **Persistence**: The `ThemeManager` does _not_ handle `localStorage`. You should read/write to `localStorage` in your wrapper.
+2.  **Reactivity**: The `ThemeManager` is imperative. You need to expose its state (`mode` and `resolvedMode`) in a reactive way for your UI to update.
+
+## 2. The Surface Component
+
+The "Surface" is the fundamental building block. It does two things:
+
+1.  Sets the `background-color` and `color` for its container.
+2.  Establishes a new "context" for nested content (e.g., adjusting contrast).
+
+Your framework likely has a way to render a component with a dynamic class.
+
+```typescript
+
+
+// Pseudo-code for a Surface component
+function Surface({ variant, as = "div", children }) {
+  // 1. Get the class name for the variant (e.g., "surface-card")
+  const className = tokens.surface[variant];
+
+  // 2. Render the element
+  return <as className={className}>{children}</as>;
+}
+```
+
+## 3. Accessing Tokens
+
+When you run `axiomatic export`, you generate a TypeScript file containing your tokens.
+
+```bash
+npx axiomatic export --format typescript --out src/theme.ts
+```
+
+This file exports a `tokens` object that mirrors your CSS variables.
+
+```typescript
+
+
+// Usage in styles
+const style = {
+  color: tokens.context.text.high, // "var(--axm-text-high-token)"
+};
+```
+
+### Why use the JS tokens?
+
+You _can_ use the CSS variables directly (e.g., `var(--text-high)`), but the JS tokens provide:
+
+- **Type Safety**: TypeScript will error if you use a token that doesn't exist.
+- **Refactoring**: Renaming a token in your config will cause build errors where it's used.
+- **Autocomplete**: Your IDE will suggest available tokens.
+
+## Checklist
+
+To have a complete integration, ensure you have:
+
+- [ ] Generated `theme.css` and imported it globally.
+- [ ] Generated `theme.ts` for type-safe token access.
+- [ ] Created a `ThemeService` / `ThemeContext` wrapping `ThemeManager`.
+- [ ] Created a `<Surface>` component.
+- [ ] (Optional) Added a theme toggle UI.
+
+---
+
+## guides/frameworks/ember.mdx
+
+This guide shows you how to integrate the Axiomatic Color into a modern Polaris Ember application (using `.gts` components and Vite).
+
+## 1. Setup
+
+First, install the CLI and generate your theme CSS and TypeScript definitions.
+
+```bash
+pnpm add -D @axiomatic-design/color
+pnpm exec axiomatic init
+pnpm exec axiomatic build --out ./app/styles/theme.css
+pnpm exec axiomatic export --format typescript --out ./app/utils/theme.ts
+```
+
+Import the CSS in your application's entry point (e.g., `app/app.ts` or `app/styles/app.css` if using CSS imports).
+
+```css
+/* app/styles/app.css */
+@import "./theme.css";
+```
+
+## 2. The Surface Helper
+
+We recommend using a simple helper function to apply surface tokens. This keeps your template structure flat and allows you to use standard HTML elements.
+
+```ts
+// app/helpers/surface.ts
+
+
+export function surface(variant: keyof typeof tokens.surface): string {
+  return tokens.surface[variant];
+}
+```
+
+You can then use this helper directly in your `.gts` components:
+
+```gts
+
+
+<template>
+  <div class={{surface "card"}}>
+    Content
+  </div>
+</template>
+```
+
+This approach provides full type safety with Glint, ensuring you only use valid surface variants.
+
+## 3. The Theme Service
+
+The library provides a `ThemeManager` class to handle the low-level details of theme switching (like updating `meta` tags and handling system preferences). We can wrap this in an Ember Service to add persistence.
+
+```ts
+// app/services/theme.ts
+
+
+import {
+  ThemeManager,
+  type ThemeMode,
+} from "@axiomatic-design/color/browser";
+
+export default class ThemeService extends Service {
+  @tracked mode: ThemeMode = "system";
+  private manager: ThemeManager;
+
+  constructor() {
+    super(...arguments);
+    // Initialize the manager
+    this.manager = new ThemeManager();
+
+    // Restore saved preference
+    this.restore();
+  }
+
+  restore() {
+    const saved = localStorage.getItem("theme") as ThemeMode | null;
+    if (saved) {
+      this.setMode(saved);
+    }
+  }
+
+  setMode(mode: ThemeMode) {
+    this.mode = mode;
+    this.manager.setMode(mode);
+    localStorage.setItem("theme", mode);
+  }
+
+  toggle() {
+    const next = this.manager.resolvedMode === "light" ? "dark" : "light";
+    this.setMode(next);
+  }
+}
+```
+
+## 4. Usage Example
+
+Here is how you put it all together in a component.
+
+```gts
+// app/components/welcome.gts
+
+
+
+
+
+
+
+
+export default class Welcome extends Component {
+  @service declare theme: ThemeService;
+
+  <template>
+    <div class={{surface "page"}} style="min-height: 100vh; padding: 2rem;">
+      <header style="display: flex; justify-content: space-between;">
+        <h1 style={{concat "color: " tokens.context.text.high}}>My Ember App</h1>
+
+        <button type="button" {{on "click" this.theme.toggle}}>
+          {{#if (eq this.theme.manager.resolvedMode "light")}}
+            🌙
+          {{else}}
+            ☀️
+          {{/if}}
+        </button>
+      </header>
+
+      <main>
+        <div class={{surface "card"}} style="padding: 2rem; border-radius: 8px;">
+          <h2 style={{concat "color: " tokens.context.text.high}}>Hello World</h2>
+          <p style={{concat "color: " tokens.context.text.subtle}}>
+            This card is automatically themed based on its context.
+          </p>
+        </div>
+      </main>
+    </div>
+  </template>
+}
+```
+
+## 5. Build vs. Runtime
+
+The Axiomatic Color is designed to be flexible.
+
+### Build Time (Recommended)
+
+The `axiomatic build` command generates a static CSS file. This is the most performant option.
+
+```css
+/* app/styles/app.css */
+@import "./theme.css";
+```
+
+### Runtime
+
+You can also use the `runtime` module to generate themes in the browser. This is useful for user-customizable themes.
+
+```ts
+
+
+
+// Load your config (e.g. from an API or JSON file)
+const config: SolverConfig = { ... };
+
+// Generate and inject the CSS
+const css = generateTheme(config);
+injectTheme(css);
+```
+
+> **Note:** The rest of this guide (the Surface helper, Theme Service, and usage patterns) works exactly the same way regardless of which mode you choose. The only difference is how the CSS variables are generated and loaded.
+
+---
+
+## guides/frameworks/html.mdx
+
+This guide shows you how to integrate the Axiomatic Color into a plain HTML project.
+
+## 1. Setup
+
+First, install the CLI and generate your theme CSS.
+
+```bash
+npm install -D @axiomatic-design/color
+npx axiomatic init
+npx axiomatic build --out ./public/theme.css
+```
+
+Link the CSS in your HTML file:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/theme.css" />
+    <title>My App</title>
+  </head>
+  <body>
+    <!-- Content goes here -->
+  </body>
+</html>
+```
+
+## 2. Using Surfaces
+
+In HTML, you apply surfaces using the generated utility classes.
+
+```html
+<!-- The page surface sets the background for the body -->
+<body class="surface-page">
+  <main style="padding: 2rem;">
+    <!-- A card surface -->
+    <div class="surface-card" style="padding: 2rem; border-radius: 8px;">
+      <!-- Use CSS variables for text colors -->
+      <h2 style="color: var(--axm-text-high-token)">Hello World</h2>
+      <p style="color: var(--axm-text-subtle-token)">
+        This card is automatically themed based on its context.
+      </p>
+    </div>
+  </main>
+</body>
+```
+
+## 3. The Theme Toggle
+
+To handle Dark Mode, add a simple script to toggle the `data-theme` attribute.
+
+```html
+<button id="theme-toggle">Toggle Theme</button>
+
+<script>
+  const toggle = document.getElementById("theme-toggle");
+
+  // 1. Initialize state
+  const systemPrefersDark = window.matchMedia(
+    "(prefers-color-scheme: dark)"
+  ).matches;
+  const savedTheme = localStorage.getItem("theme");
+  let currentTheme = savedTheme || (systemPrefersDark ? "dark" : "light");
+
+  document.documentElement.setAttribute("data-theme", currentTheme);
+  updateButtonText();
+
+  // 2. Handle click
+  toggle.addEventListener("click", () => {
+    currentTheme = currentTheme === "light" ? "dark" : "light";
+    document.documentElement.setAttribute("data-theme", currentTheme);
+    localStorage.setItem("theme", currentTheme);
+    updateButtonText();
+  });
+
+  function updateButtonText() {
+    toggle.textContent =
+      currentTheme === "light" ? "🌙 Dark Mode" : "☀️ Light Mode";
+  }
+</script>
+```
+
+---
+
+## guides/frameworks/react.mdx
+
+This guide shows you how to integrate the Axiomatic Color into a React application using TypeScript.
+
+## 1. Setup
+
+First, install the CLI and generate your theme CSS and TypeScript definitions.
+
+```bash
+npm install -D @axiomatic-design/color
+npx axiomatic init
+npx axiomatic build --out ./src/theme.css
+npx axiomatic export --format typescript --out ./src/theme.ts
+```
+
+Import the CSS in your root entry point (e.g., `main.tsx` or `App.tsx`):
+
+```tsx
+import "./theme.css";
+```
+
+## 2. The Surface Component
+
+The core concept of the system is the **Surface**. In React, we can create a reusable `<Surface>` component that handles the nesting logic automatically.
+
+```tsx
+// src/components/Surface.tsx
+
+
+
+type SurfaceProps = {
+  as?: React.ElementType;
+  variant: keyof typeof tokens.surface;
+  children: React.ReactNode;
+  className?: string;
+} & React.HTMLAttributes<HTMLElement>;
+
+export function Surface({
+  as: Component = "div",
+  variant,
+  children,
+  className = "",
+  ...props
+}: SurfaceProps) {
+  const surfaceClass = tokens.surface[variant];
+
+  return (
+    <Component className={`${surfaceClass} ${className}`} {...props}>
+      {children}
+    </Component>
+  );
+}
+```
+
+## 3. The Theme Context
+
+To handle Dark Mode and System preferences robustly, we recommend creating a Context that wraps the `ThemeManager`.
+
+```tsx
+// src/context/ThemeContext.tsx
+
+
+
+type ThemeContextType = {
+  mode: ThemeMode;
+  setMode: (mode: ThemeMode) => void;
+  toggle: () => void;
+};
+
+const ThemeContext = createContext<ThemeContextType | null>(null);
+
+export function ThemeProvider({ children }: { children: React.ReactNode }) {
+  // Initialize the manager once
+  const [manager] = useState(() => new ThemeManager());
+  const [mode, setModeState] = useState<ThemeMode>("system");
+
+  useEffect(() => {
+    // Restore saved preference on mount
+    const saved = localStorage.getItem("theme") as ThemeMode | null;
+    if (saved) {
+      manager.setMode(saved);
+      setModeState(saved);
+    }
+  }, [manager]);
+
+  const setMode = (newMode: ThemeMode) => {
+    manager.setMode(newMode);
+    setModeState(newMode);
+    localStorage.setItem("theme", newMode);
+  };
+
+  const toggle = () => {
+    const next = manager.resolvedMode === "light" ? "dark" : "light";
+    setMode(next);
+  };
+
+  return (
+    <ThemeContext.Provider value={{ mode, setMode, toggle }}>
+      {children}
+    </ThemeContext.Provider>
+  );
+}
+
+export function useTheme() {
+  const context = useContext(ThemeContext);
+  if (!context) throw new Error("useTheme must be used within a ThemeProvider");
+  return context;
+}
+```
+
+## 4. Usage Example
+
+Wrap your application in the `ThemeProvider`, and then use the `useTheme` hook to control the theme.
+
+```tsx
+// src/App.tsx
+
+
+
+
+function Header() {
+  const { toggle, mode } = useTheme();
+
+  return (
+    <header style={{ display: "flex", justifyContent: "space-between" }}>
+      <h1 style={{ color: tokens.context.text.high }}>My App</h1>
+      <button onClick={toggle}>{mode === "light" ? "🌙" : "☀️"}</button>
+    </header>
+  );
+}
+
+export default function App() {
+  return (
+    <ThemeProvider>
+      <Surface variant="page" style={{ minHeight: "100vh", padding: "2rem" }}>
+        <Header />
+
+        <main>
+          <Surface
+            variant="card"
+            style={{ padding: "2rem", borderRadius: "8px" }}
+          >
+            <h2 style={{ color: tokens.context.text.high }}>Hello World</h2>
+            <p style={{ color: tokens.context.text.subtle }}>
+              This card is automatically themed based on its context.
+            </p>
+          </Surface>
+        </main>
+      </Surface>
+    </ThemeProvider>
+  );
+}
+```
+
+---
+
+## guides/frameworks/svelte.mdx
+
+This guide shows you how to integrate the Axiomatic Color into a Svelte application using TypeScript.
+
+## 1. Setup
+
+First, install the CLI and generate your theme CSS and TypeScript definitions.
+
+```bash
+npm install -D @axiomatic-design/color
+npx axiomatic init
+npx axiomatic build --out ./src/theme.css
+npx axiomatic export --format typescript --out ./src/lib/theme.ts
+```
+
+Import the CSS in your root layout (e.g., `src/routes/+layout.svelte`):
+
+```svelte
+<script>
+  import '../theme.css';
+</script>
+
+<slot />
+```
+
+## 2. The Surface Component
+
+We can create a reusable `<Surface>` component.
+
+```svelte
+<!-- src/lib/components/Surface.svelte -->
+<script lang="ts">
+  import { tokens } from '$lib/theme';
+  import type { HTMLAttributes } from 'svelte/elements';
+
+  interface Props extends HTMLAttributes<HTMLElement> {
+    variant: keyof typeof tokens.surface;
+    as?: string;
+    children?: import('svelte').Snippet;
+  }
+
+  let {
+    variant,
+    as = 'div',
+    class: className = '',
+    children,
+    ...rest
+  }: Props = $props();
+
+  const surfaceClass = tokens.surface[variant];
+</script>
+
+<svelte:element
+  this={as}
+  class="{surfaceClass} {className}"
+  {...rest}
+>
+  {@render children?.()}
+</svelte:element>
+```
+
+## 3. The Theme Service
+
+We can wrap the `ThemeManager` in a Svelte 5 reactive class to handle state management.
+
+```typescript
+// src/lib/theme.svelte.ts
+
+
+export class ThemeService {
+  private manager: ThemeManager;
+  mode = $state<ThemeMode>("system");
+
+  constructor() {
+    this.manager = new ThemeManager();
+
+    // Restore saved preference
+    if (typeof localStorage !== "undefined") {
+      const saved = localStorage.getItem("theme") as ThemeMode | null;
+      if (saved) {
+        this.setMode(saved);
+      }
+    }
+  }
+
+  setMode(mode: ThemeMode) {
+    this.mode = mode;
+    this.manager.setMode(mode);
+    localStorage.setItem("theme", mode);
+  }
+
+  toggle() {
+    const next = this.manager.resolvedMode === "light" ? "dark" : "light";
+    this.setMode(next);
+  }
+}
+
+// Export a singleton instance
+export const theme = new ThemeService();
+```
+
+## 4. Usage Example
+
+```svelte
+<!-- src/routes/+page.svelte -->
+<script lang="ts">
+  import Surface from '$lib/components/Surface.svelte';
+  import { theme } from '$lib/theme.svelte';
+  import { tokens } from '$lib/theme';
+</script>
+
+<Surface variant="page" style="min-height: 100vh; padding: 2rem;">
+  <header style="display: flex; justify-content: space-between;">
+    <h1 style="color: {tokens.context.text.high}">My App</h1>
+
+    <button onclick={() => theme.toggle()}>
+      {theme.mode === 'light' ? '🌙' : '☀️'}
+    </button>
+  </header>
+
+  <main>
+    <Surface variant="card" style="padding: 2rem; border-radius: 8px;">
+      <h2 style="color: {tokens.context.text.high}">Hello World</h2>
+      <p style="color: {tokens.context.text.subtle}">
+        This card is automatically themed based on its context.
+      </p>
+    </Surface>
+  </main>
+</Surface>
+```
+
+---
+
+## guides/integration.md
+
+Once you have generated your `theme.css` file, integrating it is straightforward. The system produces standard CSS, so it works with any framework (React, Vue, Svelte, etc.) or vanilla HTML.
+
+## 1. Load the CSS
+
+Import the generated file into your application's entry point.
+
+### Vanilla HTML
+
+```html
+<head>
+  <link rel="stylesheet" href="/styles/theme.css" />
+</head>
+```
+
+### JavaScript / Bundlers (Vite, Webpack)
+
+```javascript
+// main.js or index.tsx
+import "./styles/theme.css";
+```
+
+## 2. Set the Root Surface
+
+The system requires a "Root Surface" to establish the initial context. Usually, this is the `<body>` tag.
+
+```html
+<body class="surface-page">
+  <!-- Your app goes here -->
+</body>
+```
+
+This sets the background color of the page and initializes the CSS variables for the "Page" context.
+
+## 3. Using Surfaces
+
+Now you can start building your UI using the semantic classes.
+
+### The Card Pattern
+
+The most common pattern is placing content inside a card.
+
+```html
+<div class="surface-card">
+  <h2 class="text-strong">Card Title</h2>
+  <p class="text-subtle">Card content goes here.</p>
+</div>
+```
+
+### The Button Pattern
+
+Buttons are interactive surfaces.
+
+```html
+<button class="surface-action hue-brand">Primary Action</button>
+
+<button class="surface-action">Secondary Action</button>
+```
+
+## 4. Handling Dark Mode
+
+The system supports two strategies for Dark Mode.
+
+### Strategy A: System Preference (Default)
+
+By default, the generated CSS uses the `light-dark()` function and media queries to automatically respect the user's OS preference (`prefers-color-scheme`).
+
+You don't need to do anything. If the user's OS is in Dark Mode, your app is in Dark Mode.
+
+### Strategy B: Manual Toggle
+
+If you want to offer a toggle button, you can force a specific mode by adding a class to the `<body>` (or any container).
+
+```html
+<!-- Force Dark Mode -->
+<body class="surface-page force-dark">
+  ...
+</body>
+
+<!-- Force Light Mode -->
+<body class="surface-page force-light">
+  ...
+</body>
+```
+
+## 5. Inverted Surfaces
+
+Some surfaces, like `surface-spotlight`, are defined as "Inverted". This means they automatically flip the theme context.
+
+- In **Light Mode**, a spotlight is **Dark**.
+- In **Dark Mode**, a spotlight is **Light**.
+
+The system achieves this using the standard `color-scheme` CSS property. This ensures that native browser controls (like scrollbars and checkboxes) inside the spotlight render with the correct contrast.
+
+```html
+<div class="surface-spotlight p-4">
+  <p class="text-strong">I am in a dark context (if the page is light)!</p>
+  <!-- Native checkbox will be dark-themed -->
+  <input type="checkbox" />
+</div>
+```
+
+## Framework Examples
+
+### React
+
+```tsx
+function Card({ title, children }) {
+  return (
+    <div className="surface-card p-4 rounded-lg">
+      <h3 className="text-strong text-lg font-bold">{title}</h3>
+      <div className="text-subtle mt-2">{children}</div>
+    </div>
+  );
+}
+```
+
+### Tailwind CSS
+
+The Color System plays nicely with Tailwind. You can use Tailwind for layout (`p-4`, `flex`, `rounded`) and the Color System for... well, color.
+
+If you want to use the Color System's tokens _inside_ Tailwind utility classes (e.g., `bg-surface-card`), you can configure your `tailwind.config.js` to map to the CSS variables.
+
+_Note: A dedicated Tailwind plugin is on the roadmap._
+
+---
+
+## guides/linting.mdx
+
+The Axiomatic Color System provides an ESLint plugin to help you maintain a clean, consistent codebase. The plugin enforces the "Code is Truth" axiom by flagging hardcoded colors and ensuring semantic token usage.
+
+## Installation
+
+```bash
+pnpm add -D @axiomatic-design/eslint-plugin
+```
+
+## Configuration
+
+Add the plugin to your `eslint.config.js` (flat config):
+
+```javascript
+
+
+export default [
+  {
+    plugins: {
+      "@axiomatic-design": axiomatic,
+    },
+    rules: {
+      // Warn on hardcoded colors (hex, rgb, etc.)
+      "@axiomatic-design/no-hardcoded-colors": "warn",
+
+      // Error on invalid or internal token usage
+      "@axiomatic-design/no-raw-tokens": "error",
+    },
+  },
+];
+```
+
+## Rules
+
+### `no-hardcoded-colors`
+
+This rule flags usage of hardcoded color values (Hex, RGB, HSL, named colors) in your code. It supports JSX `style` props, Svelte, Vue, and Ember (GTS) templates.
+
+**Why?**
+Hardcoded colors break the system's ability to adapt to themes and modes. They are "Magic Numbers" that should be replaced with semantic tokens.
+
+**Example:**
+
+```jsx
+// ❌ Invalid
+<div style={{ color: "#ff0000" }}>Error</div>
+
+// ✅ Valid
+<div style={{ color: "var(--axm-text-high-token)" }}>Error</div>
+```
+
+**Auto-Fix:**
+The rule provides auto-fix suggestions to replace hardcoded colors with the closest matching semantic token from your generated theme.
+
+### `no-raw-tokens`
+
+This rule flags usage of internal tokens, non-existent tokens, or tokens that should be applied via utility classes.
+
+**Why?**
+
+- **Internal Tokens**: Tokens like `--scale-gray-500` are implementation details and may change. Use semantic tokens like `--surface-sunken` instead.
+- **Utility Classes**: Some tokens (like shadows or surfaces) carry extra properties or side effects. Using the utility class ensures consistent behavior.
+
+**Example:**
+
+```javascript
+// ❌ Invalid (Internal Token)
+const color = "var(--scale-gray-500)";
+
+// ❌ Invalid (Should use class)
+const bg = "var(--surface-card)";
+
+// ✅ Valid
+const color = "var(--axm-text-high-token)";
+<div className="surface-card" />;
+```
+
+## Config Awareness
+
+The plugin is "Config Aware". It automatically detects your `color-config.json` and generated CSS files (`css/theme.css`, `css/utilities.css`) to validate tokens and provide accurate suggestions.
+
+Ensure these files are present in your project root or build output for the linter to work correctly.
+
+---
+
+## guides/quick-start.mdx
+
+This guide will walk you through setting up the Axiomatic Color and building your first themed component.
+
+## 1. Install & Initialize
+
+Run the following commands in your project root:
+
+
+  
+    ```bash npm install -D @axiomatic-design/color npx axiomatic init ```
+  
+  
+    ```bash pnpm add -D @axiomatic-design/color pnpm exec axiomatic init ```
+  
+
+
+This creates a `color-config.json` file with default settings.
+
+## 2. Generate Assets
+
+Now, generate the CSS and TypeScript definitions.
+
+
+  
+    ```bash npx axiomatic build --out ./src/theme.css npx axiomatic export
+    --format typescript --out ./src/theme.ts ```
+  
+  
+    ```bash pnpm exec axiomatic build --out ./src/theme.css pnpm exec axiomatic
+    export --format typescript --out ./src/theme.ts ```
+  
+
+
+## 3. Build a Card
+
+Let's build a simple "Card" component to see the system in action.
+
+
+  
+  
+  First, import the CSS in your app entry point:
+  ```tsx
+  import './theme.css';
+  ```
+
+Then, create a Card component:
+
+```tsx
+
+
+export function Card() {
+  return (
+    <div
+      className={tokens.surface.card}
+      style={{ padding: "2rem", borderRadius: "8px" }}
+    >
+      <h2 style={{ color: tokens.context.text.high }}>Hello World</h2>
+      <p style={{ color: tokens.context.text.subtle }}>I am a themed card.</p>
+    </div>
+  );
+}
+```
+
+  
+
+  
+  
+  First, import the CSS in your root layout:
+  ```svelte
+  <script>
+    import '../theme.css';
+  </script>
+  <slot />
+  ```
+
+Then, create a Card component:
+
+```svelte
+<script>
+  import { tokens } from "$lib/theme";
+</script>
+
+<div class={tokens.surface.card} style="padding: 2rem; border-radius: 8px;">
+  <h2 style="color: {tokens.context.text.high}">Hello World</h2>
+  <p style="color: {tokens.context.text.subtle}">I am a themed card.</p>
+</div>
+```
+
+  
+
+  
+  
+  Link the CSS in your `<head>`:
+  
+  > **Note**: If you are using a bundler (like Vite, Webpack, or Astro), you should import the CSS file in your JavaScript/TypeScript entry point instead (e.g. `import './theme.css'`).
+
+```html
+<link rel="stylesheet" href="/theme.css" />
+```
+
+Then, write the markup using the utility classes:
+
+```html
+<div class="surface-card" style="padding: 2rem; border-radius: 8px;">
+  <h2 class="text-strong">Hello World</h2>
+  <p class="text-subtle">I am a themed card.</p>
+</div>
+```
+
+  
+
+
+## 4. Next Steps
+
+You now have a working theme system!
+
+- **[React Integration](./frameworks/react)**: Deep dive into React patterns.
+- **[Svelte Integration](./frameworks/svelte)**: Deep dive into Svelte patterns.
+- **[The Theme Studio](./theme-builder)**: Customize your colors visually.
+
+---
+
+## guides/theme-builder.md
+
+The **Theme Studio** is a web-based tool that allows you to visually design your theme and export the configuration for your project.
+
+<div class="docs-cta-container">
+  <a href="/studio/" class="docs-cta-button">
+    Launch Theme Studio →
+  </a>
+</div>
+
+## Workflow
+
+The Theme Studio is designed to work hand-in-hand with the CLI.
+
+1.  **Design**: Use the visual controls to adjust anchors, key colors, and surfaces.
+2.  **Export**: Click the "Export Config" button to get your JSON.
+3.  **Paste**: Copy the JSON into your local `color-config.json`.
+4.  **Build**: Run `npx axiomatic build` to generate your CSS.
+
+## Key Features
+
+### 1. Anchor Tuning
+
+The most powerful feature of the studio is the **Anchor Tuner**.
+
+- **Background Anchors**: Drag the sliders to change the "start" (page background) and "end" (highest surface) lightness. Watch how every surface in the preview updates instantly.
+- **Foreground Anchors**: Adjust the contrast range for text.
+
+### 2. Semantic Colors
+
+You can define your semantic hues (Brand, Success, Danger, etc.) and see how they look across different surfaces.
+
+- **Hue**: Pick the base hue.
+- **Chroma**: Adjust the saturation.
+- **Usage**: See how the color looks as a button (`surface-action`), a badge (`surface-tinted`), or text (`text-link`).
+
+### 3. Real-time Accessibility Check
+
+As you drag sliders, the studio runs the **APCA Solver** in real-time.
+
+- If you make the background too dark for the text, the text will automatically lighten to maintain readability.
+- If you create a combination that is mathematically impossible to solve (e.g., low contrast background + low contrast text), the studio will warn you.
+
+## Importing an Existing Config
+
+If you already have a `color-config.json`, you can paste it into the "Import" tab of the Theme Studio to visualize your current theme and make adjustments.
+
+---
+
+## index.mdx
+
+## Quick Start: Build a Profile Card
+
+In this 5-minute tutorial, you'll build a fully accessible, dark-mode ready UI component without picking a single hex code.
+
+### Step 1: The Page Surface
+
+Everything starts with a **Surface**. Surfaces provide context for the content inside them. The `surface-page` is your canvas.
+
+<Snippet name="layout-stack" />
+
+### Step 2: Adding a Card
+
+Nest a `surface-card` inside the page. The system automatically adjusts the contrast and borders to ensure it stands out.
+
+<Snippet name="card" />
+
+### Step 3: Adding Interactivity
+
+Add a button using `surface-action`. Notice how we use `hue-brand` to apply your brand color, while the system handles the text contrast automatically.
+
+<Snippet name="button" />
+
+### Step 4: Inputs
+
+Form elements are surfaces too.
+
+<Snippet name="input" />
+
+## Why This Matters
+
+
+  
+    The system uses **APCA** (the future WCAG 3.0 standard) to mathematically
+    guarantee readability. If your background changes, your text automatically
+    adjusts to maintain contrast.
+  
+  
+    Don't maintain two separate palettes. The system understands **Polarity**.
+    It automatically inverts your surfaces and recalculates contrast for dark
+    mode, ensuring a perfect visual balance.
+  
+  
+    Components adapt to their environment. A "Secondary Text" class looks
+    different on a white card than it does on a dark tooltip, but it always
+    maintains the same *semantic weight*.
+  
+  
+    Built on the cutting edge of the web platform: **OKLCH**, **Relative Color
+    Syntax**, and **CSS Custom Properties**. No JavaScript runtime required for
+    the final output.
+  
+</CardGrid>
+
+---
+
+## philosophy.md
+
+Axiomatic Color is built on three core pillars: **Math**, **Semantics**, and **Adaptability**.
+
+## Math vs. Magic
+
+Most color systems are built on **Magic Numbers**.
+
+> "Use `Blue-500` for buttons and `Gray-100` for cards."
+
+This forces **you** to be the calculator.
+
+1.  **Is it accessible?** You have to know that `Blue-800` is safe on `Blue-200`. Is `Blue-500` safe? You have to check a table.
+2.  **What about Dark Mode?** `Blue-800` on `Blue-200` might work in Light Mode, but in Dark Mode, you need to invert it. Now you're managing two sets of magic numbers.
+3.  **Is it consistent?** The math of perception is non-linear. A step of "100" in lightness looks different in dark mode than in light mode. To make them _feel_ the same, you have to manually tweak the values.
+
+This system is built on **Math**.
+
+> "I need a Card."
+
+The system translates this intent into a mathematical rule: _Must have APCA 60 contrast against the background._
+
+The **Solver** handles the complexity for you:
+
+- **It guarantees contrast**: It picks the exact lightness to hit APCA 60.
+- **It handles polarity**: It automatically flips for Dark Mode.
+- **It balances perception**: It adjusts the lightness steps so that "contrast" feels the same in both modes.
+- **It shifts hue**: It automatically warms up lighter colors and cools down darker colors (the "Bezold–Brücke effect") so you don't have to manually pick "warmer" grays.
+
+**You define the intent. The system solves the math.**
+
+## Designing with Intent
+
+Our semantic roles (like "Surface", "Action", "Link") are not arbitrary choices. They are derived directly from the **fundamental semantics of the web platform**.
+
+By aligning our taxonomy with these platform primitives, we ensure that accessibility is not an "add-on" or a "special case." It is the **foundation** of the design. When you design with these concepts, you are designing with the grain of the web, ensuring your application feels native and works perfectly for every user, regardless of their device or settings.
+
+> **For the curious:** Under the hood, we map these roles to CSS System Colors (like `Canvas`, `ButtonFace`, `Highlight`). This is how we support Windows High Contrast mode automatically. But you don't need to know that to use the system—just use the semantic names.
+
+## The Reactive Pipeline
+
+How does this actually work in the browser?
+
+We use a technique called the **Reactive Pipeline**. Instead of hardcoding hex values into classes, we use CSS Custom Properties (`var(--...)`) and the Relative Color Syntax (`oklch(from ...)`).
+
+### The Flow
+
+1.  **Input Variables**: You set high-level intent variables.
+
+    ```css
+    .hue-brand {
+      --hue-brand: 250;
+    }
+    ```
+
+2.  **The Engine (`engine.css`)**: The engine listens to these variables and recalculates the colors in real-time.
+
+    ```css
+    /* Simplified Engine Logic */
+    --computed-surface: oklch(from var(--surface-token) l c var(--hue-brand));
+    ```
+
+3.  **The Output**: The browser renders the final color.
+
+### Why is this powerful?
+
+- **Instant Theming**: Change `--hue-brand` on the `<body>`, and the entire app updates instantly. No re-compiling CSS.
+- **Scoped Theming**: Change `--hue-brand` on a specific `<div>`, and only that section changes color.
+- **Animation**: Because these are just numbers, you can animate them! The system handles the color interpolation for you.
+
+---
+
+## reference/cli.md
+
+The `axiomatic` CLI is the primary tool for generating your theme tokens.
+
+## Installation
+
+```bash
+pnpm add -D @axiomatic-design/color
+# or
+npm install -D @axiomatic-design/color
+```
+
+## Usage
+
+```bash
+npx axiomatic [command] [options]
+```
+
+## Commands
+
+### `init`
+
+Scaffolds a new configuration file in your project.
+
+```bash
+npx axiomatic init
+```
+
+**Behavior:**
+
+- Checks if `color-config.json` exists.
+- If not, creates it with the default configuration.
+- If it exists, exits with an error to prevent overwriting.
+
+### `generate` (Default)
+
+Generates the CSS tokens based on your configuration. If no command is specified, this is the default behavior.
+
+```bash
+npx axiomatic [config-file] [output-file]
+```
+
+**Arguments:**
+
+1.  **`config-file`** (Optional)
+
+    - Path to your JSON configuration file.
+    - **Default**: `./color-config.json`
+
+2.  **`output-file`** (Optional)
+    - Path where the generated CSS will be written.
+    - **Default**: `./theme.css`
+
+**Examples:**
+
+```bash
+# Use defaults
+npx axiomatic
+
+# Custom config, default output
+npx axiomatic ./design/my-colors.json
+
+# Custom config and output
+npx axiomatic ./design/my-colors.json ./src/styles/variables.css
+```
+
+## Output
+
+The CLI generates a CSS file containing:
+
+1.  **:root Variables**: Global tokens like shadows, focus rings, and data viz colors.
+2.  **Surface Classes**: Classes for each surface defined in your config (e.g., `.surface-card`).
+3.  **High Contrast Media Query**: A `@media (prefers-contrast: more)` block with accessible overrides.
+
+### Integration
+
+Import the generated file in your main CSS entry point:
+
+```css
+@import "./theme.css";
+```
+
+---
+
+## reference/example.md
+
+Reference pages are ideal for outlining how things work in terse and clear terms.
+Less concerned with telling a story or addressing a specific use case, they should give a comprehensive outline of what you're documenting.
+
+## Further reading
+
+- Read [about reference](https://diataxis.fr/reference/) in the Diátaxis framework
+
+---
+
+## reference/javascript-api.md
+
+The Runtime API allows you to manage the theme mode and sync it with the browser environment.
+
+## `ThemeManager`
+
+The `ThemeManager` class is the main entry point for runtime theme control.
+
+```typescript
+
+```
+
+### Constructor
+
+```typescript
+const themeManager = new ThemeManager(options?: ThemeManagerOptions);
+```
+
+**Options:**
+
+| Option             | Type                        | Default                    | Description                                                                 |
+| :----------------- | :-------------------------- | :------------------------- | :-------------------------------------------------------------------------- |
+| `root`             | `HTMLElement`               | `document.documentElement` | The element to apply the theme to.                                          |
+| `lightClass`       | `string`                    | `undefined`                | Class to add in light mode. If omitted, sets `style="color-scheme: light"`. |
+| `darkClass`        | `string`                    | `undefined`                | Class to add in dark mode. If omitted, sets `style="color-scheme: dark"`.   |
+| `faviconGenerator` | `(color: string) => string` | `undefined`                | Function to generate an SVG favicon based on the current theme color.       |
+
+### Methods
+
+#### `setMode(mode: ThemeMode)`
+
+Sets the active theme mode.
+
+- **`mode`**: `"light" | "dark" | "system"`
+
+```typescript
+themeManager.setMode("dark");
+```
+
+#### `get mode()`
+
+Returns the current configured mode (e.g., `"system"`).
+
+#### `get resolvedMode()`
+
+Returns the actual active mode (`"light"` or `"dark"`). If mode is `"system"`, this returns the OS preference.
+
+#### `dispose()`
+
+Cleans up event listeners (e.g., for system preference changes). Call this when unmounting your app or component.
+
+### Interaction with Inverted Surfaces
+
+The `ThemeManager` sets the global theme state on the root element. The generated CSS uses this state to automatically flip the `color-scheme` for inverted surfaces (like `surface-spotlight`).
+
+No extra JavaScript is required to handle these local inversions.
+
+## Helper Functions
+
+### `updateThemeColor()`
+
+Updates the `<meta name="theme-color">` tag to match the computed background color of the document body. This is called automatically by `ThemeManager`, but you can export and use it manually if needed.
+
+```typescript
+
+
+updateThemeColor();
+```
+
+### `updateFavicon(generator)`
+
+Updates the favicon dynamically.
+
+```typescript
+
+
+updateFavicon(
+  (color) => `
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+    <circle cx="16" cy="16" r="14" fill="${color}" />
+  </svg>
+`,
+);
+```
+
+---
+
+## reference/tokens.md
+
+The system generates a set of CSS variables (tokens) that you can use in your application.
+
+## Surface Tokens
+
+These tokens are scoped to the surface class (e.g., `.surface-card`). They change value depending on the surface they are inside.
+
+| Token                       | Description                                                     |
+| :-------------------------- | :-------------------------------------------------------------- |
+| `--axm-surface-token`       | The background color of the current surface.                    |
+| `--axm-text-high-token`     | High-contrast text color (e.g., Black on Light, White on Dark). |
+| `--axm-text-subtle-token`   | Lower-contrast text color for secondary information.            |
+| `--axm-text-subtlest-token` | Lowest-contrast text color for placeholders or disabled text.   |
+| `--axm-border-dec-token`    | Decorative border color (low contrast).                         |
+| `--axm-border-int-token`    | Interactive border color (higher contrast).                     |
+
+### Usage
+
+Prefer using the utility classes (like `.text-strong`, `.surface-card`) instead of accessing these tokens directly. This ensures your UI remains consistent with the system's composition model.
+
+## Utility Classes
+
+These utility classes provide a semantic layer over the raw tokens.
+
+### Context Accessors
+
+These utilities allow elements to "read" the current surface context and apply it to specific properties. Use these when you need an element to match the _current_ surface (e.g., for masking or blending) without creating a new surface context.
+
+| Class             | Description                                   |
+| :---------------- | :-------------------------------------------- |
+| `.bg-surface`     | Sets `background-color` to the surface token. |
+| `.border-surface` | Sets `border-color` to the surface token.     |
+| `.stroke-surface` | Sets SVG `stroke` to the surface token.       |
+
+### Interaction States
+
+These utilities apply system-wide interaction styles, ensuring consistency for focus and selection states.
+
+| Class                 | Description                                      |
+| :-------------------- | :----------------------------------------------- |
+| `.ring-focus`         | Applies a static focus ring.                     |
+| `.ring-focus-visible` | Applies a focus ring only on `:focus-visible`.   |
+| `.border-highlight`   | Sets `border-color` to the highlight ring color. |
+
+### Composition
+
+You can compose surface classes with hue utilities to create colored surfaces.
+
+```html
+<!-- A button with the highlight color -->
+<button class="surface-action hue-highlight">Click Me</button>
+```
+
+## Global Tokens
+
+These tokens are defined on `:root` and are available everywhere.
+
+### Elevation (Shadows)
+
+| Token             | Description                                   |
+| :---------------- | :-------------------------------------------- |
+| `--axm-shadow-sm` | Small shadow for subtle depth.                |
+| `--axm-shadow-md` | Medium shadow for cards and dropdowns.        |
+| `--axm-shadow-lg` | Large shadow for modals and floating actions. |
+| `--axm-shadow-xl` | Extra large shadow for major overlays.        |
+
+### Focus
+
+| Token                    | Description                                 |
+| :----------------------- | :------------------------------------------ |
+| `--axm-focus-ring-color` | The brand-aware color used for focus rings. |
+
+### Data Visualization
+
+If you have configured a palette in `color-config.json`, these tokens will be available.
+
+| Token           | Description                             |
+| :-------------- | :-------------------------------------- |
+| `--axm-chart-1` | First color in the categorical palette. |
+| `--axm-chart-2` | Second color...                         |
+| ...             | ...                                     |
+| `--axm-chart-N` | Nth color.                              |
+
+## Internal Tokens
+
+You may see these tokens in the generated CSS, but they are generally intended for internal use by the engine.
+
+- `--axm-chroma-brand`: The base chroma value derived from your key colors.
+- `--axm-hue-brand`: The base hue value derived from your key colors.
+
+---
+
+## Configuration Schema
+
+```json
+{
+  "$ref": "#/definitions/UserConfig",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "ContrastOffsets": {
+      "additionalProperties": false,
+      "properties": {
+        "dark": {
+          "type": "number"
+        },
+        "light": {
+          "type": "number"
+        }
+      },
+      "type": "object"
+    },
+    "DeepPartial<AnchorValue>": {
+      "additionalProperties": false,
+      "properties": {
+        "adjustable": {
+          "type": "boolean"
+        },
+        "background": {
+          "$ref": "#/definitions/DeepPartial%3Cnumber%3E"
+        }
+      },
+      "type": "object"
+    },
+    "DeepPartial<Anchors>": {
+      "additionalProperties": false,
+      "properties": {
+        "dark": {
+          "$ref": "#/definitions/DeepPartial%3CModeAnchors%3E"
+        },
+        "light": {
+          "$ref": "#/definitions/DeepPartial%3CModeAnchors%3E"
+        }
+      },
+      "type": "object"
+    },
+    "DeepPartial<BezierCurve>": {
+      "additionalProperties": false,
+      "properties": {
+        "p1": {
+          "$ref": "#/definitions/DeepPartial%3C%5Bnumber%2Cnumber%5D%3E"
+        },
+        "p2": {
+          "$ref": "#/definitions/DeepPartial%3C%5Bnumber%2Cnumber%5D%3E"
+        }
+      },
+      "type": "object"
+    },
+    "DeepPartial<ModeAnchors>": {
+      "additionalProperties": false,
+      "properties": {
+        "end": {
+          "$ref": "#/definitions/DeepPartial%3CAnchorValue%3E"
+        },
+        "start": {
+          "$ref": "#/definitions/DeepPartial%3CAnchorValue%3E"
+        }
+      },
+      "type": "object"
+    },
+    "DeepPartial<PolarityAnchors>": {
+      "additionalProperties": false,
+      "properties": {
+        "inverted": {
+          "$ref": "#/definitions/DeepPartial%3CAnchors%3E"
+        },
+        "keyColors": {
+          "$ref": "#/definitions/DeepPartial%3Cindexed-type-1474508258-74242-74263-1474508258-74138-74264-1474508258-0-218439%3Cstring%2Cstring%3E1922313925%3E"
+        },
+        "page": {
+          "$ref": "#/definitions/DeepPartial%3CAnchors%3E"
+        }
+      },
+      "type": "object"
+    },
+    "DeepPartial<[number,number]>": {
+      "items": {
+        "type": [
+          "number"
+        ]
+      },
+      "type": "array"
+    },
+    "DeepPartial<def-alias-src_lib_types.ts-2338-2569-src_lib_types.ts-0-5941[]>": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "gapBefore": {
+            "description": "Extra spacing (in contrast steps) before this group starts. Used to create visual separation between groups.",
+            "type": "number"
+          },
+          "name": {
+            "type": "string"
+          },
+          "surfaces": {
+            "items": {
+              "$ref": "#/definitions/SurfaceConfig"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "name",
+          "surfaces"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "DeepPartial<def-alias-src_lib_types.ts-2569-2649-src_lib_types.ts-0-5941355102109>": {
+      "additionalProperties": false,
+      "properties": {
+        "p1": {
+          "$ref": "#/definitions/DeepPartial%3C%5Bnumber%2Cnumber%5D%3E"
+        },
+        "p2": {
+          "$ref": "#/definitions/DeepPartial%3C%5Bnumber%2Cnumber%5D%3E"
+        }
+      },
+      "type": "object"
+    },
+    "DeepPartial<indexed-type-1474508258-74242-74263-1474508258-74138-74264-1474508258-0-218439<string,string>1922313925>": {
+      "additionalProperties": {
+        "$ref": "#/definitions/DeepPartial%3Cstring%3E"
+      },
+      "type": "object"
+    },
+    "DeepPartial<number1805728063>": {
+      "description": "Maximum hue rotation in degrees.",
+      "type": "number"
+    },
+    "DeepPartial<number1808058353>": {
+      "description": "Number of sizes to generate (e.g. 5 for xs, sm, base, lg, xl).",
+      "type": "number"
+    },
+    "DeepPartial<number524178369>": {
+      "description": "Base size in rem (e.g. 0.75).",
+      "type": "number"
+    },
+    "DeepPartial<number686710375>": {
+      "description": "Max size in rem (e.g. 3.0).",
+      "type": "number"
+    },
+    "DeepPartial<number>": {
+      "type": "number"
+    },
+    "DeepPartial<string>": {
+      "type": "string"
+    },
+    "ModeSpec": {
+      "additionalProperties": false,
+      "properties": {
+        "background": {
+          "type": "number"
+        },
+        "debug": {
+          "additionalProperties": false,
+          "properties": {
+            "clamped": {
+              "type": "boolean"
+            },
+            "targetContrast": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "targetContrast",
+            "clamped"
+          ],
+          "type": "object"
+        },
+        "fg-baseline": {
+          "type": "number"
+        },
+        "fg-high": {
+          "type": "number"
+        },
+        "fg-strong": {
+          "type": "number"
+        },
+        "fg-subtle": {
+          "type": "number"
+        },
+        "fg-subtlest": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "background",
+        "fg-high",
+        "fg-strong",
+        "fg-baseline",
+        "fg-subtle",
+        "fg-subtlest"
+      ],
+      "type": "object"
+    },
+    "Polarity": {
+      "enum": [
+        "page",
+        "inverted"
+      ],
+      "type": "string"
+    },
+    "StateDefinition": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "offset": {
+          "description": "Contrast offset relative to the parent surface. Positive = more contrast against text (lighter in light mode, darker in dark mode).",
+          "type": "number"
+        }
+      },
+      "required": [
+        "name",
+        "offset"
+      ],
+      "type": "object"
+    },
+    "SurfaceConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "computed": {
+          "additionalProperties": false,
+          "properties": {
+            "dark": {
+              "$ref": "#/definitions/ModeSpec"
+            },
+            "light": {
+              "$ref": "#/definitions/ModeSpec"
+            }
+          },
+          "required": [
+            "light",
+            "dark"
+          ],
+          "type": "object"
+        },
+        "contrastOffset": {
+          "$ref": "#/definitions/ContrastOffsets",
+          "description": "Shifts the surface's target contrast relative to its position in the sequence."
+        },
+        "description": {
+          "type": "string"
+        },
+        "hue": {
+          "description": "Target hue for this surface. Can be a number (0-360) or a reference to a key color (e.g. \"brand\").",
+          "type": [
+            "number",
+            "string"
+          ]
+        },
+        "label": {
+          "type": "string"
+        },
+        "override": {
+          "additionalProperties": false,
+          "description": "Manual hex override for the surface background color. If set, the solver will use this color instead of the calculated one.",
+          "properties": {
+            "dark": {
+              "type": "string"
+            },
+            "light": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "polarity": {
+          "$ref": "#/definitions/Polarity"
+        },
+        "slug": {
+          "type": "string"
+        },
+        "states": {
+          "description": "Derivative surfaces (states) that are solved relative to this surface.",
+          "items": {
+            "$ref": "#/definitions/StateDefinition"
+          },
+          "type": "array"
+        },
+        "targetChroma": {
+          "description": "Target chroma for this surface. If set, the solver will adjust Lightness to compensate for the HK effect.",
+          "type": "number"
+        }
+      },
+      "required": [
+        "slug",
+        "label",
+        "polarity"
+      ],
+      "type": "object"
+    },
+    "UserConfig": {
+      "additionalProperties": false,
+      "properties": {
+        "$schema": {
+          "type": "string"
+        },
+        "anchors": {
+          "$ref": "#/definitions/DeepPartial%3CPolarityAnchors%3E"
+        },
+        "borderTargets": {
+          "additionalProperties": false,
+          "properties": {
+            "critical": {
+              "$ref": "#/definitions/DeepPartial%3Cnumber%3E"
+            },
+            "decorative": {
+              "$ref": "#/definitions/DeepPartial%3Cnumber%3E"
+            },
+            "interactive": {
+              "$ref": "#/definitions/DeepPartial%3Cnumber%3E"
+            }
+          },
+          "type": "object"
+        },
+        "groups": {
+          "$ref": "#/definitions/DeepPartial%3Cdef-alias-src_lib_types.ts-2338-2569-src_lib_types.ts-0-5941%5B%5D%3E"
+        },
+        "hueShift": {
+          "additionalProperties": false,
+          "properties": {
+            "curve": {
+              "$ref": "#/definitions/DeepPartial%3CBezierCurve%3E"
+            },
+            "maxRotation": {
+              "$ref": "#/definitions/DeepPartial%3Cnumber1805728063%3E"
+            }
+          },
+          "type": "object"
+        },
+        "options": {
+          "additionalProperties": false,
+          "properties": {
+            "prefix": {
+              "type": "string"
+            },
+            "selector": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "palette": {
+          "additionalProperties": false,
+          "properties": {
+            "hues": {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            "targetChroma": {
+              "type": "number"
+            },
+            "targetContrast": {
+              "type": "number"
+            }
+          },
+          "type": "object"
+        },
+        "presets": {
+          "additionalProperties": false,
+          "properties": {
+            "typography": {
+              "additionalProperties": false,
+              "properties": {
+                "fonts": {
+                  "additionalProperties": {
+                    "$ref": "#/definitions/DeepPartial%3Cstring%3E"
+                  },
+                  "type": "object"
+                },
+                "scale": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "curve": {
+                      "$ref": "#/definitions/DeepPartial%3Cdef-alias-src_lib_types.ts-2569-2649-src_lib_types.ts-0-5941355102109%3E"
+                    },
+                    "maxSize": {
+                      "$ref": "#/definitions/DeepPartial%3Cnumber686710375%3E"
+                    },
+                    "minSize": {
+                      "$ref": "#/definitions/DeepPartial%3Cnumber524178369%3E"
+                    },
+                    "steps": {
+                      "$ref": "#/definitions/DeepPartial%3Cnumber1808058353%3E"
+                    }
+                  },
+                  "type": "object"
+                },
+                "sizes": {
+                  "additionalProperties": {
+                    "$ref": "#/definitions/DeepPartial%3Cstring%3E"
+                  },
+                  "type": "object"
+                },
+                "weights": {
+                  "additionalProperties": {
+                    "$ref": "#/definitions/DeepPartial%3Cnumber%3E"
+                  },
+                  "type": "object"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "type": "object"
+        },
+        "vibe": {
+          "$ref": "#/definitions/VibeName"
+        }
+      },
+      "type": "object"
+    },
+    "VibeName": {
+      "type": [
+        "string"
+      ]
+    }
+  }
+}
+```
+

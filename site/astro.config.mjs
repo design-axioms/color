@@ -4,7 +4,7 @@ import starlight from "@astrojs/starlight";
 import svelte from "@astrojs/svelte";
 import { defineConfig } from "astro/config";
 import path from "path";
-import rehypeMathjax from "rehype-mathjax";
+import rehypeKatex from "rehype-katex";
 import remarkMath from "remark-math";
 import { fileURLToPath } from "url";
 
@@ -15,9 +15,17 @@ export default defineConfig({
   site: "https://axioms.design",
   markdown: {
     remarkPlugins: [remarkMath],
-    rehypePlugins: [rehypeMathjax],
+    rehypePlugins: [[rehypeKatex, { output: "mathml" }]],
+  },
+  experimental: {
+    fonts: [],
   },
   vite: {
+    server: {
+      fs: {
+        allow: [".."],
+      },
+    },
     resolve: {
       alias: {
         "@lib": path.resolve(__dirname, "../src/lib"),
@@ -30,12 +38,14 @@ export default defineConfig({
     preact(),
     starlight({
       title: "Axiomatic Color",
+      components: {
+        Head: "./src/components/StarlightHead.astro",
+      },
       customCss: [
-        "./src/styles/engine.css",
+        "../css/engine.css",
         "./src/styles/theme.css",
-        "./src/styles/utilities.css",
         "./src/styles/docs.css",
-        "./src/styles/starlight-overrides.css",
+        "./src/styles/starlight-custom.css",
       ],
       social: [
         {
@@ -71,7 +81,7 @@ export default defineConfig({
             { label: "Ember Integration", slug: "guides/frameworks/ember" },
             { label: "HTML / Vanilla", slug: "guides/frameworks/html" },
             { label: "Custom Frameworks", slug: "guides/frameworks/custom" },
-            { label: "The Theme Builder", slug: "guides/theme-builder" },
+            { label: "The Theme Studio", slug: "guides/theme-builder" },
           ],
         },
         {
@@ -86,6 +96,10 @@ export default defineConfig({
         {
           label: "Advanced Topics",
           items: [
+            {
+              label: "The Reactive Pipeline",
+              slug: "advanced/reactive-pipeline",
+            },
             { label: "Hue Shifting", slug: "advanced/hue-shifting" },
             { label: "Custom Surfaces", slug: "advanced/custom-surfaces" },
             { label: "Solver Internals", slug: "advanced/solver-internals" },
@@ -103,6 +117,13 @@ export default defineConfig({
             { label: "CLI", slug: "reference/cli" },
             { label: "JavaScript API", slug: "reference/javascript-api" },
             { label: "Tokens", slug: "reference/tokens" },
+          ],
+        },
+        {
+          label: "Theory",
+          items: [
+            { label: "The Algebra of Color", slug: "theory/algebra" },
+            { label: "Formal Derivation", slug: "theory/proof" },
           ],
         },
       ],

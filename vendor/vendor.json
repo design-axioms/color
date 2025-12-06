@@ -1,0 +1,7 @@
+{
+  "design-tokens-community-group": {
+    "url": "https://github.com/design-tokens/community-group.git",
+    "branch": "main",
+    "description": "Official Design Tokens Community Group repository containing the format specification."
+  }
+}

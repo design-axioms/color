@@ -1,0 +1,7 @@
+[project]
+name = "color-system"
+domain = "color-system.localhost"
+
+[services.web]
+type = "exec"
+command = "pnpm docs:dev --port $PORT"

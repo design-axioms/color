@@ -5,13 +5,16 @@
 </script>
 
 <div class="metric" class:align-end={align === "end"}>
-  <span class="metric-label">APCA Target</span>
-  <span class="metric-value badge-apca">L<sup>c</sup> &approx; {apca}</span>
+  <span class="metric-label font-mono text-subtle">APCA Target</span>
+  <span
+    class="metric-value badge-apca font-mono text-strong surface-card bordered"
+    >L<sup>c</sup> &approx; {apca}</span
+  >
 </div>
 
 <div class="metric" class:align-end={align === "end"}>
-  <span class="metric-label">WCAG Equiv.</span>
-  <span class="metric-value badge-wcag">{wcag}</span>
+  <span class="metric-label font-mono text-subtle">WCAG Equiv.</span>
+  <span class="metric-value badge-wcag font-mono text-strong">{wcag}</span>
 </div>
 
 <style>
@@ -27,23 +30,17 @@
   }
 
   .metric-label {
-    font-family: var(--font-mono-token);
     font-size: 0.7rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: var(--text-subtle-token);
     font-weight: 600;
   }
 
   .metric-value {
-    font-family: var(--font-mono-token);
     font-size: 0.9rem;
-    color: var(--text-token);
   }
 
   .badge-apca {
-    background: var(--surface-token);
-    border: 1px solid var(--border-subtle-token);
     padding: 0.25rem 0.5rem;
     border-radius: 6px;
     font-size: 0.9rem;
