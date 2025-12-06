@@ -61,3 +61,42 @@ export function findContextRoot(element: HTMLElement): DebugContext {
     element: document.body,
   };
 }
+
+export function findVariableSource(
+  startElement: HTMLElement,
+  variableName: string,
+): HTMLElement | null {
+  const startValue = getComputedStyle(startElement)
+    .getPropertyValue(variableName)
+    .trim();
+
+  // If the variable isn't set at all, there's no source
+  if (!startValue) return null;
+
+  let current: HTMLElement | null = startElement;
+  let lastMatch: HTMLElement = startElement;
+
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  while (true) {
+    const parent: HTMLElement | null = current.parentElement;
+    if (!parent) {
+      // Reached root, and it still matches. Root is the source.
+      return current;
+    }
+
+    const parentValue = getComputedStyle(parent)
+      .getPropertyValue(variableName)
+      .trim();
+
+    if (parentValue !== startValue) {
+      // The value changed between parent and current.
+      // Therefore, 'current' is the source of the value 'startValue'.
+      return current;
+    }
+
+    lastMatch = parent;
+    current = parent;
+  }
+
+  return lastMatch;
+}

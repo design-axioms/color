@@ -36,7 +36,7 @@ describe("Runtime Scoping", () => {
 
     // Check variable scoping
     expect(css).toContain("#my-scope {");
-    expect(css).toContain("--axm-hue-brand:");
+    expect(css).toContain("--_axm-hue-brand:");
 
     // Check class scoping
     expect(css).toContain("#my-scope .surface-card {");

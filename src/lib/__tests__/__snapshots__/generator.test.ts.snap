@@ -16,17 +16,17 @@ exports[`generateTokensCss > generates correct CSS for a standard surface group 
 }
 
 .surface-page, body {
-  --local-light-h: 0;
-  --local-light-c: 0;
-  --local-dark-h: 0;
-  --local-dark-c: 0;
-  --surface-light-h: var(--base-hue, var(--local-light-h));
-  --surface-light-c: var(--base-chroma, var(--local-light-c));
-  --surface-dark-h: var(--base-hue, var(--local-dark-h));
-  --surface-dark-c: var(--base-chroma, var(--local-dark-c));
+  --_local-light-h: 0;
+  --_local-light-c: 0;
+  --_local-dark-h: 0;
+  --_local-dark-c: 0;
+  --_surface-light-h: var(--_base-hue, var(--_local-light-h));
+  --_surface-light-c: var(--_base-chroma, var(--_local-light-c));
+  --_surface-dark-h: var(--_base-hue, var(--_local-dark-h));
+  --_surface-dark-c: var(--_base-chroma, var(--_local-dark-c));
   --surface-token: light-dark(
-    oklch(0.98 var(--surface-light-c) var(--surface-light-h)),
-    oklch(0.1 var(--surface-dark-c) var(--surface-dark-h))
+    oklch(0.98 var(--_surface-light-c) var(--_surface-light-h)),
+    oklch(0.1 var(--_surface-dark-c) var(--_surface-dark-h))
   );
   --text-high-token: light-dark(
     oklch(0 0 0),
@@ -50,28 +50,28 @@ exports[`generateTokensCss > generates correct CSS for a standard surface group 
   );
 }
 .surface-page:hover {
-  --local-light-h: 0;
-  --local-light-c: 0;
-  --local-dark-h: 0;
-  --local-dark-c: 0;
+  --_local-light-h: 0;
+  --_local-light-c: 0;
+  --_local-dark-h: 0;
+  --_local-dark-c: 0;
   --surface-token: light-dark(
-    oklch(0.95 var(--base-chroma, var(--local-light-c)) var(--base-hue, var(--local-light-h))),
-    oklch(0.15 var(--base-chroma, var(--local-dark-c)) var(--base-hue, var(--local-dark-h)))
+    oklch(0.95 var(--_base-chroma, var(--_local-light-c)) var(--_base-hue, var(--_local-light-h))),
+    oklch(0.15 var(--_base-chroma, var(--_local-dark-c)) var(--_base-hue, var(--_local-dark-h)))
   );
 }
 
 .surface-card {
-  --local-light-h: 0;
-  --local-light-c: 0;
-  --local-dark-h: 0;
-  --local-dark-c: 0;
-  --surface-light-h: var(--base-hue, var(--local-light-h));
-  --surface-light-c: var(--base-chroma, var(--local-light-c));
-  --surface-dark-h: var(--base-hue, var(--local-dark-h));
-  --surface-dark-c: var(--base-chroma, var(--local-dark-c));
+  --_local-light-h: 0;
+  --_local-light-c: 0;
+  --_local-dark-h: 0;
+  --_local-dark-c: 0;
+  --_surface-light-h: var(--_base-hue, var(--_local-light-h));
+  --_surface-light-c: var(--_base-chroma, var(--_local-light-c));
+  --_surface-dark-h: var(--_base-hue, var(--_local-dark-h));
+  --_surface-dark-c: var(--_base-chroma, var(--_local-dark-c));
   --surface-token: light-dark(
-    oklch(1 var(--surface-light-c) var(--surface-light-h)),
-    oklch(0.2 var(--surface-dark-c) var(--surface-dark-h))
+    oklch(1 var(--_surface-light-c) var(--_surface-light-h)),
+    oklch(0.2 var(--_surface-dark-c) var(--_surface-dark-h))
   );
   --text-high-token: light-dark(
     oklch(0 0 0),
@@ -96,9 +96,9 @@ exports[`generateTokensCss > generates correct CSS for a standard surface group 
 }
 
 /* Core Utilities (Reactive Pipeline) */
-.text-subtle { --text-lightness-source: var(--text-subtle-token); }
-.text-subtlest { --text-lightness-source: var(--text-subtlest-token); }
-.text-strong { --text-lightness-source: var(--text-high-token); font-weight: 600; }
+.text-subtle { --_text-lightness-source: var(--text-subtle-token); }
+.text-subtlest { --_text-lightness-source: var(--text-subtlest-token); }
+.text-strong { --_text-lightness-source: var(--text-high-token); font-weight: 600; }
 
 :root {
   --preset-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
@@ -159,9 +159,9 @@ exports[`generateTokensCss > generates palette tokens when configured 1`] = `
 }
 
 /* Core Utilities (Reactive Pipeline) */
-.text-subtle { --text-lightness-source: var(--text-subtle-token); }
-.text-subtlest { --text-lightness-source: var(--text-subtlest-token); }
-.text-strong { --text-lightness-source: var(--text-high-token); font-weight: 600; }
+.text-subtle { --_text-lightness-source: var(--text-subtle-token); }
+.text-subtlest { --_text-lightness-source: var(--text-subtlest-token); }
+.text-strong { --_text-lightness-source: var(--text-high-token); font-weight: 600; }
 
 :root {
   --preset-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
@@ -209,17 +209,17 @@ exports[`generateTokensCss > handles missing background values gracefully 1`] = 
 }
 
 .surface-unknown {
-  --local-light-h: 0;
-  --local-light-c: 0;
-  --local-dark-h: 0;
-  --local-dark-c: 0;
-  --surface-light-h: var(--base-hue, var(--local-light-h));
-  --surface-light-c: var(--context-chroma, var(--local-light-c));
-  --surface-dark-h: var(--base-hue, var(--local-dark-h));
-  --surface-dark-c: var(--base-chroma, var(--local-dark-c));
+  --_local-light-h: 0;
+  --_local-light-c: 0;
+  --_local-dark-h: 0;
+  --_local-dark-c: 0;
+  --_surface-light-h: var(--_base-hue, var(--_local-light-h));
+  --_surface-light-c: var(--_context-chroma, var(--_local-light-c));
+  --_surface-dark-h: var(--_base-hue, var(--_local-dark-h));
+  --_surface-dark-c: var(--_base-chroma, var(--_local-dark-c));
   --surface-token: light-dark(
-    oklch(0 var(--surface-light-c) var(--surface-light-h)),
-    oklch(0 var(--surface-dark-c) var(--surface-dark-h))
+    oklch(0 var(--_surface-light-c) var(--_surface-light-h)),
+    oklch(0 var(--_surface-dark-c) var(--_surface-dark-h))
   );
   --text-high-token: light-dark(
     oklch(1 0 0),
@@ -236,9 +236,9 @@ exports[`generateTokensCss > handles missing background values gracefully 1`] = 
 }
 
 /* Core Utilities (Reactive Pipeline) */
-.text-subtle { --text-lightness-source: var(--text-subtle-token); }
-.text-subtlest { --text-lightness-source: var(--text-subtlest-token); }
-.text-strong { --text-lightness-source: var(--text-high-token); font-weight: 600; }
+.text-subtle { --_text-lightness-source: var(--text-subtle-token); }
+.text-subtlest { --_text-lightness-source: var(--text-subtlest-token); }
+.text-strong { --_text-lightness-source: var(--text-high-token); font-weight: 600; }
 
 :root {
   --preset-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;

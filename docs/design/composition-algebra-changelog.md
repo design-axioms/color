@@ -17,3 +17,15 @@
 
 - Added "In Plain English" analogies (Frosted Glass vs. Opaque Paper) to make the math accessible.
 - Synced content with the MDX version on the documentation site.
+
+## 2025-12-05 (Revision 2)
+
+### Major Revisions (Peer Review Audit)
+
+- **Terminology Update**: Renamed $\Sigma \rightarrow \mathcal{S}$ (State) and $\alpha \rightarrow \rho$ (Polarity) to avoid notation collisions with Automata Theory and Alpha Channels.
+- **Analogy Shift**: Replaced "Noun/Adjective" with "Stage Lighting/Voice" to better model environmental context.
+- **Topological Clarification**: Adopted "Glass Universe" terminology for the Container Operator ($) and added the "Leakage Corollary".
+- **New Theorems**: Added "The Saturation Limit" and "The Irreversibility Principle".
+- **Semantic Dominance**: Added the "Theorem of Semantic Dominance" to address the non-commutativity of chromatic intents (Error/Success).
+- **Formal Definitions**: Defined $\sigma_{root}$ as the axiomatic origin at `:root`.
+- **Math Precision**: Reframed State Space as a Configuration Space (Manifold) rather than a Vector Space.

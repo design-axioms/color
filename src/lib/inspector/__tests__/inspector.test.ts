@@ -65,7 +65,7 @@ describe("Inspector", () => {
       // assuming the browser has correctly applied the CSS.
       container.innerHTML = `
         <div class="surface-card" id="card" style="--axm-text-subtle-token: oklch(0.6 0 0)">
-          <span id="text" class="text-subtle" style="--text-lightness-source: oklch(0.6 0 0)">Hello</span>
+          <span id="text" class="text-subtle" style="--_axm-text-lightness-source: oklch(0.6 0 0)">Hello</span>
         </div>
       `;
 
@@ -74,7 +74,7 @@ describe("Inspector", () => {
       const tokens = resolveTokens(text, context);
 
       const lightnessToken = tokens.find(
-        (t) => t.sourceVar === "--text-lightness-source",
+        (t) => t.sourceVar === "--_axm-text-lightness-source",
       );
       expect(lightnessToken).toBeDefined();
       expect(lightnessToken?.sourceValue).toBe("text-subtle");

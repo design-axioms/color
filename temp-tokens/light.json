@@ -1,0 +1,333 @@
+{
+  "shadow": {
+    "sm": {
+      "$type": "other",
+      "$value": "0 1px 2px 0 oklch(0 0 0 / 0.05)",
+      "$description": "CSS box-shadow value"
+    },
+    "md": {
+      "$type": "other",
+      "$value": "0 4px 6px -1px oklch(0 0 0 / 0.1), 0 2px 4px -1px oklch(0 0 0 / 0.06)",
+      "$description": "CSS box-shadow value"
+    },
+    "lg": {
+      "$type": "other",
+      "$value": "0 10px 15px -3px oklch(0 0 0 / 0.1), 0 4px 6px -2px oklch(0 0 0 / 0.05)",
+      "$description": "CSS box-shadow value"
+    },
+    "xl": {
+      "$type": "other",
+      "$value": "0 20px 25px -5px oklch(0 0 0 / 0.1), 0 10px 10px -5px oklch(0 0 0 / 0.04)",
+      "$description": "CSS box-shadow value"
+    }
+  },
+  "color": {
+    "surface": {
+      "page": {
+        "$type": "color",
+        "$value": "oklch(1.0000 0.0000 293.0332)",
+        "$description": "The base background of the application."
+      },
+      "workspace": {
+        "$type": "color",
+        "$value": "oklch(0.9896 0.0000 293.0325)",
+        "$description": "A very light elevated surface, used for the main workspace area."
+      },
+      "card": {
+        "$type": "color",
+        "$value": "oklch(1.0000 0.0000 293.0332)",
+        "$description": "A card-like element."
+      },
+      "action": {
+        "$type": "color",
+        "$value": "oklch(0.1000 0.0000 288.1078)",
+        "$description": "A clickable action surface (e.g. button)."
+      },
+      "action-soft": {
+        "$type": "color",
+        "$value": "oklch(1.0000 0.0000 293.0332)",
+        "$description": "A lower-emphasis interactive surface."
+      },
+      "spotlight": {
+        "$type": "color",
+        "$value": "oklch(0.5554 0.0000 291.0858)",
+        "$description": "The darkest surface."
+      },
+      "status-success": {
+        "$type": "color",
+        "$value": "oklch(0.9000 0.1500 151.1464)",
+        "$description": "Positive status feedback."
+      },
+      "status-warning": {
+        "$type": "color",
+        "$value": "oklch(0.9000 0.1500 79.9338)",
+        "$description": "Warning status feedback."
+      },
+      "status-error": {
+        "$type": "color",
+        "$value": "oklch(0.9000 0.2000 292.9586)",
+        "$description": "Error status feedback."
+      }
+    },
+    "on-surface": {
+      "page": {
+        "high": {
+          "$type": "color",
+          "$value": "oklch(0.0000 0 0)"
+        },
+        "strong": {
+          "$type": "color",
+          "$value": "oklch(0.1935 0 0)"
+        },
+        "baseline": {
+          "$type": "color",
+          "$value": "oklch(0.3619 0 0)"
+        },
+        "subtle": {
+          "$type": "color",
+          "$value": "oklch(0.4586 0 0)"
+        },
+        "subtlest": {
+          "$type": "color",
+          "$value": "oklch(0.5400 0 0)"
+        }
+      },
+      "workspace": {
+        "high": {
+          "$type": "color",
+          "$value": "oklch(0.0000 0 0)"
+        },
+        "strong": {
+          "$type": "color",
+          "$value": "oklch(0.0000 0 0)"
+        },
+        "baseline": {
+          "$type": "color",
+          "$value": "oklch(0.3426 0 0)"
+        },
+        "subtle": {
+          "$type": "color",
+          "$value": "oklch(0.4404 0 0)"
+        },
+        "subtlest": {
+          "$type": "color",
+          "$value": "oklch(0.5261 0 0)"
+        }
+      },
+      "card": {
+        "high": {
+          "$type": "color",
+          "$value": "oklch(0.0000 0 0)"
+        },
+        "strong": {
+          "$type": "color",
+          "$value": "oklch(0.1935 0 0)"
+        },
+        "baseline": {
+          "$type": "color",
+          "$value": "oklch(0.3619 0 0)"
+        },
+        "subtle": {
+          "$type": "color",
+          "$value": "oklch(0.4586 0 0)"
+        },
+        "subtlest": {
+          "$type": "color",
+          "$value": "oklch(0.5400 0 0)"
+        }
+      },
+      "action": {
+        "high": {
+          "$type": "color",
+          "$value": "oklch(1.0000 0 0)"
+        },
+        "strong": {
+          "$type": "color",
+          "$value": "oklch(0.9866 0 0)"
+        },
+        "baseline": {
+          "$type": "color",
+          "$value": "oklch(0.9416 0 0)"
+        },
+        "subtle": {
+          "$type": "color",
+          "$value": "oklch(0.8930 0 0)"
+        },
+        "subtlest": {
+          "$type": "color",
+          "$value": "oklch(0.8406 0 0)"
+        }
+      },
+      "action-soft": {
+        "high": {
+          "$type": "color",
+          "$value": "oklch(0.0000 0 0)"
+        },
+        "strong": {
+          "$type": "color",
+          "$value": "oklch(0.1935 0 0)"
+        },
+        "baseline": {
+          "$type": "color",
+          "$value": "oklch(0.3619 0 0)"
+        },
+        "subtle": {
+          "$type": "color",
+          "$value": "oklch(0.4586 0 0)"
+        },
+        "subtlest": {
+          "$type": "color",
+          "$value": "oklch(0.5400 0 0)"
+        }
+      },
+      "spotlight": {
+        "high": {
+          "$type": "color",
+          "$value": "oklch(1.0000 0 0)"
+        },
+        "strong": {
+          "$type": "color",
+          "$value": "oklch(1.0000 0 0)"
+        },
+        "baseline": {
+          "$type": "color",
+          "$value": "oklch(1.0000 0 0)"
+        },
+        "subtle": {
+          "$type": "color",
+          "$value": "oklch(1.0000 0 0)"
+        },
+        "subtlest": {
+          "$type": "color",
+          "$value": "oklch(0.9836 0 0)"
+        }
+      },
+      "status-success": {
+        "high": {
+          "$type": "color",
+          "$value": "oklch(0.0000 0 0)"
+        },
+        "strong": {
+          "$type": "color",
+          "$value": "oklch(0.0000 0 0)"
+        },
+        "baseline": {
+          "$type": "color",
+          "$value": "oklch(0.0000 0 0)"
+        },
+        "subtle": {
+          "$type": "color",
+          "$value": "oklch(0.2156 0 0)"
+        },
+        "subtlest": {
+          "$type": "color",
+          "$value": "oklch(0.3696 0 0)"
+        }
+      },
+      "status-warning": {
+        "high": {
+          "$type": "color",
+          "$value": "oklch(0.0000 0 0)"
+        },
+        "strong": {
+          "$type": "color",
+          "$value": "oklch(0.0000 0 0)"
+        },
+        "baseline": {
+          "$type": "color",
+          "$value": "oklch(0.0000 0 0)"
+        },
+        "subtle": {
+          "$type": "color",
+          "$value": "oklch(0.2156 0 0)"
+        },
+        "subtlest": {
+          "$type": "color",
+          "$value": "oklch(0.3696 0 0)"
+        }
+      },
+      "status-error": {
+        "high": {
+          "$type": "color",
+          "$value": "oklch(0.0000 0 0)"
+        },
+        "strong": {
+          "$type": "color",
+          "$value": "oklch(0.0000 0 0)"
+        },
+        "baseline": {
+          "$type": "color",
+          "$value": "oklch(0.0000 0 0)"
+        },
+        "subtle": {
+          "$type": "color",
+          "$value": "oklch(0.2156 0 0)"
+        },
+        "subtlest": {
+          "$type": "color",
+          "$value": "oklch(0.3696 0 0)"
+        }
+      }
+    },
+    "chart": {
+      "1": {
+        "$type": "color",
+        "$value": "oklch(0.6484 0.1400 25.0000)"
+      },
+      "2": {
+        "$type": "color",
+        "$value": "oklch(0.6484 0.1400 190.0000)"
+      },
+      "3": {
+        "$type": "color",
+        "$value": "oklch(0.6484 0.1400 45.0000)"
+      },
+      "4": {
+        "$type": "color",
+        "$value": "oklch(0.6484 0.1400 250.0000)"
+      },
+      "5": {
+        "$type": "color",
+        "$value": "oklch(0.6484 0.1400 85.0000)"
+      },
+      "6": {
+        "$type": "color",
+        "$value": "oklch(0.6484 0.1400 280.0000)"
+      },
+      "7": {
+        "$type": "color",
+        "$value": "oklch(0.6484 0.1400 125.0000)"
+      },
+      "8": {
+        "$type": "color",
+        "$value": "oklch(0.6484 0.1400 320.0000)"
+      },
+      "9": {
+        "$type": "color",
+        "$value": "oklch(0.6484 0.1400 150.0000)"
+      },
+      "10": {
+        "$type": "color",
+        "$value": "oklch(0.6484 0.1400 360.0000)"
+      }
+    },
+    "focus": {
+      "ring": {
+        "$type": "color",
+        "$value": "oklch(0.45 0.2 288.0332139382555)"
+      }
+    },
+    "highlight": {
+      "ring": {
+        "$type": "color",
+        "$value": "oklch(0.60 0.25 319.8500641515558)",
+        "$description": "High-visibility outline for selected or highlighted elements."
+      },
+      "surface": {
+        "$type": "color",
+        "$value": "oklch(0.96 0.05 319.8500641515558)",
+        "$description": "Background for selected items in lists/trees."
+      }
+    }
+  }
+}

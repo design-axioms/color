@@ -1,4 +1,10 @@
-# Formal Derivation: Color as a Function of Context and Intent
+---
+title: Formal Derivation
+description: An algebraic derivation showing how the system's state space supports the high-level intuition Color = f(Context, Intent).
+slug: theory/proof
+---
+
+import { Aside } from '@astrojs/starlight/components';
 
 > **Context**: An algebraic derivation showing how the system's state space supports the high-level intuition `Color = f(Context, Intent)`.
 
@@ -24,17 +30,18 @@ $$ \mathcal{S} = \Gamma \times \iota $$
 
 2.  **Intent Space ($\iota$)**: The semantic variables.
     $$ \iota = \text{Tokens} $$
-    $$ i \in \iota = \langle L\\\_{src} \rangle $$
+    $$ i \in \iota = \langle L_{src} \rangle $$
 
 Thus, any state $\sigma \in \mathcal{S}$ is an ordered pair:
 $$ \sigma = (\gamma, i) $$
 
-> **In Plain English**: We are splitting the system's "DNA" into two separate strands.
->
-> - **Context ($\Gamma$)**: The "Atmosphere" (Lighting, Mode).
-> - **Intent ($\iota$)**: The "Meaning" (Text Importance).
->
-> This separation allows us to change the lighting without changing the meaning, and vice versa.
+<Aside type="note" title="In Plain English">
+We are splitting the system's "DNA" into two separate strands.
+*   **Context ($\Gamma$)**: The "Atmosphere" (Lighting, Mode).
+*   **Intent ($\iota$)**: The "Meaning" (Text Importance).
+
+This separation allows us to change the lighting without changing the meaning, and vice versa.
+</Aside>
 
 ## 3. The Resolution Function ($\Phi$)
 
@@ -42,11 +49,13 @@ The CSS Engine's resolution function $\Phi$ maps the state $\mathcal{S}$ to a co
 
 $$ \Phi: (\Gamma \times \iota) \rightarrow \text{Color} $$
 
-$$ \Phi(\langle H, C, \rho \rangle, \langle L\_{src} \rangle) = \text{oklch}(\text{eval}(L\_{src}, \rho), C, H) $$
+$$ \Phi(\langle H, C, \rho \rangle, \langle L_{src} \rangle) = \text{oklch}(\text{eval}(L_{src}, \rho), C, H) $$
 
-**Observation**: The function $\Phi$ accepts $\gamma$ and $i$ as distinct arguments. The evaluation of lightness $\text{eval}(L\_{src}, \rho)$ is the only interaction term, representing the "Late Binding" of Intent to Context.
+**Observation**: The function $\Phi$ accepts $\gamma$ and $i$ as distinct arguments. The evaluation of lightness $\text{eval}(L_{src}, \rho)$ is the only interaction term, representing the "Late Binding" of Intent to Context.
 
-> **In Plain English**: The browser takes the two strands (Atmosphere and Meaning) and weaves them together into a pixel. The only time they "talk" to each other is when the system decides how bright the text should be based on whether it's in Light Mode or Dark Mode.
+<Aside type="note" title="In Plain English">
+The browser takes the two strands (Atmosphere and Meaning) and weaves them together into a pixel. The only time they "talk" to each other is when the system decides how bright the text should be based on whether it's in Light Mode or Dark Mode.
+</Aside>
 
 ## 4. Derivation of Independence (Orthogonality)
 
@@ -76,36 +85,37 @@ $$ M \circ I \equiv I \circ M $$
 
 **Conclusion**: For Neutral Intents, the operators commute, and the subspaces $\Gamma$ and $\iota$ are orthogonal.
 
-> **In Plain English**: Because "Subtle Text" only changes Lightness, and "Brand Theme" only changes Color, the order doesn't matter.
->
-> - `class="text-subtle hue-brand"`
-> - `class="hue-brand text-subtle"`
->
-> Both result in "Subtle Brand-Colored Text."
+<Aside type="note" title="In Plain English">
+Because "Subtle Text" only changes Lightness, and "Brand Theme" only changes Color, the order doesn't matter.
+*   `class="text-subtle hue-brand"`
+*   `class="hue-brand text-subtle"`
+
+Both result in "Subtle Brand-Colored Text."
+</Aside>
 
 ### 4.3. The Semantic Exception
 
-For **Chromatic Intents** (e.g., Error), the Intent function $I\_{chromatic}$ acts on _both_ subspaces to enforce semantic meaning.
+For **Chromatic Intents** (e.g., Error), the Intent function $I_{chromatic}$ acts on *both* subspaces to enforce semantic meaning.
 
-$$ I\_{chromatic}(\gamma, i) = (\gamma\_{override}, k(i)) $$
+$$ I_{chromatic}(\gamma, i) = (\gamma_{override}, k(i)) $$
 
 In this case, commutativity is broken ($M \circ I \neq I \circ M$), and the Intent dominates the Context.
 
-> **In Plain English**: An Error Message is _always_ Red. It doesn't care if the room is lit with Blue light. The "Error" intent shouts over the ambient lighting, effectively resetting the local atmosphere to Red.
+<Aside type="note" title="In Plain English">
+An Error Message is *always* Red. It doesn't care if the room is lit with Blue light. The "Error" intent shouts over the ambient lighting, effectively resetting the local atmosphere to Red.
+</Aside>
 
 ## 5. Surface Scoping
 
 The **Surface Operator** ($S$) is a special transformation that acts on both subspaces.
 
-### 5.1 Glass Surface ($S\_{glass}$)
-
+### 5.1 Glass Surface ($S_{glass}$)
 Preserves Context, Resets Intent.
-$$ S\_{glass}(\gamma, i) = (\gamma, i\_{reset}) $$
+$$ S_{glass}(\gamma, i) = (\gamma, i_{reset}) $$
 
-### 5.2 Solid Surface ($S\_{solid}$)
-
+### 5.2 Solid Surface ($S_{solid}$)
 Resets Context, Resets Intent.
-$$ S\_{solid}(\gamma, i) = (\gamma\_{neutral}, i\\\_{reset}) $$
+$$ S_{solid}(\gamma, i) = (\gamma_{neutral}, i_{reset}) $$
 
 ## 6. Summary
 

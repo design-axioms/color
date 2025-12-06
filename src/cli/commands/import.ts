@@ -22,7 +22,6 @@ export function importCommand(
   let config: SolverConfig;
 
   try {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     config = importer.parse(content);
   } catch (error: unknown) {
     console.error(

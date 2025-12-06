@@ -1067,3 +1067,37 @@
 - **Verification**:
   - Updated Golden Master snapshots to reflect the optimized CSS output.
   - Verified that the build produces a valid, minified CSS bundle.
+
+## Epoch 34: Phase 2 - Token Simplification (2025-12-06)
+
+**Goal**: Reduce cognitive load by hiding internal "plumbing" tokens from the public API and exports.
+
+**Completed Work**:
+
+- **Token Classification**:
+  - Defined strict schema: Public (`--axm-*`) vs. Private (`--_axm-*`).
+  - Documented in `docs/agent-context/current/token-classification.md`.
+- **Exporter Updates**:
+  - Updated Tailwind, TypeScript, and DTCG exporters to filter out private tokens.
+  - Verified exports are clean via grep tests.
+- **Inspector Updates**:
+  - Updated `<axiomatic-debugger>` to hide private tokens by default.
+  - Added a "Show Internals" toggle for advanced debugging.
+  - Updated resolver logic to flag private tokens.
+- **Verification**:
+  - Ran visual regression tests (`pnpm test:visual`) to ensure no regressions.
+
+## Epoch 34: Phase 3 - Export & Validation
+
+**Goal**: Ensure the system is "Beta-Ready" by enabling live export previews in the Theme Builder and enforcing configuration validity.
+
+**Completed Work**:
+
+- **Theme Builder Export Preview**: Implemented a live preview of generated tokens in CSS, JSON (DTCG), Tailwind, and TypeScript formats.
+- **Quality Assurance**: Fixed test regressions caused by token simplification (renaming internal tokens to `_axm-`).
+- **Tooling**: Tuned `knip` configuration to reduce noise.
+
+**Deferred Work**:
+
+- **Real-time Validation**: Schema validation in the UI was deferred.
+- **ESLint Svelte Support**: Deferred full implementation/verification beyond basic smoke tests.

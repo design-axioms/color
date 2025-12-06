@@ -64,6 +64,7 @@ export function generateTokensCss(
   const rootSelector = options?.selector || ":root";
 
   const v = (name: string): string => `--${prefix}${name}`;
+  const pv = (name: string): string => `--_${prefix}${name}`;
 
   // Note: We assume @property definitions are loaded via engine.css
   // Re-declaring them here causes transition glitches in some browsers
@@ -82,7 +83,7 @@ export function generateTokensCss(
     .join(", ");
 
   if (invertedSurfaces) {
-    rootLines.push(`  ${v("inverted-surfaces")}: "${invertedSurfaces}";`);
+    rootLines.push(`  ${pv("inverted-surfaces")}: "${invertedSurfaces}";`);
   }
 
   // Key Colors
@@ -96,16 +97,16 @@ export function generateTokensCss(
         const h = toNumber(oklch.h || 0);
 
         rootLines.push(`  ${v(`key-${name}-color`)}: oklch(${l} ${c} ${h});`);
-        rootLines.push(`  ${v(`hue-${name}`)}: ${h};`);
-        rootLines.push(`  ${v(`chroma-${name}`)}: ${c};`);
+        rootLines.push(`  ${pv(`hue-${name}`)}: ${h};`);
+        rootLines.push(`  ${pv(`chroma-${name}`)}: ${c};`);
       } else if (keyColors[value]) {
         // Alias
         rootLines.push(
           `  ${v(`key-${name}-color`)}: var(${v(`key-${value}-color`)});`,
         );
-        rootLines.push(`  ${v(`hue-${name}`)}: var(${v(`hue-${value}`)});`);
+        rootLines.push(`  ${pv(`hue-${name}`)}: var(${pv(`hue-${value}`)});`);
         rootLines.push(
-          `  ${v(`chroma-${name}`)}: var(${v(`chroma-${value}`)});`,
+          `  ${pv(`chroma-${name}`)}: var(${pv(`chroma-${value}`)});`,
         );
       }
     }
@@ -194,10 +195,10 @@ export function generateTokensCss(
 
       // 1. Surface Token
       // Define local variables for the solved values to allow overrides
-      rootLines.push(`  --local-light-h: ${toNumber(bgLight.h)};`);
-      rootLines.push(`  --local-light-c: ${toNumber(bgLight.c)};`);
-      rootLines.push(`  --local-dark-h: ${toNumber(bgDark.h)};`);
-      rootLines.push(`  --local-dark-c: ${toNumber(bgDark.c)};`);
+      rootLines.push(`  ${pv("local-light-h")}: ${toNumber(bgLight.h)};`);
+      rootLines.push(`  ${pv("local-light-c")}: ${toNumber(bgLight.c)};`);
+      rootLines.push(`  ${pv("local-dark-h")}: ${toNumber(bgDark.h)};`);
+      rootLines.push(`  ${pv("local-dark-c")}: ${toNumber(bgDark.c)};`);
 
       // Determine final hue/chroma, preferring --base-hue/--base-chroma if set (by utility classes)
       // Heuristic: Use full chroma (context-chroma) for high-contrast surfaces (Filled),
@@ -206,29 +207,29 @@ export function generateTokensCss(
       const isDarkModeFilled = bgDark.l >= 0.6;
 
       const lightChromaVar = isLightModeFilled
-        ? "--context-chroma"
-        : "--base-chroma";
+        ? pv("context-chroma")
+        : pv("base-chroma");
       const darkChromaVar = isDarkModeFilled
-        ? "--context-chroma"
-        : "--base-chroma";
+        ? pv("context-chroma")
+        : pv("base-chroma");
 
       rootLines.push(
-        `  --surface-light-h: var(--base-hue, var(--local-light-h));`,
+        `  ${pv("surface-light-h")}: var(${pv("base-hue")}, var(${pv("local-light-h")}));`,
       );
       rootLines.push(
-        `  --surface-light-c: var(${lightChromaVar}, var(--local-light-c));`,
+        `  ${pv("surface-light-c")}: var(${lightChromaVar}, var(${pv("local-light-c")}));`,
       );
       rootLines.push(
-        `  --surface-dark-h: var(--base-hue, var(--local-dark-h));`,
+        `  ${pv("surface-dark-h")}: var(${pv("base-hue")}, var(${pv("local-dark-h")}));`,
       );
       rootLines.push(
-        `  --surface-dark-c: var(${darkChromaVar}, var(--local-dark-c));`,
+        `  ${pv("surface-dark-c")}: var(${darkChromaVar}, var(${pv("local-dark-c")}));`,
       );
 
       rootLines.push(
         `  ${v("surface-token")}: light-dark(
-    oklch(${toNumber(bgLight.l)} var(--surface-light-c) var(--surface-light-h)),
-    oklch(${toNumber(bgDark.l)} var(--surface-dark-c) var(--surface-dark-h))
+    oklch(${toNumber(bgLight.l)} var(${pv("surface-light-c")}) var(${pv("surface-light-h")})),
+    oklch(${toNumber(bgDark.l)} var(${pv("surface-dark-c")}) var(${pv("surface-dark-h")}))
   );`,
       );
 
@@ -329,25 +330,33 @@ export function generateTokensCss(
             rootLines.push(`${selectorPrefix}${stateSelector} {`);
 
             // Define local variables for the state
-            rootLines.push(`  --local-light-h: ${toNumber(bgState.light.h)};`);
-            rootLines.push(`  --local-light-c: ${toNumber(bgState.light.c)};`);
-            rootLines.push(`  --local-dark-h: ${toNumber(bgState.dark.h)};`);
-            rootLines.push(`  --local-dark-c: ${toNumber(bgState.dark.c)};`);
+            rootLines.push(
+              `  ${pv("local-light-h")}: ${toNumber(bgState.light.h)};`,
+            );
+            rootLines.push(
+              `  ${pv("local-light-c")}: ${toNumber(bgState.light.c)};`,
+            );
+            rootLines.push(
+              `  ${pv("local-dark-h")}: ${toNumber(bgState.dark.h)};`,
+            );
+            rootLines.push(
+              `  ${pv("local-dark-c")}: ${toNumber(bgState.dark.c)};`,
+            );
 
             const isLightModeFilled = bgState.light.l < 0.6;
             const isDarkModeFilled = bgState.dark.l >= 0.6;
 
             const lightChromaVar = isLightModeFilled
-              ? "--context-chroma"
-              : "--base-chroma";
+              ? pv("context-chroma")
+              : pv("base-chroma");
             const darkChromaVar = isDarkModeFilled
-              ? "--context-chroma"
-              : "--base-chroma";
+              ? pv("context-chroma")
+              : pv("base-chroma");
 
             rootLines.push(
               `  ${v("surface-token")}: light-dark(
-    oklch(${toNumber(bgState.light.l)} var(${lightChromaVar}, var(--local-light-c)) var(--base-hue, var(--local-light-h))),
-    oklch(${toNumber(bgState.dark.l)} var(${darkChromaVar}, var(--local-dark-c)) var(--base-hue, var(--local-dark-h)))
+    oklch(${toNumber(bgState.light.l)} var(${lightChromaVar}, var(${pv("local-light-c")})) var(${pv("base-hue")}, var(${pv("local-light-h")}))),
+    oklch(${toNumber(bgState.dark.l)} var(${darkChromaVar}, var(${pv("local-dark-c")})) var(${pv("base-hue")}, var(${pv("local-dark-h")})))
   );`,
             );
             rootLines.push(`}`);
@@ -362,17 +371,23 @@ export function generateTokensCss(
   if (keyColors) {
     for (const name of Object.keys(keyColors)) {
       rootLines.push(`.hue-${name} {`);
-      rootLines.push(`  --context-hue: var(${v(`hue-${name}`)});`);
-      rootLines.push(`  --context-chroma: var(${v(`chroma-${name}`)});`);
+      rootLines.push(`  ${pv("context-hue")}: var(${pv(`hue-${name}`)});`);
+      rootLines.push(
+        `  ${pv("context-chroma")}: var(${pv(`chroma-${name}`)});`,
+      );
       rootLines.push(``);
       rootLines.push(`  /* 1. Surface Tinting */`);
-      rootLines.push(`  --base-hue: var(--context-hue);`);
-      rootLines.push(`  --hue-adjust: 0;`);
-      rootLines.push(`  --base-chroma: calc(var(--context-chroma) * 0.1);`);
+      rootLines.push(`  ${pv("base-hue")}: var(${pv("context-hue")});`);
+      rootLines.push(`  ${pv("hue-adjust")}: 0;`);
+      rootLines.push(
+        `  ${pv("base-chroma")}: calc(var(${pv("context-chroma")}) * 0.1);`,
+      );
       rootLines.push(``);
       rootLines.push(`  /* 2. Text Tinting (Indirection) */`);
-      rootLines.push(`  --text-hue-source: var(--context-hue);`);
-      rootLines.push(`  --text-chroma-source: var(--context-chroma);`);
+      rootLines.push(`  ${pv("text-hue-source")}: var(${pv("context-hue")});`);
+      rootLines.push(
+        `  ${pv("text-chroma-source")}: var(${pv("context-chroma")});`,
+      );
       rootLines.push(`}`);
       rootLines.push("");
     }
@@ -381,13 +396,13 @@ export function generateTokensCss(
   // Standard Utilities
   rootLines.push(`/* Core Utilities (Reactive Pipeline) */`);
   rootLines.push(
-    `.text-subtle { --text-lightness-source: var(${v("text-subtle-token")}); }`,
+    `.text-subtle { ${pv("text-lightness-source")}: var(${v("text-subtle-token")}); }`,
   );
   rootLines.push(
-    `.text-subtlest { --text-lightness-source: var(${v("text-subtlest-token")}); }`,
+    `.text-subtlest { ${pv("text-lightness-source")}: var(${v("text-subtlest-token")}); }`,
   );
   rootLines.push(
-    `.text-strong { --text-lightness-source: var(${v("text-high-token")}); font-weight: 600; }`,
+    `.text-strong { ${pv("text-lightness-source")}: var(${v("text-high-token")}); font-weight: 600; }`,
   );
 
   rootLines.push("");

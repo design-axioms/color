@@ -81,10 +81,10 @@ export function buildCommand(args: string[], cwd: string): void {
     const hcBlock = `
 @media (prefers-contrast: more) {
   :root {
-    --base-chroma: 0;
-    --surface-chroma-adjust: 0;
-    --hue-adjust: 0;
-    --chroma-brand: 0;
+    --_axm-base-chroma: 0;
+    --_axm-surface-chroma-adjust: 0;
+    --_axm-hue-adjust: 0;
+    --_axm-chroma-brand: 0;
   }
 
 ${hcCss}

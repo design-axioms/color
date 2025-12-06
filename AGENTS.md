@@ -89,6 +89,12 @@ The project is governed by a set of core principles defined in `docs/design/axio
 - **Subdirectories**: If a command must run in a subdirectory, use chaining (e.g., `cd site && pnpm build`) or the `-C` / `--filter` flags where available.
 - **Paths**: Refer to files relative to the workspace root (e.g., `docs/agent-context/task-list.md`).
 
+### Development Environment
+
+- **Server**: The development server is managed by `locald` and is always running.
+- **URL**: Access the site at `https://color-system.localhost/`.
+- **No Manual Start**: Do NOT run `pnpm docs:dev` or `pnpm dev` manually. Assume the server is up.
+
 ### Project Structure
 
 - **`src/lib/`**: Core logic for the color system (solvers, math, types).

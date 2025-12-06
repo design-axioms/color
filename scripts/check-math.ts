@@ -19,6 +19,7 @@ for (const file of files) {
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
+    if (line === undefined) continue;
 
     // Check for broken subscripts: *{ instead of _{
     // This is a heuristic but matches the specific error we saw

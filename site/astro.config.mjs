@@ -21,6 +21,11 @@ export default defineConfig({
     fonts: [],
   },
   vite: {
+    server: {
+      fs: {
+        allow: [".."],
+      },
+    },
     resolve: {
       alias: {
         "@lib": path.resolve(__dirname, "../src/lib"),
@@ -37,9 +42,9 @@ export default defineConfig({
         Head: "./src/components/StarlightHead.astro",
       },
       customCss: [
-        path.resolve(__dirname, "../css/engine.css"),
+        "../css/engine.css",
         "./src/styles/theme.css",
-        path.resolve(__dirname, "../css/utilities.css"),
+        "../css/utilities.css",
         "./src/styles/docs.css",
         "./src/styles/starlight-custom.css",
       ],
@@ -113,6 +118,13 @@ export default defineConfig({
             { label: "CLI", slug: "reference/cli" },
             { label: "JavaScript API", slug: "reference/javascript-api" },
             { label: "Tokens", slug: "reference/tokens" },
+          ],
+        },
+        {
+          label: "Theory",
+          items: [
+            { label: "The Algebra of Color", slug: "theory/algebra" },
+            { label: "Formal Derivation", slug: "theory/proof" },
           ],
         },
       ],

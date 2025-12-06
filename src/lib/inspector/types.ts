@@ -18,6 +18,18 @@ export interface ResolvedToken {
   sourceVar: string;
   /** The raw value of the source variable (e.g., "0.6") */
   sourceValue: string;
+  /** The element that supplied this token */
+  element?: HTMLElement;
+  /** Whether the element is the same as the inspected element */
+  isLocal?: boolean;
+  /** Whether this is an internal plumbing token */
+  isPrivate?: boolean;
+  /** The CSS class likely responsible for this token (e.g., "theme-red") */
+  responsibleClass?: string;
+  /** Whether the token is defined via inline style */
+  isInline?: boolean;
+  /** Whether the token matches the system default (initial-value) */
+  isDefault?: boolean;
 }
 
 export interface ElementDebugInfo {

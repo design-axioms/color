@@ -2,7 +2,7 @@
 
 ## Overview
 
-This phase focuses on making the system "Beta-Ready" by ensuring that users can trust the tools and the output. We are implementing a live export preview in the Theme Builder to bridge the gap between configuration and consumption, adding real-time validation to prevent invalid states, and ensuring our ecosystem tools (ESLint) support Svelte.
+This phase focused on making the system "Beta-Ready" by implementing a live export preview in the Theme Builder. This bridges the gap between configuration and consumption, allowing users to immediately see and use the generated tokens.
 
 ## Key Changes
 
@@ -15,12 +15,17 @@ We have implemented a live "Export Preview" feature in the Theme Builder. This a
 - **State Management**: Updated `BuilderState` to include a new `viewMode` option: `"export"`. This allows switching the main stage area between the component preview and the export view.
 - **Export View Component**: Created `site/src/components/builder-v2/stage/ExportView.svelte`. This component subscribes to `configState` and uses the core exporters (`toDTCG`, `toTailwind`, `toTypeScript`) to generate the output. It provides tabs to switch between formats and includes "Copy" and "Download" buttons.
 - **Layout Integration**: Updated `site/src/components/builder-v2/StagePanel.svelte` to include a toggle in the toolbar. The toggle switches between "Preview" and "Export" modes.
-- **Core Library Updates**: Exported the exporter functions (`toDTCG`, `toTailwind`, `toTypeScript`) and key types (`Theme`, `SolverConfig`) from the main package entry point (`src/lib/index.ts`) so they can be used by the site. Fixed an unused variable issue in `src/lib/inspector/overlay.ts` that was blocking the build.
+- **Core Library Updates**: Exported the exporter functions (`toDTCG`, `toTailwind`, `toTypeScript`) and key types (`Theme`, `SolverConfig`) from the main package entry point (`src/lib/index.ts`) so they can be used by the site.
 
-### 2. Configuration Validation
+### 2. Quality Assurance & Verification
 
-_(Pending)_
+- **Token Simplification Fixes**: Updated the test suite (`scoping.test.ts`, `inspector.test.ts`) to align with the recent token renaming (using `_axm-` prefix for private tokens).
+- **Knip Configuration**: Tuned `knip.ts` to reduce false positives and ignore specific build artifacts.
+- **Snapshot Updates**: Updated visual regression snapshots to reflect the latest token generation logic.
 
-### 3. ESLint Svelte Support
+## Deferred Work
 
-_(Pending)_
+The following items were planned for this phase but have been deferred to future phases:
+
+- **Theme Builder: Validation**: Real-time schema validation and error reporting in the UI.
+- **Ecosystem: ESLint Svelte Support**: While basic smoke tests pass, full support for Svelte `style` attributes needs more comprehensive testing and implementation.

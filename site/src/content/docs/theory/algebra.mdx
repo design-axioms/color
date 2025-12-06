@@ -1,0 +1,263 @@
+---
+title: The Algebra of Color Design
+description: The physics and grammar of the Axiomatic Color system.
+slug: theory/algebra
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+> **Context**: The physics and grammar of the Axiomatic Color system. ([View Changelog](./composition-algebra-changelog.md))
+
+This document defines the "Physics" of the Axiomatic Color system. While the system is built on rigorous math, you can think of it using a theatrical analogy:
+
+- **Context ($H, C$) is the Stage Lighting**: It sets the atmosphere. If the stage is lit with red light, everything on it is tinted red. This "atmosphere" permeates everything.
+- **Intent ($L$) is the Voice**: It's how the actor speaks. They can whisper (Subtle) or shout (High).
+- **Surfaces are Set Changes**: When you walk into a new room (a Card, a Sidebar), the conversation resets. The actor stops shouting, but the lighting might stay the same.
+
+Below, we formalize these intuitions into a set of rules that guarantee your UI always looks consistent.
+
+## 1. The State Space ($\mathcal{S}$)
+
+The system state at any point in the DOM tree is defined by a configuration $\mathcal{S}$. Note that this is a **Configuration Space** (Manifold), not a Vector Space, as the components are not all continuous fields.
+
+$$ \mathcal{S} = \langle H, C, L_{src}, \rho \rangle $$
+
+Where:
+
+- $H \in S^1$ (Circle Group): **Context Hue**. The base hue for the current environment. Being circular, $360^\circ \equiv 0^\circ$.
+- $C \in [0, 1]$: **Context Chroma**. The base vibrancy for the current environment.
+- $L_{src} \in \text{Token}$: **Intent Lightness**. A reference to a lightness token (e.g., `text-high`, `text-subtle`).
+- $\rho \in \{ \text{Light}, \text{Dark} \}$: **Polarity**. The local resolved mode. This is a discrete binary switch.
+
+### 1.1 The Axiomatic Origin ($\sigma_{root}$)
+
+The system is a closed universe. The initial state is defined at the `:root` of the document.
+
+$$ \sigma_{root} = \langle H_{theme}, C_{theme}, L_{base}, \rho_{user} \rangle $$
+
+<Aside type="note" title="In Plain English">
+Think of $\mathcal{S}$ as the "DNA" of the current element. It carries four genes: what color family we are in ($H$), how vibrant it is ($C$), how bright the text should be ($L_{src}$), and whether we are in light or dark mode ($\rho$). Every element inherits this DNA from its parent.
+</Aside>
+
+## 2. The Resolution Function ($\Phi$)
+
+The CSS Engine acts as a projection function $\Phi$ that maps the state $\mathcal{S}$ to a concrete CSS color value.
+
+$$ \Phi(\mathcal{S}) \mapsto \text{ColorSpace}(\text{oklch}) $$
+
+$$
+\Phi(\langle H, C, L_{src}, \rho \rangle) = \text{oklch}(\text{eval}(L_{src}, \rho), C, H)
+$$
+
+Where $\text{eval}(L_{src}, \rho)$ represents the **Late Binding** of the token. It is a lookup function into the token definition set:
+
+$$
+\forall t \in \text{Tokens}, \exists (l_{light}, l_{dark}) \text{ s.t. } \text{eval}(t, \rho) = (\rho = \text{Dark}) ? l_{dark} : l_{light}
+$$
+
+<Aside type="note" title="In Plain English">
+$\Phi$ is the browser's rendering engine. It takes the DNA ($\mathcal{S}$) and turns it into actual pixels. Crucially, it decides the actual lightness _at the last moment_ based on whether we are in light or dark mode.
+</Aside>
+
+## 3. The Operators
+
+Classes in the system are **Operators** that transform the state $\mathcal{S} \rightarrow \mathcal{S}'$.
+
+### 3.1. The Container Operator ($K$)
+
+Layout primitives (like `div`, `span`, `section` without a surface class) act as the Identity Operator.
+
+$$
+K(\mathcal{S}) = \mathcal{S}
+$$
+
+- **Conservation**: Preserves $H, C, L_{src}, \text{and } \rho$ exactly.
+- **Translucency**: A container is mathematically invisible to the state. It allows the parent's "Voice" (Intent) and "Atmosphere" (Context) to pass through unchanged.
+
+**The Glass Universe Topology**: Because the default container is transparent, the system operates in a "Glass Universe." Context propagates downwards infinitely until it strikes a boundary.
+
+<Aside type="note" title="In Plain English">
+A Container is just a grouping mechanism. If you put text inside a `div`, it doesn't stop being "Subtle" or "Brand colored." This formalizes the difference between a **Card** (Surface) and a **Wrapper** (Container).
+</Aside>
+
+### 3.2. Surface Operators ($S$)
+
+A Surface establishes a new spatial context. All surfaces act as a **Lossy Barrier** for Intent ($L_{src}$), forcibly resetting the "Voice" to the default. However, they differ in how they handle the "Atmosphere" ($H, C$).
+
+We distinguish between two topological types of surfaces:
+
+#### 3.2.1. Glass Surface ($S_{glass}$)
+
+A Glass Surface (e.g., `surface-card`, `surface-floating`) preserves the ambient environment.
+
+$$
+S_{glass}(\langle H, C, L_{src}, \rho \rangle) = \langle H, C, L_{high}, \rho' \rangle
+$$
+
+- **Context Identity**: $H$ and $C$ are preserved. The surface is tinted by the parent's light.
+- **Intent Erasure**: $L_{src}$ is reset to $L_{high}$.
+- **Polarity**: $\rho'$ is resolved (usually $\rho' = \rho$, unless inverted).
+
+<Aside type="note" title="In Plain English">
+A standard Card is like a pane of frosted glass. It resets the text conversation (so you can start a new sentence), but it lets the room's colored lighting shine through. If the room is red, the card is tinted red.
+</Aside>
+
+#### 3.2.2. Solid Surface ($S_{solid}$)
+
+A Solid Surface (e.g., `surface-neutral`, `surface-paper`) blocks the ambient environment, grounding the local state. This is the **Topological Inverse** of the Container.
+
+$$
+S_{solid}(\langle H, C, L_{src}, \rho \rangle) = \langle H, 0, L_{high}, \rho' \rangle
+$$
+
+- **Context Reset**: $C$ is forced to $0$ (or a neutral floor $\epsilon$). $H$ becomes irrelevant (undefined) when $C=0$.
+- **Intent Erasure**: $L_{src}$ is reset to $L_{high}$.
+
+<Aside type="note" title="In Plain English">
+A Solid Surface is opaque white (or black) paper. It ignores the room's red lighting and creates a purely neutral canvas. This is essential for "breaking out" of a strong brand section to display data or neutral content.
+</Aside>
+
+### 3.3. Intent Operator ($I$)
+
+Intent classes (e.g., `.text-subtle`) modify the Lightness Source.
+
+$$
+I_{token}(\langle H, C, L_{src}, \rho \rangle) = \langle H, C, L_{token}, \rho \rangle
+$$
+
+- **Identity on Context**: $H$ and $C$ are preserved.
+- **Action**: Updates $L_{src}$.
+
+<Aside type="note" title="In Plain English">
+Intent classes are adjectives. They modify the _current_ noun. They do not change the color of the noun, only its weight or emphasis.
+</Aside>
+
+### 3.4. Modifier Operator ($M$)
+
+Modifier classes (e.g., `.hue-brand`) modify the Context variables.
+
+$$
+M_{brand}(\langle H, C, L_{src}, \rho \rangle) = \langle H_{brand}, C_{ambient}, L_{src}, \rho \rangle
+$$
+
+- **Identity on Intent**: $L_{src}$ is preserved.
+- **Context Definition**: Updates $H$ to the brand hue and $C$ to the ambient chroma level.
+
+<Aside type="note" title="In Plain English">
+Modifier classes change the lighting of the room. They don't touch the text hierarchy. A title is still a title, but now it's illuminated by purple light.
+</Aside>
+
+## 4. Laws of Composition
+
+### 4.1. Orthogonality (Commutativity of $I$ and $M$)
+
+For **Neutral Intents** (where $I$ only affects $L$), Intent and Modifiers are commutative.
+
+$$ I(M(\mathcal{S})) \equiv M(I(\mathcal{S})) $$
+
+**Implication**: The order of classes in HTML (`class="text-subtle hue-brand"` vs `class="hue-brand text-subtle"`) does not matter for the resulting color.
+
+#### Exception: The Theorem of Semantic Dominance
+
+For **Chromatic Intents** (e.g., Error, Success), the Intent must override the Context to convey meaning.
+
+$$ I_{error}(\langle H, C, L, \rho \rangle) = \langle H_{error}, C_{error}, L_{error}, \rho \rangle $$
+
+In these cases, commutativity breaks, and the Intent acts as a localized Context Reset.
+
+#### The Gamut Trap
+
+Note that while $L$ and $C$ are mathematically orthogonal in the state vector, they are **physically coupled** by the color gamut. At high Chroma, the available range of Lightness is compressed.
+
+### 4.2. Surface Dominance
+
+A Surface ($S$) resets the local intent. Therefore, an Intent applied _outside_ a surface does not penetrate _into_ the surface's default text.
+
+$$ \text{Inside Surface: } \Phi(S(I(\mathcal{S}))) \neq \Phi(I(S(\mathcal{S}))) $$
+
+- $S(I(\mathcal{S}))$: The surface resets the intent. The outer intent is lost.
+- $I(S(\mathcal{S}))$: The intent is applied _to_ the surface's context.
+
+**Implication**: You must apply text utilities _inside_ or _on_ the element that needs them.
+
+<Aside type="note" title="In Plain English">
+Surfaces are barriers. If you make a container "subtle", and then put a Card inside it, the text inside the Card goes back to normal. The Card protects its contents from the outside world's text styles.
+</Aside>
+
+## 5. Invariants
+
+### 5.1. Contrast Preservation
+
+Modifiers ($M$) are **Contrast Preserving**.
+
+$$ \text{Contrast}(\Phi(\mathcal{S}), \text{Background}) \approx \text{Contrast}(\Phi(M(\mathcal{S})), \text{Background}) $$
+
+Since $M$ only changes $H$ and $C$, and OKLCH is perceptually uniform, the perceived lightness (and thus contrast against the background) remains constant.
+
+<Aside type="note" title="In Plain English">
+Changing the hue (e.g., adding `.hue-brand`) never breaks accessibility. If the text was readable before, it stays readable, because the system only changes the color, not the brightness.
+</Aside>
+
+### 5.2. Intent Stability
+
+Intent ($I$) is **Chromatically Transparent**.
+
+$$ \text{Hue}(\Phi(I(\mathcal{S}))) = \text{Hue}(\Phi(\mathcal{S})) $$
+
+Changing the text importance (High -> Subtle) never shifts the hue.
+
+<Aside type="note" title="In Plain English">
+Changing the text style (e.g., making it `.text-subtle`) never changes its color family. If you are in a "Brand" section, the subtle text will still be tinted with the brand color, just dimmer. The text style doesn't "reset" the color to gray.
+</Aside>
+
+## 6. Derived Theorems
+
+### 6.1. Theorem A: The Saturation Limit (The Depth Theorem)
+
+Since the Resolution Function $\Phi$ maps to a bounded color space, there exists a limit to nesting modifiers. If $m$ is a contrast-reducing function (e.g., `opacity: 0.5`), there exists a depth $n$ where:
+
+$$ |\Phi(m^n(\gamma), i_a) - \Phi(m^n(\gamma), i_b)| < \epsilon_{visual} $$
+
+**Plain English**: "The Fade-Out Limit." If you nest "Subtle" contexts too deeply, the system mathematically guarantees that text becomes illegible.
+
+### 6.2. Theorem B: The Irreversibility Principle
+
+$$ \Phi^{-1}(\text{Color}) \text{ is undefined.} $$
+
+You cannot look at a pixel (e.g., `#334455`) and mathematically derive the State $\mathcal{S}$ that produced it. (Is it a Dark Token in Light Mode? Or a Light Token in Dark Mode?).
+
+**Practical Consequence**: State must flow strictly **Top-Down**. You cannot "read" the design system from the computed styles; you can only write to it.
+
+## 7. Implications & Corollaries
+
+### 7.1. Idempotency of Modifiers
+
+Applying the same modifier twice is equivalent to applying it once.
+
+$$
+M_{brand}(M_{brand}(\mathcal{S})) \equiv M_{brand}(\mathcal{S})
+$$
+
+This means nesting a `.hue-brand` section inside another `.hue-brand` section is safe and redundant.
+
+### 7.2. The "Leakage" Corollary
+
+In a Glass Universe, all nested Contexts are additive. Visual isolation can only be achieved by the explicit application of an Opaque Surface ($S_{solid}$), which acts as a Context Reset.
+
+$$ \text{Container}(I\_{subtle}(\mathcal{S})) \rightarrow \text{Text is still subtle inside} $$
+
+This distinguishes **Layout Containers** (divs, spans) from **Surfaces** (cards, sidebars). Surfaces are opaque boundaries for Intent; Containers are transparent.
+
+### 7.3. Universal Theming
+
+Since $M$ operators control the environment ($H, C$) for all child elements, changing the top-level modifier effectively re-themes the entire subtree without requiring changes to the leaf nodes (text, borders).
+
+### 7.4. The Portal Effect (Subspace Involution)
+
+Because Inverted Surfaces perform a Hard Flip ($\rho' = \neg \rho$), nesting them creates an alternating polarity stack. However, because $S$ is lossy on Intent ($L$), this is not a true inverse of the state.
+
+$$
+S_{inv}(S_{inv}(\mathcal{S})) \neq \mathcal{S}
+$$
+
+While the polarity returns to the original ($\neg(\neg \rho) = \rho$), the Intent $L_{src}$ is reset to $L_{high}$ at each step. You recover the _mode_, but you lose the _semantic context_.

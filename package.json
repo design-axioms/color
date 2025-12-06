@@ -39,6 +39,8 @@
     "prepublishOnly": "pnpm test && pnpm build",
     "test": "vitest --run",
     "test:update-snapshots": "vitest -u --run",
+    "test:visual": "playwright test tests/visual.spec.ts",
+    "test:visual:update": "playwright test tests/visual.spec.ts --update-snapshots",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage --run",
     "lint": "eslint .",

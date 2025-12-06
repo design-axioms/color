@@ -8,8 +8,9 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: "html",
   use: {
-    baseURL: "http://localhost:4321",
+    baseURL: "https://color-system.localhost",
     trace: "on-first-retry",
+    ignoreHTTPSErrors: true,
   },
   projects: [
     {
@@ -17,11 +18,4 @@ export default defineConfig({
       use: { ...devices["Desktop Chrome"] },
     },
   ],
-  webServer: {
-    command: "pnpm docs:dev",
-    url: "http://localhost:4321",
-    reuseExistingServer: !process.env.CI,
-    stdout: "ignore",
-    stderr: "pipe",
-  },
 });

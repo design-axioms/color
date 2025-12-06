@@ -28,7 +28,7 @@ import "../styles/fonts.css";
 <script>
   import "@axiomatic-design/color/inspector";
 
-  // Auto-inject the debugger element
+  // Always inject the debugger (it starts in a dormant state with a toggle button)
   if (!document.querySelector("axiomatic-debugger")) {
     const el = document.createElement("axiomatic-debugger");
     document.body.appendChild(el);

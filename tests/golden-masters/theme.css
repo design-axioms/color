@@ -1,30 +1,30 @@
 :root {
-  --axm-inverted-surfaces: ".surface-action, .surface-spotlight";
+  --_axm-inverted-surfaces: ".surface-action, .surface-spotlight";
   /* Key Colors */
   --axm-key-brand-color: oklch(0.5417 0.179 288.0332);
-  --axm-hue-brand: 288.0332;
-  --axm-chroma-brand: 0.179;
+  --_axm-hue-brand: 288.0332;
+  --_axm-chroma-brand: 0.179;
   --axm-key-success-color: oklch(0.6222 0.1661 146.2209);
-  --axm-hue-success: 146.2209;
-  --axm-chroma-success: 0.1661;
+  --_axm-hue-success: 146.2209;
+  --_axm-chroma-success: 0.1661;
   --axm-key-warning-color: oklch(0.5542 0.1169 75.0084);
-  --axm-hue-warning: 75.0084;
-  --axm-chroma-warning: 0.1169;
+  --_axm-hue-warning: 75.0084;
+  --_axm-chroma-warning: 0.1169;
   --axm-key-error-color: var(--axm-key-danger-color);
-  --axm-hue-error: var(--axm-hue-danger);
-  --axm-chroma-error: var(--axm-chroma-danger);
+  --_axm-hue-error: var(--_axm-hue-danger);
+  --_axm-chroma-error: var(--_axm-chroma-danger);
   --axm-key-highlight-color: oklch(0.6002 0.2504 319.8501);
-  --axm-hue-highlight: 319.8501;
-  --axm-chroma-highlight: 0.2504;
+  --_axm-hue-highlight: 319.8501;
+  --_axm-chroma-highlight: 0.2504;
   --axm-key-danger-color: oklch(0.5879 0.1927 20.4694);
-  --axm-hue-danger: 20.4694;
-  --axm-chroma-danger: 0.1927;
+  --_axm-hue-danger: 20.4694;
+  --_axm-chroma-danger: 0.1927;
   --axm-key-blue-color: oklch(0.5299 0.1896 257.4102);
-  --axm-hue-blue: 257.4102;
-  --axm-chroma-blue: 0.1896;
+  --_axm-hue-blue: 257.4102;
+  --_axm-chroma-blue: 0.1896;
   --axm-key-info-color: oklch(0.452 0.3132 264.052);
-  --axm-hue-info: 264.052;
-  --axm-chroma-info: 0.3132;
+  --_axm-hue-info: 264.052;
+  --_axm-chroma-info: 0.3132;
   /* Elevation */
   --axm-shadow-sm: light-dark(
     0 1px 2px 0 oklch(0 0 0 / 0.05),
@@ -77,17 +77,17 @@
 
 .surface-page,
 body {
-  --local-light-h: 293.0332;
-  --local-light-c: 0;
-  --local-dark-h: 288.1078;
-  --local-dark-c: 0;
-  --surface-light-h: var(--base-hue, var(--local-light-h));
-  --surface-light-c: var(--base-chroma, var(--local-light-c));
-  --surface-dark-h: var(--base-hue, var(--local-dark-h));
-  --surface-dark-c: var(--base-chroma, var(--local-dark-c));
+  --_axm-local-light-h: 293.0332;
+  --_axm-local-light-c: 0;
+  --_axm-local-dark-h: 288.1078;
+  --_axm-local-dark-c: 0;
+  --_axm-surface-light-h: var(--_axm-base-hue, var(--_axm-local-light-h));
+  --_axm-surface-light-c: var(--_axm-base-chroma, var(--_axm-local-light-c));
+  --_axm-surface-dark-h: var(--_axm-base-hue, var(--_axm-local-dark-h));
+  --_axm-surface-dark-c: var(--_axm-base-chroma, var(--_axm-local-dark-c));
   --axm-surface-token: light-dark(
-    oklch(1 var(--surface-light-c) var(--surface-light-h)),
-    oklch(0.1 var(--surface-dark-c) var(--surface-dark-h))
+    oklch(1 var(--_axm-surface-light-c) var(--_axm-surface-light-h)),
+    oklch(0.1 var(--_axm-surface-dark-c) var(--_axm-surface-dark-h))
   );
   --axm-text-high-token: light-dark(oklch(0 0 0), oklch(1 0 0));
   --axm-text-subtle-token: light-dark(oklch(0.4586 0 0), oklch(0.893 0 0));
@@ -103,17 +103,17 @@ body {
 }
 
 .surface-workspace {
-  --local-light-h: 293.0325;
-  --local-light-c: 0;
-  --local-dark-h: 288.4172;
-  --local-dark-c: 0;
-  --surface-light-h: var(--base-hue, var(--local-light-h));
-  --surface-light-c: var(--base-chroma, var(--local-light-c));
-  --surface-dark-h: var(--base-hue, var(--local-dark-h));
-  --surface-dark-c: var(--base-chroma, var(--local-dark-c));
+  --_axm-local-light-h: 293.0325;
+  --_axm-local-light-c: 0;
+  --_axm-local-dark-h: 288.4172;
+  --_axm-local-dark-c: 0;
+  --_axm-surface-light-h: var(--_axm-base-hue, var(--_axm-local-light-h));
+  --_axm-surface-light-c: var(--_axm-base-chroma, var(--_axm-local-light-c));
+  --_axm-surface-dark-h: var(--_axm-base-hue, var(--_axm-local-dark-h));
+  --_axm-surface-dark-c: var(--_axm-base-chroma, var(--_axm-local-dark-c));
   --axm-surface-token: light-dark(
-    oklch(0.9896 var(--surface-light-c) var(--surface-light-h)),
-    oklch(0.2156 var(--surface-dark-c) var(--surface-dark-h))
+    oklch(0.9896 var(--_axm-surface-light-c) var(--_axm-surface-light-h)),
+    oklch(0.2156 var(--_axm-surface-dark-c) var(--_axm-surface-dark-h))
   );
   --axm-text-high-token: light-dark(oklch(0 0 0), oklch(1 0 0));
   --axm-text-subtle-token: light-dark(oklch(0.4404 0 0), oklch(0.8991 0 0));
@@ -129,17 +129,17 @@ body {
 }
 
 .surface-card {
-  --local-light-h: 293.0332;
-  --local-light-c: 0;
-  --local-dark-h: 288.1078;
-  --local-dark-c: 0;
-  --surface-light-h: var(--base-hue, var(--local-light-h));
-  --surface-light-c: var(--base-chroma, var(--local-light-c));
-  --surface-dark-h: var(--base-hue, var(--local-dark-h));
-  --surface-dark-c: var(--base-chroma, var(--local-dark-c));
+  --_axm-local-light-h: 293.0332;
+  --_axm-local-light-c: 0;
+  --_axm-local-dark-h: 288.1078;
+  --_axm-local-dark-c: 0;
+  --_axm-surface-light-h: var(--_axm-base-hue, var(--_axm-local-light-h));
+  --_axm-surface-light-c: var(--_axm-base-chroma, var(--_axm-local-light-c));
+  --_axm-surface-dark-h: var(--_axm-base-hue, var(--_axm-local-dark-h));
+  --_axm-surface-dark-c: var(--_axm-base-chroma, var(--_axm-local-dark-c));
   --axm-surface-token: light-dark(
-    oklch(1 var(--surface-light-c) var(--surface-light-h)),
-    oklch(0.1 var(--surface-dark-c) var(--surface-dark-h))
+    oklch(1 var(--_axm-surface-light-c) var(--_axm-surface-light-h)),
+    oklch(0.1 var(--_axm-surface-dark-c) var(--_axm-surface-dark-h))
   );
   --axm-text-high-token: light-dark(oklch(0 0 0), oklch(1 0 0));
   --axm-text-subtle-token: light-dark(oklch(0.4586 0 0), oklch(0.893 0 0));
@@ -154,50 +154,50 @@ body {
   );
 }
 .surface-card:hover {
-  --local-light-h: 293.0286;
-  --local-light-c: 0;
-  --local-dark-h: 288.8814;
-  --local-dark-c: 0;
+  --_axm-local-light-h: 293.0286;
+  --_axm-local-light-c: 0;
+  --_axm-local-dark-h: 288.8814;
+  --_axm-local-dark-c: 0;
   --axm-surface-token: light-dark(
     oklch(
-      0.9746 var(--base-chroma, var(--local-light-c))
-        var(--base-hue, var(--local-light-h))
+      0.9746 var(--_axm-base-chroma, var(--_axm-local-light-c))
+        var(--_axm-base-hue, var(--_axm-local-light-h))
     ),
     oklch(
-      0.3072 var(--base-chroma, var(--local-dark-c))
-        var(--base-hue, var(--local-dark-h))
+      0.3072 var(--_axm-base-chroma, var(--_axm-local-dark-c))
+        var(--_axm-base-hue, var(--_axm-local-dark-h))
     )
   );
 }
 .surface-card:active {
-  --local-light-h: 293.0161;
-  --local-light-c: 0;
-  --local-dark-h: 289.3469;
-  --local-dark-c: 0;
+  --_axm-local-light-h: 293.0161;
+  --_axm-local-light-c: 0;
+  --_axm-local-dark-h: 289.3469;
+  --_axm-local-dark-c: 0;
   --axm-surface-token: light-dark(
     oklch(
-      0.9506 var(--base-chroma, var(--local-light-c))
-        var(--base-hue, var(--local-light-h))
+      0.9506 var(--_axm-base-chroma, var(--_axm-local-light-c))
+        var(--_axm-base-hue, var(--_axm-local-light-h))
     ),
     oklch(
-      0.3734 var(--base-chroma, var(--local-dark-c))
-        var(--base-hue, var(--local-dark-h))
+      0.3734 var(--_axm-base-chroma, var(--_axm-local-dark-c))
+        var(--_axm-base-hue, var(--_axm-local-dark-h))
     )
   );
 }
 
 .surface-action {
-  --local-light-h: 288.1078;
-  --local-light-c: 0;
-  --local-dark-h: 292.9586;
-  --local-dark-c: 0;
-  --surface-light-h: var(--base-hue, var(--local-light-h));
-  --surface-light-c: var(--context-chroma, var(--local-light-c));
-  --surface-dark-h: var(--base-hue, var(--local-dark-h));
-  --surface-dark-c: var(--context-chroma, var(--local-dark-c));
+  --_axm-local-light-h: 288.1078;
+  --_axm-local-light-c: 0;
+  --_axm-local-dark-h: 292.9586;
+  --_axm-local-dark-c: 0;
+  --_axm-surface-light-h: var(--_axm-base-hue, var(--_axm-local-light-h));
+  --_axm-surface-light-c: var(--_axm-context-chroma, var(--_axm-local-light-c));
+  --_axm-surface-dark-h: var(--_axm-base-hue, var(--_axm-local-dark-h));
+  --_axm-surface-dark-c: var(--_axm-context-chroma, var(--_axm-local-dark-c));
   --axm-surface-token: light-dark(
-    oklch(0.1 var(--surface-light-c) var(--surface-light-h)),
-    oklch(0.9 var(--surface-dark-c) var(--surface-dark-h))
+    oklch(0.1 var(--_axm-surface-light-c) var(--_axm-surface-light-h)),
+    oklch(0.9 var(--_axm-surface-dark-c) var(--_axm-surface-dark-h))
   );
   --axm-text-high-token: light-dark(oklch(1 0 0), oklch(0 0 0));
   --axm-text-subtle-token: light-dark(oklch(0.893 0 0), oklch(0.2156 0 0));
@@ -212,50 +212,50 @@ body {
   );
 }
 .surface-action:hover {
-  --local-light-h: 288.8814;
-  --local-light-c: 0;
-  --local-dark-h: 292.9145;
-  --local-dark-c: 0;
+  --_axm-local-light-h: 288.8814;
+  --_axm-local-light-c: 0;
+  --_axm-local-dark-h: 292.9145;
+  --_axm-local-dark-c: 0;
   --axm-surface-token: light-dark(
     oklch(
-      0.3072 var(--context-chroma, var(--local-light-c))
-        var(--base-hue, var(--local-light-h))
+      0.3072 var(--_axm-context-chroma, var(--_axm-local-light-c))
+        var(--_axm-base-hue, var(--_axm-local-light-h))
     ),
     oklch(
-      0.8746 var(--context-chroma, var(--local-dark-c))
-        var(--base-hue, var(--local-dark-h))
+      0.8746 var(--_axm-context-chroma, var(--_axm-local-dark-c))
+        var(--_axm-base-hue, var(--_axm-local-dark-h))
     )
   );
 }
 .surface-action:active {
-  --local-light-h: 289.3469;
-  --local-light-c: 0;
-  --local-dark-h: 292.8523;
-  --local-dark-c: 0;
+  --_axm-local-light-h: 289.3469;
+  --_axm-local-light-c: 0;
+  --_axm-local-dark-h: 292.8523;
+  --_axm-local-dark-c: 0;
   --axm-surface-token: light-dark(
     oklch(
-      0.3734 var(--context-chroma, var(--local-light-c))
-        var(--base-hue, var(--local-light-h))
+      0.3734 var(--_axm-context-chroma, var(--_axm-local-light-c))
+        var(--_axm-base-hue, var(--_axm-local-light-h))
     ),
     oklch(
-      0.8468 var(--context-chroma, var(--local-dark-c))
-        var(--base-hue, var(--local-dark-h))
+      0.8468 var(--_axm-context-chroma, var(--_axm-local-dark-c))
+        var(--_axm-base-hue, var(--_axm-local-dark-h))
     )
   );
 }
 
 .surface-action-soft {
-  --local-light-h: 293.0332;
-  --local-light-c: 0;
-  --local-dark-h: 288.1078;
-  --local-dark-c: 0;
-  --surface-light-h: var(--base-hue, var(--local-light-h));
-  --surface-light-c: var(--base-chroma, var(--local-light-c));
-  --surface-dark-h: var(--base-hue, var(--local-dark-h));
-  --surface-dark-c: var(--base-chroma, var(--local-dark-c));
+  --_axm-local-light-h: 293.0332;
+  --_axm-local-light-c: 0;
+  --_axm-local-dark-h: 288.1078;
+  --_axm-local-dark-c: 0;
+  --_axm-surface-light-h: var(--_axm-base-hue, var(--_axm-local-light-h));
+  --_axm-surface-light-c: var(--_axm-base-chroma, var(--_axm-local-light-c));
+  --_axm-surface-dark-h: var(--_axm-base-hue, var(--_axm-local-dark-h));
+  --_axm-surface-dark-c: var(--_axm-base-chroma, var(--_axm-local-dark-c));
   --axm-surface-token: light-dark(
-    oklch(1 var(--surface-light-c) var(--surface-light-h)),
-    oklch(0.1 var(--surface-dark-c) var(--surface-dark-h))
+    oklch(1 var(--_axm-surface-light-c) var(--_axm-surface-light-h)),
+    oklch(0.1 var(--_axm-surface-dark-c) var(--_axm-surface-dark-h))
   );
   --axm-text-high-token: light-dark(oklch(0 0 0), oklch(1 0 0));
   --axm-text-subtle-token: light-dark(oklch(0.4586 0 0), oklch(0.893 0 0));
@@ -270,50 +270,50 @@ body {
   );
 }
 .surface-action-soft:hover {
-  --local-light-h: 293.0286;
-  --local-light-c: 0;
-  --local-dark-h: 288.8814;
-  --local-dark-c: 0;
+  --_axm-local-light-h: 293.0286;
+  --_axm-local-light-c: 0;
+  --_axm-local-dark-h: 288.8814;
+  --_axm-local-dark-c: 0;
   --axm-surface-token: light-dark(
     oklch(
-      0.9746 var(--base-chroma, var(--local-light-c))
-        var(--base-hue, var(--local-light-h))
+      0.9746 var(--_axm-base-chroma, var(--_axm-local-light-c))
+        var(--_axm-base-hue, var(--_axm-local-light-h))
     ),
     oklch(
-      0.3072 var(--base-chroma, var(--local-dark-c))
-        var(--base-hue, var(--local-dark-h))
+      0.3072 var(--_axm-base-chroma, var(--_axm-local-dark-c))
+        var(--_axm-base-hue, var(--_axm-local-dark-h))
     )
   );
 }
 .surface-action-soft:active {
-  --local-light-h: 293.0161;
-  --local-light-c: 0;
-  --local-dark-h: 289.3469;
-  --local-dark-c: 0;
+  --_axm-local-light-h: 293.0161;
+  --_axm-local-light-c: 0;
+  --_axm-local-dark-h: 289.3469;
+  --_axm-local-dark-c: 0;
   --axm-surface-token: light-dark(
     oklch(
-      0.9506 var(--base-chroma, var(--local-light-c))
-        var(--base-hue, var(--local-light-h))
+      0.9506 var(--_axm-base-chroma, var(--_axm-local-light-c))
+        var(--_axm-base-hue, var(--_axm-local-light-h))
     ),
     oklch(
-      0.3734 var(--base-chroma, var(--local-dark-c))
-        var(--base-hue, var(--local-dark-h))
+      0.3734 var(--_axm-base-chroma, var(--_axm-local-dark-c))
+        var(--_axm-base-hue, var(--_axm-local-dark-h))
     )
   );
 }
 
 .surface-spotlight {
-  --local-light-h: 291.0858;
-  --local-light-c: 0;
-  --local-dark-h: 291.0858;
-  --local-dark-c: 0;
-  --surface-light-h: var(--base-hue, var(--local-light-h));
-  --surface-light-c: var(--context-chroma, var(--local-light-c));
-  --surface-dark-h: var(--base-hue, var(--local-dark-h));
-  --surface-dark-c: var(--base-chroma, var(--local-dark-c));
+  --_axm-local-light-h: 291.0858;
+  --_axm-local-light-c: 0;
+  --_axm-local-dark-h: 291.0858;
+  --_axm-local-dark-c: 0;
+  --_axm-surface-light-h: var(--_axm-base-hue, var(--_axm-local-light-h));
+  --_axm-surface-light-c: var(--_axm-context-chroma, var(--_axm-local-light-c));
+  --_axm-surface-dark-h: var(--_axm-base-hue, var(--_axm-local-dark-h));
+  --_axm-surface-dark-c: var(--_axm-base-chroma, var(--_axm-local-dark-c));
   --axm-surface-token: light-dark(
-    oklch(0.5554 var(--surface-light-c) var(--surface-light-h)),
-    oklch(0.5554 var(--surface-dark-c) var(--surface-dark-h))
+    oklch(0.5554 var(--_axm-surface-light-c) var(--_axm-surface-light-h)),
+    oklch(0.5554 var(--_axm-surface-dark-c) var(--_axm-surface-dark-h))
   );
   --axm-text-high-token: light-dark(oklch(1 0 0), oklch(1 0 0));
   --axm-text-subtle-token: light-dark(oklch(1 0 0), oklch(1 0 0));
@@ -329,17 +329,17 @@ body {
 }
 
 .surface-status-success {
-  --local-light-h: 151.1464;
-  --local-light-c: 0.15;
-  --local-dark-h: 147.7619;
-  --local-dark-c: 0.15;
-  --surface-light-h: var(--base-hue, var(--local-light-h));
-  --surface-light-c: var(--base-chroma, var(--local-light-c));
-  --surface-dark-h: var(--base-hue, var(--local-dark-h));
-  --surface-dark-c: var(--base-chroma, var(--local-dark-c));
+  --_axm-local-light-h: 151.1464;
+  --_axm-local-light-c: 0.15;
+  --_axm-local-dark-h: 147.7619;
+  --_axm-local-dark-c: 0.15;
+  --_axm-surface-light-h: var(--_axm-base-hue, var(--_axm-local-light-h));
+  --_axm-surface-light-c: var(--_axm-base-chroma, var(--_axm-local-light-c));
+  --_axm-surface-dark-h: var(--_axm-base-hue, var(--_axm-local-dark-h));
+  --_axm-surface-dark-c: var(--_axm-base-chroma, var(--_axm-local-dark-c));
   --axm-surface-token: light-dark(
-    oklch(0.9 var(--surface-light-c) var(--surface-light-h)),
-    oklch(0.4 var(--surface-dark-c) var(--surface-dark-h))
+    oklch(0.9 var(--_axm-surface-light-c) var(--_axm-surface-light-h)),
+    oklch(0.4 var(--_axm-surface-dark-c) var(--_axm-surface-dark-h))
   );
   --axm-text-high-token: light-dark(oklch(0 0 0), oklch(1 0 0));
   --axm-text-subtle-token: light-dark(oklch(0.2156 0 0), oklch(0.9536 0 0));
@@ -355,17 +355,17 @@ body {
 }
 
 .surface-status-warning {
-  --local-light-h: 79.9338;
-  --local-light-c: 0.15;
-  --local-dark-h: 76.5494;
-  --local-dark-c: 0.15;
-  --surface-light-h: var(--base-hue, var(--local-light-h));
-  --surface-light-c: var(--base-chroma, var(--local-light-c));
-  --surface-dark-h: var(--base-hue, var(--local-dark-h));
-  --surface-dark-c: var(--base-chroma, var(--local-dark-c));
+  --_axm-local-light-h: 79.9338;
+  --_axm-local-light-c: 0.15;
+  --_axm-local-dark-h: 76.5494;
+  --_axm-local-dark-c: 0.15;
+  --_axm-surface-light-h: var(--_axm-base-hue, var(--_axm-local-light-h));
+  --_axm-surface-light-c: var(--_axm-base-chroma, var(--_axm-local-light-c));
+  --_axm-surface-dark-h: var(--_axm-base-hue, var(--_axm-local-dark-h));
+  --_axm-surface-dark-c: var(--_axm-base-chroma, var(--_axm-local-dark-c));
   --axm-surface-token: light-dark(
-    oklch(0.9 var(--surface-light-c) var(--surface-light-h)),
-    oklch(0.4 var(--surface-dark-c) var(--surface-dark-h))
+    oklch(0.9 var(--_axm-surface-light-c) var(--_axm-surface-light-h)),
+    oklch(0.4 var(--_axm-surface-dark-c) var(--_axm-surface-dark-h))
   );
   --axm-text-high-token: light-dark(oklch(0 0 0), oklch(1 0 0));
   --axm-text-subtle-token: light-dark(oklch(0.2156 0 0), oklch(0.9536 0 0));
@@ -381,17 +381,17 @@ body {
 }
 
 .surface-status-error {
-  --local-light-h: 292.9586;
-  --local-light-c: 0.2;
-  --local-dark-h: 289.5742;
-  --local-dark-c: 0.2;
-  --surface-light-h: var(--base-hue, var(--local-light-h));
-  --surface-light-c: var(--base-chroma, var(--local-light-c));
-  --surface-dark-h: var(--base-hue, var(--local-dark-h));
-  --surface-dark-c: var(--base-chroma, var(--local-dark-c));
+  --_axm-local-light-h: 292.9586;
+  --_axm-local-light-c: 0.2;
+  --_axm-local-dark-h: 289.5742;
+  --_axm-local-dark-c: 0.2;
+  --_axm-surface-light-h: var(--_axm-base-hue, var(--_axm-local-light-h));
+  --_axm-surface-light-c: var(--_axm-base-chroma, var(--_axm-local-light-c));
+  --_axm-surface-dark-h: var(--_axm-base-hue, var(--_axm-local-dark-h));
+  --_axm-surface-dark-c: var(--_axm-base-chroma, var(--_axm-local-dark-c));
   --axm-surface-token: light-dark(
-    oklch(0.9 var(--surface-light-c) var(--surface-light-h)),
-    oklch(0.4 var(--surface-dark-c) var(--surface-dark-h))
+    oklch(0.9 var(--_axm-surface-light-c) var(--_axm-surface-light-h)),
+    oklch(0.4 var(--_axm-surface-dark-c) var(--_axm-surface-dark-h))
   );
   --axm-text-high-token: light-dark(oklch(0 0 0), oklch(1 0 0));
   --axm-text-subtle-token: light-dark(oklch(0.2156 0 0), oklch(0.9536 0 0));
@@ -407,126 +407,126 @@ body {
 }
 
 .hue-brand {
-  --context-hue: var(--axm-hue-brand);
-  --context-chroma: var(--axm-chroma-brand);
+  --_axm-context-hue: var(--_axm-hue-brand);
+  --_axm-context-chroma: var(--_axm-chroma-brand);
 
   /* 1. Surface Tinting */
-  --base-hue: var(--context-hue);
-  --hue-adjust: 0;
-  --base-chroma: calc(var(--context-chroma) * 0.1);
+  --_axm-base-hue: var(--_axm-context-hue);
+  --_axm-hue-adjust: 0;
+  --_axm-base-chroma: calc(var(--_axm-context-chroma) * 0.1);
 
   /* 2. Text Tinting (Indirection) */
-  --text-hue-source: var(--context-hue);
-  --text-chroma-source: var(--context-chroma);
+  --_axm-text-hue-source: var(--_axm-context-hue);
+  --_axm-text-chroma-source: var(--_axm-context-chroma);
 }
 
 .hue-success {
-  --context-hue: var(--axm-hue-success);
-  --context-chroma: var(--axm-chroma-success);
+  --_axm-context-hue: var(--_axm-hue-success);
+  --_axm-context-chroma: var(--_axm-chroma-success);
 
   /* 1. Surface Tinting */
-  --base-hue: var(--context-hue);
-  --hue-adjust: 0;
-  --base-chroma: calc(var(--context-chroma) * 0.1);
+  --_axm-base-hue: var(--_axm-context-hue);
+  --_axm-hue-adjust: 0;
+  --_axm-base-chroma: calc(var(--_axm-context-chroma) * 0.1);
 
   /* 2. Text Tinting (Indirection) */
-  --text-hue-source: var(--context-hue);
-  --text-chroma-source: var(--context-chroma);
+  --_axm-text-hue-source: var(--_axm-context-hue);
+  --_axm-text-chroma-source: var(--_axm-context-chroma);
 }
 
 .hue-warning {
-  --context-hue: var(--axm-hue-warning);
-  --context-chroma: var(--axm-chroma-warning);
+  --_axm-context-hue: var(--_axm-hue-warning);
+  --_axm-context-chroma: var(--_axm-chroma-warning);
 
   /* 1. Surface Tinting */
-  --base-hue: var(--context-hue);
-  --hue-adjust: 0;
-  --base-chroma: calc(var(--context-chroma) * 0.1);
+  --_axm-base-hue: var(--_axm-context-hue);
+  --_axm-hue-adjust: 0;
+  --_axm-base-chroma: calc(var(--_axm-context-chroma) * 0.1);
 
   /* 2. Text Tinting (Indirection) */
-  --text-hue-source: var(--context-hue);
-  --text-chroma-source: var(--context-chroma);
+  --_axm-text-hue-source: var(--_axm-context-hue);
+  --_axm-text-chroma-source: var(--_axm-context-chroma);
 }
 
 .hue-error {
-  --context-hue: var(--axm-hue-error);
-  --context-chroma: var(--axm-chroma-error);
+  --_axm-context-hue: var(--_axm-hue-error);
+  --_axm-context-chroma: var(--_axm-chroma-error);
 
   /* 1. Surface Tinting */
-  --base-hue: var(--context-hue);
-  --hue-adjust: 0;
-  --base-chroma: calc(var(--context-chroma) * 0.1);
+  --_axm-base-hue: var(--_axm-context-hue);
+  --_axm-hue-adjust: 0;
+  --_axm-base-chroma: calc(var(--_axm-context-chroma) * 0.1);
 
   /* 2. Text Tinting (Indirection) */
-  --text-hue-source: var(--context-hue);
-  --text-chroma-source: var(--context-chroma);
+  --_axm-text-hue-source: var(--_axm-context-hue);
+  --_axm-text-chroma-source: var(--_axm-context-chroma);
 }
 
 .hue-highlight {
-  --context-hue: var(--axm-hue-highlight);
-  --context-chroma: var(--axm-chroma-highlight);
+  --_axm-context-hue: var(--_axm-hue-highlight);
+  --_axm-context-chroma: var(--_axm-chroma-highlight);
 
   /* 1. Surface Tinting */
-  --base-hue: var(--context-hue);
-  --hue-adjust: 0;
-  --base-chroma: calc(var(--context-chroma) * 0.1);
+  --_axm-base-hue: var(--_axm-context-hue);
+  --_axm-hue-adjust: 0;
+  --_axm-base-chroma: calc(var(--_axm-context-chroma) * 0.1);
 
   /* 2. Text Tinting (Indirection) */
-  --text-hue-source: var(--context-hue);
-  --text-chroma-source: var(--context-chroma);
+  --_axm-text-hue-source: var(--_axm-context-hue);
+  --_axm-text-chroma-source: var(--_axm-context-chroma);
 }
 
 .hue-danger {
-  --context-hue: var(--axm-hue-danger);
-  --context-chroma: var(--axm-chroma-danger);
+  --_axm-context-hue: var(--_axm-hue-danger);
+  --_axm-context-chroma: var(--_axm-chroma-danger);
 
   /* 1. Surface Tinting */
-  --base-hue: var(--context-hue);
-  --hue-adjust: 0;
-  --base-chroma: calc(var(--context-chroma) * 0.1);
+  --_axm-base-hue: var(--_axm-context-hue);
+  --_axm-hue-adjust: 0;
+  --_axm-base-chroma: calc(var(--_axm-context-chroma) * 0.1);
 
   /* 2. Text Tinting (Indirection) */
-  --text-hue-source: var(--context-hue);
-  --text-chroma-source: var(--context-chroma);
+  --_axm-text-hue-source: var(--_axm-context-hue);
+  --_axm-text-chroma-source: var(--_axm-context-chroma);
 }
 
 .hue-blue {
-  --context-hue: var(--axm-hue-blue);
-  --context-chroma: var(--axm-chroma-blue);
+  --_axm-context-hue: var(--_axm-hue-blue);
+  --_axm-context-chroma: var(--_axm-chroma-blue);
 
   /* 1. Surface Tinting */
-  --base-hue: var(--context-hue);
-  --hue-adjust: 0;
-  --base-chroma: calc(var(--context-chroma) * 0.1);
+  --_axm-base-hue: var(--_axm-context-hue);
+  --_axm-hue-adjust: 0;
+  --_axm-base-chroma: calc(var(--_axm-context-chroma) * 0.1);
 
   /* 2. Text Tinting (Indirection) */
-  --text-hue-source: var(--context-hue);
-  --text-chroma-source: var(--context-chroma);
+  --_axm-text-hue-source: var(--_axm-context-hue);
+  --_axm-text-chroma-source: var(--_axm-context-chroma);
 }
 
 .hue-info {
-  --context-hue: var(--axm-hue-info);
-  --context-chroma: var(--axm-chroma-info);
+  --_axm-context-hue: var(--_axm-hue-info);
+  --_axm-context-chroma: var(--_axm-chroma-info);
 
   /* 1. Surface Tinting */
-  --base-hue: var(--context-hue);
-  --hue-adjust: 0;
-  --base-chroma: calc(var(--context-chroma) * 0.1);
+  --_axm-base-hue: var(--_axm-context-hue);
+  --_axm-hue-adjust: 0;
+  --_axm-base-chroma: calc(var(--_axm-context-chroma) * 0.1);
 
   /* 2. Text Tinting (Indirection) */
-  --text-hue-source: var(--context-hue);
-  --text-chroma-source: var(--context-chroma);
+  --_axm-text-hue-source: var(--_axm-context-hue);
+  --_axm-text-chroma-source: var(--_axm-context-chroma);
 }
 
 /* Core Utilities (Reactive Pipeline) */
 .text-subtle {
-  --text-lightness-source: var(--axm-text-subtle-token);
+  --_axm-text-lightness-source: var(--axm-text-subtle-token);
 }
 .text-subtlest {
-  --text-lightness-source: var(--axm-text-subtlest-token);
+  --_axm-text-lightness-source: var(--axm-text-subtlest-token);
 }
 .text-strong {
-  --text-lightness-source: var(--axm-text-high-token);
+  --_axm-text-lightness-source: var(--axm-text-high-token);
   font-weight: 600;
 }
 

@@ -4,4 +4,4 @@ domain = "color-system.localhost"
 
 [services.web]
 type = "exec"
-command = "pnpm docs:dev"
+command = "pnpm docs:dev --port $PORT"
