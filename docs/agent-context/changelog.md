@@ -1102,15 +1102,26 @@
 - **Real-time Validation**: Schema validation in the UI was deferred.
 - **ESLint Svelte Support**: Deferred full implementation/verification beyond basic smoke tests.
 
-## Epoch 35: Deployment & Release (Active)
+## Epoch 35: Deployment & Release (Completed)
 
 **Goal**: Deploy the updated system to production and verify the live site.
 
-**Phases**:
+**Completed Work**:
 
-- **Phase 1: Pre-Flight Verification (Completed)**:
+- **Phase 1: Pre-Flight Verification**:
   - Verified local builds for both the library and the documentation site.
   - Fixed critical build issues (missing CSS, broken imports).
   - Resolved linting and security warnings.
   - Updated test snapshots and verified all tests pass.
-- **Phase 2: Deployment (Active)**: Triggering and verifying the production deployment.
+- **Phase 2: Deployment**:
+  - **CI Fixes**: Resolved Svelte check errors, fixed CI workflow ordering, and implemented deterministic snapshot testing using Prettier.
+  - **Release**: Merged `fix/svelte-check-errors` into `main`, triggering the "Plan Release" workflow.
+  - **Verification**: Confirmed successful deployment workflow run.
+
+## Epoch 36: Website Polish (Active)
+
+**Goal**: Polish the website based on user feedback to improve usability and aesthetics.
+
+**Phases**:
+
+- **Phase 1: Feedback Implementation (Active)**: Addressing specific user feedback items.

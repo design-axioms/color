@@ -1,10 +1,9 @@
-# Phase 2: Deployment
+# Phase 1: Feedback Implementation
 
-- [ ] **Commit Changes**
-  - [ ] Commit all changes made during Phase 1 (fixes, linting, snapshots).
-- [ ] **Push to Main**
-  - [ ] Push the changes to the `main` branch to trigger the deployment workflow.
-- [ ] **Monitor Deployment**
-  - [ ] Monitor the GitHub Actions workflow to ensure the build and deployment succeed.
-- [ ] **Verify Live Site**
-  - [ ] Visit the live site and verify that the changes (e.g., Theme Builder export preview) are working correctly.
+- [ ] **Layout Fixes**
+  - [ ] Fix Context Tree Truncation (Left Sidebar).
+  - [ ] Fix Inspector Clipping (Right Sidebar).
+- [ ] **Data Investigation**
+  - [ ] Investigate "Spotlight" delta (108).
+- [ ] **Color Tuning**
+  - [ ] Tune "Action" surface colors.
