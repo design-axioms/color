@@ -71,6 +71,7 @@ export class AxiomaticDecorator {
     const text = document.getText();
     const tree = parser.parse(text);
     const queryStr = QUERIES[document.languageId] || QUERIES["html"];
+    if (!queryStr) return;
 
     let query;
     try {

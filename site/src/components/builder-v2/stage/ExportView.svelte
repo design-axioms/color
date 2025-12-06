@@ -17,24 +17,28 @@
     config: SolverConfig;
     css: string;
   }
-  const state = configState as unknown as IConfigState;
+  const appState = configState as unknown as IConfigState;
 
   $effect(() => {
-    if (!state.solved) return;
+    if (!appState.solved) return;
 
     try {
       switch (format) {
         case "css":
-          output = state.css;
+          output = appState.css;
           break;
         case "dtcg":
-          output = JSON.stringify(toDTCG(state.solved, state.config), null, 2);
+          output = JSON.stringify(
+            toDTCG(appState.solved, appState.config),
+            null,
+            2,
+          );
           break;
         case "tailwind":
-          output = JSON.stringify(toTailwind(state.solved), null, 2);
+          output = JSON.stringify(toTailwind(appState.solved), null, 2);
           break;
         case "typescript":
-          output = toTypeScript(state.solved);
+          output = toTypeScript(appState.solved);
           break;
       }
     } catch (e) {

@@ -32,6 +32,10 @@ export class AxiomaticCompletionProvider
     const tree = parser.parse(text);
     const queryStr = QUERIES[document.languageId] || QUERIES["html"]; // Default to HTML query
 
+    if (!queryStr) {
+      return undefined;
+    }
+
     let query: Parser.Query;
     try {
       query = parser.getLanguage().query(queryStr);

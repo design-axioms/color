@@ -11,7 +11,7 @@
     children,
     class: className,
     ...rest
-  }: HTMLAttributes<HTMLDivElement> = $props();
+  }: HTMLAttributes<HTMLButtonElement> = $props();
 
   let element = $state<HTMLElement>();
   let isSelected = $derived(element && inspector.selected === element);
