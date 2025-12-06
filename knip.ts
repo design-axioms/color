@@ -9,13 +9,8 @@ const config: KnipConfig = {
       ignoreDependencies: [
         // Used in scripts or config files but not imported in code
         "ts-json-schema-generator",
-        "tsup",
-        "vitest",
         "@vitest/coverage-v8",
         "@vitest/ui",
-        "lefthook",
-        "publint",
-        "glob",
         "http-proxy",
         "@types/http-proxy",
         "@types/node",
@@ -51,7 +46,6 @@ const config: KnipConfig = {
         "src/components/builder-v2/stage/ExportView.svelte",
       ],
       ignoreDependencies: [
-        "astro",
         "@astrojs/check",
         "typescript",
         "sharp", // Used by Astro image optimization
