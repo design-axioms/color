@@ -45,14 +45,20 @@
 </button>
 
 <style>
-  .inspector-surface {
-    all: unset;
+  :global(:where(.inspector-surface)) {
+    appearance: none;
+    background-color: transparent;
+    border: none;
     box-sizing: border-box;
     width: 100%;
     cursor: pointer;
     transition: outline 0.2s;
     display: block;
     text-align: inherit;
+    font: inherit;
+    color: inherit;
+    padding: 0;
+    margin: 0;
   }
 
   .inspector-surface:hover {

@@ -225,6 +225,19 @@
   border-style: solid;
 }
 
+.shadow-sm {
+  box-shadow: var(--shadow-sm);
+}
+.shadow-md {
+  box-shadow: var(--shadow-md);
+}
+.shadow-lg {
+  box-shadow: var(--shadow-lg);
+}
+.shadow-xl {
+  box-shadow: var(--shadow-xl);
+}
+
 :focus-visible {
   outline: 2px solid
     oklch(from var(--_axm-computed-fg-color) l 0.2 var(--alpha-hue));

@@ -8,12 +8,24 @@
   padding: 1rem;
 }
 
+.docs-p-6 {
+  padding: 1.5rem;
+}
+
+.docs-p-8 {
+  padding: 2rem;
+}
+
 .docs-m-2 {
   margin: 0.5rem;
 }
 
 .docs-m-4 {
   margin: 1rem;
+}
+
+.docs-mt-2 {
+  margin-top: 0.5rem;
 }
 
 .docs-mt-4 {
@@ -25,6 +37,10 @@
 }
 
 .docs-rounded {
+  border-radius: 0.5rem;
+}
+
+.docs-rounded-lg {
   border-radius: 0.5rem;
 }
 
@@ -152,6 +168,10 @@
 }
 
 /* Refactored Utilities */
+
+.docs-mb-1 {
+  margin-bottom: 0.25rem;
+}
 
 .docs-mb-2 {
   margin-bottom: 0.5rem;

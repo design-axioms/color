@@ -6,11 +6,11 @@
 </script>
 
 <div
-  class="{surface} {tint} p-6 rounded-lg border border-border-subtle transition-all duration-200"
+  class="{surface} {tint} docs-p-6 docs-rounded-lg bordered transition-all duration-200"
 >
-  <div class="text-lg font-bold text-text-strong mb-1">{name}</div>
+  <div class="text-lg font-bold text-strong docs-mb-1">{name}</div>
   {#if description}
-    <div class="text-sm text-text-subtle">{description}</div>
+    <div class="text-sm text-subtle">{description}</div>
   {/if}
   <slot />
 </div>
