@@ -1,5 +1,5 @@
-import { readFileSync, watch, writeFileSync } from "node:fs";
-import { resolve } from "node:path";
+import { mkdirSync, readFileSync, watch, writeFileSync } from "node:fs";
+import { dirname, resolve } from "node:path";
 import { generateTokensCss } from "../../lib/generator.ts";
 import { resolveConfig, solve } from "../../lib/index.ts";
 import type { SolverConfig } from "../../lib/types.ts";
@@ -71,6 +71,7 @@ export function buildCommand(args: string[], cwd: string): void {
     */
 
     console.log("Writing CSS to:", absOutPath);
+    mkdirSync(dirname(absOutPath), { recursive: true });
     writeFileSync(absOutPath, css);
 
     console.log("Done!");

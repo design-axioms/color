@@ -16,11 +16,16 @@ It resolves the "Gamut Trap" (where high chroma at high lightness causes clippin
 Accessibility is defined by the physical contrast between foreground and background.
 Let $Y_{fg}$ and $Y_{bg}$ be the realized luminance (APCA/WCAG) of the resolved pixels.
 
-$$\mathbb{A}(\Sigma) \iff \text{Contrast}(Y_{fg}, Y_{bg}) \ge \text{Target}$$
+$$
+\mathbb{A}(\Sigma) \iff \text{Contrast}(Y_{fg}, Y_{bg}) \ge \text{Target}
+$$
 
 ### 2.2. The Genesis Axiom
 We assume the **Genesis Algorithm** has successfully derived valid tokens for the poles.
-$$\forall \nu, \forall \tau \in \{-1, 1\}: \mathbb{A}(\langle \text{Achromatic}, \nu, \tau \rangle) \text{ is True}$$
+
+$$
+\forall \nu, \forall \tau \in \{-1, 1\}: \mathbb{A}(\langle \text{Achromatic}, \nu, \tau \rangle) \text{ is True}
+$$
 
 > **Meaning**: If the background is pure White or pure Black, the text is guaranteed to be readable.
 
@@ -45,21 +50,29 @@ To prevent drift, we must prevent clipping. We define a **Safe Subspace** $\math
 
 The Algebra enforces that the resolved Chroma ($C_{final}$) never exceeds the limit defined by the **Bicone Taper** and the **Hue Wave**.
 
-$$C_{final} = \min(C_{requested}, \delta(L, H))$$
+$$
+C_{final} = \min(C_{requested}, \delta(L, H))
+$$
 
-$$\delta(L, H) = \underbrace{\beta(H)}_{\text{Hue Shape}} \times \underbrace{(1 - |2L - 1|)}_{\text{Linear Taper}}$$
+$$
+\delta(L, H) = \underbrace{\beta(H)}_{\text{Hue Shape}} \times \underbrace{(1 - |2L - 1|)}_{\text{Linear Taper}}
+$$
 
 ### 4.2. The Theorem of Iso-Luminant Preservation
 
 **Theorem**: *Within the Safe Subspace $\mathcal{K}$ defined by $\delta$, the derivative of Realized Luminance with respect to Hue is effectively zero.*
 
-$$\forall \Sigma \in \mathcal{K} \implies \frac{\partial Y}{\partial H} \approx 0$$
+$$
+\forall \Sigma \in \mathcal{K} \implies \frac{\partial Y}{\partial H} \approx 0
+$$
 
 **Proof**:
 1.  **Containment**: The function $\delta(L, H)$ describes a volume strictly contained within the sRGB polyhedron. Therefore, no gamut clipping occurs.
 2.  **Linear Core**: In the unclipped region (The Linear Core), OKLCH Lightness ($L$) and APCA Luminance ($Y$) are monotonic.
 3.  **Convergence**: As $L \to 1$ (White), the Taper forces $C \to 0$.
-    $$\lim_{L \to 1} C_{final} = 0$$
+    $$
+    \lim_{L \to 1} C_{final} = 0
+    $$
     Therefore, a "Tinted White" background is mathematically indistinguishable from a "Pure White" background in terms of luminance.
 
 ## 5. The Theorem of Transient Safety (The Diving Bell)
@@ -68,11 +81,15 @@ $$\forall \Sigma \in \mathcal{K} \implies \frac{\partial Y}{\partial H} \approx 
 
 **Solution**: We introduce the **Tunnel Factor** $\zeta(\tau) = \tau^2$ (Parabolic Ease).
 
-$$C_{limit} = \delta(L, H) \times \zeta(\tau)$$
+$$
+C_{limit} = \delta(L, H) \times \zeta(\tau)
+$$
 
 **Proof**:
 At the moment of maximum state flux ($\tau=0$):
-$$C_{limit} = \delta \times 0 = 0$$
+$$
+C_{limit} = \delta \times 0 = 0
+$$
 The system is forced to **Achromatic Gray**.
 
 **Result**:

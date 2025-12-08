@@ -132,6 +132,8 @@
   .sl-markdown-content code:not(:where(.not-content *)) {
     background-color: var(--axm-surface-token);
     border: 1px solid var(--axm-border-dec-token);
+    padding: 0.1em 0.3em;
+    border-radius: 0.25em;
   }
 
   math * {
@@ -154,11 +156,13 @@
 
   /* Mapping the Axiomatic Color System to Starlight's variables */
 
-  :root[data-theme="light"] {
+  :root[data-theme="light"],
+  :root[data-theme="light"] body {
     color-scheme: light;
   }
 
-  :root[data-theme="dark"] {
+  :root[data-theme="dark"],
+  :root[data-theme="dark"] body {
     color-scheme: dark;
   }
 
@@ -188,6 +192,7 @@
     /* --- Text --- */
     --sl-color-text: var(--axm-text-high-token);
     --sl-color-text-invert: light-dark(oklch(1 0 0), oklch(0 0 0));
+    --sl-color-text-accent: var(--sl-color-accent);
 
     /* --- Borders --- */
     --sl-color-hairline: var(--axm-border-dec-token);
@@ -244,3 +249,116 @@
 .debug-marker {
   color: red;
 }
+
+/* --- Axiomatic Overrides for Starlight Components --- */
+
+/* 1. Primary Action Button -> Surface Action (Brand) */
+.sl-link-button.primary {
+  /* Brand Context */
+  --alpha-hue: var(--_axm-hue-brand);
+  --alpha-beta: var(--_axm-chroma-brand);
+
+  /* Surface Action Tokens (Copied from theme.css) */
+  --axm-surface-token: light-dark(
+    oklch(0.1 var(--alpha-beta) var(--alpha-hue)),
+    oklch(0.9 var(--alpha-beta) var(--alpha-hue))
+  );
+
+  --axm-text-high-token: light-dark(oklch(1 0 0), oklch(0 0 0));
+
+  /* Reset Starlight */
+  border: none;
+  text-decoration: none;
+}
+
+/* 2. Cards -> Surface Card */
+.card {
+  /* Surface Card Tokens (Copied from theme.css) */
+  --axm-surface-token: light-dark(
+    oklch(0.9687 var(--alpha-beta) var(--alpha-hue)),
+    oklch(0.2911 var(--alpha-beta) var(--alpha-hue))
+  );
+
+  /* Reset Starlight */
+  background-color: transparent; /* Let the physics take over */
+  border: 1px solid var(--axm-border-dec-token);
+}
+
+/* 3. Search Button -> Surface Input/Action Soft */
+site-search button {
+  /* Surface Action Soft Tokens (Copied from theme.css) */
+  --axm-surface-token: light-dark(
+    oklch(0.9355 var(--alpha-beta) var(--alpha-hue)),
+    oklch(0.3543 var(--alpha-beta) var(--alpha-hue))
+  );
+
+  border: 1px solid var(--axm-border-dec-token);
+  border-radius: 0.5rem;
+}
+
+/* Apply Reactive Pipeline Logic to these selectors */
+.sl-link-button.primary,
+.card,
+site-search button {
+  /* Text Resolution */
+  --_axm-text-lightness-source: var(--axm-text-high-token);
+  --_axm-computed-fg-C: calc(var(--alpha-beta) * 0.5);
+  --_axm-computed-fg-color: oklch(
+    from var(--_axm-text-lightness-source)
+      calc(l + (0.05 * var(--_axm-computed-fg-C))) var(--_axm-computed-fg-C)
+      var(--alpha-hue)
+  );
+  color: var(--_axm-computed-fg-color);
+
+  /* Surface Resolution */
+  --_axm-computed-surface: oklch(
+    from var(--axm-surface-token) l
+      min(
+        var(--alpha-beta),
+        var(--alpha-beta) * (1 - abs(2 * l - 1)) * var(--tau) * var(--tau)
+      )
+      h
+  );
+  background-color: var(--_axm-computed-surface);
+}
+
+/* 4. Code Blocks -> Surface Workspace */
+.astro-code {
+  /* Surface Workspace Tokens (Copied from theme.css) */
+  --axm-surface-token: light-dark(
+    oklch(0.9926 var(--alpha-beta) var(--alpha-hue)),
+    oklch(0.1935 var(--alpha-beta) var(--alpha-hue))
+  );
+
+  /* Force override of Shiki's inline styles */
+  background-color: var(--axm-surface-token) !important;
+  border: 1px solid var(--axm-border-dec-token);
+  border-radius: 0.5rem;
+}
+
+/* 5. Hero Section Safeguard */
+.hero {
+  /* Ensure the hero is always treated as a dark context if intended, 
+     or at least respects the system theme correctly. 
+     The issue was "invisible text" in dark mode. */
+  position: relative;
+  z-index: 1;
+  background-color: transparent; /* Let the page surface show through */
+}
+
+/* Ensure Hero Actions use our buttons */
+.hero .action {
+  /* Reset Starlight button styles if needed, but .sl-link-button.primary above might cover it */
+}
+
+/* 6. Responsive Tables (Tokens Page) */
+.sl-markdown-content table {
+  display: block;
+  overflow-x: auto;
+  white-space: nowrap;
+  width: 100%;
+}
+
+/* Optional: Make the description column wrap if we want to avoid scrolling, 
+   but scrolling is usually safer for long token names. 
+   Let's stick to scrolling for now as per the plan. */

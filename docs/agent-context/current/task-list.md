@@ -1,29 +1,56 @@
-# Phase 1: Feedback Implementation
+# Phase: Visual QA & Remediation
 
-- [x] **Layout Fixes**
-  - [x] Fix Context Tree Truncation (Left Sidebar).
-  - [x] Fix Inspector Clipping (Right Sidebar).
-- [x] **Data Investigation**
-  - [x] Investigate "Spotlight" delta (108).
-- [x] **Color Tuning**
-  - [x] Tune "Action" surface colors.
+## 1. Infrastructure & Tooling (Complete)
 
-# Phase 2: Proactive Polish
+- [x] **Screenshot Automation**
+  - [x] Update `scripts/qa-screenshots.ts` to capture "Debug/Violations" mode.
+  - [x] Implement file reorganization script (`scripts/reorganize-qa.ts`).
+  - [x] Execute reorganization to `qa-audit/<page>/<viewport>/<theme>/`.
 
-- [x] **Visual Audit (Browser)**
-  - [x] Capture screenshots of Theme Builder (Desktop/Mobile). (Skipped: Tooling Limitation)
-  - [x] Inspect DOM for overflow/clipping. (Verified via Code)
-  - [x] Verify "Action" color in context. (Verified via Code)
-- [x] **Code Audit (Static)**
-  - [x] Scan for hardcoded dimensions. (Fixed `InspectorPanel`)
-  - [x] Check z-index layering. (Fixed `StudioWrapper` comment)
+## 2. Home Page (`index`) (Complete)
 
-# Phase 3: Build & Test Repair
+- [x] **Visual Analysis**
+  - [x] Upload & Analyze `desktop/light` screenshots.
+  - [x] Upload & Analyze `desktop/dark` screenshots.
+  - [x] Upload & Analyze `mobile/light` screenshots.
+  - [x] Upload & Analyze `mobile/dark` screenshots.
+  - [x] Update `qa-audit/index/.../description.md`.
+  - [x] Finalize `qa-audit/index/audit-report.md`.
+- [x] **Remediation**
+  - [x] Fix Desktop Hero: Missing H1 title (Fixed via `color-scheme` and `z-index`).
+  - [x] Fix Desktop Hero: Missing Action buttons (Fixed via `color-scheme`).
+  - [x] Fix Dark Mode: Code block contrast/visibility (Fixed via `.astro-code` override).
+  - [x] Fix Starlight UI Leaks: Address issues found in debug mode (Fixed Sidebar active color).
+- [x] **Verification**
+  - [x] Re-run screenshots to verify fixes.
 
-- [x] **Test Suite Repair**
-  - [x] Fix `tests/llm-context.spec.ts` (ELOOP error).
-  - [x] Fix `tests/golden-master.spec.ts` (Snapshot mismatches).
-  - [x] Fix `tests/brand-button.spec.ts` (Playwright/Vitest conflict).
-- [x] **Documentation Generation**
-  - [x] Fix `scripts/generate-llms-txt.ts` to reference correct CSS files.
-  - [x] Regenerate `site/public/llms.txt`.
+## 3. Concepts Page (`concepts`) (Complete)
+
+- [x] **Preparation**
+  - [x] Create `qa-audit/concepts/expectations.md`.
+- [x] **Visual Analysis**
+  - [x] Upload & Analyze `desktop/light` screenshots.
+  - [x] Upload & Analyze `desktop/dark` screenshots.
+  - [x] Upload & Analyze `mobile/light` screenshots.
+  - [x] Upload & Analyze `mobile/dark` screenshots.
+  - [x] Create `qa-audit/concepts/.../description.md`.
+  - [x] Generate `qa-audit/concepts/audit-report.md`.
+- [x] **Remediation**
+  - [x] Fix "Ghost Text" in `ContextVisualizer` (Used `.text-strong`).
+  - [x] Fix Mobile Layout (Added horizontal scrolling).
+  - [x] Improve Visual Density (Increased grid gaps).
+  - [x] Improve Example Differentiation (Updated `SurfacePreview`).
+
+## 4. Tokens Page (`tokens`) (Complete)
+
+- [x] **Preparation**
+  - [x] Create `qa-audit/tokens/expectations.md`.
+- [x] **Visual Analysis**
+  - [x] Upload & Analyze `desktop/light` screenshots.
+  - [x] Upload & Analyze `desktop/dark` screenshots.
+  - [x] Upload & Analyze `mobile/light` screenshots.
+  - [x] Upload & Analyze `mobile/dark` screenshots.
+  - [x] Create `qa-audit/tokens/.../description.md`.
+  - [x] Generate `qa-audit/tokens/audit-report.md`.
+- [x] **Remediation**
+  - [x] Fix Unreadable Tables on Mobile (Wrapped in `.surface-card` and renamed to `.mdx`).

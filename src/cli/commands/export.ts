@@ -1,5 +1,5 @@
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { extname, join, resolve } from "node:path";
+import { dirname, extname, join, resolve } from "node:path";
 import { toDTCG } from "../../lib/exporters/dtcg.ts";
 import { toTailwind } from "../../lib/exporters/tailwind.ts";
 import { toTypeScript } from "../../lib/exporters/typescript.ts";
@@ -81,6 +81,7 @@ export function exportCommand(args: string[], cwd: string): void {
       };
 
       console.log(`Writing to: ${absOutPath}`);
+      mkdirSync(dirname(absOutPath), { recursive: true });
       writeFileSync(absOutPath, JSON.stringify(singleFile, null, 2));
     } else {
       // Directory mode
@@ -103,6 +104,7 @@ export function exportCommand(args: string[], cwd: string): void {
       outputContent = toTypeScript(theme, config.options);
     }
 
+    mkdirSync(dirname(absOutPath), { recursive: true });
     console.log(`Writing to: ${absOutPath}`);
     writeFileSync(absOutPath, outputContent);
   }

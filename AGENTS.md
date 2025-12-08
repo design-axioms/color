@@ -94,6 +94,7 @@ The project is governed by a set of core principles defined in `docs/design/axio
 - **Server**: The development server is managed by `locald` and is always running.
 - **URL**: Access the site at `https://color-system.localhost/`.
 - **No Manual Start**: Do NOT run `pnpm docs:dev` or `pnpm dev` manually. Assume the server is up.
+- **Troubleshooting**: If the server is down, run `locald up`. If that fails, **STOP** and raise the issue to the user.
 
 ### Project Structure
 

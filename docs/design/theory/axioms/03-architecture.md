@@ -24,7 +24,7 @@ We define a strict taxonomy of surfaces based on semantic role:
 
 ## 5. Context Flows Down
 
-A surface establishes the **Context** for its children.
+**Context is King.** A surface establishes the **Context** for its children.
 
 ### Inheritance
 

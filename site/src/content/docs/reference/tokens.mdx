@@ -8,6 +8,8 @@ The system generates a set of CSS variables (tokens) that you can use in your ap
 
 These tokens are scoped to the surface class (e.g., `.surface-card`). They change value depending on the surface they are inside.
 
+<div class="surface-card p-6 rounded-lg border border-border-dec mb-8">
+
 | Token                       | Description                                                     |
 | :-------------------------- | :-------------------------------------------------------------- |
 | `--axm-surface-token`       | The background color of the current surface.                    |
@@ -16,6 +18,8 @@ These tokens are scoped to the surface class (e.g., `.surface-card`). They chang
 | `--axm-text-subtlest-token` | Lowest-contrast text color for placeholders or disabled text.   |
 | `--axm-border-dec-token`    | Decorative border color (low contrast).                         |
 | `--axm-border-int-token`    | Interactive border color (higher contrast).                     |
+
+</div>
 
 ### Usage
 
@@ -29,21 +33,29 @@ These utility classes provide a semantic layer over the raw tokens.
 
 These utilities allow elements to "read" the current surface context and apply it to specific properties. Use these when you need an element to match the _current_ surface (e.g., for masking or blending) without creating a new surface context.
 
+<div class="surface-card p-6 rounded-lg border border-border-dec mb-8">
+
 | Class             | Description                                   |
 | :---------------- | :-------------------------------------------- |
 | `.bg-surface`     | Sets `background-color` to the surface token. |
 | `.border-surface` | Sets `border-color` to the surface token.     |
 | `.stroke-surface` | Sets SVG `stroke` to the surface token.       |
 
+</div>
+
 ### Interaction States
 
 These utilities apply system-wide interaction styles, ensuring consistency for focus and selection states.
+
+<div class="surface-card p-6 rounded-lg border border-border-dec mb-8">
 
 | Class                 | Description                                      |
 | :-------------------- | :----------------------------------------------- |
 | `.ring-focus`         | Applies a static focus ring.                     |
 | `.ring-focus-visible` | Applies a focus ring only on `:focus-visible`.   |
 | `.border-highlight`   | Sets `border-color` to the highlight ring color. |
+
+</div>
 
 ### Composition
 
@@ -60,6 +72,8 @@ These tokens are defined on `:root` and are available everywhere.
 
 ### Elevation (Shadows)
 
+<div class="surface-card p-6 rounded-lg border border-border-dec mb-8">
+
 | Token             | Description                                   |
 | :---------------- | :-------------------------------------------- |
 | `--axm-shadow-sm` | Small shadow for subtle depth.                |
@@ -67,15 +81,23 @@ These tokens are defined on `:root` and are available everywhere.
 | `--axm-shadow-lg` | Large shadow for modals and floating actions. |
 | `--axm-shadow-xl` | Extra large shadow for major overlays.        |
 
+</div>
+
 ### Focus
+
+<div class="surface-card p-6 rounded-lg border border-border-dec mb-8">
 
 | Token                    | Description                                 |
 | :----------------------- | :------------------------------------------ |
 | `--axm-focus-ring-color` | The brand-aware color used for focus rings. |
 
+</div>
+
 ### Data Visualization
 
 If you have configured a palette in `color-config.json`, these tokens will be available.
+
+<div class="surface-card p-6 rounded-lg border border-border-dec mb-8">
 
 | Token           | Description                             |
 | :-------------- | :-------------------------------------- |
@@ -83,6 +105,8 @@ If you have configured a palette in `color-config.json`, these tokens will be av
 | `--axm-chart-2` | Second color...                         |
 | ...             | ...                                     |
 | `--axm-chart-N` | Nth color.                              |
+
+</div>
 
 ## Internal Tokens
 

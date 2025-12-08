@@ -47,3 +47,34 @@
     - **Goal**: Implement the "Baseline 2025" architecture, including Safe Bicone Physics, Unified State Tuple, and Reactive Accessibility (Gain/Hollow State).
   - **Phase 4: Build & Test Repair (Completed)**
     - **Goal**: Stabilize the build and test suite following the "Grand Unified Algebra" refactor.
+
+## Epoch 37: Website Quality Assurance (Active)
+
+- **Goal**: Ensure the documentation site is robust, responsive, and error-free before the major interoperability push.
+- **Phases**:
+  - **Phase 1: Deep Visual & Semantic Audit (Completed)**
+    - **Goal**: Verify that the site renders correctly and faithfully represents the system's axioms with a "premium" design aesthetic.
+    - **Strategy**:
+      1.  **Expectation**: Analyze source code to define how concepts _should_ look.
+      2.  **Capture**: Generate screenshots for key pages.
+      3.  **Critique**: Compare Reality vs. Expectation, specifically looking for "jammed" layouts, poor padding, and low-fidelity representations of concepts.
+      4.  **Remediate**: Fix systemic and local design issues.
+  - **Phase 2: Remediation (Completed)**
+    - **Goal**: Fix the visual and semantic defects identified in the Phase 1 Audit.
+    - **Strategy**: Execute the remediation plan defined in `qa-audit/audit-results.md`.
+  - **Phase 3: Content Review (Planned)**
+    - **Goal**: Audit the documentation for clarity, spelling, and broken links.
+  - **Phase 4: Performance Audit (Planned)**
+    - **Goal**: Ensure the site loads quickly and is accessible (Lighthouse/Axe).
+  - **Phase 5: Manual QA & Iteration (Planned)**
+    - **Goal**: Final manual verification and iterative polish with the user.
+    - **Strategy**: Open-ended session to address any remaining visual, functional, or content issues identified by the user.
+
+## Epoch 38: Interoperability & Ecosystem (Planned)
+
+- **Goal**: Expand the system's reach by ensuring lossless interoperability with the broader design ecosystem.
+- **Phases**:
+  - **Phase 1: Round-Trip DTCG**
+    - **Goal**: Implement the ability to _import_ DTCG tokens, allowing the system to be hydrated from external tools like Figma.
+  - **Phase 2: Native Tailwind Preset**
+    - **Goal**: Upgrade the Tailwind export to map semantic concepts to reactive CSS variables, preserving "Late Binding" in the export.

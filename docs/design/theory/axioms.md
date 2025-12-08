@@ -54,10 +54,23 @@ We build maintainable, testable software that leverages the power of the browser
 **Static exports are snapshots.**
 Since the system is dynamic, any static export (JSON, PDF) is a lossy projection of the system's state at a specific moment. We must enumerate states explicitly in these formats.
 
+### [VII. The Law of Determinism](axioms/07-determinism.md)
+
+**Given the same configuration, the output must be bit-for-bit identical.**
+We rely on Golden Master testing to ensure that the "Physics Engine" does not drift silently.
+
+### [VIII. The Law of Lossless Interoperability](axioms/08-interoperability.md)
+
+**We export to other formats without losing semantic meaning.**
+We prioritize formats that preserve the semantics of the system (like reactive CSS variables in Tailwind) over flattened values.
+
+### [IX. The Law of "Just Enough" Configuration](axioms/09-configuration.md)
+
+**We expose knobs for _intent_, not _implementation_.**
+Users express what they want (Accessibility, Vibe), and the system handles the math.
+
 ## Missing / Implicit Axioms (To Be Formalized)
 
 The following principles guide our work but have not yet been codified into Law:
 
-- **The Law of Determinism**: Given the same configuration, the output must be bit-for-bit identical.
-- **The Law of Lossless Interoperability**: We export to other formats (Tailwind, DTCG) without losing semantic meaning.
-- **The Law of "Just Enough" Configuration**: We expose knobs for _intent_, not _implementation_.
+- (None currently - all known axioms have been formalized)

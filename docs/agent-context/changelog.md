@@ -1102,6 +1102,28 @@
 - **Real-time Validation**: Schema validation in the UI was deferred.
 - **ESLint Svelte Support**: Deferred full implementation/verification beyond basic smoke tests.
 
+## Epoch 37: Phase 1 - Deep Visual & Semantic Audit (2025-12-08)
+
+**Goal**: Verify that the site renders correctly and faithfully represents the system's axioms with a "premium" design aesthetic.
+
+**Completed Work**:
+
+- **Audit Strategy**: Adopted an "Audit First, Fix Later" approach.
+- **Programmatic Analysis**:
+  - Created `scripts/debug-hero.ts` to verify computed styles of invisible elements.
+  - Created `scripts/check-violations.ts` to detect semantic surface mismatches.
+  - Created `scripts/qa-screenshots.ts` to automate multi-viewport/theme capture.
+- **Visual Inspection**:
+  - Audited Home, Concepts, and Tokens pages across Desktop/Mobile and Light/Dark modes.
+  - Identified critical issues:
+    - **Global**: Code block contrast mismatch in Dark Mode, Sidebar active color mismatch.
+    - **Concepts**: "Ghost Text" in inverted surfaces (Light Mode), cramped mobile layout.
+    - **Tokens**: Unreadable tables on mobile.
+    - **Design**: "Packed" button layouts, unstyled lists, repetitive examples.
+- **Deliverables**:
+  - `qa-audit/audit-results.md`: Master remediation plan.
+  - `qa-audit/`: Comprehensive screenshot library and detailed description logs.
+
 ## Epoch 36: Phase 1 - Feedback Implementation (2025-12-06)
 
 **Goal**: Address specific user feedback items regarding the Theme Builder layout and default colors.
@@ -1161,3 +1183,24 @@
 - **Verification**:
   - Confirmed all 17 test files pass.
   - Verified the build pipeline is functional.
+
+## Epoch 37: Phase 2 - Remediation (2025-12-08)
+
+**Goal**: Execute the remediation plan derived from the "Deep Visual & Semantic Audit" to fix visual defects and improve design quality.
+
+**Completed Work**:
+
+- **Global Fixes**:
+  - **Sidebar**: Fixed active link color in Dark Mode to match the brand theme.
+  - **Code Blocks**: Forced `.astro-code` to use semantic surface tokens, fixing the "cutout" effect in Dark Mode.
+  - **Hero**: Added `z-index` and `color-scheme` safeguards to prevent invisible text in Dark Mode.
+- **Page-Specific Fixes**:
+  - **Concepts**: Fixed "Ghost Text" in `ContextVisualizer` by replacing hardcoded colors with semantic tokens (`.text-strong`).
+  - **Tokens**: Renamed `tokens.md` to `tokens.mdx` and wrapped tables in `.surface-card` containers for better hierarchy.
+  - **Mobile**: Added global responsive table styles (`overflow-x: auto`) to prevent layout breakage.
+- **Design Polish**:
+  - **Visual Density**: Increased grid gaps in `thinking-in-surfaces.mdx` to reduce clutter.
+  - **Example Differentiation**: Updated `SurfacePreview` usage in `thinking-in-surfaces.mdx` to include distinct content (buttons, placeholders) for different surface types.
+- **Verification**:
+  - Ran `scripts/qa-screenshots.ts` to verify fixes across all viewports and themes.
+  - Hardened QA scripts (`check-violations.ts`, `qa-semantic.ts`) with strict TypeScript types to pass linting.

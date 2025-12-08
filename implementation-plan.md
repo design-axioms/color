@@ -1,73 +1,89 @@
-# Implementation Plan - Epoch 38: Grand Unified Algebra v4.0
+# Implementation Plan - Epoch 37: Website Quality Assurance
 
 ## Goal
 
-Implement the **Grand Unified Algebra v4.0** across the entire stack. This replaces the deprecated "Parabolic Dome" with the **Safe Bicone** and introduces the **Unified State Tuple** $\Sigma = \langle \alpha, \nu, \tau, \gamma, \sigma \rangle$ to handle High Contrast and Forced Colors modes natively.
+Ensure the documentation site is robust, responsive, and error-free before the major interoperability push. This epoch focuses on "polishing the lens" through which users view the system.
 
-## Conceptual Integrity
+## Phases
 
-The system is defined by the Unified State Tuple:
+### Phase 1: Deep Visual & Semantic Audit
 
-- **$\alpha$ (Atmosphere)**: The environment (Hue + Vibrancy Coefficient).
-- **$\nu$ (Voice)**: The semantic intent (Lightness Token).
-- **$\tau$ (Time)**: The global cycle (Scalar -1 to 1).
-- **$\gamma$ (Gain)**: High Contrast Multiplier.
-- **$\sigma$ (System)**: Rendering Mode (Rich vs. X-Ray).
+- **Goal**: Verify that the implementation faithfully and beautifully renders the system's axioms. It's not just about "no bugs"; it's about "high design fidelity" and "premium feel".
 
-## Execution Phases
+- **1. Infrastructure & Tooling**
+  - [ ] **Enhanced Screenshot Script**:
+    - Update `scripts/qa-screenshots.ts` to output to `qa-audit/<page-name>/`.
+    - Ensure it captures Mobile, Tablet, and Desktop for both Light and Dark modes.
+  - [ ] **Audit Structure Setup**:
+    - Create the `qa-audit/` directory structure.
 
-### Phase 1: Documentation Verification (Complete)
+- **2. The Audit Loop (Iterative per Page)**
+  - _Target Pages_: `index` (Home), `concepts` (Core Theory), `reference/tokens` (API), `components/buttons` (or equivalent).
+  - [x] **Step A: Code Analysis & Expectation Setting**:
+    - For each target page, read the source code (`.mdx`, `.astro`).
+    - Identify key axiomatic components (Surfaces, Buttons, Tokens).
+    - Create `qa-audit/<page>/expectations.md`: Describe exactly how these concepts _should_ look (e.g., "Inline tokens should be badges, not text").
+  - [x] **Step B: Visual Capture**:
+    - Run the screenshot script for the specific page. - **Action**: Ask the user to upload/paste the generated screenshots into the chat for analysis (since the agent cannot view local files directly). - [ ] **Step B.1: Visual Description**:
+    - **Action**: For each screenshot (`mobile-light.png`, `desktop-light.png`, `desktop-dark.png`), create a corresponding `qa-audit/index/<view>-description.md` file.
+    - **Prompt**: "Perform a forensic visual analysis of the screenshot.
+      1.  **Geometry**: Estimate padding, margins, and gaps (e.g., 'The gap between buttons is tight, approx 4px'). Check alignment.
+      2.  **Typography**: Note hierarchy, readability, and line-height.
+      3.  **Generative Spec**: Describe the UI as a technical specification (e.g., 'A vertical stack of 3 buttons, centered, with 16px vertical gap').
+      4.  **Reality Check**: Explicitly note any elements that look 'broken', 'jammed', or 'default HTML'."
+  - [x] **Step C: Semantic Review**:
+    - Compare `description.md` + Screenshot vs. `expectations.md`.
+    - **Critique**: Look for "jammed" elements, lack of padding, and "non-premium" inline representations.
+    - Generate `qa-audit/<page>/audit-report.md` with findings and specific recommendations.
+  - [ ] **Step D: Remediation**:
+    - **Task 1**: Fix Hero Actions visibility on Desktop (restore StackBlitz/Philosophy buttons).
+    - **Task 2**: Fix Hero Title visibility on Desktop.
+    - **Task 3**: Improve Dark Mode Code Block contrast.
 
-- [x] `composition-algebra.md`: Updated to define Unified State Tuple & Bicone Taper.
-- [x] `biconical-safety.md`: Updated with Linear Taper formula.
-- [x] `formal-proof-context-intent.md`: Updated with new math.
+- **3. Remediation**
+  - [ ] **Systemic Fixes**: Address issues that appear across multiple pages (e.g., global CSS for spacing, component defaults).
+  - [ ] **Local Polish**: Fix specific layout issues in individual MDX files.
+  - [ ] **Verification**: Re-run screenshots to confirm the "Premium" look is achieved.
 
-### Phase 2: Core Library (`src/lib`)
+### Phase 4: Systematic Remediation
 
-- [ ] **Generator (`src/lib/generator.ts`)**:
-  - **Implement HK Buffer**: $L_{target} = L_{APCA} + (0.05 \times \beta)$.
-  - **Generate High Contrast Tokens**: Create `--text-subtle-high` (APCA 60) alongside standard tokens.
-  - Verify `src/lib/types.ts` reflects any new configuration needs.
+- **Goal**: Systematically identify and fix axiomatic violations across the entire site using automated tooling.
 
-### Phase 3: CSS Engine (`css/engine.css`)
+- **Workflow**:
+  1.  **Identify**: Run `node scripts/check-violations.ts /path/to/page` to generate a violation report.
+  2.  **Document**: Record the violations in `docs/agent-context/task-list.md`.
+  3.  **Fix**: Apply fixes (CSS overrides, component updates, or axiom refinements).
+  4.  **Verify**: Re-run the script to confirm zero violations.
 
-- [ ] **Global State**:
-  - Define `@property --tau` (initial: 1).
-- [ ] **Modifiers**:
-  - Update `.hue-*` to set `--alpha-hue` and `--alpha-beta`.
-  - Define `--alpha-structure` for X-Ray Mode fallbacks.
-- [ ] **Surfaces**:
-  - Implement `surface-card` with **Safe Bicone** logic:
-    - `_x = 2 * L - 1`
-    - `_taper = 1 - abs(_x)` (Linear Taper)
-    - `_tunnel = tau * tau`
-    - `_limit = beta * taper * tunnel`
-  - Implement **X-Ray Mode** (`@media (forced-colors: active)`):
-    - Disable background colors.
-    - Enable borders via `--alpha-structure`.
-- [ ] **Voice**:
-  - Implement **Gain** (`@media (prefers-contrast: more)`):
-    - Swap `--nu-target` for High Contrast tokens.
+- **Target Pages**:
+  - `/` (Home)
+  - `/studio/`
+  - `/concepts/thinking-in-surfaces/`
+  - `/reference/tokens/`
+  - `/components/buttons/` (if exists)
 
-### Phase 4: CLI & Theme Builder (`src/cli`)
+### Phase 4.1: Strategy for Foreign Elements (RFC)
 
-- [ ] **Token Generation**:
-  - Ensure the CLI writes the correct CSS variables to `theme.css`.
-  - Verify `src/cli/index.ts` handles the new variable names.
+- **Problem**: Third-party frameworks (like Starlight) use their own classes and hardcoded colors, violating the "Axiomatic" contract.
+- **Goal**: A systematic way to "bless" foreign selectors as Axiomatic surfaces without manual CSS hacking.
+- **Proposal**: See [RFC 001: Foreign Element Adapters](docs/design/rfcs/001-foreign-element-adapters.md).
+  - **Configuration**: Allow users to map selectors to roles in `color-config.json` (e.g., `".sl-link-button.primary": "surface-action"`).
+  - **Generation**: The build system generates a CSS "Adapter" that injects the Reactive Pipeline variables and logic into those selectors.
+  - **Benefit**: Users don't need to copy-paste the complex `oklch` math; they just declare intent.
 
-### Phase 5: Verification
+### Phase 5: Content Review
 
-- [ ] **Build**: Run `pnpm build:css`.
-- [ ] **Test**: Run `pnpm test` to check for regressions.
-- [ ] **Visual**: Check the demo site for:
-  - No clipping on white backgrounds (Bicone Taper check).
-  - Smooth transitions between modes (Tunnel check).
-  - High Contrast Mode behavior.
-  - Forced Colors Mode behavior (Hollow State).
+- [ ] **Link Checking**:
+  - Run `pnpm check:links` (or equivalent) to find broken internal/external links.
+- [ ] **Spelling & Grammar**:
+  - Perform a pass over key guides (`quick-start.mdx`, `concepts.md`) for clarity.
+- [ ] **Code Snippet Verification**:
+  - Ensure all code snippets in the docs are valid and up-to-date with the latest API.
 
-## Key Formulas
+### Phase 3: Performance & Accessibility
 
-- **Taper**: `1 - abs(2L - 1)`
-- **Tunnel**: `tau^2`
-- **Limit**: `beta * taper * tunnel`
-- **HK Buffer**: `L_req + (0.05 * beta)`
+- [ ] **Lighthouse Audit**:
+  - Run Lighthouse on the homepage and a documentation page.
+  - Address any "Red" scores (Performance, Accessibility, SEO).
+- [ ] **Axe Audit**:
+  - Run an accessibility scan to catch low-hanging fruit (contrast, labels).

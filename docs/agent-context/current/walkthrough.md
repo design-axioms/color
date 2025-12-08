@@ -169,3 +169,71 @@ Refactored the physics calculation to happen inline within the `oklch` function,
 
 **Problem**: `scripts/generate-llms-txt.ts` failed because `css/theme.css` was missing (likely cleaned).
 **Fix**: Ran `pnpm solve` to regenerate the theme CSS before running the doc generation script.
+
+## Bug Fix: Desktop Hero Visibility (Dark Mode)
+
+### Issue
+
+The H1 title and Action buttons were reported as "missing" on Desktop in Dark Mode.
+**Diagnosis**: The `body` element was not correctly inheriting `color-scheme: dark` from the root, causing the `light-dark()` function in `theme.css` to resolve to the Light Mode value (White background). Since the text color correctly switched to White (via other mechanisms), this resulted in **White Text on White Background**.
+
+### Fix
+
+Updated `site/src/styles/starlight-custom.css` to explicitly apply `color-scheme` to the `body` element when the `data-theme` attribute changes:
+
+```css
+:root[data-theme="dark"],
+:root[data-theme="dark"] body {
+  color-scheme: dark;
+}
+```
+
+This ensures the `light-dark()` function in `theme.css` (which defines tokens on `body`) resolves to the correct Dark Mode surface color.
+
+## Phase 4: Systematic Remediation (Completed)
+
+### 1. Tooling: Headless Violation Checker
+
+We created `scripts/check-violations.ts`, a Playwright-based tool that:
+
+1.  Navigates to a given URL (e.g., `/`).
+2.  Injects the `walker.ts` and `resolver.ts` logic from the `src/lib/inspector` module.
+3.  Crawls the DOM to find elements with "Surface Mismatch" or "Private Token" violations.
+4.  Outputs a structured table of violations to the console.
+
+This allows us to audit the site programmatically rather than relying on manual visual inspection.
+
+### 2. RFC 001: Foreign Element Adapters
+
+We drafted `docs/design/rfcs/001-foreign-element-adapters.md` to formalize the strategy for handling third-party components (like Starlight). The proposal involves:
+
+- **Configuration**: Defining a mapping between external selectors and internal semantic roles.
+- **Generation**: Automatically generating the CSS adapter code (like the manual overrides we wrote in `starlight-custom.css`).
+
+### 3. Remediation Execution
+
+We executed the remediation plan derived from the "Deep Visual & Semantic Audit" to fix visual defects and improve design quality.
+
+#### Global Fixes
+
+- **Sidebar**: Fixed active link color in Dark Mode to match the brand theme by overriding Starlight's default styles in `starlight-custom.css`.
+- **Code Blocks**: Forced `.astro-code` to use semantic surface tokens (`var(--axm-surface-token)`), fixing the "cutout" effect in Dark Mode where code blocks appeared as holes in the surface.
+- **Hero**: Added `z-index: 1` and `color-scheme: dark` safeguards to the Hero section to prevent invisible text in Dark Mode.
+
+#### Page-Specific Fixes
+
+- **Concepts Page**:
+  - Fixed "Ghost Text" in `ContextVisualizer` by replacing hardcoded `text-white` with semantic `.text-strong` tokens. This ensures text correctly inverts when the surface polarity flips.
+  - Fixed Mobile Layout by adding `overflow-x: auto` to tables and adjusting grid gaps.
+- **Tokens Page**:
+  - Renamed `tokens.md` to `tokens.mdx` to enable component usage.
+  - Wrapped token tables in `.surface-card` containers to give them proper visual hierarchy and separation from the background.
+
+#### Design Polish
+
+- **Visual Density**: Increased grid gaps in `thinking-in-surfaces.mdx` from `gap-4` to `gap-6` to reduce visual clutter.
+- **Example Differentiation**: Updated `SurfacePreview` usage in `thinking-in-surfaces.mdx` to include distinct content (buttons, placeholders, tooltips) for different surface types, making the hierarchy visually obvious.
+
+### 4. Verification
+
+We ran `scripts/qa-screenshots.ts` to capture screenshots of all key pages across Mobile, Tablet, and Desktop viewports in both Light and Dark modes. The screenshots confirm that the visual defects have been resolved.

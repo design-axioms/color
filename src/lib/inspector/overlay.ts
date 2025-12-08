@@ -1108,6 +1108,15 @@ export class AxiomaticDebugger extends HTMLElement {
   private scanForViolations(): void {
     this.violationLayer.innerHTML = "";
     const allElements = document.body.querySelectorAll("*");
+    const violations: Array<{
+      element: HTMLElement;
+      tagName: string;
+      id: string;
+      classes: string;
+      reason: string;
+      surface?: string;
+      actual?: string;
+    }> = [];
 
     for (const element of Array.from(allElements)) {
       if (element instanceof HTMLElement) {
@@ -1132,8 +1141,44 @@ export class AxiomaticDebugger extends HTMLElement {
 
         if (hasSurfaceMismatch || hasUnconnectedPrivateToken) {
           this.drawViolation(element);
+
+          let reason = "";
+          if (hasSurfaceMismatch) reason = "Surface Mismatch";
+          if (hasUnconnectedPrivateToken)
+            reason = reason ? `${reason} & Private Token` : "Private Token";
+
+          violations.push({
+            element,
+            tagName: element.tagName.toLowerCase(),
+            id: element.id,
+            classes: element.className,
+            reason,
+            surface: surfaceToken?.value,
+            actual: bgToken?.value,
+          });
         }
       }
+    }
+
+    if (violations.length > 0) {
+      console.group("🚫 Axiomatic Violations Detected");
+      console.table(
+        violations.map((v) => ({
+          Tag: v.tagName,
+          ID: v.id,
+          Classes: v.classes,
+          Reason: v.reason,
+          "Expected Surface": v.surface,
+          "Actual Background": v.actual,
+        })),
+      );
+      console.log(
+        "Elements (expand to inspect):",
+        violations.map((v) => v.element),
+      );
+      console.groupEnd();
+    } else {
+      console.log("✅ No Axiomatic Violations found.");
     }
   }
 
