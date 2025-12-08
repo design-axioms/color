@@ -1,6 +1,6 @@
 import { readFileSync, watch, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { generateTokensCss, toHighContrast } from "../../lib/generator.ts";
+import { generateTokensCss } from "../../lib/generator.ts";
 import { resolveConfig, solve } from "../../lib/index.ts";
 import type { SolverConfig } from "../../lib/types.ts";
 
@@ -64,34 +64,11 @@ export function buildCommand(args: string[], cwd: string): void {
       config.presets,
     );
 
-    // --- High Contrast Generation ---
-    console.log("Generating High Contrast variant...");
-    const hcConfig = toHighContrast(config);
-    const hcTheme = solve(hcConfig);
-    const hcCss = generateTokensCss(
-      hcConfig.groups,
-      hcTheme,
-      hcConfig.borderTargets,
-      config.options,
-      config.anchors.keyColors,
-      config.presets,
-    );
-
-    // Wrap in media query and add overrides
-    const hcBlock = `
-@media (prefers-contrast: more) {
-  :root {
-    --_axm-base-chroma: 0;
-    --_axm-surface-chroma-adjust: 0;
-    --_axm-hue-adjust: 0;
-    --_axm-chroma-brand: 0;
-  }
-
-${hcCss}
-}
-`;
-
-    css += hcBlock;
+    /* 
+       DEPRECATED: High Contrast Theme Generation
+       We now handle High Contrast via "Gain" tokens generated in the single pass above.
+       The "Theme Swapping" approach is rejected in favor of the Unified State Tuple.
+    */
 
     console.log("Writing CSS to:", absOutPath);
     writeFileSync(absOutPath, css);

@@ -1,32 +1,73 @@
-# Implementation Plan - Epoch 36: Website Polish (Phase 1)
+# Implementation Plan - Epoch 38: Grand Unified Algebra v4.0
 
 ## Goal
 
-Address specific user feedback regarding layout truncation, visual clipping, and color tuning in the Theme Builder (Studio).
+Implement the **Grand Unified Algebra v4.0** across the entire stack. This replaces the deprecated "Parabolic Dome" with the **Safe Bicone** and introduces the **Unified State Tuple** $\Sigma = \langle \alpha, \nu, \tau, \gamma, \sigma \rangle$ to handle High Contrast and Forced Colors modes natively.
 
-## Scope
+## Conceptual Integrity
 
-### 1. Layout Fixes
+The system is defined by the Unified State Tuple:
 
-- **Context Tree (Left Sidebar)**: The text labels for surfaces (e.g., "Surface Workspace") are being truncated.
-  - **Fix**: Adjust the width of the sidebar or the indentation/padding of the tree items to allow more space for labels. Consider dynamic resizing or tooltips for very long names, but primary fix is spacing.
-- **Inspector (Right Sidebar)**: The `LuminanceSpectrum` control and text are being clipped by the container edge.
-  - **Fix**: Increase internal padding of the Inspector panel. Ensure the slider handles have enough "safe area" so they don't overflow the container when at 0% or 100%.
+- **$\alpha$ (Atmosphere)**: The environment (Hue + Vibrancy Coefficient).
+- **$\nu$ (Voice)**: The semantic intent (Lightness Token).
+- **$\tau$ (Time)**: The global cycle (Scalar -1 to 1).
+- **$\gamma$ (Gain)**: High Contrast Multiplier.
+- **$\sigma$ (System)**: Rendering Mode (Rich vs. X-Ray).
 
-### 2. Data Investigation
+## Execution Phases
 
-- **Spotlight Delta**: The "Surface Spotlight" shows a $\Delta L^c$ of **108**, which should be mathematically impossible on a 0-100 scale.
-  - **Action**: Investigate the `calculateDelta` logic and the specific configuration for "Spotlight" to understand this anomaly. It might be a display bug or a wrapping issue.
+### Phase 1: Documentation Verification (Complete)
 
-### 3. Color Tuning
+- [x] `composition-algebra.md`: Updated to define Unified State Tuple & Bicone Taper.
+- [x] `biconical-safety.md`: Updated with Linear Taper formula.
+- [x] `formal-proof-context-intent.md`: Updated with new math.
 
-- **Primary Action**: The "Save Changes" button feels washed out.
-  - **Fix**: Adjust the `targetChroma` or lightness constraints for the `action` surface in the default configuration to increase visual weight.
-- **Vibrancy Slider**: The purple slider doesn't match the cyan/teal theme.
-  - **Fix**: Ensure the Studio UI controls reflect the _Studio's_ theme (neutral/purple) distinct from the _User's_ theme, OR make them dynamic. For now, we will focus on the Action surface itself.
+### Phase 2: Core Library (`src/lib`)
 
-## Execution Order
+- [ ] **Generator (`src/lib/generator.ts`)**:
+  - **Implement HK Buffer**: $L_{target} = L_{APCA} + (0.05 \times \beta)$.
+  - **Generate High Contrast Tokens**: Create `--text-subtle-high` (APCA 60) alongside standard tokens.
+  - Verify `src/lib/types.ts` reflects any new configuration needs.
 
-1.  **Layout**: Fix the clipping and truncation first as they are objective bugs.
-2.  **Investigation**: Debug the Spotlight value.
-3.  **Tuning**: Adjust the Action surface parameters.
+### Phase 3: CSS Engine (`css/engine.css`)
+
+- [ ] **Global State**:
+  - Define `@property --tau` (initial: 1).
+- [ ] **Modifiers**:
+  - Update `.hue-*` to set `--alpha-hue` and `--alpha-beta`.
+  - Define `--alpha-structure` for X-Ray Mode fallbacks.
+- [ ] **Surfaces**:
+  - Implement `surface-card` with **Safe Bicone** logic:
+    - `_x = 2 * L - 1`
+    - `_taper = 1 - abs(_x)` (Linear Taper)
+    - `_tunnel = tau * tau`
+    - `_limit = beta * taper * tunnel`
+  - Implement **X-Ray Mode** (`@media (forced-colors: active)`):
+    - Disable background colors.
+    - Enable borders via `--alpha-structure`.
+- [ ] **Voice**:
+  - Implement **Gain** (`@media (prefers-contrast: more)`):
+    - Swap `--nu-target` for High Contrast tokens.
+
+### Phase 4: CLI & Theme Builder (`src/cli`)
+
+- [ ] **Token Generation**:
+  - Ensure the CLI writes the correct CSS variables to `theme.css`.
+  - Verify `src/cli/index.ts` handles the new variable names.
+
+### Phase 5: Verification
+
+- [ ] **Build**: Run `pnpm build:css`.
+- [ ] **Test**: Run `pnpm test` to check for regressions.
+- [ ] **Visual**: Check the demo site for:
+  - No clipping on white backgrounds (Bicone Taper check).
+  - Smooth transitions between modes (Tunnel check).
+  - High Contrast Mode behavior.
+  - Forced Colors Mode behavior (Hollow State).
+
+## Key Formulas
+
+- **Taper**: `1 - abs(2L - 1)`
+- **Tunnel**: `tau^2`
+- **Limit**: `beta * taper * tunnel`
+- **HK Buffer**: `L_req + (0.05 * beta)`

@@ -267,8 +267,8 @@
 
     <div
       class="preview-card surface-card bordered {intent.value}"
-      style:--base-hue={hue}
-      style:--base-chroma={chroma}
+      style:--alpha-hue={hue}
+      style:--alpha-beta={chroma}
       style:color-scheme={mode}
     >
       <div>
@@ -518,21 +518,21 @@
     justify-content: center;
     text-align: center;
     transition: all 0.3s;
-    --computed-fg-C: var(--base-chroma);
-    --computed-fg-H: var(--base-hue);
+    --computed-fg-C: var(--alpha-beta);
+    --computed-fg-H: var(--alpha-hue);
 
     /* More subtle appearance */
-    background-color: oklch(0.96 var(--base-chroma) var(--base-hue));
-    border: 1px solid oklch(0.9 var(--base-chroma) var(--base-hue));
+    background-color: oklch(0.96 var(--alpha-beta) var(--alpha-hue));
+    border: 1px solid oklch(0.9 var(--alpha-beta) var(--alpha-hue));
     box-shadow: 0 4px 20px -4px
-      oklch(0.9 var(--base-chroma) var(--base-hue) / 0.5);
+      oklch(0.9 var(--alpha-beta) var(--alpha-hue) / 0.5);
   }
 
   :global(.scheme-dark) .preview-card {
-    background-color: oklch(0.2 var(--base-chroma) var(--base-hue));
-    border: 1px solid oklch(0.3 var(--base-chroma) var(--base-hue));
+    background-color: oklch(0.2 var(--alpha-beta) var(--alpha-hue));
+    border: 1px solid oklch(0.3 var(--alpha-beta) var(--alpha-hue));
     box-shadow: 0 4px 20px -4px
-      oklch(0.1 var(--base-chroma) var(--base-hue) / 0.5);
+      oklch(0.1 var(--alpha-beta) var(--alpha-hue) / 0.5);
   }
 
   .preview-title {

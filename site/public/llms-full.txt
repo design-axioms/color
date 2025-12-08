@@ -45,8 +45,8 @@ We organize UI elements into a strict taxonomy of Surfaces that establish Contex
 
 ### [IV. The Laws of Integration](axioms/04-integration.md)
 
-**Code is Truth. No Magic Numbers. Baseline Newly Available.**
-We ensure consistency and interoperability by deriving everything from configuration and targeting modern web standards.
+**Code is Truth. No Magic Numbers. Baseline Newly Available. Standard CSS First.**
+We ensure consistency and interoperability by deriving everything from configuration and targeting modern web standards. We use build tools only for bundling and optimization, not for language extension.
 
 ### [V. The Laws of Engineering](axioms/05-engineering.md)
 
@@ -1638,55 +1638,53 @@ You don't need to write a print stylesheet. The system's "Physics" just adapt to
 
 <DemoWrapper>
 
-If "Surfaces" are the atoms of the system, **Anchors** are the laws of physics that govern them.
+If "Surfaces" are the atoms of the system, **Physics** is the law that governs them.
 
-The Axiomatic Color doesn't store a list of colors for every surface. Instead, it calculates them dynamically based on a set of boundary conditions.
+Axiomatic Color doesn't store a list of colors for every surface. Instead, it calculates them dynamically based on the environment.
 
-## The Dynamic Range
+## 1. Solar Time ($\tau$)
 
-Imagine a vertical axis representing Lightness, from 0% (Absolute Black) to 100% (Absolute White). Every theme is defined by a **Dynamic Range** on this axis.
+Instead of a binary "Light Mode" vs "Dark Mode" switch, the system models time as a continuous cycle.
 
-### Anchors: The Boundary Conditions
+- **Noon (+1)**: Bright Day (Light Mode).
+- **Midnight (-1)**: Deep Night (Dark Mode).
+- **Twilight (0)**: The transition zone.
 
-An **Anchor** is a fixed point on this scale. It tells the solver: _"This is where the world begins, and this is where it ends."_
+Every surface in the system knows what "Time" it is. When you switch modes, you aren't swapping a stylesheet; you are moving the sun.
 
+## 2. The Taper (Spatial Safety)
 
+In the real world, you can't have a "Neon Black" or a "Neon White". As colors get very dark or very light, they lose their ability to hold saturation.
 
+The system enforces this with **The Taper**.
 
-<Diagram>
-  <DynamicRange />
-</Diagram>
+Imagine a cone (or a "Bicone") in the color space.
 
-## The "Rubber Band" Effect
+- At 50% Gray, you can have maximum vibrancy.
+- As you approach Black (0%) or White (100%), the available vibrancy tapers off to zero.
 
-The most powerful aspect of this physics model is that surfaces are **relative**, not absolute.
+This ensures that no matter how you configure your theme, you never accidentally create a color that is "out of gamut" (impossible to display) or that vibrates uncomfortably against the text.
 
-If you decide your Dark Mode is too dark, you don't have to manually adjust every single card, sidebar, and button. You simply move the **Start Anchor**.
+## 3. The Tunnel (Temporal Safety)
 
-Imagine all your surfaces are attached to a rubber band stretched between the Start and End anchors.
+The most dangerous time for color design is **Twilight** ($\tau = 0$). This is the moment when the background is 50% gray.
 
-1.  **Move the Start Anchor up**: The entire rubber band compresses. Every surface gets lighter, but they maintain their relative order and separation.
-2.  **Move the End Anchor down**: The range compresses. Surfaces get closer together in lightness.
+If we just linearly interpolated colors from Day to Night, the middle point would often be a muddy, low-contrast mess.
 
-### Why is this better?
+To prevent this, the system uses a **Tunneling** effect. As the system transitions through Twilight, it automatically dampens the vibrancy of all surfaces. It creates a "Diving Bell" of safety, ensuring that text remains legible even during the animation between modes.
+
+## Why is this better?
 
 In a traditional system (Hex codes), changing the background color breaks everything.
 
 - "I made the background darker, now the cards are invisible."
 - "I made the background lighter, now the text contrast is failing."
 
-In the Axiomatic System, the solver **re-runs the physics simulation** every time you change an anchor. It guarantees that:
+In the Axiomatic System, the solver **re-runs the physics simulation** every time the environment changes. It guarantees that:
 
-1.  Surfaces stay visible against the background.
-2.  Text stays readable against the surfaces (by adjusting text colors if needed).
-
-## Contrast Distribution
-
-The system doesn't just place surfaces linearly (e.g., 10%, 20%, 30%). It distributes them based on **Perceptual Contrast**.
-
-The human eye is more sensitive to changes in dark colors than light colors. A 5% change in lightness is very noticeable in dark mode, but barely visible in light mode.
-
-The solver accounts for this. It ensures that the **visual step** from Page to Card looks the same in Dark Mode as it does in Light Mode, even if the actual math values are different.
+1.  **Legibility**: Text is always readable, because the Taper prevents the background from eating the contrast.
+2.  **Gamut Safety**: You can't pick an "illegal" color. The math won't let you.
+3.  **Smooth Transitions**: Switching modes is a fluid, mathematical operation, not a jarring jump cut.
 
 </DemoWrapper>
 
@@ -1722,8 +1720,8 @@ Every surface acts as a "Context Provider." It automatically sets a suite of CSS
 In the visualization above:
 
 1.  The **Page** sets the baseline context (Light Mode).
-2.  The **Card** sits on the Page. It might be slightly lighter or darker, but it maintains the same "Polarity" (Light text on Dark, or Dark text on Light).
-3.  The **Spotlight** (the dark box) _inverts_ the polarity. It tells its children: "I am dark. You must be light."
+2.  The **Card** sits on the Page. It might be slightly lighter or darker, but it maintains the same **Solar Time** (Light text on Dark, or Dark text on Light).
+3.  The **Spotlight** (the dark box) _inverts_ the time. It tells its children: "I am dark. You must be light."
 
 ### 2. Content Adapts to Context
 
@@ -1744,29 +1742,82 @@ We categorize surfaces based on their physical role in the UI, not their color.
 
 These are the foundations. They recede into the background.
 
-- **Page**: The infinite backdrop.
-- **Workspace**: A dedicated area for tools or navigation.
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 not-content my-4">
+  <SurfacePreview
+    surface="surface-page"
+    name="Page"
+    description="The infinite backdrop."
+  />
+  <SurfacePreview
+    surface="surface-workspace"
+    name="Workspace"
+    description="A dedicated area for tools or navigation."
+  />
+</div>
 
 ### The Objects
 
 These sit _on top_ of the canvas. They hold your content.
 
-- **Card**: The primary container for information.
-- **Tinted**: A subtle grouping mechanism, often used to highlight a section without a hard border.
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 not-content my-4">
+  <SurfacePreview
+    surface="surface-card"
+    name="Card"
+    description="The primary container for information."
+  />
+  <SurfacePreview
+    surface="surface-card"
+    tint="hue-brand"
+    name="Tinted"
+    description="A subtle grouping mechanism."
+  />
+</div>
 
 ### The Interactors
 
 These are actionable. They invite touch.
 
-- **Action**: Buttons, toggles, and controls.
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 not-content my-4">
+  <SurfacePreview
+    surface="surface-action"
+    name="Action"
+    description="Buttons, toggles, and controls."
+  />
+  <SurfacePreview
+    surface="surface-action-soft"
+    name="Soft Action"
+    description="Secondary interactive elements."
+  />
+</div>
 
 ### The Spotlights
 
 These demand attention. They often break the current polarity to stand out.
 
-- **Spotlight**: Tooltips, toasts, and primary calls-to-action.
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 not-content my-4">
+  <SurfacePreview
+    surface="surface-spotlight"
+    name="Spotlight"
+    description="Tooltips, toasts, and primary calls-to-action."
+  />
+</div>
 
 **Note on Inversion**: Spotlight surfaces perform a "Hard Flip" of the theme. If your app is in Light Mode, a Spotlight surface forces its internals into Dark Mode (and vice versa). This ensures that native browser controls (like scrollbars and checkboxes) render correctly inside the inverted area.
+
+## X-Ray Mode (Forced Colors)
+
+What happens when the user turns on "High Contrast Mode" in Windows?
+
+In this mode, the operating system strips away all background colors to ensure maximum legibility. This can be disastrous for modern UIs that rely on background colors to define structure (like a white card on a gray background).
+
+Axiomatic Color handles this with **X-Ray Mode**.
+
+When the system detects `forced-colors: active`, it automatically switches from "Rich Mode" (painting pixels) to "X-Ray Mode" (drawing outlines).
+
+- **Rich Mode**: A card has a white background and no border.
+- **X-Ray Mode**: The background becomes transparent, and a **Border** appears automatically.
+
+This ensures that your UI structure remains visible ("Fail Visible") even when the user strips away the paint.
 
 ## Why This Matters
 
@@ -1783,6 +1834,68 @@ By thinking in surfaces, you stop fighting with contrast ratios.
 ## demo-test.mdx
 
 <DemoComposition client:load />
+
+---
+
+## guides/configuration.mdx
+
+The `color-config.json` file is the heart of your design system. It defines your semantic intent, and the solver uses it to generate your CSS.
+
+## Structure
+
+The configuration is divided into three main sections:
+
+1.  **Vibes**: High-level presets that control the "physics" of the system.
+2.  **Anchors**: The fixed points of lightness that define your contrast range.
+3.  **Groups & Surfaces**: The semantic taxonomy of your UI.
+
+```json
+{
+  "$schema": "node_modules/@axiomatic-design/color/color-config.schema.json",
+  "vibes": {
+    "mode": "default"
+  },
+  "anchors": { ... },
+  "groups": [ ... ]
+}
+```
+
+## Vibes (Presets)
+
+Vibes are the easiest way to change the look and feel of your system without tweaking individual math parameters. They configure the underlying physics engine (hue shifting, chroma scaling, and contrast targets).
+
+### Usage
+
+Add a `vibes` object to your config:
+
+```json
+{
+  "vibes": {
+    "mode": "vibrant"
+  }
+}
+```
+
+### Available Vibes
+
+| Vibe          | Description                          | Characteristics                                  |
+| :------------ | :----------------------------------- | :----------------------------------------------- |
+| **default**   | Balanced and neutral.                | Standard contrast, minimal hue shift.            |
+| **vibrant**   | High energy and saturation.          | Aggressive hue shifting, higher chroma surfaces. |
+| **corporate** | Safe, blue-tinted, and professional. | Cool grays, high contrast text, conservative.    |
+| **academic**  | Low chroma, high legibility.         | Warm grays, serif-friendly, paper-like.          |
+
+## Anchors
+
+Anchors define the "Lightness Space" of your application. They tell the solver where "White" and "Black" are, and how much contrast is required for text.
+
+See [Physics of Light](/concepts/physics-of-light) for a deep dive.
+
+## Groups & Surfaces
+
+Surfaces are organized into **Groups** (e.g., "Canvas", "Objects", "Actions"). This is purely for organization and does not affect the output CSS.
+
+See [Thinking in Surfaces](/concepts/thinking-in-surfaces) for the mental model.
 
 ---
 
@@ -1805,10 +1918,24 @@ The flow is **unidirectional**. You should treat your `color-config.json` as the
 To generate a DTCG-compatible JSON file, use the `export` command:
 
 ```bash
-pnpm axiomatic export --format dtcg > tokens.json
+npx axiomatic export --format dtcg --out tokens/
 ```
 
-This will output a JSON file containing your entire theme (Light and Dark modes) in the standard format.
+This will output a directory containing your theme tokens split into logical sets:
+
+- `tokens/primitives.json`: Global values like Key Colors.
+- `tokens/light.json`: Semantic tokens for Light Mode.
+- `tokens/dark.json`: Semantic tokens for Dark Mode.
+
+This "Multi-File" structure is the standard for modern design token tools (like Tokens Studio), allowing you to treat Light and Dark modes as switchable themes.
+
+### Single File Export (Legacy)
+
+If you prefer a single JSON file, you can specify a file path instead of a directory:
+
+```bash
+npx axiomatic export --format dtcg --out tokens.json
+```
 
 ## Importing into Figma
 
@@ -1819,8 +1946,13 @@ This will output a JSON file containing your entire theme (Light and Dark modes)
 1.  Open the **Tokens Studio** plugin in Figma.
 2.  Go to the **Tools** tab (or Settings).
 3.  Click **Load from file/folder** or **Import**.
-4.  Select your generated `tokens.json`.
-5.  The plugin will create token sets for `light` and `dark`.
+4.  Select your `tokens/` directory (or the individual JSON files).
+5.  The plugin will create token sets for `primitives`, `light`, and `dark`.
+
+**Best Practice**:
+
+- Enable the **primitives** set as "Source" (Reference only).
+- Enable **light** OR **dark** as "Active" to switch themes.
 
 ### Using Native Figma Variables
 
@@ -3057,44 +3189,83 @@ npx axiomatic init
 **Behavior:**
 
 - Checks if `color-config.json` exists.
-- If not, creates it with the default configuration.
+- If not, creates it with the default configuration (including the `$schema` reference).
 - If it exists, exits with an error to prevent overwriting.
 
-### `generate` (Default)
+### `build` (Default)
 
 Generates the CSS tokens based on your configuration. If no command is specified, this is the default behavior.
 
 ```bash
-npx axiomatic [config-file] [output-file]
+npx axiomatic build [options]
 ```
 
-**Arguments:**
+**Options:**
 
-1.  **`config-file`** (Optional)
-
-    - Path to your JSON configuration file.
-    - **Default**: `./color-config.json`
-
-2.  **`output-file`** (Optional)
-    - Path where the generated CSS will be written.
-    - **Default**: `./theme.css`
+- `--config <path>`: Path to your JSON configuration file. (Default: `./color-config.json`)
+- `--out <path>`: Path where the generated CSS will be written. (Default: `./theme.css`)
+- `--watch`: Watch for changes in the config file and rebuild automatically.
 
 **Examples:**
 
 ```bash
 # Use defaults
-npx axiomatic
+npx axiomatic build
 
-# Custom config, default output
-npx axiomatic ./design/my-colors.json
+# Watch mode
+npx axiomatic build --watch
 
-# Custom config and output
-npx axiomatic ./design/my-colors.json ./src/styles/variables.css
+# Custom paths
+npx axiomatic build --config ./design/colors.json --out ./src/variables.css
 ```
+
+### `export`
+
+Exports your theme tokens to other formats (DTCG, Tailwind, TypeScript).
+
+```bash
+npx axiomatic export [options]
+```
+
+**Options:**
+
+- `--format <format>`: The output format. Supported: `dtcg`, `tailwind`, `typescript`. (Default: `dtcg`)
+- `--out <path>`: Output file or directory.
+  - For `dtcg`: Defaults to `./tokens/` (Directory).
+  - For `tailwind`: Defaults to `./tailwind.preset.js`.
+  - For `typescript`: Defaults to `./theme.ts`.
+- `--config <path>`: Path to config file.
+
+**Examples:**
+
+```bash
+# Export DTCG tokens to ./tokens/ directory
+npx axiomatic export --format dtcg
+
+# Export as a single JSON file
+npx axiomatic export --format dtcg --out tokens.json
+
+# Export Tailwind preset
+npx axiomatic export --format tailwind
+```
+
+### `audit`
+
+Audits your configuration and generated theme for accessibility and logic errors.
+
+```bash
+npx axiomatic audit
+```
+
+**Checks:**
+
+- **Schema Validation**: Ensures your JSON config matches the schema.
+- **Contrast Compliance**: Verifies that all surfaces meet APCA contrast guidelines.
+- **Polarity Logic**: Ensures "Page" surfaces are light in Light Mode, and "Inverted" surfaces are dark.
 
 ## Output
 
-The CLI generates a CSS file containing:
+The `build` command generates a CSS file containing:
 
 1.  **:root Variables**: Global tokens like shadows, focus rings, and data viz colors.
 2.  **Surface Classes**: Classes for each surface defined in your config (e.g., `.surface-card`).
@@ -3301,6 +3472,297 @@ You may see these tokens in the generated CSS, but they are generally intended f
 
 ---
 
+## theory/algebra.mdx
+
+> **Context**: The physics and grammar of the Axiomatic Color system.
+
+This document defines the **Grand Unified Algebra** for UI rendering. It models the UI not as a static page, but as a reactive state machine where color is a function of Environment, Intent, Time, and System Mode.
+
+## Part I: The Unified State Space ($\Sigma$)
+
+The state of any UI element is defined by a 5-dimensional tuple.
+
+$$ \Sigma = \langle \alpha, \nu, \tau, \gamma, \sigma \rangle $$
+
+### 1. The Environmental Variables
+
+These define the "Physics" of the world the element lives in.
+
+- **Atmosphere ($\alpha$)**: The ambient potential $\langle H, \beta \rangle$.
+  - $H$ (Hue): The context color (e.g., Brand Blue).
+  - $\beta$ (Vibrancy): The potential energy (Coefficient).
+- **Solar Time ($\tau$)**: The continuous temporal scalar $\tau \in [-1, 1]$.
+  - $-1.0$: Deep Night (Dark Mode).
+  - $0.0$: Twilight (The Gray Equator).
+  - $+1.0$: Bright Day (Light Mode).
+
+### 2. The Semantic Variables
+
+These define the "Meaning" of the element.
+
+- **Voice ($\nu$)**: The base semantic text weight (Token).
+  - _Analogy_: The volume of the speaker (Whisper vs. Shout).
+- **Gain ($\gamma$)**: The user's contrast preference.
+  - $1.0$: Standard Contrast.
+  - $>1.0$: High Contrast (Amplifies the Voice).
+  - _Analogy_: The user turning up the volume knob.
+
+### 3. The Mode Variable
+
+This defines the "Rules of Physics" currently active.
+
+- **System ($\sigma$)**: The rendering mode.
+  - $0$ (Rich Mode): Standard rendering. The browser allows pixel painting.
+  - $1$ (X-Ray Mode): Forced Colors (Windows HCM). The browser strips pixel data.
+
+## Part II: The Universal Resolution Function ($\Phi$)
+
+The Resolution Function $\Phi$ determines the final rendering. It acts as a Switch based on the System Variable ($\sigma$).
+
+$$
+\Phi(\Sigma) =
+\begin{cases}
+\Phi_{rich}(\alpha, \nu, \tau, \gamma) & \text{if } \sigma = 0 \text{ (Rich Mode)} \\
+\Phi_{xray}(\alpha, \nu) & \text{if } \sigma = 1 \text{ (X-Ray Mode)}
+\end{cases}
+$$
+
+### Branch A: Rich Mode ($\Phi_{rich}$)
+
+Used when the browser allows us to paint pixels.
+
+This executes the **Hybrid Manifold** logic: Linear for Spatial constraints, Quadratic for Temporal constraints.
+
+1.  **Modulate Voice**: The Gain ($\gamma$) amplifies the contrast target of the Voice ($\nu$).
+    $$ \nu' = \nu \times \gamma $$
+
+2.  **Interpolate Time**: Solve the continuous animation state.
+    $$ L*{bg} = f(\tau) \quad L*{text} = \text{lerp}(\nu'_{night}, \nu'_{day}, \tau) $$
+
+3.  **Apply Physics**: Enforce the **Taper** and **Tunnel** constraints.
+    $$ \text{Tunnel}(\tau) = \tau^2 \quad \text{(Quadratic Safety)} $$
+    $$ C*{final} = \beta*\alpha \times \underbrace{\text{Taper}(L*{bg})}*{\text{Linear Space}} \times \underbrace{\text{Tunnel}(\tau)}\_{\text{Quadratic Time}} $$
+
+**Output**: A precise, gamut-safe, high-contrast `oklch()` color.
+
+### Branch B: X-Ray Mode ($\Phi_{xray}$)
+
+Used when the browser strips background colors (Forced Colors).
+
+This executes a **Topology Transformation**. It maps Semantics to Geometry.
+
+1.  **Map Atmosphere to Structure**:
+    Instead of calculating a background tint, we project the Atmosphere vector onto the Border vector.
+    $$ P(\alpha) \rightarrow \text{BorderWidth} \times \text{SystemColor} $$
+
+2.  **Map Voice to Keyword**:
+    The Voice token is mapped to the nearest semantic System Keyword.
+    $$ P(\nu) \rightarrow \{ \text{CanvasText}, \text{ButtonText}, \text{LinkText} \} $$
+
+**Output**: A geometry definition (Border/Stroke) and a System Keyword.
+
+## Part III: The Operators
+
+Classes are operators that transform the state tuple $\Sigma \rightarrow \Sigma'$.
+
+### 1. Mood Operator ($M$)
+
+Sets the Atmosphere ($\alpha$). In X-Ray mode, it sets a structural flag.
+
+```css
+.hue-brand {
+  /* Rich Mode: Atmospheric Potential */
+  --alpha-hue: var(--brand-hue);
+  --alpha-beta: var(--brand-beta);
+
+  /* X-Ray Mode: Structural Flag */
+  --alpha-structure: 2px solid Highlight;
+}
+```
+
+### 2. Surface Operator ($S$)
+
+The Physics Engine. It handles the fork between Math (Rich) and Geometry (X-Ray).
+
+```css
+.surface-card {
+  /* --- BRANCH A: RICH MODE --- */
+  /* 1. Calculate Time & Spatial Taper (Linear) */
+  --tau-l: calc((var(--time) + 1) * 50%);
+  --_taper: calc(1 - abs(2 * var(--tau-l) - 1));
+
+  /* 2. Calculate Temporal Tunnel (Quadratic) */
+  /* Using Time^2 creates a stronger dampening effect near Gray (0) */
+  --_tunnel: calc(var(--time) * var(--time));
+
+  /* 3. Solve Limit */
+  --_limit: calc(var(--alpha-beta) * var(--_taper) * var(--_tunnel));
+  --final-chroma: min(var(--brand-chroma), var(--_limit));
+
+  /* 4. Paint */
+  background-color: oklch(
+    from var(--surface-base) l var(--final-chroma) var(--alpha-hue)
+  );
+
+  /* --- BRANCH B: X-RAY MODE --- */
+  @media (forced-colors: active) {
+    /* Disable Math (OS enforces background) */
+    background-color: Canvas;
+
+    /* Map Atmosphere to Structure */
+    /* If alpha is set, render the border defined by the Mood */
+    border: var(--alpha-structure, 1px solid CanvasText);
+  }
+}
+```
+
+### 3. Voice Operator ($V$)
+
+Sets the Voice ($\nu$) and handles Gain ($\gamma$).
+
+```css
+.text-subtle {
+  /* 1. Standard Voice */
+  --nu-target: var(--token-subtle);
+
+  /* 2. Apply Gain (Gamma) via Media Query */
+  @media (prefers-contrast: more) {
+    /* Swap token for higher contrast version */
+    --nu-target: var(--token-subtle-high);
+  }
+
+  /* 3. Render (Rich vs X-Ray handled by browser color resolution) */
+  color: var(--nu-target);
+}
+```
+
+---
+
+## theory/proof.mdx
+
+> **Context**: An algebraic derivation showing how the system's state space supports the high-level intuition `Color = f(Context, Intent)`.
+
+## 1. Proposition
+
+The Axiomatic Color system posits that a resolved color is a pure function of two independent variables: **Context** (the environment) and **Intent** (the semantic role).
+
+$$ \text{Color} = f(\text{Context}, \text{Intent}) $$
+
+This document derives this property from the definitions in [The Algebra of Color Design](./composition-algebra.md).
+
+## 2. State Space Decomposition
+
+Let the system state $\mathcal{S}$ be defined as the **Configuration Space** of two subspaces: Context ($\Gamma$) and Intent ($\iota$).
+
+$$ \mathcal{S} = \Gamma \times \iota $$
+
+### 2.1. The Subspaces
+
+1.  **Context Space ($\Gamma$)**: The environmental variables.
+    $$ \Gamma = \text{Hue} \times \text{Chroma} \times \text{Polarity} $$
+    $$ \gamma \in \Gamma = \langle H, C, \rho \rangle $$
+
+2.  **Intent Space ($\iota$)**: The semantic variables.
+    $$ \iota = \text{Tokens} $$
+    $$ i \in \iota = \langle L_{src} \rangle $$
+
+Thus, any state $\sigma \in \mathcal{S}$ is an ordered pair:
+$$ \sigma = (\gamma, i) $$
+
+> 
+We are splitting the system's "DNA" into two separate strands.
+*   **Context ($\Gamma$)**: The "Atmosphere" (Lighting, Mode).
+*   **Intent ($\iota$)**: The "Meaning" (Text Importance).
+
+This separation allows us to change the lighting without changing the meaning, and vice versa.
+
+
+## 3. The Resolution Function ($\Phi$)
+
+The CSS Engine's resolution function $\Phi$ maps the state $\mathcal{S}$ to a color space (OKLCH).
+
+$$ \Phi: (\Gamma \times \iota) \rightarrow \text{Color} $$
+
+$$ \Phi(\langle H, C, \rho \rangle, \langle L_{src} \rangle) = \text{oklch}(\text{eval}(L_{src}, \rho), C, H) $$
+
+**Observation**: The function $\Phi$ accepts $\gamma$ and $i$ as distinct arguments. The evaluation of lightness $\text{eval}(L_{src}, \rho)$ is the only interaction term, representing the "Late Binding" of Intent to Context.
+
+> 
+The browser takes the two strands (Atmosphere and Meaning) and weaves them together into a pixel. The only time they "talk" to each other is when the system decides how bright the text should be based on whether it's in Light Mode or Dark Mode.
+
+
+## 4. Derivation of Independence (Orthogonality)
+
+We define the system operators as transformations on $\mathcal{S}$. To prove independence, we must show that Modifiers ($M$) and Intents ($I$) operate on disjoint subspaces.
+
+### 4.1. Operator Definitions
+
+Let $M$ be a modifier function acting on $\Gamma$, and $I$ be an intent function acting on $\iota$.
+
+$$ M(\gamma, i) = (m(\gamma), i) $$
+$$ I(\gamma, i) = (\gamma, k(i)) $$
+
+Where $m: \Gamma \rightarrow \Gamma$ and $k: \iota \rightarrow \iota$ are the specific transformations (e.g., "Set Hue to Brand", "Set Token to Subtle").
+
+### 4.2. Commutativity Proof (General Case)
+
+We examine the composition of these operators in both orders for **Neutral Intents**.
+
+**Case 1: Intent then Modifier ($M \circ I$)**
+$$ M(I(\gamma, i)) = M(\gamma, k(i)) = (m(\gamma), k(i)) $$
+
+**Case 2: Modifier then Intent ($I \circ M$)**
+$$ I(M(\gamma, i)) = I(m(\gamma), i) = (m(\gamma), k(i)) $$
+
+**Result**:
+$$ M \circ I \equiv I \circ M $$
+
+**Conclusion**: For Neutral Intents, the operators commute, and the subspaces $\Gamma$ and $\iota$ are orthogonal.
+
+> 
+Because "Subtle Text" only changes Lightness, and "Brand Theme" only changes Color, the order doesn't matter.
+*   `class="text-subtle hue-brand"`
+*   `class="hue-brand text-subtle"`
+
+Both result in "Subtle Brand-Colored Text."
+
+
+### 4.3. The Semantic Exception
+
+For **Chromatic Intents** (e.g., Error), the Intent function $I_{chromatic}$ acts on *both* subspaces to enforce semantic meaning.
+
+$$ I_{chromatic}(\gamma, i) = (\gamma_{override}, k(i)) $$
+
+In this case, commutativity is broken ($M \circ I \neq I \circ M$), and the Intent dominates the Context.
+
+> 
+An Error Message is *always* Red. It doesn't care if the room is lit with Blue light. The "Error" intent shouts over the ambient lighting, effectively resetting the local atmosphere to Red.
+
+
+## 5. Surface Scoping
+
+The **Surface Operator** ($S$) is a special transformation that acts on both subspaces.
+
+### 5.1 Glass Surface ($S_{glass}$)
+Preserves Context, Resets Intent.
+$$ S_{glass}(\gamma, i) = (\gamma, i_{reset}) $$
+
+### 5.2 Solid Surface ($S_{solid}$)
+Resets Context, Resets Intent.
+$$ S_{solid}(\gamma, i) = (\gamma_{neutral}, i_{reset}) $$
+
+## 6. Summary
+
+By modeling the state $\mathcal{S}$ as the product $\Gamma \times \iota$, we have derived that:
+
+1.  **Separability**: The resolution function $\Phi$ is defined over the pair $(\gamma, i)$.
+2.  **Independence**: Operations on $\Gamma$ and $\iota$ are commutative (except for Semantic Dominance).
+3.  **Scoping**: Surfaces act as filters that reset $\iota$, and optionally reset $\Gamma$ (if Solid).
+
+This confirms that `Color = f(Context, Intent)` is structurally enforced by the algebra.
+
+---
+
 ## Configuration Schema
 
 ```json
@@ -3391,7 +3853,7 @@ You may see these tokens in the generated CSS, but they are generally intended f
       },
       "type": "array"
     },
-    "DeepPartial<def-alias-src_lib_types.ts-2338-2569-src_lib_types.ts-0-5941[]>": {
+    "DeepPartial<def-alias-src_lib_types.ts-2498-2729-src_lib_types.ts-0-6101[]>": {
       "items": {
         "additionalProperties": false,
         "properties": {
@@ -3417,7 +3879,7 @@ You may see these tokens in the generated CSS, but they are generally intended f
       },
       "type": "array"
     },
-    "DeepPartial<def-alias-src_lib_types.ts-2569-2649-src_lib_types.ts-0-5941355102109>": {
+    "DeepPartial<def-alias-src_lib_types.ts-2729-2809-src_lib_types.ts-0-6101355102109>": {
       "additionalProperties": false,
       "properties": {
         "p1": {
@@ -3482,16 +3944,31 @@ You may see these tokens in the generated CSS, but they are generally intended f
         "fg-baseline": {
           "type": "number"
         },
+        "fg-baseline-hc": {
+          "type": "number"
+        },
         "fg-high": {
+          "type": "number"
+        },
+        "fg-high-hc": {
           "type": "number"
         },
         "fg-strong": {
           "type": "number"
         },
+        "fg-strong-hc": {
+          "type": "number"
+        },
         "fg-subtle": {
           "type": "number"
         },
+        "fg-subtle-hc": {
+          "type": "number"
+        },
         "fg-subtlest": {
+          "type": "number"
+        },
+        "fg-subtlest-hc": {
           "type": "number"
         }
       },
@@ -3501,7 +3978,12 @@ You may see these tokens in the generated CSS, but they are generally intended f
         "fg-strong",
         "fg-baseline",
         "fg-subtle",
-        "fg-subtlest"
+        "fg-subtlest",
+        "fg-high-hc",
+        "fg-strong-hc",
+        "fg-baseline-hc",
+        "fg-subtle-hc",
+        "fg-subtlest-hc"
       ],
       "type": "object"
     },
@@ -3628,7 +4110,7 @@ You may see these tokens in the generated CSS, but they are generally intended f
           "type": "object"
         },
         "groups": {
-          "$ref": "#/definitions/DeepPartial%3Cdef-alias-src_lib_types.ts-2338-2569-src_lib_types.ts-0-5941%5B%5D%3E"
+          "$ref": "#/definitions/DeepPartial%3Cdef-alias-src_lib_types.ts-2498-2729-src_lib_types.ts-0-6101%5B%5D%3E"
         },
         "hueShift": {
           "additionalProperties": false,
@@ -3688,7 +4170,7 @@ You may see these tokens in the generated CSS, but they are generally intended f
                   "additionalProperties": false,
                   "properties": {
                     "curve": {
-                      "$ref": "#/definitions/DeepPartial%3Cdef-alias-src_lib_types.ts-2569-2649-src_lib_types.ts-0-5941355102109%3E"
+                      "$ref": "#/definitions/DeepPartial%3Cdef-alias-src_lib_types.ts-2729-2809-src_lib_types.ts-0-6101355102109%3E"
                     },
                     "maxSize": {
                       "$ref": "#/definitions/DeepPartial%3Cnumber686710375%3E"

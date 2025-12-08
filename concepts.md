@@ -18,6 +18,21 @@ By aligning our taxonomy with these platform primitives (e.g., `Canvas`, `Button
 2.  **Adaptive:** Because the roles are native, the system adapts to Light, Dark, High Contrast, and Forced Colors automatically.
 3.  **Automated:** Lightness values are calculated by a solver to guarantee accessible contrast within those roles.
 
+## The Grand Unified Algebra
+
+The system is governed by a rigorous mathematical model called the **Grand Unified Algebra (v4.0)**.
+
+Instead of storing static colors, we store the **State** of the UI as a tuple:
+$$ \Sigma = \langle \alpha, \nu, \tau, \gamma, \sigma \rangle $$
+
+- **Atmosphere ($\alpha$)**: The ambient hue and vibrancy.
+- **Voice ($\nu$)**: The semantic weight of the content.
+- **Time ($\tau$)**: The continuous cycle between Light and Dark modes.
+- **Gain ($\gamma$)**: The user's contrast preference (High Contrast).
+- **System ($\sigma$)**: The rendering mode (Rich vs. X-Ray/Forced Colors).
+
+This algebra allows us to calculate the perfect color for any element in any environment, guaranteeing accessibility and gamut safety via the **Safe Bicone** physics model.
+
 ## Surfaces & Context
 
 Everything sits on a **Surface**. A surface is not just a background color; it **sets the rules** for everything inside it (creating a **Context**).
@@ -35,7 +50,7 @@ Text utilities consume the **Context** provided by the surface. You don't need t
 
 - **`text-strong`** (Default): Primary content. High contrast.
 - **`text-subtle`**: Secondary content. Medium contrast.
-- **`text-subtler`**: Meta-data or low-emphasis content.
+- **`text-subtlest`**: Meta-data or low-emphasis content.
 - **`text-link`**: Interactive navigation elements. Uses the brand hue.
 
 ## States
@@ -46,9 +61,11 @@ Interactive elements have standard states that work across all surfaces.
 - **`state-selected`**: For chosen items (e.g., a selected list option). Maps to System Highlight.
 - **`state-disabled`**: For non-interactive items. Maps to System GrayText.
 
-## Borders
+## X-Ray Mode (Forced Colors)
 
-Borders also consume the surface context.
+When the user enables "High Contrast Mode" (Windows HCM), the system switches to **X-Ray Mode**.
 
-- **`bordered`**: Adds a decorative border (low contrast) to define the edge of a surface.
-- **`border-interactive`**: A higher contrast border for inputs or active elements.
+- **Rich Mode**: Surfaces have background colors.
+- **X-Ray Mode**: Backgrounds become transparent, and a **Border** appears automatically to define the structure.
+
+This ensures the UI remains usable ("Fail Visible") even when the operating system strips away all color.

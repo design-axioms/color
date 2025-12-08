@@ -41,5 +41,9 @@
 - **Phases**:
   - **Phase 1: Feedback Implementation (Completed)**
     - **Goal**: Address specific user feedback items one by one.
-  - **Phase 2: Proactive Polish (Active)**
+  - **Phase 2: Proactive Polish (Completed)**
     - **Goal**: Self-audit the site using browser automation and static analysis to find and fix latent visual issues.
+  - **Phase 3: Grand Unified Algebra v4.0 (Completed)**
+    - **Goal**: Implement the "Baseline 2025" architecture, including Safe Bicone Physics, Unified State Tuple, and Reactive Accessibility (Gain/Hollow State).
+  - **Phase 4: Build & Test Repair (Completed)**
+    - **Goal**: Stabilize the build and test suite following the "Grand Unified Algebra" refactor.

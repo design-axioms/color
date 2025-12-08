@@ -17,3 +17,13 @@
 - [x] **Code Audit (Static)**
   - [x] Scan for hardcoded dimensions. (Fixed `InspectorPanel`)
   - [x] Check z-index layering. (Fixed `StudioWrapper` comment)
+
+# Phase 3: Build & Test Repair
+
+- [x] **Test Suite Repair**
+  - [x] Fix `tests/llm-context.spec.ts` (ELOOP error).
+  - [x] Fix `tests/golden-master.spec.ts` (Snapshot mismatches).
+  - [x] Fix `tests/brand-button.spec.ts` (Playwright/Vitest conflict).
+- [x] **Documentation Generation**
+  - [x] Fix `scripts/generate-llms-txt.ts` to reference correct CSS files.
+  - [x] Regenerate `site/public/llms.txt`.

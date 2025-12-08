@@ -343,6 +343,7 @@ export default tseslint.config(
       "tests/golden-masters/**",
       "vendor/**",
       "examples/**",
+      ".locald/**",
     ],
   },
   eslintConfigPrettier,

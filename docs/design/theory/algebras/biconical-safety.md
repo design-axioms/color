@@ -47,7 +47,7 @@ The Algebra enforces that the resolved Chroma ($C_{final}$) never exceeds the li
 
 $$C_{final} = \min(C_{requested}, \delta(L, H))$$
 
-$$\delta(L, H) = \underbrace{\beta(H)}_{\text{Hue Shape}} \times \underbrace{(1 - |2L - 1|)}_{\text{Bicone Taper}}$$
+$$\delta(L, H) = \underbrace{\beta(H)}_{\text{Hue Shape}} \times \underbrace{(1 - |2L - 1|)}_{\text{Linear Taper}}$$
 
 ### 4.2. The Theorem of Iso-Luminant Preservation
 
@@ -66,7 +66,7 @@ $$\forall \Sigma \in \mathcal{K} \implies \frac{\partial Y}{\partial H} \approx 
 
 **Context**: When animating from Day ($\tau=1$) to Night ($\tau=-1$), the system passes through Gray ($\tau=0$). In the Bicone, Gray allows maximum chroma. This poses a risk of a "Neon Flash" (sudden vibrancy) that distracts the user, even if contrast is technically maintained.
 
-**Solution**: We introduce the **Tunnel Factor** $\zeta(\tau) = |\tau|$ (implemented as a parabola $\tau^2$ for smoothness).
+**Solution**: We introduce the **Tunnel Factor** $\zeta(\tau) = \tau^2$ (Parabolic Ease).
 
 $$C_{limit} = \delta(L, H) \times \zeta(\tau)$$
 
@@ -87,3 +87,13 @@ The Axiomatic Color System guarantees accessibility via **Correctness by Constru
 3.  **The Tunnel** guarantees that transitions between modes do not introduce jarring chromatic artifacts.
 
 Therefore, $\mathbb{A}(\Sigma)$ holds true for all valid states.
+
+## 7. Audit Findings (Red Team)
+
+### Finding 02: Velocity Shock
+*   **Issue**: The linear derivative of the previous "Tent" model caused a sharp velocity change at $\tau=0$.
+*   **Status**: **RESOLVED**. The adoption of the Parabolic Tunnel ($\tau^2$) ensures $C^1$ continuity at the transition point.
+
+### Finding 03: Equatorial Drift (HK Effect)
+*   **Issue**: High chroma colors appear lighter than their physical luminance, potentially reducing perceived contrast.
+*   **Status**: **MITIGATED**. The Genesis Algorithm now includes a Helmholtz-Kohlrausch Buffer ($k_{hk} \approx 0.05$) to demand higher physical contrast for vibrant tokens.

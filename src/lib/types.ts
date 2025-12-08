@@ -50,6 +50,12 @@ export type ModeSpec = {
   "fg-baseline": number;
   "fg-subtle": number;
   "fg-subtlest": number;
+  // High Contrast Variants
+  "fg-high-hc": number;
+  "fg-strong-hc": number;
+  "fg-baseline-hc": number;
+  "fg-subtle-hc": number;
+  "fg-subtlest-hc": number;
   debug?: {
     targetContrast: number;
     clamped: boolean;

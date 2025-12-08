@@ -9,7 +9,7 @@ The Axiomatic Color system posits that a resolved color is a pure function of tw
 
 $$ \text{Color} = \Phi(\text{Context}, \text{Intent}) $$
 
-This document derives this property from the definitions in [The Algebra of Continuous Color Design](./composition-algebra.md).
+This document derives this property from the definitions in [The Algebra of Continuous Color Design](../composition-algebra.md).
 
 ## 2. State Space Decomposition
 

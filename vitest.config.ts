@@ -8,8 +8,10 @@ export default defineConfig({
       ...configDefaults.exclude,
       "dist/**",
       "site/**",
+      ".locald/**",
       "tests/verify-colors.spec.ts",
       "tests/visual.spec.ts",
+      "tests/brand-button.spec.ts",
     ],
     coverage: {
       provider: "v8",

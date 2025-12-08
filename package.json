@@ -1,6 +1,7 @@
 {
   "name": "@axiomatic-design/color",
   "version": "0.1.0",
+  "packageManager": "pnpm@9.15.0",
   "description": "An Axiomatic approach to color. Automated contrast, platform-native adaptation, and mathematically guaranteed accessibility.",
   "keywords": [
     "color",
@@ -39,6 +40,7 @@
     "prepublishOnly": "pnpm test && pnpm build",
     "test": "vitest --run",
     "test:update-snapshots": "vitest -u --run",
+    "test:playwright": "playwright test",
     "test:visual": "playwright test tests/visual.spec.ts",
     "test:visual:update": "playwright test tests/visual.spec.ts --update-snapshots",
     "test:ui": "vitest --ui",
@@ -49,11 +51,12 @@
     "lint:security": "node scripts/check-security.ts",
     "lint:tokens": "./scripts/check-tokens.sh",
     "lint:math": "node scripts/check-math.ts",
-    "lint:all": "pnpm lint && pnpm lint:security && pnpm lint:tokens && pnpm lint:math",
+    "lint:all": "pnpm lint && pnpm lint:security && pnpm lint:tokens && pnpm lint:math && pnpm check:site",
     "docs:dev": "pnpm --filter site dev",
     "docs:build": "pnpm --filter site build",
     "dev:site": "pnpm docs:dev & pnpm --filter demo dev",
     "build:site": "node scripts/build-site.ts",
+    "check:site": "pnpm --filter site check",
     "check:exports": "publint",
     "vendor:update": "node scripts/update-vendor.ts"
   },

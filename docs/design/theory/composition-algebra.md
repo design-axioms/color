@@ -1,119 +1,161 @@
-# The Algebra of Continuous Color Design
+# The Algebra of Color Design: Omnibus Specification v4.1
 
-> **Context**: The physics and grammar of the Axiomatic Color system. ([View Changelog](./algebras/composition-algebra-changelog.md))
+**Abstract**: This document defines the Grand Unified Algebra for UI rendering. It models the UI as a state machine where color is a function of Environmental Context, Semantic Intent, Temporal State, User Preference, and System Mode.
 
-This document defines the "Physics" of the Axiomatic Color system. It replaces the previous static heuristic model with a **Reactive Physics Model** based on continuous state interpolation.
+## Part I: The Unified State Space ($\Sigma$)
 
-## 1. The State Space ($\Sigma$)
+The state of any UI element is defined by a 5-dimensional tuple.
 
-The system state at any point in the DOM tree is defined by the **Mnemonic State Tuple** $\Sigma$. This configuration space represents the continuous interpolation between environmental extremes.
+$$ \Sigma = \langle \alpha, \nu, \tau, \gamma, \sigma \rangle $$
 
-1292590 \Sigma = \langle \alpha, \nu, \tau \rangle 1292590
+### 1. The Environmental Variables
 
-Where:
+These define the "Physics" of the world the element lives in.
 
-1.  **Atmosphere ($\alpha$)**: The environmental vector.
-    1292590 \alpha = \langle H, \beta \rangle 1292590
-    - \in S^1$: **Hue**. The base angle of the environment.
-    - $\beta \in [0, 1]$: **Vibrancy Coefficient**. The maximum potential chroma of the environment.
+- **Atmosphere ($\alpha$)**: The ambient potential $\langle H, \beta \rangle$.
+  - $H$ (Hue): The context color (e.g., Brand Blue).
+  - $\beta$ (Vibrancy): The potential energy (Coefficient).
+- **Time ($\tau$)**: The continuous temporal scalar $\tau \in [-1, 1]$.
+  - $-1.0$: Deep Night (Dark Mode).
+  - $0.0$: The Gray Equator (Mid-Transition).
+  - $+1.0$: Bright Day (Light Mode).
 
-2.  **Voice ($\nu$)**: The semantic intent.
-    - $\nu \in \text{Tokens}$: A reference to a pre-solved lightness constant derived by **Genesis** (e.g., `text-high`, `text-subtle`).
+### 2. The Semantic Variables
 
-3.  **Time ($\tau$)**: The continuous temporal scalar.
-    - $\tau \in [-1, 1]$: Represents the shift from Night (himBHs1$) to Day ($).
-    - This replaces the discrete "Light/Dark" mode switch with a continuous manifold.
+These define the "Meaning" of the element.
 
-> **In Plain English**:
->
-> - **Atmosphere ($\alpha$)**: The "Weather" of the room. Is it a sunny yellow room or a cool blue room?
-> - **Voice ($\nu$)**: The "Script". What is the actor saying? (Heading, Caption, etc.)
-> - **Time ($\tau$)**: The "Clock". Is it noon (Day Mode) or midnight (Night Mode)?
+- **Voice ($\nu$)**: The base semantic text weight (Token).
+  - _Analogy_: The volume of the speaker (Whisper vs. Shout).
+- **Gain ($\gamma$)**: The user's contrast preference.
+  - $1.0$: Standard Contrast.
+  - $>1.0$: High Contrast (Amplifies the Voice).
+  - _Analogy_: The user turning up the volume knob.
 
-## 2. The Architecture: Genesis vs. Algebra
+### 3. The Mode Variable
 
-The system is explicitly split into two domains to guarantee performance and correctness.
+This defines the "Rules of Physics" currently active.
 
-### 2.1. Genesis (Build Time)
+- **System ($\sigma$)**: The rendering mode.
+  - $0$ (Rich Mode): Standard rendering. The browser allows pixel painting.
+  - $1$ (X-Ray Mode): Forced Colors (Windows HCM). The browser strips pixel data.
 
-The **Genesis** engine solves the "Hard Math" (APCA Contrast) offline. It calculates the exact Lightness ($) required for a specific Voice ($\nu$) to be legible against a specific background.
+## Part II: The Universal Resolution Function ($\Phi$)
 
-<!-- prettier-ignore -->
-1292590 \Psi(K, T) \rightarrow \nu_{constant} 1292590
+The Resolution Function $\Phi$ determines the final rendering. It acts as a Switch based on the System Variable ($\sigma$).
 
-These constants are baked into the CSS as variables (e.g., `--text-high-L: 98%`).
+$$
+\Phi(\Sigma) =
+\begin{cases}
+\Phi_{rich}(\alpha, \nu, \tau, \gamma) & \text{if } \sigma = 0 \text{ (Rich Mode)} \\
+\Phi_{xray}(\alpha, \nu) & \text{if } \sigma = 1 \text{ (X-Ray Mode)}
+\end{cases}
+$$
 
-### 2.2. Algebra (Render Time)
+### Branch A: Rich Mode ($\Phi_{rich}$)
 
-The **Algebra** (CSS Engine) is a "Dumb Mixer." It does not solve for contrast. It interpolates the Genesis constants based on Time ($\tau$) and clamps the Atmosphere ($\alpha$) based on the Universal Safety Theorem.
+Used when the browser allows us to paint pixels.
 
-1292590 \Phi(\Sigma) \rightarrow \text{oklch}(L, C, H) 1292590
+This executes the Bicone Physics and Tunneling logic. We use a Hybrid Manifold strategy: Linear for Spatial constraints, Quadratic for Temporal constraints.
 
-## 3. The Operators
+1.  **Modulate Voice**: The Gain ($\gamma$) amplifies the contrast target of the Voice ($\nu$).
+    $$ \nu' = \nu \times \gamma $$
 
-Classes in the system are **Operators** that transform the state $\Sigma \rightarrow \Sigma'$.
+2.  **Interpolate Time**: Solve the continuous animation state.
+    $$ L_{bg} = f(\tau) \quad L_{text} = \text{lerp}(\nu'_{night}, \nu'_{day}, \tau) $$
 
-### 3.1. The Surface Split
+3.  **Apply Physics**: Enforce the Bicone Limit ($\mathcal{K}$) and Parabolic Tunnel Factor ($\zeta$).
+    $$ \zeta(\tau) = \tau^2 \quad \text{(Quadratic Tunnel)} $$
+    $$ C_{final} = \beta_{\alpha} \times \underbrace{\text{Taper}(L_{bg})}_{\text{Linear Space}} \times \underbrace{\zeta(\tau)}_{\text{Quadratic Time}} $$
 
-We distinguish between two topological types of surfaces.
+**Output**: A precise, gamut-safe, high-contrast `oklch()` color.
 
-#### 3.1.1. Glass Surfaces ({glass}$)
+### Branch B: X-Ray Mode ($\Phi_{xray}$)
 
-Glass surfaces are **Filters**. They inherit the Atmosphere ($\alpha$) from their parent but apply **Bicone Dampening** to ensure the background remains a subtle tint, safe for text.
+Used when the browser strips background colors (Forced Colors).
 
-<!-- prettier-ignore -->
-1292590 S_{glass}(\langle \alpha, \nu, \tau \rangle) = \langle \text{Dampen}(\alpha), \nu_{reset}, \tau \rangle 1292590
+This executes a Topology Transformation. It maps Semantics to Geometry.
 
-> **In Plain English**: A Glass Card is like a tent. It sits _inside_ the landscape. It takes the color of the environment (Atmosphere) but stretches it thin so it's just a whisper of color.
+1.  **Map Atmosphere to Structure**:
+    Instead of calculating a background tint, we project the Atmosphere vector onto the Border vector.
+    $$ P(\alpha) \rightarrow \text{BorderWidth} \times \text{SystemColor} $$
 
-#### 3.1.2. Solid Surfaces ({solid}$)
+2.  **Map Voice to Keyword**:
+    The Voice token is mapped to the nearest semantic System Keyword.
+    $$ P(\nu) \rightarrow \{ \text{CanvasText}, \text{ButtonText}, \text{LinkText} \} $$
 
-Solid surfaces are **Emitters**. They represent "Genesis Pairs" (like Primary Buttons) where the color is derived at build-time to be maximal. They do _not_ dampen. They establish a _new_ Atmosphere.
+**Output**: A geometry definition (Border/Stroke) and a System Keyword.
 
-<!-- prettier-ignore -->
-1292590 S_{solid}(\langle \alpha, \nu, \tau \rangle) = \langle \alpha_{new}, \nu_{new}, \tau \rangle 1292590
+## Part III: The Operators
 
-> **In Plain English**: A Solid Button is a light source. It ignores the ambient weather and shines with its own specific color (e.g., Brand Blue). It resets the local physics.
+Classes are operators that transform the state tuple $\Sigma \rightarrow \Sigma'$.
 
-## 4. The Universal Safety Theorem (Adaptive Clamping)
+### 1. Mood Operator ($M$)
 
-To guarantee that text is always readable on Glass Surfaces, we enforce the **Universal Safety Theorem**. The Chroma ($) of any Glass Surface is mathematically constrained to lie within the **Safe Bicone**.
+Sets the Atmosphere ($\alpha$). In X-Ray mode, it sets a structural flag.
 
-### 4.1. The Vibrancy Limit ({limit}$)
+```css
+.hue-brand {
+  /* Rich Mode: Atmospheric Potential */
+  --alpha-hue: var(--brand-hue);
+  --alpha-beta: var(--brand-beta);
 
-The maximum allowed Chroma is the intersection of three functions:
+  /* X-Ray Mode: Structural Flag */
+  --alpha-structure: 2px solid Highlight;
+}
+```
 
-1292590 C\_{limit} = \beta(H) \cdot \tau(L) \cdot \zeta(\tau) 1292590
+### 2. Surface Operator ($S$)
 
-1.  **The Sine Wave ($\beta(H)$)**: The hue-dependent boundary. Yellows can be more vibrant than Blues without clipping.
-    <!-- prettier-ignore -->
-    1292590 \beta(H) \approx C_{floor} + (C_{ceil} - C_{floor}) \cdot \frac{1 + \sin(H + \phi)}{2} 1292590
-    - Where {floor} \approx 0.04$ (Blue Limit)
-    - Where {ceil} \approx 0.18$ (Yellow Limit)
+The Physics Engine. It handles the fork between Math (Rich) and Geometry (X-Ray).
 
-2.  **The Taper ($\tau(L)$)**: The lightness-dependent boundary. As Lightness approaches Black (0) or White (1), Chroma must drop to 0 to fit in the gamut.
-    1292590 \tau(L) = 1 - |2L - 1| 1292590
+```css
+.surface-card {
+  /* --- BRANCH A: RICH MODE --- */
+  /* 1. Calculate Time & Spatial Taper (Linear) */
+  --tau-l: calc((var(--time) + 1) * 50%);
+  --_taper: calc(1 - abs(2 * var(--tau-l) - 1));
 
-3.  **The Tunnel ($\zeta(\tau)$)**: The motion-dependent boundary. As the system transitions between Day and Night ($\tau \approx 0$), contrast is lowest, so Chroma is throttled to prevent clashes.
+  /* 2. Calculate Temporal Tunnel (Quadratic) */
+  /* Using Time^2 creates a stronger dampening effect near Gray (0) */
+  --_tunnel: calc(var(--time) * var(--time));
 
-> **In Plain English**:
->
-> - **The Sine Wave**: We allow Yellow to be brighter than Blue because the human eye (and screens) can handle it.
-> - **The Taper**: You can't have a "Vibrant Black" or "Vibrant White." Physics demands they fade to gray.
-> - **The Tunnel**: During the twilight transition (Day to Night), we dim the colors to ensure nothing clashes while the lights are changing.
+  /* 3. Solve Limit */
+  --_limit: calc(var(--alpha-beta) * var(--_taper) * var(--_tunnel));
+  --final-chroma: min(var(--brand-chroma), var(--_limit));
 
-### 4.2. The Dampening Function
+  /* 4. Paint */
+  background-color: oklch(
+    from var(--surface-base) l var(--final-chroma) var(--alpha-hue)
+  );
 
-For Glass Surfaces, the resolved Chroma is the minimum of the requested Vibrancy and the Limit.
+  /* --- BRANCH B: X-RAY MODE --- */
+  @media (forced-colors: active) {
+    /* Disable Math (OS enforces background) */
+    background-color: Canvas;
 
-<!-- prettier-ignore -->
-1292590 C_{resolved} = \min(C_{requested}, C_{limit}) 1292590
+    /* Map Atmosphere to Structure */
+    /* If alpha is set, render the border defined by the Mood */
+    border: var(--alpha-structure, 1px solid CanvasText);
+  }
+}
+```
 
-This guarantees that no matter what the user asks for (e.g., "Neon Background"), the system mathematically clamps it to a safe, legible range.
+### 3. Voice Operator ($V$)
 
-## 5. Summary
+Sets the Voice ($\nu$) and handles Gain ($\gamma$).
 
-1.  **State is Mnemonic**: $\Sigma = \langle \alpha, \nu, \tau \rangle$.
-2.  **Surfaces are Topology**: Glass filters (Dampen), Solid emitters (Reset).
-3.  **Safety is Geometric**: The Safe Bicone ensures text legibility by clamping Chroma based on Hue, Lightness, and Time.
-4.  **Execution is Split**: Genesis solves the goals; Algebra enforces the constraints.
+```css
+.text-subtle {
+  /* 1. Standard Voice */
+  --nu-target: var(--token-subtle);
+
+  /* 2. Apply Gain (Gamma) via Media Query */
+  @media (prefers-contrast: more) {
+    /* Swap token for higher contrast version */
+    --nu-target: var(--token-subtle-high);
+  }
+
+  /* 3. Render (Rich vs X-Ray handled by browser color resolution) */
+  color: var(--nu-target);
+}
+```
