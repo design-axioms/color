@@ -44,6 +44,7 @@ Audits, reviews, and historical context.
 
 - [Project Learnings](./process/project_learnings.md): Key takeaways and pivots.
 - [Fresh Eyes Reviews](./process/fresh-eyes-review.md): Periodic audits of the system.
+- [Website Polish Plan](./website-polish-plan.md): Remediation plan from the Dec 2025 review.
 
 ## [Meta](./meta/)
 

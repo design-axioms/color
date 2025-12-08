@@ -126,3 +126,30 @@ The Color System plays nicely with Tailwind. You can use Tailwind for layout (`p
 If you want to use the Color System's tokens _inside_ Tailwind utility classes (e.g., `bg-surface-card`), you can configure your `tailwind.config.js` to map to the CSS variables.
 
 _Note: A dedicated Tailwind plugin is on the roadmap._
+
+### Tailwind Configuration
+
+To use the system's tokens within Tailwind classes (e.g., `bg-surface-card`), add this to your `tailwind.config.js`:
+
+```javascript
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  theme: {
+    extend: {
+      colors: {
+        // Map semantic surfaces
+        surface: {
+          page: "var(--surface-page)",
+          card: "var(--surface-card)",
+          action: "var(--surface-action)",
+        },
+        // Map semantic text
+        text: {
+          strong: "var(--text-strong)",
+          subtle: "var(--text-subtle)",
+        },
+      },
+    },
+  },
+};
+```

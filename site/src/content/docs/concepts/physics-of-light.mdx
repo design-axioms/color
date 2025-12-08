@@ -11,13 +11,13 @@ If "Surfaces" are the atoms of the system, **Physics** is the law that governs t
 
 Axiomatic Color doesn't store a list of colors for every surface. Instead, it calculates them dynamically based on the environment.
 
-## 1. Solar Time ($\tau$)
+## 1. Solar Time
 
 Instead of a binary "Light Mode" vs "Dark Mode" switch, the system models time as a continuous cycle.
 
-- **Noon (+1)**: Bright Day (Light Mode).
-- **Midnight (-1)**: Deep Night (Dark Mode).
-- **Twilight (0)**: The transition zone.
+- **Noon**: Bright Day (Light Mode).
+- **Midnight**: Deep Night (Dark Mode).
+- **Twilight**: The transition zone.
 
 Every surface in the system knows what "Time" it is. When you switch modes, you aren't swapping a stylesheet; you are moving the sun.
 
@@ -36,7 +36,7 @@ This ensures that no matter how you configure your theme, you never accidentally
 
 ## 3. The Tunnel (Temporal Safety)
 
-The most dangerous time for color design is **Twilight** ($\tau = 0$). This is the moment when the background is 50% gray.
+The most dangerous time for color design is **Twilight**. This is the moment when the background is 50% gray.
 
 If we just linearly interpolated colors from Day to Night, the middle point would often be a muddy, low-contrast mess.
 

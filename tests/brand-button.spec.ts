@@ -30,7 +30,9 @@ test("Brand button hover state retains chroma", async ({ page }) => {
     // Handle rgb(r, g, b)
     const rgbMatch = colorString.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
     if (rgbMatch) {
-      const [_, r, g, b] = rgbMatch.map(Number);
+      const r = Number(rgbMatch[1]);
+      const g = Number(rgbMatch[2]);
+      const b = Number(rgbMatch[3]);
       // Allow small difference due to rounding/color space conversion
       return Math.abs(r - g) < 3 && Math.abs(g - b) < 3 && Math.abs(r - b) < 3;
     }

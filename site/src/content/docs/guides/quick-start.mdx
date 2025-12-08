@@ -52,16 +52,14 @@ Let's build a simple "Card" component to see the system in action.
 Then, create a Card component:
 
 ```tsx
-import { tokens } from "./theme";
-
 export function Card() {
   return (
     <div
-      className={tokens.surface.card}
+      className="surface-card"
       style={{ padding: "2rem", borderRadius: "8px" }}
     >
-      <h2 style={{ color: tokens.context.text.high }}>Hello World</h2>
-      <p style={{ color: tokens.context.text.subtle }}>I am a themed card.</p>
+      <h2 className="text-strong">Hello World</h2>
+      <p className="text-subtle">I am a themed card.</p>
     </div>
   );
 }
