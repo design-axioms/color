@@ -124,7 +124,9 @@ function alignInvertedAnchors(
       end: { ...modeAnchors.end, background: lightness },
     });
 
-    const lightness = clamp01(keyColorLightness);
+    // Clamp lightness to ensure sufficient contrast for white text
+    // L=0.40 provides better contrast than 0.45, ensuring white text is clearly legible
+    const lightness = Math.min(clamp01(keyColorLightness), 0.4);
 
     const newInverted: Anchors = {
       light: updateEnd(invertedAnchors.light, lightness),

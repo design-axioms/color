@@ -4,20 +4,18 @@
 </script>
 
 <TokenInspector>
-  <div class="context-visualizer p-4">
-    <InspectorSurface
-      class="surface-page p-8 border border-border-subtle rounded-lg"
-    >
-      <div class="text-sm font-bold mb-4 text-text-subtle">
+  <div class="context-visualizer docs-p-4">
+    <InspectorSurface class="surface-page docs-p-8 bordered docs-rounded-lg">
+      <div class="text-sm font-bold docs-mb-4 text-subtle">
         Page (Light Context)
       </div>
       <InspectorSurface
-        class="surface-card p-8 border border-border-subtle rounded-lg shadow-sm"
+        class="surface-card docs-p-8 bordered docs-rounded-lg shadow-sm"
       >
-        <div class="text-sm font-bold mb-4 text-text-subtle">Card (Nested)</div>
-        <InspectorSurface class="surface-spotlight p-8 text-white rounded-lg">
+        <div class="text-sm font-bold docs-mb-4 text-subtle">Card (Nested)</div>
+        <InspectorSurface class="surface-spotlight docs-p-8 docs-rounded-lg">
           <div class="text-sm font-bold">Spotlight (Inverted Context)</div>
-          <div class="mt-2 text-sm opacity-80">
+          <div class="docs-mt-2 text-sm text-subtle">
             This surface inverts the polarity. Text becomes light automatically.
           </div>
         </InspectorSurface>

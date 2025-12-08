@@ -1,60 +1,58 @@
 ---
 title: The Physics of Light
-description: How the system calculates color relationships using anchors and interpolation.
+description: How the system calculates color relationships using Solar Time and Tapering.
 ---
 
 import DemoWrapper from "../../../components/DemoWrapper.svelte";
 
 <DemoWrapper>
 
-If "Surfaces" are the atoms of the system, **Anchors** are the laws of physics that govern them.
+If "Surfaces" are the atoms of the system, **Physics** is the law that governs them.
 
-The Axiomatic Color doesn't store a list of colors for every surface. Instead, it calculates them dynamically based on a set of boundary conditions.
+Axiomatic Color doesn't store a list of colors for every surface. Instead, it calculates them dynamically based on the environment.
 
-## The Dynamic Range
+## 1. Solar Time ($\tau$)
 
-Imagine a vertical axis representing Lightness, from 0% (Absolute Black) to 100% (Absolute White). Every theme is defined by a **Dynamic Range** on this axis.
+Instead of a binary "Light Mode" vs "Dark Mode" switch, the system models time as a continuous cycle.
 
-### Anchors: The Boundary Conditions
+- **Noon (+1)**: Bright Day (Light Mode).
+- **Midnight (-1)**: Deep Night (Dark Mode).
+- **Twilight (0)**: The transition zone.
 
-An **Anchor** is a fixed point on this scale. It tells the solver: _"This is where the world begins, and this is where it ends."_
+Every surface in the system knows what "Time" it is. When you switch modes, you aren't swapping a stylesheet; you are moving the sun.
 
-import Diagram from "../../../components/Diagram.svelte";
-import DynamicRange from "../../../components/DynamicRange.svelte";
+## 2. The Taper (Spatial Safety)
 
-<Diagram>
-  <DynamicRange />
-</Diagram>
+In the real world, you can't have a "Neon Black" or a "Neon White". As colors get very dark or very light, they lose their ability to hold saturation.
 
-## The "Rubber Band" Effect
+The system enforces this with **The Taper**.
 
-The most powerful aspect of this physics model is that surfaces are **relative**, not absolute.
+Imagine a cone (or a "Bicone") in the color space.
 
-If you decide your Dark Mode is too dark, you don't have to manually adjust every single card, sidebar, and button. You simply move the **Start Anchor**.
+- At 50% Gray, you can have maximum vibrancy.
+- As you approach Black (0%) or White (100%), the available vibrancy tapers off to zero.
 
-Imagine all your surfaces are attached to a rubber band stretched between the Start and End anchors.
+This ensures that no matter how you configure your theme, you never accidentally create a color that is "out of gamut" (impossible to display) or that vibrates uncomfortably against the text.
 
-1.  **Move the Start Anchor up**: The entire rubber band compresses. Every surface gets lighter, but they maintain their relative order and separation.
-2.  **Move the End Anchor down**: The range compresses. Surfaces get closer together in lightness.
+## 3. The Tunnel (Temporal Safety)
 
-### Why is this better?
+The most dangerous time for color design is **Twilight** ($\tau = 0$). This is the moment when the background is 50% gray.
+
+If we just linearly interpolated colors from Day to Night, the middle point would often be a muddy, low-contrast mess.
+
+To prevent this, the system uses a **Tunneling** effect. As the system transitions through Twilight, it automatically dampens the vibrancy of all surfaces. It creates a "Diving Bell" of safety, ensuring that text remains legible even during the animation between modes.
+
+## Why is this better?
 
 In a traditional system (Hex codes), changing the background color breaks everything.
 
 - "I made the background darker, now the cards are invisible."
 - "I made the background lighter, now the text contrast is failing."
 
-In the Axiomatic System, the solver **re-runs the physics simulation** every time you change an anchor. It guarantees that:
+In the Axiomatic System, the solver **re-runs the physics simulation** every time the environment changes. It guarantees that:
 
-1.  Surfaces stay visible against the background.
-2.  Text stays readable against the surfaces (by adjusting text colors if needed).
-
-## Contrast Distribution
-
-The system doesn't just place surfaces linearly (e.g., 10%, 20%, 30%). It distributes them based on **Perceptual Contrast**.
-
-The human eye is more sensitive to changes in dark colors than light colors. A 5% change in lightness is very noticeable in dark mode, but barely visible in light mode.
-
-The solver accounts for this. It ensures that the **visual step** from Page to Card looks the same in Dark Mode as it does in Light Mode, even if the actual math values are different.
+1.  **Legibility**: Text is always readable, because the Taper prevents the background from eating the contrast.
+2.  **Gamut Safety**: You can't pick an "illegal" color. The math won't let you.
+3.  **Smooth Transitions**: Switching modes is a fluid, mathematical operation, not a jarring jump cut.
 
 </DemoWrapper>

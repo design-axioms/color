@@ -27,17 +27,14 @@ A Surface is not just a background color. It is a **Context Creator**. When you 
 ### The Hierarchy
 
 1.  **The Canvas (Foundations)**
-
     - `surface-page`: The infinite backdrop of your application.
     - `surface-workspace`: A slightly elevated area (often used for sidebars or main content areas).
 
 2.  **The Objects (Containers)**
-
     - `surface-card`: A distinct, contained element. It has boundaries. It holds content.
     - `surface-tinted`: A subtle variation for grouping related items without a hard border.
 
 3.  **The Interactors (Actions)**
-
     - `surface-action`: Something you click. It wants to be touched. (e.g., Buttons).
 
 4.  **The Spotlights (Attention)**

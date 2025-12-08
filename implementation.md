@@ -1,91 +1,113 @@
 # Color System Implementation
 
-This document details the technical implementation of the color system.
+This document details the technical implementation of the color system, based on the **Grand Unified Algebra v4.0**.
 
 ## Architecture
 
-The system is built on **CSS Custom Properties**, **OKLCH** color space, and a **TypeScript Solver**.
+The system is a hybrid of **Build-Time Math** (TypeScript) and **Run-Time Physics** (CSS).
 
 ### Directory Structure
 
-- **`scripts/`**: The "Build Time" logic.
-  - `solver-engine.ts`: The core math engine. Calculates lightness and contrast.
-  - `generate-tokens.ts`: The CLI wrapper.
-  - `surface-lightness.config.json`: The source of truth for surfaces, groups, and targets.
+- **`src/cli/`**: The "Build Time" logic (The Solver).
+  - `index.ts`: The CLI entry point (`axiomatic`).
+  - `commands/solve.ts`: The command that runs the solver.
+- **`src/lib/`**: The Core Logic.
+  - `math.ts`: The pure math functions (Taper, Tunnel, Interpolation).
+  - `solver.ts`: The engine that distributes lightness values across the range.
+  - `generator.ts`: Emits the CSS tokens.
 - **`css/`**: The "Run Time" styles.
-  - `generated-tokens.css`: Output of the solver. Contains `light-dark()` color tokens.
-  - `base.css`: Core variables, calculations (Hue/Chroma), and System Color mappings.
-  - `utilities.css`: The public API (`.surface-*`, `.text-*`) and composition logic.
+  - `engine.css`: The **Reactive Pipeline**. Contains the `@property` definitions and the core algebra.
+  - `theme.css`: The **Generated Tokens**. Output of `pnpm solve`.
+  - `index.css`: The entry point that bundles everything.
 
-## The CSS Model: Context Variables
+## The Reactive Pipeline (Run-Time)
 
-We use a **Context Provider/Consumer** pattern to handle composition and nesting.
+The core innovation is the **Reactive Pipeline** in `css/engine.css`. Instead of pre-calculating every possible color combination, we use CSS Custom Properties to create a live physics engine in the browser.
 
-1.  **Provider (Surface):** A class like `.surface-card` sets local variables:
-    ```css
-    .surface-card {
-      --surface-lightness: ...;
-      --context-text-subtle: var(--lightness-subtle-on-card);
-      --context-border-decorative: var(--border-decorative-on-card);
-    }
-    ```
-2.  **Consumer (Utility):** A class like `.text-subtle` consumes the context:
-    ```css
-    .text-subtle {
-      --surface-text-lightness: var(--context-text-subtle);
-    }
-    ```
+### 1. The State Tuple ($\Sigma$)
 
-This ensures **Orthogonality**: Adding a new surface doesn't require updating every utility class. It also handles **Nesting** naturally, as the nearest surface ancestor provides the context.
-
-## The Reactive Pipeline (Engine)
-
-The core logic lives in `css/engine.css`. It uses CSS `@property` to create a reactive data flow.
-
-1.  **Inputs:**
-    - **Global Config:** `--base-hue`, `--base-chroma` (set by theme/utilities).
-    - **Surface Tokens:** `--surface-token`, `--text-high-token` (set by `light-dark()` in `generated-tokens.css`).
-2.  **Computation:**
-    - The engine calculates intermediate values like `--computed-surface-C` (Chroma) and `--computed-surface-H` (Hue).
-    - It combines these with the tokens to produce **Computed Colors**: `--computed-surface`, `--computed-fg-color`.
-3.  **Output:**
-    - The computed colors are assigned to CSS properties: `background-color: var(--computed-surface)`.
-
-### Animation Strategy
-
-We support two types of state changes, which require a specific transition strategy to animate smoothly in unison:
-
-1.  **Continuous Changes (Hue/Chroma):**
-    - Example: Changing `--hue-brand` from Blue to Red.
-    - Mechanism: The browser interpolates the number. The engine recalculates the color every frame.
-2.  **Discrete Changes (Light/Dark Mode):**
-    - Example: `light-dark()` flipping from Light to Dark.
-    - Mechanism: The input token (`--surface-token`) changes _instantly_ (snaps).
-    - **The Fix:** We transition the **Computed Properties** (`--computed-surface`), _not_ the input tokens.
-    - Why? CSS Transitions do not trigger on a custom property if its value changes solely due to a dependency change. By registering `--computed-surface` with `@property` and an `initial-value`, we allow the browser to interpolate the _result_ of the snap.
+We define the state of the UI using typed custom properties:
 
 ```css
-/* css/engine.css */
-transition: --computed-surface 0.2s, --computed-fg-color 0.2s;
+@property --tau {
+  syntax: "<number>";
+  initial-value: 1;
+  inherits: true;
+} /* Time */
+@property --alpha-hue {
+  syntax: "<number>";
+  initial-value: 0;
+  inherits: true;
+} /* Atmosphere */
+@property --alpha-beta {
+  syntax: "<number>";
+  initial-value: 0.008;
+  inherits: true;
+} /* Vibrancy */
 ```
 
-## The Solver
+### 2. The Resolution Function ($\Phi$)
 
-The `solver-engine.ts` script automates the selection of lightness values.
+The engine uses `calc()` and `oklch()` to resolve the final color based on the current state.
 
-1.  **Anchors:** Defines the available dynamic range (e.g., 0.1 to 0.9) for Light and Dark modes.
-2.  **APCA Contrast:** Uses the APCA algorithm (perceptual contrast) to ensure text is legible on every surface.
-3.  **Groups & Steps:** Distributes surfaces evenly across the range, or clusters them in groups (e.g., "Content", "Spotlight").
-4.  **Hue Shift:** Applies a Bezier curve to shift hue (warmth) based on lightness.
+**Key Formula: The Safe Bicone**
+$$ C\_{final} = \min(\beta, \beta \times \text{Taper} \times \text{Tunnel}) $$
+
+In CSS, this calculation happens **inline** within the `oklch` function to access the dynamic lightness (`l`) of the source token:
+
+```css
+--_axm-computed-surface: oklch(
+  from var(--axm-surface-token) l
+    min(
+      var(--alpha-beta),
+      /* Limit = Beta * Taper * Tunnel */ var(--alpha-beta) *
+        (1 - abs(2 * l - 1)) * /* Taper (Space) */ var(--tau) * var(--tau)
+        /* Tunnel (Time) */
+    )
+    h
+);
+```
+
+### 3. Animation Strategy
+
+Because the math is live, we can animate the _inputs_ ($\tau$) and the system automatically interpolates the _outputs_ (Color).
+
+- **Continuous**: Changing `--alpha-hue` rotates the color wheel.
+- **Discrete**: Switching Light/Dark mode snaps the tokens, but we transition the **Computed Properties** (`--_axm-computed-surface`) to create a smooth morph.
+
+## The Solver (Build-Time)
+
+The TypeScript solver (`src/lib/solver.ts`) handles the static parts of the system: **Lightness Anchors**.
+
+1.  **Anchors**: It defines the "safe range" for Light and Dark modes.
+2.  **Distribution**: It distributes surface lightness values (0-100) based on the configuration in `color-config.json`.
+3.  **Output**: It generates `css/theme.css` containing the `light-dark()` tokens.
 
 ## Accessibility Implementation
 
-We achieve accessibility through **Taxonomy Alignment**.
+### 1. High Contrast (Gain $\gamma$)
 
-- **Forced Colors:** We map our semantic tokens (`surface-action`, `text-link`) directly to System Colors (`ButtonFace`, `LinkText`) in `base.css`.
-- **High Contrast:** The solver can generate a parallel set of tokens with stricter contrast targets (Future Work).
+We support High Contrast preferences via the **Gain** variable.
+Instead of a separate build, we use a media query to swap the input tokens for higher-contrast versions.
 
-## Running the System
+```css
+@media (prefers-contrast: more) {
+  .text-subtle {
+    --_axm-text-lightness-source: var(--axm-text-subtle-hc-token);
+  }
+}
+```
 
-- **`pnpm solve`**: Runs the solver and regenerates `css/generated-tokens.css`.
-- **`pnpm dev`**: Runs the demo app.
+### 2. Forced Colors (X-Ray Mode $\sigma$)
+
+When `forced-colors: active` is detected (Windows HCM), the system switches to **X-Ray Mode**.
+
+- **Rich Mode**: Surfaces have background colors.
+- **X-Ray Mode**: Surfaces become transparent and gain a **Structure** (Border).
+
+This is handled via the `--alpha-structure` variable, which maps the "Atmosphere" (Brand Color) to a "Structure" (Border Color) automatically.
+
+## Build Commands
+
+- **`pnpm solve`**: Runs the solver and regenerates `css/theme.css`.
+- **`pnpm build:css`**: Bundles the CSS using `lightningcss` (via `scripts/build-css.ts`).

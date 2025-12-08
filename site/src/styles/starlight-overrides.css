@@ -179,10 +179,10 @@
   --local-light-c: 0;
   --local-dark-h: 0;
   --local-dark-c: 0;
-  --surface-light-h: var(--base-hue, var(--local-light-h));
-  --surface-light-c: var(--base-chroma, var(--local-light-c));
-  --surface-dark-h: var(--base-hue, var(--local-dark-h));
-  --surface-dark-c: var(--base-chroma, var(--local-dark-c));
+  --surface-light-h: var(--alpha-hue, var(--local-light-h));
+  --surface-light-c: var(--alpha-beta, var(--local-light-c));
+  --surface-dark-h: var(--alpha-hue, var(--local-dark-h));
+  --surface-dark-c: var(--alpha-beta, var(--local-dark-c));
   --axm-surface-token: light-dark(
     oklch(1 var(--surface-light-c) var(--surface-light-h)),
     oklch(0 var(--surface-dark-c) var(--surface-dark-h))

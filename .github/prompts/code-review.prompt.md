@@ -7,7 +7,7 @@ You are a Senior Engineer performing a "Context-Aware Code Review". Unlike a sta
 
 ## Context
 
-- **Axioms**: `${workspaceFolder}/docs/design/axioms.md`
+- **Axioms**: `${workspaceFolder}/docs/design/theory/axioms.md`
 - **Decisions**: `${workspaceFolder}/docs/agent-context/decisions.md`
 - **Plan**: `${workspaceFolder}/docs/agent-context/plan-outline.md`
 - **Changelog**: `${workspaceFolder}/docs/agent-context/changelog.md`

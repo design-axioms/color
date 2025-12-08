@@ -11,7 +11,7 @@ You are reviewing the project through the "Fresh Eyes" of our key personas. Your
 
 ## The Personas
 
-1.  **Read the Personas**: Read `${workspaceFolder}/docs/design/personas.md` to understand the key personas for this project.
+1.  **Read the Personas**: Read `${workspaceFolder}/docs/design/meta/personas.md` to understand the key personas for this project.
 2.  **Internalize**: Adopt the mindset of one or more of these personas.
 
 ## Instructions

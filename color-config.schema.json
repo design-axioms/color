@@ -83,7 +83,7 @@
       },
       "type": "array"
     },
-    "DeepPartial<def-alias-src_lib_types.ts-2338-2569-src_lib_types.ts-0-5941[]>": {
+    "DeepPartial<def-alias-src_lib_types.ts-2498-2729-src_lib_types.ts-0-6101[]>": {
       "items": {
         "additionalProperties": false,
         "properties": {
@@ -106,7 +106,7 @@
       },
       "type": "array"
     },
-    "DeepPartial<def-alias-src_lib_types.ts-2569-2649-src_lib_types.ts-0-5941355102109>": {
+    "DeepPartial<def-alias-src_lib_types.ts-2729-2809-src_lib_types.ts-0-6101355102109>": {
       "additionalProperties": false,
       "properties": {
         "p1": {
@@ -168,16 +168,31 @@
         "fg-baseline": {
           "type": "number"
         },
+        "fg-baseline-hc": {
+          "type": "number"
+        },
         "fg-high": {
+          "type": "number"
+        },
+        "fg-high-hc": {
           "type": "number"
         },
         "fg-strong": {
           "type": "number"
         },
+        "fg-strong-hc": {
+          "type": "number"
+        },
         "fg-subtle": {
           "type": "number"
         },
+        "fg-subtle-hc": {
+          "type": "number"
+        },
         "fg-subtlest": {
+          "type": "number"
+        },
+        "fg-subtlest-hc": {
           "type": "number"
         }
       },
@@ -187,7 +202,12 @@
         "fg-strong",
         "fg-baseline",
         "fg-subtle",
-        "fg-subtlest"
+        "fg-subtlest",
+        "fg-high-hc",
+        "fg-strong-hc",
+        "fg-baseline-hc",
+        "fg-subtle-hc",
+        "fg-subtlest-hc"
       ],
       "type": "object"
     },
@@ -298,7 +318,7 @@
           "type": "object"
         },
         "groups": {
-          "$ref": "#/definitions/DeepPartial%3Cdef-alias-src_lib_types.ts-2338-2569-src_lib_types.ts-0-5941%5B%5D%3E"
+          "$ref": "#/definitions/DeepPartial%3Cdef-alias-src_lib_types.ts-2498-2729-src_lib_types.ts-0-6101%5B%5D%3E"
         },
         "hueShift": {
           "additionalProperties": false,
@@ -358,7 +378,7 @@
                   "additionalProperties": false,
                   "properties": {
                     "curve": {
-                      "$ref": "#/definitions/DeepPartial%3Cdef-alias-src_lib_types.ts-2569-2649-src_lib_types.ts-0-5941355102109%3E"
+                      "$ref": "#/definitions/DeepPartial%3Cdef-alias-src_lib_types.ts-2729-2809-src_lib_types.ts-0-6101355102109%3E"
                     },
                     "maxSize": {
                       "$ref": "#/definitions/DeepPartial%3Cnumber686710375%3E"

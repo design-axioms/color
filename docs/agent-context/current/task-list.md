@@ -1,10 +1,9 @@
-# Phase 2: Deployment
+# Phase 5: Regression Fixes
 
-- [ ] **Commit Changes**
-  - [ ] Commit all changes made during Phase 1 (fixes, linting, snapshots).
-- [ ] **Push to Main**
-  - [ ] Push the changes to the `main` branch to trigger the deployment workflow.
-- [ ] **Monitor Deployment**
-  - [ ] Monitor the GitHub Actions workflow to ensure the build and deployment succeed.
-- [ ] **Verify Live Site**
-  - [ ] Visit the live site and verify that the changes (e.g., Theme Builder export preview) are working correctly.
+## Tasks
+
+- [x] **Fix Invisible Click Targets**: `InspectorSurface` was using `all: unset` which removed the background color provided by `surface-card`. Replaced with targeted resets.
+- [x] **Fix Broken Cards**: `SurfacePreview` was using incorrect class names (`text-text-strong`) and missing layout utilities. Updated to use correct system classes and `docs-*` utilities.
+- [x] **Fix Missing Shadows**: `engine.css` defined shadow variables but not the utility classes. Added `.shadow-*` utilities.
+- [x] **Fix Text Hierarchy**: Updated components to use correct `text-subtle` classes.
+- [x] **Fix Math Syntax**: Corrected invalid LaTeX syntax in `algebra.mdx` that was causing lint failures.

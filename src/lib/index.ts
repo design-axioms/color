@@ -4,7 +4,6 @@ export * from "./defaults.ts";
 export * from "./exporters/dtcg.ts";
 export * from "./exporters/tailwind.ts";
 export * from "./exporters/typescript.ts";
-export { toHighContrast } from "./generator.ts";
 export {
   contrastForBackground,
   contrastForPair,

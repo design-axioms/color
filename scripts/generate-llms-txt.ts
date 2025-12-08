@@ -9,7 +9,7 @@ const OUTPUT_DIR = "site/public";
 // Order matters for context window optimization
 const SUMMARY_FILES = [
   // 1. The Constitution
-  { path: "docs/design/axioms.md", title: "Axioms (The Constitution)" },
+  { path: "docs/design/theory/axioms.md", title: "Axioms (The Constitution)" },
 
   // 2. Core Concepts
   {
@@ -34,8 +34,14 @@ const SUMMARY_FILES = [
     title: "JavaScript API",
   },
   {
-    path: "css/utilities.css",
-    title: "CSS Utilities Reference",
+    path: "css/engine.css",
+    title: "CSS Engine Reference",
+    isCode: true,
+    lang: "css",
+  },
+  {
+    path: "css/theme.css",
+    title: "CSS Theme Reference",
     isCode: true,
     lang: "css",
   },
@@ -127,7 +133,7 @@ async function generateFull(): Promise<void> {
   files.sort();
 
   // Add Axioms first
-  const axiomsPath = "docs/design/axioms.md";
+  const axiomsPath = "docs/design/theory/axioms.md";
   if (fs.existsSync(axiomsPath)) {
     output += `## Axioms\n\n`;
     output +=

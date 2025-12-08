@@ -13,8 +13,8 @@ const TOKENS = [
 
 // Known defaults from engine.css
 const DEFAULTS: Record<string, number> = {
-  "--_axm-base-hue": 0,
-  "--_axm-base-chroma": 0.008,
+  "--alpha-hue": 0,
+  "--alpha-beta": 0.008,
 };
 
 export function resolveTokens(
@@ -72,7 +72,7 @@ export function resolveTokens(
       const classList = Array.from(sourceElement.classList);
 
       // Heuristics for finding the responsible class
-      if (intent === "Base Hue" || intent === "Base Chroma") {
+      if (intent === "Context Hue" || intent === "Context Chroma") {
         responsibleClass = classList.find(
           (c) => c.startsWith("theme-") || c.startsWith("hue-"),
         );
@@ -133,15 +133,15 @@ export function resolveTokens(
     });
   };
 
-  // 0. Resolve Base Hue & Chroma (The "DNA" of the color)
-  const hue = style.getPropertyValue("--_axm-base-hue").trim();
+  // 0. Resolve Context Hue & Chroma (The "DNA" of the color)
+  const hue = style.getPropertyValue("--alpha-hue").trim();
   if (hue) {
-    addToken("Base Hue", hue, "--_axm-base-hue", hue);
+    addToken("Context Hue", hue, "--alpha-hue", hue);
   }
 
-  const chroma = style.getPropertyValue("--_axm-base-chroma").trim();
+  const chroma = style.getPropertyValue("--alpha-beta").trim();
   if (chroma) {
-    addToken("Base Chroma", chroma, "--_axm-base-chroma", chroma);
+    addToken("Context Chroma", chroma, "--alpha-beta", chroma);
   }
 
   // 1. Resolve Text Lightness Source

@@ -26,11 +26,24 @@
   - **Phase 4: Interactive Tutorials (Deferred)**
     - **Goal**: Create "Learn by Doing" tutorials to guide users through the system's concepts.
 
-## Epoch 35: Deployment & Release (Active)
+## Epoch 35: Deployment & Release (Completed)
 
 - **Goal**: Deploy the updated system to production and verify the live site.
 - **Phases**:
   - **Phase 1: Pre-Flight Verification (Completed)**
     - **Goal**: Verify that the build works locally and all checks pass before deployment.
-  - **Phase 2: Deployment (Active)**
+  - **Phase 2: Deployment (Completed)**
     - **Goal**: Trigger the deployment and verify the live site.
+
+## Epoch 36: Website Polish (Active)
+
+- **Goal**: Polish the website based on user feedback to improve usability and aesthetics.
+- **Phases**:
+  - **Phase 1: Feedback Implementation (Completed)**
+    - **Goal**: Address specific user feedback items one by one.
+  - **Phase 2: Proactive Polish (Completed)**
+    - **Goal**: Self-audit the site using browser automation and static analysis to find and fix latent visual issues.
+  - **Phase 3: Grand Unified Algebra v4.0 (Completed)**
+    - **Goal**: Implement the "Baseline 2025" architecture, including Safe Bicone Physics, Unified State Tuple, and Reactive Accessibility (Gain/Hollow State).
+  - **Phase 4: Build & Test Repair (Completed)**
+    - **Goal**: Stabilize the build and test suite following the "Grand Unified Algebra" refactor.

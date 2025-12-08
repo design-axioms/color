@@ -54,7 +54,7 @@ async function checkPage(url) {
 
       // Force an event if necessary (sometimes needed for framework reactivity)
       await input.evaluate((el) =>
-        el.dispatchEvent(new Event("input", { bubbles: true }))
+        el.dispatchEvent(new Event("input", { bubbles: true })),
       );
 
       // Wait for the UI to update

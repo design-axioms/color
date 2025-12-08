@@ -629,10 +629,10 @@ export class AxiomaticDebugger extends HTMLElement {
 
     // Reorder tokens: Final Text Color should be at the bottom
     const PRIORITY: Record<string, number> = {
-      "Base Hue": 1,
-      "Base Chroma": 2,
-      "Text Source": 3,
-      "Surface Color": 4,
+      "Text Source": 1,
+      "Surface Color": 2,
+      "Context Hue": 3,
+      "Context Chroma": 4,
       "Actual Background": 5,
       "Final Text Color": 6,
     };
@@ -643,8 +643,8 @@ export class AxiomaticDebugger extends HTMLElement {
       return pA - pB;
     });
 
-    // Extract Base Hue for coloring
-    const baseHueToken = tokens.find((t) => t.intent === "Base Hue");
+    // Extract Context Hue for coloring
+    const baseHueToken = tokens.find((t) => t.intent === "Context Hue");
     const baseHue = baseHueToken ? parseFloat(baseHueToken.value) : 0;
 
     // Update Tokens
@@ -714,13 +714,13 @@ export class AxiomaticDebugger extends HTMLElement {
               ? `<div class="token-swatch" style="background-color: ${t.value}"></div>`
               : "";
 
-            // Special visualization for Base Hue and Base Chroma
-            if (t.intent === "Base Hue") {
+            // Special visualization for Context Hue and Context Chroma
+            if (t.intent === "Context Hue") {
               const hue = parseFloat(t.value);
               if (!isNaN(hue)) {
                 swatch = `<div class="token-hue-swatch" style="background-color: oklch(0.7 0.15 ${hue})"></div>`;
               }
-            } else if (t.intent === "Base Chroma") {
+            } else if (t.intent === "Context Chroma") {
               const chroma = parseFloat(t.value);
               if (!isNaN(chroma)) {
                 // Max chroma is usually around 0.37, so we scale 0.4 to 100%
@@ -753,13 +753,13 @@ export class AxiomaticDebugger extends HTMLElement {
               statusIcon = inputIcon;
               subtitle = "Input: Context";
               roleColor = "#ffffff"; // High Contrast White
-            } else if (t.intent === "Base Hue") {
+            } else if (t.intent === "Context Hue") {
               statusIcon = inputIcon;
-              subtitle = "Input: Base Hue";
+              subtitle = "Input: Context Hue";
               roleColor = "#ffffff"; // High Contrast White
-            } else if (t.intent === "Base Chroma") {
+            } else if (t.intent === "Context Chroma") {
               statusIcon = inputIcon;
-              subtitle = "Input: Base Chroma";
+              subtitle = "Input: Context Chroma";
               roleColor = "#ffffff"; // High Contrast White
             } else if (t.isPrivate && !t.responsibleClass && !t.isInline) {
               statusIcon = "🔒";
@@ -780,14 +780,14 @@ export class AxiomaticDebugger extends HTMLElement {
               valueStyle = `color: ${roleColor}; font-weight: bold;`;
             } else if (t.intent === "Surface Color") {
               valueType = "type-derived";
-            } else if (t.intent === "Base Hue") {
+            } else if (t.intent === "Context Hue") {
               if (!isNaN(baseHue)) {
                 // Use a visible chroma to show the hue clearly
                 valueStyle = `color: oklch(0.8 0.14 ${baseHue}); font-weight: bold;`;
               } else {
                 valueType = "type-source";
               }
-            } else if (t.intent === "Base Chroma") {
+            } else if (t.intent === "Context Chroma") {
               const chroma = parseFloat(t.value);
               if (!isNaN(baseHue) && !isNaN(chroma)) {
                 // Use the actual chroma
@@ -985,8 +985,8 @@ export class AxiomaticDebugger extends HTMLElement {
           (t) =>
             t.intent === "Text Source" ||
             t.intent === "Surface Color" ||
-            t.intent === "Base Hue" ||
-            t.intent === "Base Chroma",
+            t.intent === "Context Hue" ||
+            t.intent === "Context Chroma",
         )
       ) {
         borderColor = "#ffffff";

@@ -47,23 +47,23 @@ We treat `getContext()` calls similarly to injecting a Service in Ember. These s
 ```svelte
 <!-- Root Layout -->
 <script>
-  import { setContext } from 'svelte';
-  import { ThemeState } from './ThemeState.svelte';
+  import { setContext } from "svelte";
+  import { ThemeState } from "./ThemeState.svelte";
 
   // Registered once at the root, available everywhere
-  setContext('theme', new ThemeState());
+  setContext("theme", new ThemeState());
 </script>
 ```
 
 ```svelte
 <!-- Child Component -->
 <script>
-  import { getContext } from 'svelte';
-  const theme = getContext<ThemeState>('theme');
+  import { getContext } from "svelte";
+  const theme = getContext<ThemeState>("theme");
 </script>
 
 <button onclick={() => theme.toggle()}>
-  {theme.isDark ? 'Dark' : 'Light'}
+  {theme.isDark ? "Dark" : "Light"}
 </button>
 ```
 

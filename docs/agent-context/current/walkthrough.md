@@ -1,36 +1,32 @@
-# Walkthrough - Epoch 35: Deployment & Release
+# Walkthrough: Visual Regression Fixes
 
-## Phase 1: Pre-Flight Verification
+Following the "Grand Unified Algebra" refactor and build stabilization, several visual regressions were identified in the documentation site. This phase focused on diagnosing and fixing these issues.
 
-### Summary
+## 1. Invisible Click Targets (`InspectorSurface`)
 
-Successfully verified the build pipeline and fixed several issues preventing a clean build and test run.
+**Issue**: The `InspectorSurface` component, used in the `ContextVisualizer`, was rendering as invisible.
+**Root Cause**: The component used `all: unset` to reset button styles. This property has high specificity (when scoped) and was resetting the `background-color` provided by the `surface-card` utility class to `initial` (transparent).
+**Fix**: Replaced `all: unset` with a set of targeted properties (`appearance: none`, `border: none`, etc.) inside a `:global(:where(.inspector-surface))` block. This lowers the specificity of the reset, allowing the `surface-card` utility class (specificity 0,1,0) to win.
 
-### Key Actions
+## 2. Broken Cards (`SurfacePreview`)
 
-#### 1. Build Fixes
+**Issue**: The `SurfacePreview` component rendered cards that looked like plain text sections.
+**Root Cause**:
 
-- **Restored `css/utilities.css`**: The file was missing, causing `pnpm build` to fail. Restored it from `site/src/styles/docs.css` which serves as the source of truth.
-- **Fixed `ExportView.svelte`**: Corrected a relative import path (`../../lib/state/...` -> `../../../lib/state/...`) that was breaking the site build.
+1.  Incorrect class names: `text-text-strong` instead of `text-strong`, `border-border-subtle` instead of `bordered`.
+2.  Missing layout utilities: The component used `p-6`, `rounded-lg` which were not defined in the available CSS.
+    **Fix**:
+3.  Updated class names to match the system tokens (`text-strong`, `text-subtle`, `bordered`).
+4.  Updated layout classes to use `docs-*` utilities (`docs-p-6`, `docs-rounded-lg`) and added the missing ones to `site/src/styles/docs.css`.
 
-#### 2. Linting & Security
+## 3. Missing Shadows
 
-- **Updated Security Check**: Modified `scripts/check-security.ts` to correctly ignore `vendor/` and `node_modules` directories, resolving false positives in the security lint check.
-- **Fixed `theme.ts` Lint Errors**: Updated `src/lib/exporters/typescript.ts` to include `/* eslint-disable @axiomatic-design/no-raw-tokens */` in the generated file, as `theme.ts` intentionally maps tokens to CSS variables.
-- **Fixed `overlay.ts` Lint Errors**: Added `/* eslint-disable @axiomatic-design/no-raw-tokens */` to `src/lib/inspector/overlay.ts` to allow CSS variables in the Shadow DOM styles.
+**Issue**: Shadows were missing from the "Elevation" section in `catalog/surfaces.mdx`.
+**Root Cause**: `css/engine.css` defined the shadow variables (`--shadow-sm`) but did not expose them as utility classes (`.shadow-sm`).
+**Fix**: Added `.shadow-sm`, `.shadow-md`, `.shadow-lg`, `.shadow-xl` utility classes to `css/engine.css`.
 
-#### 3. Testing
+## 4. Math Syntax
 
-- **Updated Snapshots**: Ran `pnpm test:update-snapshots` to accept changes in `theme.ts` (added eslint disable comment) and minor formatting differences in other generated files.
-- **Verified Tests**: All tests passed after snapshot updates.
-
-### Outcome
-
-The codebase is now in a clean state:
-
-- `pnpm build` passes.
-- `pnpm --filter site build` passes.
-- `pnpm lint:all` passes.
-- `pnpm test` passes.
-
-Ready for deployment.
+**Issue**: The `lint:math` check failed due to suspicious syntax in `site/src/content/docs/theory/algebra.mdx`.
+**Root Cause**: The file used `* {` instead of `_ {` for subscripts in LaTeX equations (e.g., `L* {bg}` instead of `L_{bg}`).
+**Fix**: Corrected the LaTeX syntax.

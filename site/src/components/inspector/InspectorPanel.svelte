@@ -179,7 +179,7 @@
     margin-top: 0.5rem;
 
     max-height: 60vh;
-    width: 500px;
+    width: min(500px, 90vw);
 
     border-radius: 8px;
     padding: 1rem;

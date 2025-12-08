@@ -1102,15 +1102,62 @@
 - **Real-time Validation**: Schema validation in the UI was deferred.
 - **ESLint Svelte Support**: Deferred full implementation/verification beyond basic smoke tests.
 
-## Epoch 35: Deployment & Release (Active)
+## Epoch 36: Phase 1 - Feedback Implementation (2025-12-06)
+
+**Goal**: Address specific user feedback items regarding the Theme Builder layout and default colors.
+
+**Completed Work**:
+
+- **Layout Fixes**:
+  - **Context Tree**: Reduced indentation and increased sidebar width to prevent text truncation.
+  - **Inspector**: Added padding to `LuminanceSpectrum` to prevent slider handle clipping.
+- **Color Tuning**:
+  - **Action Surface**: Updated library defaults to use "Brand" hue and `0.12` chroma, fixing the "washed out" appearance.
+  - **Spotlight Surface**: Clamped inverted surface lightness to `0.45` in light mode to ensure white text remains legible (fixing "white on white" issue).
+- **Data Investigation**:
+  - Confirmed that the "Spotlight" delta of 108 is mathematically correct for an inverted surface.
+
+## Epoch 35: Deployment & Release (Completed)
 
 **Goal**: Deploy the updated system to production and verify the live site.
 
-**Phases**:
+**Completed Work**:
 
-- **Phase 1: Pre-Flight Verification (Completed)**:
+- **Phase 1: Pre-Flight Verification**:
   - Verified local builds for both the library and the documentation site.
   - Fixed critical build issues (missing CSS, broken imports).
   - Resolved linting and security warnings.
   - Updated test snapshots and verified all tests pass.
-- **Phase 2: Deployment (Active)**: Triggering and verifying the production deployment.
+- **Phase 2: Deployment**:
+  - **CI Fixes**: Resolved Svelte check errors, fixed CI workflow ordering, and implemented deterministic snapshot testing using Prettier.
+  - **Release**: Merged `fix/svelte-check-errors` into `main`, triggering the "Plan Release" workflow.
+  - **Verification**: Confirmed successful deployment workflow run.
+
+## Epoch 36: Website Polish (Active)
+
+**Goal**: Polish the website based on user feedback to improve usability and aesthetics.
+
+**Phases**:
+
+- **Phase 1: Feedback Implementation (Completed)**: Addressing specific user feedback items.
+- **Phase 2: Proactive Polish (Active)**: Auditing and fixing layout/visual issues.
+
+## Phase 3: Build & Test Repair (Epoch 36)
+
+**Goal**: Stabilize the build and test suite following the "Grand Unified Algebra" refactor.
+
+**Completed Work**:
+
+- **ELOOP Fix**:
+  - Identified `vitest` traversing symlinks in `.locald` causing infinite loops.
+  - Updated `vitest.config.ts` to exclude `.locald/**`.
+- **Snapshot Updates**:
+  - Updated Golden Master snapshots to reflect the new "Late Binding" architecture (CSS variables instead of hardcoded values).
+  - Verified that the changes are intentional and correct.
+- **Tool Conflict Resolution**:
+  - Excluded `tests/brand-button.spec.ts` (Playwright) from the Vitest runner to prevent conflicts.
+- **Documentation Generation**:
+  - Regenerated `css/theme.css` via `pnpm solve` to ensure `scripts/generate-llms-txt.ts` has the necessary artifacts.
+- **Verification**:
+  - Confirmed all 17 test files pass.
+  - Verified the build pipeline is functional.

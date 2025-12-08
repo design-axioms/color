@@ -4,49 +4,12 @@ import type {
   BorderTargets,
   ConfigOptions,
   PresetsConfig,
-  SolverConfig,
   SurfaceGroup,
   Theme,
 } from "./types.ts";
 import { generatePresetUtilities } from "./utilities.ts";
 
 const toOklch = converter("oklch");
-
-export function toHighContrast(config: SolverConfig): SolverConfig {
-  return {
-    ...config,
-    anchors: {
-      ...config.anchors,
-      keyColors: {}, // Force grayscale
-      page: {
-        ...config.anchors.page,
-        light: {
-          ...config.anchors.page.light,
-          start: { background: 1.0, adjustable: false },
-          end: { background: 0.0, adjustable: false },
-        },
-        dark: {
-          ...config.anchors.page.dark,
-          start: { background: 0.0, adjustable: false },
-          end: { background: 1.0, adjustable: false },
-        },
-      },
-      inverted: {
-        ...config.anchors.inverted,
-        light: {
-          ...config.anchors.inverted.light,
-          start: { background: 0.0, adjustable: false },
-          end: { background: 1.0, adjustable: false },
-        },
-        dark: {
-          ...config.anchors.inverted.dark,
-          start: { background: 1.0, adjustable: false },
-          end: { background: 0.0, adjustable: false },
-        },
-      },
-    },
-  };
-}
 
 export function generateTokensCss(
   groups: SurfaceGroup[],
@@ -200,40 +163,32 @@ export function generateTokensCss(
       rootLines.push(`  ${pv("local-dark-h")}: ${toNumber(bgDark.h)};`);
       rootLines.push(`  ${pv("local-dark-c")}: ${toNumber(bgDark.c)};`);
 
-      // Determine final hue/chroma, preferring --base-hue/--base-chroma if set (by utility classes)
-      // Heuristic: Use full chroma (context-chroma) for high-contrast surfaces (Filled),
-      // and tinted chroma (base-chroma) for low-contrast surfaces (Tinted).
-      const isLightModeFilled = bgLight.l < 0.6;
-      const isDarkModeFilled = bgDark.l >= 0.6;
+      // Determine final hue/chroma...
+      // We need to set --alpha-hue and --alpha-beta for this surface.
+      // Since these are numbers, we can't use light-dark().
+      // We'll default to the light mode values, but allow overrides via media query if needed.
+      // Ideally, surfaces shouldn't change hue wildly between modes.
 
-      const lightChromaVar = isLightModeFilled
-        ? pv("context-chroma")
-        : pv("base-chroma");
-      const darkChromaVar = isDarkModeFilled
-        ? pv("context-chroma")
-        : pv("base-chroma");
+      rootLines.push(`  --alpha-hue: ${toNumber(bgLight.h)};`);
+      rootLines.push(`  --alpha-beta: ${toNumber(bgLight.c)};`);
 
-      rootLines.push(
-        `  ${pv("surface-light-h")}: var(${pv("base-hue")}, var(${pv("local-light-h")}));`,
-      );
-      rootLines.push(
-        `  ${pv("surface-light-c")}: var(${lightChromaVar}, var(${pv("local-light-c")}));`,
-      );
-      rootLines.push(
-        `  ${pv("surface-dark-h")}: var(${pv("base-hue")}, var(${pv("local-dark-h")}));`,
-      );
-      rootLines.push(
-        `  ${pv("surface-dark-c")}: var(${darkChromaVar}, var(${pv("local-dark-c")}));`,
-      );
+      // If dark mode differs significantly, we might need a media query here.
+      // For now, we assume stability or that the engine handles it via the token L extraction.
+      // Wait, the engine uses alpha-hue/beta for the *result*.
+      // If we want the surface to be "Brand Blue", we must set alpha-hue to Blue.
+
+      // Also set the structure fallback
+      rootLines.push(`  --alpha-structure: 1px solid CanvasText;`);
 
       rootLines.push(
         `  ${v("surface-token")}: light-dark(
-    oklch(${toNumber(bgLight.l)} var(${pv("surface-light-c")}) var(${pv("surface-light-h")})),
-    oklch(${toNumber(bgDark.l)} var(${pv("surface-dark-c")}) var(${pv("surface-dark-h")}))
+    oklch(${toNumber(bgLight.l)} var(--alpha-beta) var(--alpha-hue)),
+    oklch(${toNumber(bgDark.l)} var(--alpha-beta) var(--alpha-hue))
   );`,
       );
 
       // 2. Text Tokens
+      // Standard
       rootLines.push(
         `  ${v("text-high-token")}: light-dark(
     oklch(${toNumber(lightSpec["fg-high"])} 0 0),
@@ -252,6 +207,28 @@ export function generateTokensCss(
         `  ${v("text-subtlest-token")}: light-dark(
     oklch(${toNumber(lightSpec["fg-subtlest"])} 0 0),
     oklch(${toNumber(darkSpec["fg-subtlest"])} 0 0)
+  );`,
+      );
+
+      // High Contrast
+      rootLines.push(
+        `  ${v("text-high-hc-token")}: light-dark(
+    oklch(${toNumber(lightSpec["fg-high-hc"])} 0 0),
+    oklch(${toNumber(darkSpec["fg-high-hc"])} 0 0)
+  );`,
+      );
+
+      rootLines.push(
+        `  ${v("text-subtle-hc-token")}: light-dark(
+    oklch(${toNumber(lightSpec["fg-subtle-hc"])} 0 0),
+    oklch(${toNumber(darkSpec["fg-subtle-hc"])} 0 0)
+  );`,
+      );
+
+      rootLines.push(
+        `  ${v("text-subtlest-hc-token")}: light-dark(
+    oklch(${toNumber(lightSpec["fg-subtlest-hc"])} 0 0),
+    oklch(${toNumber(darkSpec["fg-subtlest-hc"])} 0 0)
   );`,
       );
 
@@ -343,20 +320,10 @@ export function generateTokensCss(
               `  ${pv("local-dark-c")}: ${toNumber(bgState.dark.c)};`,
             );
 
-            const isLightModeFilled = bgState.light.l < 0.6;
-            const isDarkModeFilled = bgState.dark.l >= 0.6;
-
-            const lightChromaVar = isLightModeFilled
-              ? pv("context-chroma")
-              : pv("base-chroma");
-            const darkChromaVar = isDarkModeFilled
-              ? pv("context-chroma")
-              : pv("base-chroma");
-
             rootLines.push(
               `  ${v("surface-token")}: light-dark(
-    oklch(${toNumber(bgState.light.l)} var(${lightChromaVar}, var(${pv("local-light-c")})) var(${pv("base-hue")}, var(${pv("local-light-h")}))),
-    oklch(${toNumber(bgState.dark.l)} var(${darkChromaVar}, var(${pv("local-dark-c")})) var(${pv("base-hue")}, var(${pv("local-dark-h")})))
+    oklch(${toNumber(bgState.light.l)} var(--alpha-beta) var(--alpha-hue)),
+    oklch(${toNumber(bgState.dark.l)} var(--alpha-beta) var(--alpha-hue))
   );`,
             );
             rootLines.push(`}`);
@@ -371,23 +338,16 @@ export function generateTokensCss(
   if (keyColors) {
     for (const name of Object.keys(keyColors)) {
       rootLines.push(`.hue-${name} {`);
-      rootLines.push(`  ${pv("context-hue")}: var(${pv(`hue-${name}`)});`);
+      // Set Atmosphere
+      rootLines.push(`  --alpha-hue: var(${pv(`hue-${name}`)});`);
+      rootLines.push(`  --alpha-beta: var(${pv(`chroma-${name}`)});`);
+
+      // Set Structure Fallback (for X-Ray)
+      // We use the key color as the border color
       rootLines.push(
-        `  ${pv("context-chroma")}: var(${pv(`chroma-${name}`)});`,
+        `  --alpha-structure: 2px solid var(${v(`key-${name}-color`)});`,
       );
-      rootLines.push(``);
-      rootLines.push(`  /* 1. Surface Tinting */`);
-      rootLines.push(`  ${pv("base-hue")}: var(${pv("context-hue")});`);
-      rootLines.push(`  ${pv("hue-adjust")}: 0;`);
-      rootLines.push(
-        `  ${pv("base-chroma")}: calc(var(${pv("context-chroma")}) * 0.1);`,
-      );
-      rootLines.push(``);
-      rootLines.push(`  /* 2. Text Tinting (Indirection) */`);
-      rootLines.push(`  ${pv("text-hue-source")}: var(${pv("context-hue")});`);
-      rootLines.push(
-        `  ${pv("text-chroma-source")}: var(${pv("context-chroma")});`,
-      );
+
       rootLines.push(`}`);
       rootLines.push("");
     }
@@ -395,15 +355,34 @@ export function generateTokensCss(
 
   // Standard Utilities
   rootLines.push(`/* Core Utilities (Reactive Pipeline) */`);
-  rootLines.push(
-    `.text-subtle { ${pv("text-lightness-source")}: var(${v("text-subtle-token")}); }`,
-  );
-  rootLines.push(
-    `.text-subtlest { ${pv("text-lightness-source")}: var(${v("text-subtlest-token")}); }`,
-  );
+
+  // Text High
   rootLines.push(
     `.text-strong { ${pv("text-lightness-source")}: var(${v("text-high-token")}); font-weight: 600; }`,
   );
+
+  // Text Subtle
+  rootLines.push(
+    `.text-subtle { ${pv("text-lightness-source")}: var(${v("text-subtle-token")}); }`,
+  );
+
+  // Text Subtlest
+  rootLines.push(
+    `.text-subtlest { ${pv("text-lightness-source")}: var(${v("text-subtlest-token")}); }`,
+  );
+
+  // High Contrast Overrides
+  rootLines.push(`@media (prefers-contrast: more) {`);
+  rootLines.push(
+    `  .text-strong { ${pv("text-lightness-source")}: var(${v("text-high-hc-token")}); }`,
+  );
+  rootLines.push(
+    `  .text-subtle { ${pv("text-lightness-source")}: var(${v("text-subtle-hc-token")}); }`,
+  );
+  rootLines.push(
+    `  .text-subtlest { ${pv("text-lightness-source")}: var(${v("text-subtlest-hc-token")}); }`,
+  );
+  rootLines.push(`}`);
 
   rootLines.push("");
   rootLines.push(generatePresetUtilities(presets, options));

@@ -1,6 +1,6 @@
-import { describe, it, expect } from "vitest";
 import fs from "node:fs";
 import path from "node:path";
+import { describe, expect, it } from "vitest";
 
 const SITE_PUBLIC_DIR = path.join(__dirname, "../site/public");
 
@@ -13,7 +13,8 @@ describe("LLM Context Generation", () => {
     expect(content).toContain("# Axiomatic Color - AI Context");
     expect(content).toContain("## Axioms (The Constitution)");
     expect(content).toContain("## Thinking in Surfaces");
-    expect(content).toContain("## CSS Utilities Reference");
+    expect(content).toContain("## CSS Engine Reference");
+    expect(content).toContain("## CSS Theme Reference");
     expect(content).toContain(".text-strong");
   });
 

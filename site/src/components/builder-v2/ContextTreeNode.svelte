@@ -42,7 +42,7 @@
     class:surface-action={isSelected}
     onmouseenter={handleMouseEnter}
     onmouseleave={handleMouseLeave}
-    style="padding-left: {level * 1.5}rem"
+    style="padding-left: {level * 1}rem"
     role="none"
   >
     <div class="selection-marker" class:visible={isSelected}></div>

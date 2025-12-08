@@ -42,7 +42,8 @@
   }
 
   const titleColor =
-    "oklch(from var(--text-lightness-source) l var(--base-chroma) var(--base-hue))";
+    // eslint-disable-next-line @axiomatic-design/no-raw-tokens
+    "oklch(from var(--text-lightness-source) l var(--alpha-beta) var(--alpha-hue))";
 </script>
 
 <div class="demo-container surface-card bordered">
@@ -81,7 +82,7 @@
   </div>
 
   <!-- The Stage -->
-  <div class="stage bordered" style:--base-hue={hue} style:--base-chroma="0.12">
+  <div class="stage bordered" style:--alpha-hue={hue} style:--alpha-beta="0.12">
     <!-- Zone 1: Ambient (Outer) -->
     <div class="zone zone-outer surface-card">
       <span class="zone-label text-subtlest">Outer Scope</span>
@@ -216,7 +217,7 @@
 
   .zone-outer {
     background-color: oklch(
-      from var(--computed-surface) l 0.02 var(--base-hue) / 0.3
+      from var(--computed-surface) l 0.02 var(--alpha-hue) / 0.3
     );
     border-right: none;
   }

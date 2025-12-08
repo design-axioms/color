@@ -197,7 +197,6 @@ The goal is to avoid "Layout Thrashing" (rapid read/write cycles).
 3. **Observation:** A single `ResizeObserver` watches the container.
 
 4. **Reaction:** When the observer fires, we compare the current width to the cached Threshold.
-
    - If $Width_{container} \le Threshold$: The content is too wide to fit. Add class `.is-stacked`.
 
    - If $Width_{container} > Threshold$: There is enough room. Remove class `.is-stacked`.
@@ -222,31 +221,26 @@ interface LayoutController {
 For a layout to be considered "Algebraically Sound," it must pass these five Unit Tests.
 
 1.  **Boundary Invariant:**
-
     - _Test:_ Apply `overflow: hidden` to the primitive container.
 
     - _Pass Condition:_ No child content should be clipped (unless the primitive is explicitly designed to clip, like `Shelf`). If content is clipped, the primitive is failing to calculate its dimensions correctly.
 
 2.  **Isolation Invariant:**
-
     - _Test:_ Nest a `Stack(gap: 0)` inside a `Stack(gap: 50)`.
 
     - _Pass Condition:_ The inner gap must be exactly 0 pixels. The outer gap must not "leak" into the inner container (a common failure mode of CSS margin collapse).
 
 3.  **Dimensional Invariant:**
-
     - _Test:_ Place a contiguous string of text (no spaces) inside a child element.
 
     - _Pass Condition:_ The text should wrap or truncate. It must **not** force the container to become wider than its parent. This validates the `min-width: 0` constraint on flex children.
 
 4.  **Identity Invariant:**
-
     - _Test:_ Render the primitive with an empty array of children: `children={[]}`.
 
     - _Pass Condition:_ The computed height of the element must be 0px. It should not occupy any visual space.
 
 5.  **Hierarchy Monotonicity:**
-
     - _Test:_ Create a `Sidebar` and place a `Promote`d card inside it. Overlap them using negative margins (for testing only).
 
     - _Pass Condition:_ The Promoted card must visually obscure the Sidebar's border. This confirms that the Stacking Context is correctly ordered ($Z_{child} \ge Z_{parent}$).
