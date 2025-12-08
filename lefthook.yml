@@ -17,9 +17,9 @@ pre-commit:
     tokens:
       glob: "site/src/components/builder-v2/**/*"
       run: pnpm lint:tokens
-    math:
+    docs:
       glob: "*.{md,mdx}"
-      run: pnpm lint:math
+      run: pnpm lint:docs
     knip:
       run: pnpm knip
     test:
