@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "pnpm generate:theme && astro dev",
     "start": "astro dev",
-    "generate:theme": "pnpm exec axiomatic color-config.json src/styles/theme.css",
+    "generate:theme": "pnpm exec axiomatic ../color-config.json src/styles/theme.css",
     "check": "astro check",
     "build": "pnpm generate:theme && astro build",
     "preview": "astro preview",
