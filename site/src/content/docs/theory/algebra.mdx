@@ -4,6 +4,8 @@ description: The Grand Unified Algebra (v4.1) for UI rendering.
 slug: theory/algebra
 ---
 
+import { Aside } from '@astrojs/starlight/components';
+
 > **Context**: The physics and grammar of the Axiomatic Color system. ([View Changelog](./composition-algebra-changelog.md))
 
 This document defines the "Physics" of the Axiomatic Color system. It replaces the previous static heuristic model with a **Reactive Physics Model** based on continuous state interpolation.
@@ -36,13 +38,13 @@ Where:
         - $0$: **Rich Mode** (Standard).
         - $1$: **X-Ray Mode** (Forced Colors).
 
-> **In Plain English**:
->
-> - **Atmosphere ($\alpha$)**: The "Weather" of the room.
-> - **Voice ($\nu$)**: The "Script".
-> - **Time ($\tau$)**: The "Clock".
-> - **Gain ($\gamma$)**: The "Volume Knob". (Turn it up for High Contrast).
-> - **System ($\sigma$)**: The "Physics Engine". (Rich vs. X-Ray).
+<Aside type="note" title="In Plain English">
+- **Atmosphere ($\alpha$)**: The "Weather" of the room.
+- **Voice ($\nu$)**: The "Script".
+- **Time ($\tau$)**: The "Clock".
+- **Gain ($\gamma$)**: The "Volume Knob". (Turn it up for High Contrast).
+- **System ($\sigma$)**: The "Physics Engine". (Rich vs. X-Ray).
+</Aside>
 
 ## 2. The Architecture: Genesis vs. Algebra
 
@@ -108,11 +110,11 @@ $$ C_{limit} = \beta(H) \cdot \text{Taper}(L) \cdot \zeta(\tau) $$
 3.  **The Tunnel ($\zeta(\tau)$)**: The motion-dependent boundary. We use a **Parabolic Ease** to prevent velocity shock during transitions.
     $$ \zeta(\tau) = \tau^2 $$
 
-> **In Plain English**:
->
-> - **The Sine Wave**: Yellows can be brighter than Blues.
-> - **The Bicone**: As you get closer to White or Black, the allowed chroma drops linearly to zero.
-> - **The Tunnel**: During the twilight transition, we dim the colors to ensure safety.
+<Aside type="note" title="In Plain English">
+- **The Sine Wave**: Yellows can be brighter than Blues.
+- **The Bicone**: As you get closer to White or Black, the allowed chroma drops linearly to zero.
+- **The Tunnel**: During the twilight transition, we dim the colors to ensure safety.
+</Aside>
 
 ### 4.2. The Dampening Function
 
