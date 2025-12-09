@@ -29,6 +29,7 @@ function reorganize(): void {
 
       if (match) {
         const [_, viewport, theme, isDebug, ext] = match;
+        if (!viewport || !theme) continue;
         const targetDir = path.join(pageDir, viewport, theme);
 
         if (!fs.existsSync(targetDir)) {

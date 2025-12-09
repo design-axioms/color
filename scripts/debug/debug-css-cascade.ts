@@ -12,6 +12,10 @@ async function debugCascade() {
   }
 
   const [url, selector, ...properties] = args;
+  if (!url || !selector) {
+    console.error("URL and selector are required");
+    process.exit(1);
+  }
   const isAuto = properties.length === 0 || properties[0] === "auto";
 
   // Check for pseudo-state argument (e.g., :hover, :focus)
@@ -225,7 +229,8 @@ async function debugCascade() {
             // Get the specific selector that matched
             const selectorIndex = match.matchingSelectors[0];
             const selectorText =
-              rule.selectorList.selectors[selectorIndex]?.text ||
+              (selectorIndex !== undefined &&
+                rule.selectorList.selectors[selectorIndex]?.text) ||
               rule.selectorList.text;
 
             const isImportant = prop.important;

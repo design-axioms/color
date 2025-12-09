@@ -1257,6 +1257,8 @@ export class AxiomaticDebugger extends HTMLElement {
       if (this.contains(element)) return;
 
       const a = stateA[i];
+      if (!a) return;
+
       const style = getComputedStyle(element);
       const b = { bg: style.backgroundColor, color: style.color };
 

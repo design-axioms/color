@@ -66,6 +66,8 @@ test.describe("Continuity Audit", () => {
       const a = stateA[i];
       const b = stateB[i];
 
+      if (!a || !b) continue;
+
       // Ignore transparent backgrounds as they are often noisy or irrelevant
       if (a.bg === "rgba(0, 0, 0, 0)" && b.bg === "rgba(0, 0, 0, 0)") continue;
 
