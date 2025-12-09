@@ -33,7 +33,7 @@
     "solve": "node src/cli/index.ts color-config.json css/theme.css",
     "audit:theme": "node src/cli/index.ts audit",
     "sketch": "node scripts/lightness-lut-sketch.ts",
-    "build": "tsup && pnpm schema && pnpm build:css",
+    "build": "pnpm solve && tsup && pnpm schema && pnpm build:css",
     "build:css": "node scripts/build-css.ts",
     "schema": "ts-json-schema-generator --path 'src/lib/types.ts' --type 'UserConfig' --out 'color-config.schema.json'",
     "prepack": "pnpm build",
