@@ -171,45 +171,136 @@
    * Axiomatic tokens on `body` (and .surface-page), not :root.
    */
   body {
-    /* --- Grays (Mapping to Axiomatic Neutrals) --- */
+    /* --- TOTAL VARIABLE TAKEOVER --- */
+    /* 
+     * We map EVERY Starlight variable that could possibly be used for a background
+     * or surface to our single reactive token. This defeats "Variable Swapping".
+     */
+
+    /* 1. The Usual Suspects (Backgrounds) */
+    --sl-color-bg: var(--axm-surface-token);
+    --sl-color-bg-nav: var(--axm-surface-token);
+    --sl-color-bg-sidebar: var(--axm-surface-token);
+    --sl-color-bg-inline-code: var(--axm-surface-token);
+    --sl-color-bg-sidebar-mobile: var(--axm-surface-token);
+
+    /* 2. The Swappers (Grays & Absolute Colors) */
+    /* Starlight uses these directly in Light/Dark mode. We hijack them. */
+    --sl-color-black: var(--axm-surface-token);
+    --sl-color-white: var(
+      --axm-text-high-token
+    ); /* White is text in Light mode */
+
     --sl-color-gray-1: var(--axm-text-high-token);
     --sl-color-gray-2: var(--axm-text-subtle-token);
     --sl-color-gray-3: var(--axm-text-subtlest-token);
     --sl-color-gray-4: var(--axm-border-int-token);
     --sl-color-gray-5: var(--axm-border-dec-token);
-    --sl-color-gray-6: var(--axm-surface-token);
+    --sl-color-gray-6: var(
+      --axm-surface-token
+    ); /* Often used for bg in dark mode */
+    --sl-color-gray-7: var(
+      --axm-surface-token
+    ); /* Often used for bg in dark mode */
 
-    /* --- Brand Colors --- */
-    --sl-color-accent-low: oklch(0.4 0.1 var(--axm-hue-brand));
-    --sl-color-accent: oklch(0.6 0.15 var(--axm-hue-brand));
-    --sl-color-accent-high: oklch(0.8 0.1 var(--axm-hue-brand));
+    /* 3. Borders (Prevent Border Snap) */
+    --sl-color-hairline: var(--axm-border-dec-token);
+    --sl-color-hairline-light: var(--axm-border-dec-token);
+    --sl-color-hairline-shade: var(--axm-border-dec-token);
+    --sl-color-border: var(--axm-border-int-token);
 
-    /* --- Backgrounds --- */
-    --sl-color-bg: var(--axm-surface-token);
-    --sl-color-bg-nav: var(--axm-surface-token);
-    --sl-color-bg-sidebar: var(--axm-surface-token);
+    /* 4. Brand Colors */
+    --sl-color-accent-low: oklch(0.4 0.1 var(--_axm-hue-brand));
+    --sl-color-accent: oklch(0.6 0.15 var(--_axm-hue-brand));
+    --sl-color-accent-high: oklch(0.8 0.1 var(--_axm-hue-brand));
 
-    /* --- Text --- */
+    /* 5. Text */
     --sl-color-text: var(--axm-text-high-token);
     --sl-color-text-invert: light-dark(oklch(1 0 0), oklch(0 0 0));
     --sl-color-text-accent: var(--sl-color-accent);
 
-    /* --- Borders --- */
-    --sl-color-hairline: var(--axm-border-dec-token);
-    --sl-color-border: var(--axm-border-int-token);
-  }
+    /* 6. Shadows */
+    --sl-shadow-sm: var(--axm-shadow-sm);
+    --sl-shadow-md: var(--axm-shadow-md);
+    --sl-shadow-lg: var(--axm-shadow-lg);
 
-  :root {
-    --font-stix-two-math: var(--font-math);
+    /* 7. Fonts */
     --sl-font-system:
-      "Inter Variable", ui-sans-serif, system-ui, -apple-system,
-      BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial,
-      sans-serif;
+      ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+      Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
+      "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+      "Noto Color Emoji";
     --sl-font-heading: "Space Grotesk Variable", var(--sl-font-system);
     --sl-font-mono:
       "JetBrains Mono Variable", ui-monospace, SFMono-Regular, Menlo, Monaco,
       Consolas, "Liberation Mono", "Courier New", monospace;
+
+    /* 8. Layout */
     --sl-sidebar-width: 18rem;
+
+    /* 9. Reactive Asides (The "Exceptions") */
+    /* 
+     * Starlight uses *-low variables for backgrounds and *-high for text/borders.
+     * We replace the static swap with a continuous function of --tau.
+     * L_bg(t) = 0.6 + 0.35t  (Light: 0.95, Dark: 0.25)
+     * L_fg(t) = 0.6 - 0.30t  (Light: 0.30, Dark: 0.90)
+     */
+
+    /* Orange (Caution) */
+    --sl-color-orange-low: oklch(
+      calc(0.6 + (0.35 * var(--tau))) 0.1 var(--sl-hue-orange)
+    );
+    --sl-color-orange-high: oklch(
+      calc(0.6 - (0.3 * var(--tau))) 0.15 var(--sl-hue-orange)
+    );
+    --sl-color-orange: oklch(0.65 0.2 var(--sl-hue-orange)); /* Mid-tone */
+
+    /* Green (Success/Tip - though Starlight uses Purple for Tip usually) */
+    --sl-color-green-low: oklch(
+      calc(0.6 + (0.35 * var(--tau))) 0.1 var(--sl-hue-green)
+    );
+    --sl-color-green-high: oklch(
+      calc(0.6 - (0.3 * var(--tau))) 0.15 var(--sl-hue-green)
+    );
+    --sl-color-green: oklch(0.65 0.2 var(--sl-hue-green));
+
+    /* Blue (Note) */
+    --sl-color-blue-low: oklch(
+      calc(0.6 + (0.35 * var(--tau))) 0.1 var(--sl-hue-blue)
+    );
+    --sl-color-blue-high: oklch(
+      calc(0.6 - (0.3 * var(--tau))) 0.15 var(--sl-hue-blue)
+    );
+    --sl-color-blue: oklch(0.65 0.2 var(--sl-hue-blue));
+
+    /* Purple (Tip) */
+    --sl-color-purple-low: oklch(
+      calc(0.6 + (0.35 * var(--tau))) 0.1 var(--sl-hue-purple)
+    );
+    --sl-color-purple-high: oklch(
+      calc(0.6 - (0.3 * var(--tau))) 0.15 var(--sl-hue-purple)
+    );
+    --sl-color-purple: oklch(0.65 0.2 var(--sl-hue-purple));
+
+    /* Red (Danger) */
+    --sl-color-red-low: oklch(
+      calc(0.6 + (0.35 * var(--tau))) 0.1 var(--sl-hue-red)
+    );
+    --sl-color-red-high: oklch(
+      calc(0.6 - (0.3 * var(--tau))) 0.15 var(--sl-hue-red)
+    );
+    --sl-color-red: oklch(0.65 0.2 var(--sl-hue-red));
+  }
+
+  /* --- DIRECT OVERRIDES (The Nuclear Option) --- */
+  /* 
+   * Force structural elements to use the reactive surface token directly.
+   * This bypasses Starlight's variable swapping logic entirely.
+   */
+  body,
+  .header,
+  .sidebar-pane {
+    background-color: var(--axm-surface-token) !important;
   }
 
   .sl-markdown-content p,
@@ -248,6 +339,79 @@
 
 .debug-marker {
   color: red;
+}
+
+/* Comparison Grid V2 */
+.docs-grid-comparison-v2 {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin: 2rem 0;
+  background: var(--axm-surface-token);
+  border: 1px solid var(--axm-border-dec-token);
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+}
+
+.comparison-header {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--axm-border-dec-token);
+  margin-bottom: 0.5rem;
+}
+
+.comparison-header span {
+  text-align: center;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.comparison-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.swatch-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.swatch-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.swatch-col .text-xs {
+  font-size: 0.8rem;
+  color: var(--axm-text-subtle-token);
+  line-height: 1.2;
+}
+
+.swatch-pair .docs-swatch {
+  width: 100%;
+  height: 48px;
+  border-radius: 4px;
+  border: 1px solid var(--axm-border-dec-token);
+}
+
+.row-header {
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: var(--axm-text-subtle-token);
+  margin-bottom: 0.25rem;
+}
+
+.row-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
 }
 
 /* --- Axiomatic Overrides for Starlight Components --- */
@@ -296,10 +460,18 @@ site-search button {
   border-radius: 0.5rem;
 }
 
+site-search button kbd {
+  background-color: transparent !important;
+  border: none;
+  box-shadow: none;
+  color: inherit;
+}
+
 /* Apply Reactive Pipeline Logic to these selectors */
 .sl-link-button.primary,
 .card,
-site-search button {
+site-search button,
+a[aria-current="page"] {
   /* Text Resolution */
   --_axm-text-lightness-source: var(--axm-text-high-token);
   --_axm-computed-fg-C: calc(var(--alpha-beta) * 0.5);
@@ -323,7 +495,8 @@ site-search button {
 }
 
 /* 4. Code Blocks -> Surface Workspace */
-.astro-code {
+.astro-code,
+.expressive-code .frame {
   /* Surface Workspace Tokens (Copied from theme.css) */
   --axm-surface-token: light-dark(
     oklch(0.9926 var(--alpha-beta) var(--alpha-hue)),
@@ -334,6 +507,26 @@ site-search button {
   background-color: var(--axm-surface-token) !important;
   border: 1px solid var(--axm-border-dec-token);
   border-radius: 0.5rem;
+
+  /* Reactive Pipeline: Ensure computed surface matches */
+  --_axm-computed-surface: oklch(
+    from var(--axm-surface-token) l
+      min(
+        var(--alpha-beta),
+        var(--alpha-beta) * (1 - abs(2 * l - 1)) * var(--tau) * var(--tau)
+      )
+      h
+  );
+}
+
+.astro-code pre,
+.expressive-code pre {
+  background-color: transparent !important;
+}
+
+.expressive-code .copy button {
+  background-color: transparent !important;
+  /* If it has a border or other styles, keep them, but background should match surface */
 }
 
 /* 5. Hero Section Safeguard */
@@ -359,6 +552,180 @@ site-search button {
   width: 100%;
 }
 
+/* 7. Sidebar Active State -> Surface Action Soft */
+a[aria-current="page"] {
+  /* Surface Action Soft Tokens (Copied from theme.css) */
+  --axm-surface-token: light-dark(
+    oklch(0.9355 var(--alpha-beta) var(--alpha-hue)),
+    oklch(0.3543 var(--alpha-beta) var(--alpha-hue))
+  );
+  --axm-text-high-token: light-dark(oklch(0 0 0), oklch(1 0 0));
+}
+
+/* 8. Headings -> Text High Token */
+.sl-markdown-content :is(h1, h2, h3, h4, h5, h6):not(:where(.not-content *)) {
+  color: var(--axm-text-high-token) !important;
+}
+
+/* 9. Hero/Large Text -> Text High Token */
+.large {
+  color: var(--axm-text-high-token) !important;
+}
+
 /* Optional: Make the description column wrap if we want to avoid scrolling, 
    but scrolling is usually safer for long token names. 
    Let's stick to scrolling for now as per the plan. */
+
+/* --- Unlayered Overrides for Animation --- */
+/* We place these outside of @layer to ensure they have high specificity and priority */
+
+:root {
+  /* Ensure transition is present on the element where --tau changes */
+  transition: --tau 0.3s ease-in-out;
+}
+
+:root[data-theme="light"] {
+  --tau: 1;
+}
+
+:root[data-theme="dark"] {
+  --tau: -1;
+}
+
+/* Force transition to persist even if Starlight tries to kill it */
+html,
+html[data-theme],
+:root[data-theme] {
+  transition: --tau 0.3s ease-in-out !important;
+}
+
+/* --- View Transition Overrides --- */
+/* -----------------------------------------------------------------
+   1. DISABLE VIEW TRANSITIONS ON ROOT
+   This prevents the browser from "freezing" the page to take a snapshot.
+   It ensures your CSS transition on --tau remains the active visual.
+   ----------------------------------------------------------------- */
+html,
+:root {
+  view-transition-name: none !important;
+}
+
+/* -----------------------------------------------------------------
+   2. REACTIVE CHARTS (The Data)
+   We replace static light-dark() with the Linear State Equation:
+   L(tau) = L_mid + (k * tau)
+   
+   Derived from your engine.css values: 
+   Day (tau=1): 0.6484, Night (tau=-1): 0.7588
+   ----------------------------------------------------------------- */
+:root {
+  /* L_mid = 0.7036, k = -0.0552 */
+  --_chart-L: calc(0.7036 - (0.0552 * var(--tau)));
+
+  --axm-chart-1: oklch(var(--_chart-L) 0.14 25);
+  --axm-chart-2: oklch(var(--_chart-L) 0.14 190);
+  --axm-chart-3: oklch(var(--_chart-L) 0.14 45);
+  --axm-chart-4: oklch(var(--_chart-L) 0.14 250);
+  --axm-chart-5: oklch(var(--_chart-L) 0.14 85);
+  --axm-chart-6: oklch(var(--_chart-L) 0.14 280);
+  --axm-chart-7: oklch(var(--_chart-L) 0.14 125);
+  --axm-chart-8: oklch(var(--_chart-L) 0.14 320);
+  --axm-chart-9: oklch(var(--_chart-L) 0.14 150);
+  --axm-chart-10: oklch(var(--_chart-L) 0.14 360);
+}
+
+/* -----------------------------------------------------------------
+   3. REACTIVE SURFACES (The Stage)
+   Required to make the "Tunnel Effect" (tau^2) work. 
+   Without this, the background lightness will snap while chroma fades.
+   ----------------------------------------------------------------- */
+
+/* Page: Day(1.0) -> Night(0.1) */
+.surface-page,
+body {
+  --axm-surface-token: oklch(
+    calc(0.55 + (0.45 * var(--tau))) var(--alpha-beta) var(--alpha-hue)
+  ) !important;
+
+  /* Text Interpolation */
+  --axm-text-high-token: oklch(calc(0.5 - (0.5 * var(--tau))) 0 0) !important;
+  --axm-text-body-token: oklch(
+    calc(0.6518 - (0.2899 * var(--tau))) 0 0
+  ) !important;
+  --axm-text-subtle-token: oklch(
+    calc(0.6758 - (0.2172 * var(--tau))) 0 0
+  ) !important;
+  --axm-text-subtlest-token: oklch(
+    calc(0.6903 - (0.1503 * var(--tau))) 0 0
+  ) !important;
+}
+
+/* Workspace: Day(0.9926) -> Night(0.1935) */
+.surface-workspace,
+.astro-code {
+  --axm-surface-token: oklch(
+    calc(0.593 + (0.3995 * var(--tau))) var(--alpha-beta) var(--alpha-hue)
+  ) !important;
+
+  /* Text Interpolation */
+  --axm-text-high-token: oklch(calc(0.5 - (0.5 * var(--tau))) 0 0) !important;
+  --axm-text-body-token: oklch(
+    calc(0.6475 - (0.2971 * var(--tau))) 0 0
+  ) !important;
+  --axm-text-subtle-token: oklch(
+    calc(0.6719 - (0.2242 * var(--tau))) 0 0
+  ) !important;
+  --axm-text-subtlest-token: oklch(
+    calc(0.6882 - (0.1587 * var(--tau))) 0 0
+  ) !important;
+}
+
+/* Card: Day(0.9687) -> Night(0.2911) */
+.surface-card,
+.card {
+  --axm-surface-token: oklch(
+    calc(0.6299 + (0.3388 * var(--tau))) var(--alpha-beta) var(--alpha-hue)
+  ) !important;
+
+  /* Text Interpolation */
+  --axm-text-high-token: oklch(calc(0.5 - (0.5 * var(--tau))) 0 0) !important;
+  --axm-text-body-token: oklch(
+    calc(0.6234 - (0.3363 * var(--tau))) 0 0
+  ) !important;
+  --axm-text-subtle-token: oklch(
+    calc(0.6574 - (0.2539 * var(--tau))) 0 0
+  ) !important;
+  --axm-text-subtlest-token: oklch(
+    calc(0.6765 - (0.1857 * var(--tau))) 0 0
+  ) !important;
+}
+
+/* Action: Day(0.6) -> Night(0.9) (Note: Inverted Polarity) */
+.surface-action,
+.sl-link-button.primary {
+  --axm-surface-token: oklch(
+    calc(0.75 - (0.15 * var(--tau))) var(--alpha-beta) var(--alpha-hue)
+  ) !important;
+
+  /* Text Interpolation */
+  --axm-text-high-token: oklch(calc(0.5 + (0.5 * var(--tau))) 0 0) !important;
+  --axm-text-body-token: oklch(calc(0.5 + (0.5 * var(--tau))) 0 0) !important;
+  --axm-text-subtle-token: oklch(
+    calc(0.6078 + (0.3922 * var(--tau))) 0 0
+  ) !important;
+  --axm-text-subtlest-token: oklch(
+    calc(0.6848 + (0.3152 * var(--tau))) 0 0
+  ) !important;
+}
+
+/* Action Soft: Day(0.9355) -> Night(0.3543) */
+.surface-action-soft,
+site-search button,
+a[aria-current="page"] {
+  --axm-surface-token: oklch(
+    calc(0.6449 + (0.2906 * var(--tau))) var(--alpha-beta) var(--alpha-hue)
+  ) !important;
+
+  /* Text Interpolation: Black(0) -> White(1) */
+  --axm-text-high-token: oklch(calc(0.5 - (0.5 * var(--tau))) 0 0) !important;
+}

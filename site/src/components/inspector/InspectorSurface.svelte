@@ -31,11 +31,11 @@
 
 <!-- eslint-disable-next-line svelte/valid-compile -->
 <button
+  type="button"
   bind:this={element}
   class={(["inspector-surface", className || ""] as string[])
     .filter((c) => !!c)
     .join(" ")}
-  type="button"
   onclick={handleClick}
   onkeydown={handleKeydown}
   style:anchor-name={isSelected ? "--inspector-anchor" : undefined}
@@ -46,7 +46,13 @@
 
 <style>
   .inspector-surface {
-    all: unset;
+    appearance: none;
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    color: inherit;
     box-sizing: border-box;
     width: 100%;
     cursor: pointer;

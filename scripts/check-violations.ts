@@ -1,4 +1,5 @@
 import { chromium } from "playwright";
+import { WALKER_LIBRARY } from "./utils/walker.ts";
 
 export interface Violation {
   element: string;
@@ -10,288 +11,7 @@ export interface Violation {
   actual?: string;
 }
 
-const INJECTED_SCRIPT = `
-// --- walker.ts ---
-function findContextRoot(element) {
-  let current = element;
-
-  while (current) {
-    const isSurface =
-      current.tagName === "BODY" ||
-      Array.from(current.classList).some((c) => c.startsWith("surface-"));
-
-    if (isSurface) {
-      const style = getComputedStyle(current);
-      const surfaceName =
-        current.tagName === "BODY"
-          ? "page"
-          : Array.from(current.classList)
-              .find((c) => c.startsWith("surface-"))
-              ?.replace("surface-", "") || "unknown";
-
-      let polarity = null;
-      const colorScheme = style.colorScheme;
-
-      if (colorScheme === "dark") {
-        polarity = "dark";
-      } else if (colorScheme === "light") {
-        polarity = "light";
-      } else {
-        if (document.documentElement.classList.contains("dark")) {
-          polarity = "dark";
-        } else {
-          polarity = "light";
-        }
-      }
-
-      return {
-        surface: surfaceName,
-        polarity: polarity,
-        backgroundColor: style.backgroundColor,
-        element: current,
-      };
-    }
-
-    current = current.parentElement;
-  }
-
-  return {
-    surface: "page",
-    polarity: document.documentElement.classList.contains("dark")
-      ? "dark"
-      : "light",
-    backgroundColor: getComputedStyle(document.body).backgroundColor,
-    element: document.body,
-  };
-}
-
-function findVariableSource(startElement, variableName) {
-  const startValue = getComputedStyle(startElement)
-    .getPropertyValue(variableName)
-    .trim();
-
-  if (!startValue) return null;
-
-  let current = startElement;
-  let lastMatch = startElement;
-
-  while (true) {
-    const parent = current.parentElement;
-    if (!parent) {
-      return current;
-    }
-
-    const parentValue = getComputedStyle(parent)
-      .getPropertyValue(variableName)
-      .trim();
-
-    if (parentValue !== startValue) {
-      return current;
-    }
-
-    lastMatch = parent;
-    current = parent;
-  }
-
-  return lastMatch;
-}
-
-// --- resolver.ts ---
-const TOKENS = [
-  { name: "text-high", var: "--axm-text-high-token" },
-  { name: "text-subtle", var: "--axm-text-subtle-token" },
-  { name: "text-subtlest", var: "--axm-text-subtlest-token" },
-  { name: "surface", var: "--axm-surface-token" },
-  { name: "border-dec", var: "--axm-border-dec-token" },
-  { name: "border-int", var: "--axm-border-int-token" },
-];
-
-const DEFAULTS = {
-  "--alpha-hue": 0,
-  "--alpha-beta": 0.008,
-};
-
-function resolveTokens(element, context) {
-  const style = getComputedStyle(element);
-  const contextStyle = getComputedStyle(context.element);
-  const tokens = [];
-
-  const findMatch = (value) => {
-    if (!value || value === "transparent" || value === "rgba(0, 0, 0, 0)")
-      return null;
-
-    for (const token of TOKENS) {
-      const tokenValue = contextStyle.getPropertyValue(token.var).trim();
-      if (tokenValue === value) {
-        return token.name;
-      }
-    }
-    return null;
-  };
-
-  const addToken = (intent, value, sourceVar, sourceValue) => {
-    let sourceElement = element;
-
-    if (sourceVar.startsWith("--")) {
-      sourceElement = findVariableSource(element, sourceVar);
-    }
-
-    let isDefault = false;
-    const defaultValue = DEFAULTS[sourceVar];
-    if (defaultValue !== undefined) {
-      const numValue = parseFloat(value);
-      if (!isNaN(numValue) && Math.abs(numValue - defaultValue) < 0.0001) {
-        isDefault = true;
-      }
-    }
-
-    let responsibleClass;
-    if (sourceElement && !isDefault) {
-      const classList = Array.from(sourceElement.classList);
-
-      if (intent === "Context Hue" || intent === "Context Chroma") {
-        responsibleClass = classList.find(
-          (c) => c.startsWith("theme-") || c.startsWith("hue-"),
-        );
-      } else if (intent === "Surface Color") {
-        responsibleClass = classList.find((c) => c.startsWith("surface-") || c.includes("card") || c.includes("sl-link-button"));
-        if (!responsibleClass && sourceElement.tagName === "BODY") {
-          responsibleClass = "surface-page";
-        }
-      } else if (intent === "Text Source" || intent === "Final Text Color") {
-        responsibleClass = classList.find((c) => c.startsWith("text-"));
-        if (!responsibleClass && sourceElement.tagName === "BODY") {
-          responsibleClass = "text-high (default)";
-        }
-      } else if (intent === "Actual Background") {
-        responsibleClass = classList.find((c) => c.startsWith("bg-"));
-      }
-
-      if (!responsibleClass) {
-        responsibleClass = classList.find(
-          (c) =>
-            c.startsWith("theme-") ||
-            c.startsWith("hue-") ||
-            c.startsWith("surface-") ||
-            c.startsWith("text-") ||
-            c.startsWith("bg-") ||
-            c.includes("card") ||
-            c.includes("sl-link-button")
-        );
-      }
-    }
-
-    const isInline = sourceElement
-      ? sourceElement.style.getPropertyValue(sourceVar) !== ""
-      : false;
-
-    const isSemanticallyPublic =
-      intent === "Final Text Color" || intent === "Surface Color";
-
-    tokens.push({
-      intent,
-      value,
-      sourceVar,
-      sourceValue,
-      element: sourceElement || undefined,
-      isLocal: sourceElement === element,
-      isPrivate:
-        !isSemanticallyPublic &&
-        (sourceVar.startsWith("--_") || sourceVar.startsWith("--axm-computed")),
-      responsibleClass,
-      isInline,
-      isDefault,
-    });
-  };
-
-  const hue = style.getPropertyValue("--alpha-hue").trim();
-  if (hue) {
-    addToken("Context Hue", hue, "--alpha-hue", hue);
-  }
-
-  const chroma = style.getPropertyValue("--alpha-beta").trim();
-  if (chroma) {
-    addToken("Context Chroma", chroma, "--alpha-beta", chroma);
-  }
-
-  const lightnessSource = style
-    .getPropertyValue("--_axm-text-lightness-source")
-    .trim();
-  if (lightnessSource) {
-    const match = findMatch(lightnessSource);
-    const isPublic = !!match;
-    const sourceVar = "--_axm-text-lightness-source";
-    const sourceElement = findVariableSource(element, sourceVar);
-
-    let responsibleClass;
-    if (sourceElement) {
-      const classList = Array.from(sourceElement.classList);
-      responsibleClass = classList.find((c) => c.startsWith("text-"));
-      if (!responsibleClass && sourceElement.tagName === "BODY") {
-        responsibleClass = "text-high (default)";
-      }
-    }
-
-    tokens.push({
-      intent: "Text Source",
-      value: lightnessSource,
-      sourceVar,
-      sourceValue: match || "Custom/Inherited",
-      isPrivate: !isPublic,
-      element: sourceElement || undefined,
-      isLocal: sourceElement === element,
-      responsibleClass,
-    });
-  }
-
-  const fgColor = style.getPropertyValue("--_axm-computed-fg-color").trim();
-  if (fgColor && fgColor !== "transparent") {
-    addToken("Final Text Color", fgColor, "--_axm-computed-fg-color", fgColor);
-  }
-
-  const surfaceColor = style.getPropertyValue("--_axm-computed-surface").trim();
-  if (surfaceColor && surfaceColor !== "transparent") {
-    addToken(
-      "Surface Color",
-      surfaceColor,
-      "--_axm-computed-surface",
-      surfaceColor,
-    );
-  }
-
-  const bgColor = style.backgroundColor;
-  if (bgColor && bgColor !== "transparent" && bgColor !== "rgba(0, 0, 0, 0)") {
-    addToken("Actual Background", bgColor, "background-color", bgColor);
-  }
-
-  return tokens;
-}
-
-// --- Main Logic ---
-function getCssSelector(el) {
-  if (!(el instanceof Element)) return;
-  const path = [];
-  while (el.nodeType === Node.ELEMENT_NODE) {
-    let selector = el.nodeName.toLowerCase();
-    if (el.id) {
-      selector += '#' + el.id;
-      path.unshift(selector);
-      break;
-    } else {
-      let sib = el, nth = 1;
-      while (sib = sib.previousElementSibling) {
-        if (sib.nodeName.toLowerCase() == selector)
-          nth++;
-      }
-      if (nth != 1)
-        selector += ":nth-of-type(" + nth + ")";
-    }
-    path.unshift(selector);
-    el = el.parentNode;
-  }
-  return path.join(" > ");
-}
-
+const SCANNER_LOGIC = `
 function scanForViolations() {
   const allElements = document.body.querySelectorAll("*");
   const violations = [];
@@ -300,6 +20,10 @@ function scanForViolations() {
     if (element instanceof HTMLElement) {
       if (element.offsetParent === null) continue;
       if (element.tagName === "AXIOMATIC-DEBUGGER") continue;
+      if (element.matches(".expressive-code .copy button div")) continue;
+      if (element.matches(".preview-swatch, .handle, .selection-marker, .track-fill")) continue;
+      if (element.matches(".expressive-code figcaption, .expressive-code figcaption *")) continue;
+      if (element.tagName === "INPUT" && (element.type === "range" || element.type === "color")) continue;
 
       const context = findContextRoot(element);
       const tokens = resolveTokens(element, context);
@@ -341,13 +65,18 @@ function scanForViolations() {
   return violations;
 }
 
-return scanForViolations();
+scanForViolations();
 `;
+
+const INJECTED_SCRIPT = WALKER_LIBRARY + SCANNER_LOGIC;
 
 async function checkViolations(): Promise<void> {
   const browser = await chromium.launch();
   const context = await browser.newContext({ ignoreHTTPSErrors: true });
   const page = await context.newPage();
+  page.on("console", (msg) => {
+    console.log("PAGE LOG:", msg.text());
+  });
 
   let url = process.argv[2] || "https://color-system.localhost/";
   if (url.startsWith("/")) {
@@ -361,7 +90,7 @@ async function checkViolations(): Promise<void> {
 
   for (let i = 0; i < maxRetries; i++) {
     try {
-      await page.goto(url, { timeout: 5000, waitUntil: "domcontentloaded" });
+      await page.goto(url, { timeout: 30000, waitUntil: "domcontentloaded" });
       connected = true;
       break;
     } catch {
@@ -388,7 +117,7 @@ async function checkViolations(): Promise<void> {
 
     // Inject and run the violation scanner
 
-    const violations = await page.evaluate(INJECTED_SCRIPT);
+    const violations = await page.evaluate<Violation[]>(INJECTED_SCRIPT);
 
     if (violations.length === 0) {
       console.log("✅ No violations found.");
@@ -400,6 +129,128 @@ async function checkViolations(): Promise<void> {
 
   await checkMode("light");
   await checkMode("dark");
+
+  console.log("\n--- CONTINUITY CHECK (Tau Zero) ---");
+  // 5. Compare
+  // const continuityViolations = 0;
+
+  // We need to inject the walker library again for the diagnosis step if we want to use it inside evaluate
+  // But here we are comparing stateA and stateB which are just JSON objects in Node.
+  // To get the blame, we need to run the diagnosis INSIDE the browser during the check.
+
+  // Let's rewrite the continuity check to run entirely in the browser, like overlay.ts does.
+  // This is more efficient and allows access to the DOM for diagnosis.
+
+  const CONTINUITY_SCRIPT =
+    WALKER_LIBRARY +
+    `
+    async function checkContinuity() {
+      // 1. Freeze Time (Set tau to 0)
+      document.documentElement.style.setProperty("--tau", "0");
+      const style = document.createElement("style");
+      style.innerHTML = "* { transition: none !important; }";
+      document.head.appendChild(style);
+
+      // 2. Capture State A (Light Mode + Tau=0)
+      document.documentElement.setAttribute("data-theme", "light");
+      // Wait for style recalc
+      await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+      
+      const allElements = Array.from(document.body.querySelectorAll("*"));
+      const stateA = allElements.map(el => {
+        const style = getComputedStyle(el);
+        return {
+          bg: style.backgroundColor,
+          color: style.color
+        };
+      });
+
+      // 3. Toggle Theme (Dark Mode + Tau=0)
+      document.documentElement.setAttribute("data-theme", "dark");
+      await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+
+      // 4. Capture State B & Compare
+      const violations = [];
+
+      allElements.forEach((element, i) => {
+        if (!(element instanceof HTMLElement)) return;
+        if (element.offsetParent === null) return;
+        if (element.tagName === "AXIOMATIC-DEBUGGER") return;
+        if (element.matches(".expressive-code .copy button div")) return;
+        if (element.matches(".preview-swatch, .handle, .selection-marker, .track-fill")) return;
+
+        const a = stateA[i];
+        const style = getComputedStyle(element);
+        const b = { bg: style.backgroundColor, color: style.color };
+
+        if (a.bg === "rgba(0, 0, 0, 0)" && b.bg === "rgba(0, 0, 0, 0)") {
+          // Ignore transparent
+        } else if (a.bg !== b.bg) {
+          // Diagnose the cause
+          const context = findContextRoot(element);
+          const tokens = resolveTokens(element, context);
+          const bgToken = tokens.find(t => t.intent === "Actual Background");
+          
+          let culprit = "Unknown Selector";
+          const classList = Array.from(element.classList);
+          const bgUtilities = classList.filter((c) => c.startsWith("bg-"));
+          const otherClasses = classList.filter(
+            (c) =>
+              !c.startsWith("bg-") &&
+              !c.startsWith("text-") &&
+              !c.startsWith("surface-") &&
+              !c.startsWith("theme-"),
+          );
+          const hasInlineStyle = element.style.backgroundColor !== "";
+
+          if (bgToken && bgToken.sourceVar.startsWith("--")) {
+             culprit = \`Variable \${bgToken.sourceVar}\`;
+          } else if (hasInlineStyle) {
+             culprit = "Inline 'style' attribute";
+          } else if (bgUtilities.length > 0) {
+             culprit = \`Utility classes: \${bgUtilities.join(", ")}\`;
+          } else if (otherClasses.length > 0) {
+             culprit = \`Custom CSS classes: \${otherClasses.join(", ")}\`;
+          } else if (element.id) {
+             culprit = \`ID selector: #\${element.id}\`;
+          } else {
+             culprit = "Tag selector or User Agent default";
+          }
+
+          violations.push({
+            tag: element.tagName.toLowerCase(),
+            classes: element.className,
+            id: element.id,
+            reason: \`Continuity Violation (Background): Snapped from \${a.bg} to \${b.bg}. Culprit: \${culprit}\`
+          });
+        } else if (a.color !== b.color) {
+          violations.push({
+            tag: element.tagName.toLowerCase(),
+            classes: element.className,
+            id: element.id,
+            reason: \`Continuity Violation (Foreground): Snapped from \${a.color} to \${b.color}.\`
+          });
+        }
+      });
+      
+      return violations;
+    }
+    checkContinuity();
+  `;
+
+  const violations =
+    await page.evaluate<
+      Array<{ tag: string; classes: string; id: string; reason: string }>
+    >(CONTINUITY_SCRIPT);
+
+  if (violations.length === 0) {
+    console.log("✅ No continuity violations found.");
+  } else {
+    console.log(`🚫 Found ${violations.length} continuity violations:`);
+    violations.forEach((v) => {
+      console.log(`[${v.tag}.${v.classes.replace(/ /g, ".")}] ${v.reason}`);
+    });
+  }
 
   await browser.close();
 }

@@ -1,34 +1,45 @@
 <script>
-  import InspectorSurface from "./inspector/InspectorSurface.svelte";
-  import TokenInspector from "./inspector/TokenInspector.svelte";
+  // Inspector functionality removed in favor of global inspector
 </script>
 
-<TokenInspector>
-  <div class="context-visualizer p-4 overflow-x-auto">
-    <div class="min-w-[600px]">
-      <InspectorSurface
-        class="surface-page p-8 border border-border-subtle rounded-lg"
+<div class="context-visualizer" style="padding: 1rem; overflow-x: auto;">
+  <div style="min-width: 600px;">
+    <div
+      class="surface-page bordered"
+      style="padding: 2rem; border-radius: 0.5rem;"
+    >
+      <div
+        style="margin-bottom: 1rem; font-weight: bold; font-size: 0.875rem; color: var(--axm-text-subtle-token);"
       >
-        <div class="text-sm font-bold mb-4 text-text-subtle">
-          Page (Light Context)
-        </div>
-        <InspectorSurface
-          class="surface-card p-8 border border-border-subtle rounded-lg shadow-sm"
+        Page (Light Context)
+      </div>
+      <div
+        class="surface-card bordered"
+        style="padding: 2rem; border-radius: 0.5rem; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);"
+      >
+        <div
+          style="margin-bottom: 1rem; font-weight: bold; font-size: 0.875rem; color: var(--axm-text-subtle-token);"
         >
-          <div class="text-sm font-bold mb-4 text-text-subtle">
-            Card (Nested)
+          Card (Nested)
+        </div>
+        <div
+          class="surface-spotlight"
+          style="padding: 2rem; border-radius: 0.5rem;"
+        >
+          <div
+            class="text-strong"
+            style="font-weight: bold; font-size: 0.875rem;"
+          >
+            Spotlight (Inverted Context)
           </div>
-          <InspectorSurface class="surface-spotlight p-8 text-white rounded-lg">
-            <div class="text-sm font-bold text-strong">
-              Spotlight (Inverted Context)
-            </div>
-            <div class="mt-2 text-sm text-subtle">
-              This surface inverts the polarity. Text becomes light
-              automatically.
-            </div>
-          </InspectorSurface>
-        </InspectorSurface>
-      </InspectorSurface>
+          <div
+            class="text-subtle"
+            style="margin-top: 0.5rem; font-size: 0.875rem;"
+          >
+            This surface inverts the polarity. Text becomes light automatically.
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-</TokenInspector>
+</div>

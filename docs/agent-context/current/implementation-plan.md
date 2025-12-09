@@ -1,66 +1,50 @@
-# Implementation Plan - Epoch 37: Phase 2 - Remediation
+# Implementation Plan - Phase 5: Manual QA & Iteration
 
-**Goal**: Fix the visual and semantic defects identified in the Phase 1 Audit to ensure a premium, robust user experience.
+**Goal**: Final manual verification and iterative polish with the user to ensure the system meets all quality standards before the major interoperability push.
 
-**Source of Truth**: `qa-audit/audit-results.md`
+## Strategy
 
-## 1. Global Fixes
+This phase is open-ended and driven by user feedback. We will focus on:
 
-**Status**: Pending
+1.  **User Review**: The user will review the deployed site or local build.
+2.  **Feedback Loop**: We will address specific visual, functional, or content issues identified by the user.
+3.  **Final Polish**: Any remaining "fit and finish" tasks.
 
-- [ ] **Code Block Contrast**:
-  - **Task**: Override `.astro-code` background to use a semantic surface token (e.g., `var(--axm-surface-sunken)` or a dedicated code surface).
-  - **Goal**: Eliminate the "cutout" effect in Dark Mode.
-- [ ] **Sidebar Active State**:
-  - **Task**: Map Starlight's active link color variable to a brand token (e.g., `var(--axm-color-primary)`).
-  - **Goal**: Replace the hardcoded blue with the system's brand color.
-- [ ] **Starlight Leaks**:
-  - **Task**: Create a `starlight-reset.css` or scope custom components (`.card`, `.sl-link-button`) to prevent style leakage.
-  - **Goal**: Ensure custom components look consistent regardless of Starlight's default styles.
+## Debugging Workflow
 
-## 2. Page-Specific Fixes
+When visual or functional issues are identified, use the `scripts/debug-css-cascade.ts` tool to diagnose the root cause.
 
-**Status**: Pending
+### Usage
 
-### Home Page
+```bash
+# Basic usage (inspects cascade for a selector)
+node scripts/debug-css-cascade.ts <url> <selector>
 
-- [ ] **Hero Visibility Safeguard**:
-  - **Task**: Explicitly set `color-scheme: dark` and `z-index` on the Hero container.
-  - **Goal**: Prevent regression of the "invisible text" issue.
+# Auto Mode (detects semantic violations)
+node scripts/debug-css-cascade.ts <url> <selector> auto
+```
 
-### Concepts Page
+### Debugging Steps
 
-- [ ] **"Ghost Text" (Spotlight)**:
-  - **Task**: Investigate and fix the text color/weight for inverted surfaces in Light Mode.
-  - **Goal**: Ensure text inside the "Spotlight" box is legible.
-- [ ] **Mobile Layout (Context Visualizer)**:
-  - **Task**: Add `min-width` and horizontal scrolling to the Context Visualizer container.
-  - **Goal**: Preserve the nesting visualization on small screens.
+1.  **Reproduce**: Identify the URL and selector of the problematic element.
+2.  **Diagnose**: Run the debug script in `auto` mode to check for semantic violations (e.g., missing surface tokens, incorrect contrast).
+3.  **Inspect**: If no violations are found, check the "Cascade Report" to see which CSS rules are winning.
+4.  **Fix**: Adjust the CSS (or tokens) based on the findings.
+5.  **Verify**: Re-run the debug script to confirm the fix.
 
-### Tokens Page
+## Constraints
 
-- [ ] **Mobile Tables**:
-  - **Task**: Wrap token tables in a scrollable container (`overflow-x: auto`) or implement a stacked layout for mobile.
-  - **Goal**: Make token tables readable on mobile devices.
+- **Explicit Sign-off**: Do **NOT** propose moving to the next phase until the user explicitly states "We are ready to move on".
+- **No Assumptions**: Assume there is always more polish to be done unless told otherwise.
 
-## 3. Design Quality & Polish
+## Tasks
 
-**Status**: Pending
-
-- [ ] **Visual Density**:
-  - **Task**: Increase `gap` in button groups and review padding in "Surface Hierarchy" grids.
-  - **Goal**: Reduce the "packed" feeling.
-- [ ] **Card Styling**:
-  - **Task**: Audit lists on the Tokens page and wrap distinct sections in `.surface-card`.
-  - **Goal**: Improve visual hierarchy.
-- [ ] **Example Differentiation**:
-  - **Task**: Update the "Surface Hierarchy" examples to use distinct layouts/content for different surface types (e.g., Button vs. Callout vs. Card).
-  - **Goal**: Make the semantic difference between surfaces obvious.
-
-## 4. Verification
-
-**Status**: Pending
-
-- [ ] **Visual Regression Check**:
-  - **Task**: Re-run `scripts/qa-screenshots.ts` and compare with the audit screenshots.
-  - **Goal**: Confirm fixes without introducing regressions.
+- [ ] **User Review Session**
+  - [ ] Solicit feedback on the current state.
+  - [ ] Identify any remaining blockers for the next epoch.
+- [ ] **Remediation**
+  - [ ] Address feedback item 1 (TBD)
+  - [ ] Address feedback item 2 (TBD)
+- [ ] **Final Verification**
+  - [ ] Verify all fixes.
+  - [ ] Ensure no regressions.

@@ -702,3 +702,12 @@ This file tracks key architectural and design decisions made throughout the proj
 - **Rationale**:
   - **Control**: MDX allows us to use HTML/Components to control layout and styling beyond what standard Markdown permits.
   - **Hierarchy**: Wrapping tables in cards visually separates them from the background, improving readability and design quality.
+
+### [2025-12-08] Strict TypeScript in Scripts
+
+- **Context**: Our scripts (e.g., `check-violations.ts`) were using `any` types and loose typing, which led to maintenance issues and potential runtime errors. The linter was configured to be strict, causing build failures.
+- **Decision**: Enforce strict TypeScript typing in all scripts, including `no-explicit-any` and `no-unused-vars`.
+- **Rationale**:
+  - **Reliability**: Scripts are part of the production pipeline (CI/CD). They should be as robust as the application code.
+  - **Maintainability**: Strict typing acts as documentation and prevents "bit rot" where scripts stop working as the codebase evolves.
+  - **Consistency**: The entire monorepo should adhere to the same quality standards.

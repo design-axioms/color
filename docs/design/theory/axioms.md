@@ -69,6 +69,11 @@ We prioritize formats that preserve the semantics of the system (like reactive C
 **We expose knobs for _intent_, not _implementation_.**
 Users express what they want (Accessibility, Vibe), and the system handles the math.
 
+### [X. The Law of Semantic Continuity](axioms/10-semantic-continuity.md)
+
+**Transitions must preserve semantic intent, not just minimize distance.**
+We reject linear interpolation when it violates the semantic meaning of the transition (e.g., forcing a "Cool -> Warm" hue shift to go the long way around the wheel).
+
 ## Missing / Implicit Axioms (To Be Formalized)
 
 The following principles guide our work but have not yet been codified into Law:

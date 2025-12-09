@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Animation Repro</title>
+    <style>
+      @property --tau {
+        syntax: "<number>";
+        initial-value: 1;
+        inherits: true;
+      }
+
+      :root {
+        --tau: 1;
+        transition: --tau 1s linear;
+      }
+
+      :root[data-theme="dark"] {
+        --tau: -1;
+      }
+
+      /* Simulate the generated CSS */
+      :where(*) {
+        --h: 25;
+        --c: 0.14;
+        --beta: 0.008;
+        --bg: oklch(
+          calc(0.7 - (0.05 * var(--tau))) calc(var(--c) + (var(--beta) * 0.5))
+            var(--h)
+        );
+      }
+
+      .box {
+        width: 100px;
+        height: 100px;
+        margin: 20px;
+      }
+
+      .box-complex {
+        background-color: var(--bg);
+      }
+
+      /* View Transition Overrides from starlight-custom.css */
+      ::view-transition-group(*) {
+        animation-duration: 0s !important;
+        mix-blend-mode: normal !important;
+      }
+
+      ::view-transition-old(*),
+      ::view-transition-new(*) {
+        animation: none !important;
+        opacity: 0 !important;
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Animation Repro</h1>
+    <button onclick="toggleTheme()">Toggle Theme</button>
+
+    <p>Complex Dependency (Lightness Shift)</p>
+    <div class="box box-complex"></div>
+
+    <script>
+      function toggleTheme() {
+        const html = document.documentElement;
+        const current = html.getAttribute("data-theme");
+        const next = current === "light" ? "dark" : "light";
+
+        // Simulate View Transition if supported
+        if (document.startViewTransition) {
+          document.startViewTransition(() => {
+            html.setAttribute("data-theme", next);
+          });
+        } else {
+          html.setAttribute("data-theme", next);
+        }
+      }
+
+      // Log --tau value
+      function logTau() {
+        const tau = getComputedStyle(document.documentElement).getPropertyValue(
+          "--tau",
+        );
+        const color = getComputedStyle(
+          document.querySelector(".box-complex"),
+        ).backgroundColor;
+        // console.log(`Tau: ${tau}, Color: ${color}`);
+        requestAnimationFrame(logTau);
+      }
+      logTau();
+    </script>
+  </body>
+</html>

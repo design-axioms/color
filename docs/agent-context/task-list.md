@@ -22,8 +22,8 @@ This task list tracks the systematic remediation of the documentation site to en
 
 ### 3. Concepts (`/concepts/thinking-in-surfaces/`)
 
-- [ ] **Audit**: Run `check-violations.ts /concepts/thinking-in-surfaces/`
-- [ ] **Fix**: Resolve reported violations.
+- [x] **Audit**: Run `check-violations.ts /concepts/thinking-in-surfaces/`
+- [x] **Fix**: Resolve reported violations.
 
 ### 4. Reference (`/reference/tokens/`)
 

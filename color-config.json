@@ -1,6 +1,16 @@
 {
   "$schema": "./color-config.schema.json",
   "anchors": {
+    "inverted": {
+      "light": {
+        "start": { "background": 0.6 },
+        "end": { "background": 0 }
+      },
+      "dark": {
+        "start": { "background": 0.9 },
+        "end": { "background": 1 }
+      }
+    },
     "keyColors": {
       "brand": "#8b5cf6",
       "success": "#10b981",
@@ -45,8 +55,8 @@
           "hue": "brand",
           "targetChroma": 0,
           "states": [
-            { "name": "hover", "offset": 0.05 },
-            { "name": "active", "offset": 0.08 }
+            { "name": "hover", "offset": 5 },
+            { "name": "active", "offset": 8 }
           ]
         }
       ]
@@ -60,8 +70,8 @@
           "polarity": "inverted",
           "hue": "brand",
           "states": [
-            { "name": "hover", "offset": 0.1 },
-            { "name": "active", "offset": 0.15 }
+            { "name": "hover", "offset": 5 },
+            { "name": "active", "offset": 8 }
           ]
         },
         {
@@ -70,8 +80,8 @@
           "polarity": "page",
           "hue": "brand",
           "states": [
-            { "name": "hover", "offset": 0.05 },
-            { "name": "active", "offset": 0.08 }
+            { "name": "hover", "offset": 5 },
+            { "name": "active", "offset": 8 }
           ]
         }
       ]

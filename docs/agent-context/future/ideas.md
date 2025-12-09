@@ -7,6 +7,7 @@
 
 ## UI/UX
 
+- **Visualizations for Physics of Light**: The `physics-of-light` documentation page needs visualizations to better explain the concepts.
 - **Interactive Tutorials**: Guided walkthroughs within the Theme Builder that teach users about concepts like Contrast Space, APCA, and Surface Context as they adjust settings.
   - I think this is a high priority once we get everything else sorted, but it implies thinking about how we want to represent code (a "REPL" mode?) and how to structure the tutorials. Svelte's tutorial structure is great, but implementing it will require thinking about design goals and axioms, personas, and learning outcomes. And _then_ we can build it.
 

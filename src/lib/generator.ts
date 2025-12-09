@@ -1,4 +1,5 @@
 import { converter } from "culori";
+import { generateChartAlgebra } from "./charts.ts";
 import { solveBorderAlpha, solveForegroundSpec } from "./math.ts";
 import type {
   BorderTargets,
@@ -80,9 +81,24 @@ export function generateTokensCss(
 
   // Shadows
   for (const [size, token] of Object.entries(shadows)) {
-    rootLines.push(
-      `  ${v(`shadow-${size}`)}: light-dark(${token.light}, ${token.dark});`,
-    );
+    // Merge light and dark shadow definitions to use light-dark() for colors only
+    const lightColors = token.light.match(/oklch\([^)]+\)/g) || [];
+    const darkColors = token.dark.match(/oklch\([^)]+\)/g) || [];
+
+    if (lightColors.length > 0 && lightColors.length === darkColors.length) {
+      let index = 0;
+      const merged = token.light.replace(/oklch\([^)]+\)/g, (match) => {
+        const darkColor = darkColors[index];
+        index++;
+        return `light-dark(${match}, ${darkColor})`;
+      });
+      rootLines.push(`  ${v(`shadow-${size}`)}: ${merged};`);
+    } else {
+      // Fallback for mismatched structures
+      rootLines.push(
+        `  ${v(`shadow-${size}`)}: light-dark(${token.light}, ${token.dark});`,
+      );
+    }
   }
 
   // Focus
@@ -107,25 +123,25 @@ export function generateTokensCss(
     }, ${highlight.surface.dark});`,
   );
 
-  // Data Visualization Palette
-  if (theme.charts.length > 0) {
-    rootLines.push(`  /* Data Visualization */`);
-    theme.charts.forEach((chart, index) => {
-      rootLines.push(
-        `  ${v(`chart-${index + 1}`)}: light-dark(
-    oklch(${toNumber(chart.light.l)} ${toNumber(chart.light.c)} ${toNumber(
-      chart.light.h,
-    )}),
-    oklch(${toNumber(chart.dark.l)} ${toNumber(chart.dark.c)} ${toNumber(
-      chart.dark.h,
-    )})
-  );`,
-      );
-    });
-  }
-
   rootLines.push(`}`);
   rootLines.push("");
+
+  // Data Visualization Palette
+  if (theme.charts.length > 0) {
+    rootLines.push(`* {`);
+    rootLines.push(`  /* Data Visualization (Reactive) */`);
+    theme.charts.forEach((chart, index) => {
+      const i = index + 1;
+      const algebra = generateChartAlgebra(i, chart, options?.prefix);
+
+      algebra.variables.forEach((v) => {
+        rootLines.push(`  ${v.name}: ${v.value};`);
+      });
+      rootLines.push(algebra.css);
+    });
+    rootLines.push(`}`);
+    rootLines.push("");
+  }
 
   for (const group of groups) {
     for (const surface of group.surfaces) {
@@ -197,6 +213,13 @@ export function generateTokensCss(
       );
 
       rootLines.push(
+        `  ${v("text-body-token")}: light-dark(
+    oklch(${toNumber(lightSpec["fg-baseline"])} 0 0),
+    oklch(${toNumber(darkSpec["fg-baseline"])} 0 0)
+  );`,
+      );
+
+      rootLines.push(
         `  ${v("text-subtle-token")}: light-dark(
     oklch(${toNumber(lightSpec["fg-subtle"])} 0 0),
     oklch(${toNumber(darkSpec["fg-subtle"])} 0 0)
@@ -215,6 +238,13 @@ export function generateTokensCss(
         `  ${v("text-high-hc-token")}: light-dark(
     oklch(${toNumber(lightSpec["fg-high-hc"])} 0 0),
     oklch(${toNumber(darkSpec["fg-high-hc"])} 0 0)
+  );`,
+      );
+
+      rootLines.push(
+        `  ${v("text-body-hc-token")}: light-dark(
+    oklch(${toNumber(lightSpec["fg-baseline-hc"])} 0 0),
+    oklch(${toNumber(darkSpec["fg-baseline-hc"])} 0 0)
   );`,
       );
 
@@ -361,6 +391,11 @@ export function generateTokensCss(
     `.text-strong { ${pv("text-lightness-source")}: var(${v("text-high-token")}); font-weight: 600; }`,
   );
 
+  // Text Body
+  rootLines.push(
+    `.text-body { ${pv("text-lightness-source")}: var(${v("text-body-token")}); }`,
+  );
+
   // Text Subtle
   rootLines.push(
     `.text-subtle { ${pv("text-lightness-source")}: var(${v("text-subtle-token")}); }`,
@@ -375,6 +410,9 @@ export function generateTokensCss(
   rootLines.push(`@media (prefers-contrast: more) {`);
   rootLines.push(
     `  .text-strong { ${pv("text-lightness-source")}: var(${v("text-high-hc-token")}); }`,
+  );
+  rootLines.push(
+    `  .text-body { ${pv("text-lightness-source")}: var(${v("text-body-hc-token")}); }`,
   );
   rootLines.push(
     `  .text-subtle { ${pv("text-lightness-source")}: var(${v("text-subtle-hc-token")}); }`,

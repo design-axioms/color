@@ -1,239 +1,176 @@
-# Phase 3 Walkthrough: Grand Unified Algebra v4.0
+# Phase 5: Manual QA & Iteration - Walkthrough
 
-## Overview
+## [2025-12-08] Phase Kickoff
 
-This phase implemented the **Grand Unified Algebra v4.0** (Baseline 2025), a major architectural overhaul of the color system. The goal was to replace the legacy "Parabolic Dome" physics with the "Safe Bicone" model, implement the Unified State Tuple ($\Sigma$), and transition accessibility features (High Contrast, Forced Colors) to a fully reactive, variable-based architecture.
+We have successfully transitioned from "Phase 2: Remediation" to "Phase 5: Manual QA & Iteration". The codebase is in a clean state, with all linting and syntax errors resolved.
 
-## Key Implementations
+### Goals for this Phase
 
-### 1. Unified State Tuple ($\Sigma$)
+1.  **Manual Verification**: The user will manually review the system (Demo App, Documentation, CLI) to identify any remaining visual or functional issues.
+2.  **Remediation**: We will fix any issues found during the manual review.
+3.  **Final Polish**: We will ensure the documentation is accurate and the system feels robust.
 
-We formalized the state of any surface as a 5-tuple:
-$$ \Sigma = \langle \alpha, \nu, \tau, \gamma, \sigma \rangle $$
+### Current Status
 
-- **$\alpha$ (Atmosphere)**: The base hue/chroma context.
-- **$\nu$ (Voice)**: The lightness/contrast target.
-- **$\tau$ (Time)**: The animation state (Quadratic Ease).
-- **$\gamma$ (Gain)**: High Contrast mode state.
-- **$\sigma$ (System)**: Forced Colors mode state.
+- **Linting**: Clean (Strict TypeScript, Knip, Prettier).
+- **Tests**: Passing.
+- **Documentation**: Syntax errors fixed.
+- **Context**: Reset for the new phase.
 
-This is now reflected in `css/engine.css` via the `--alpha-*` variables.
+### Next Steps
 
-### 2. Hybrid Manifold Physics
+- Wait for user feedback on the manual review.
+- Address items in `task-list.md` as they are prioritized.
 
-We implemented a **Hybrid Manifold** strategy, combining Linear Space with Quadratic Time to maximize both gamut safety and transition smoothness.
-
-- **Space (Taper)**: **Linear** (`1 - abs(2L - 1)`).
-  - _Why_: The sRGB gamut boundary is linear. This prevents clipping at the extremes (black/white).
-- **Time (Tunnel)**: **Quadratic** (`tau^2`).
-  - _Why_: A parabolic tunnel stays closer to 0 for longer around the "Gray Equator", creating a wider "Diving Bell" effect that suppresses the Neon Flash during the most dangerous part of the transition.
-
-**New Math:**
-$$ \text{Taper} = 1 - |2L - 1| $$
-$$ \text{Tunnel} = \tau^2 $$
-$$ \text{Limit} = \beta \times \text{Taper} \times \text{Tunnel} $$
-
-### 3. Reactive Accessibility
-
-#### High Contrast (Gain $\gamma$)
-
-Instead of a separate build pass, High Contrast is now handled via CSS variables and the `@media (prefers-contrast: more)` query.
-
-- **Generator**: Emits `*-hc-token` variables (boosted contrast).
-- **Engine**: Swaps the source variables dynamically when the media query matches.
-
-#### Forced Colors (System $\sigma$) - "Hollow State"
-
-We implemented the "Hollow State" for Windows High Contrast Mode (Forced Colors).
-
-- **Mechanism**: Surfaces switch from `background-color` to `border` using the `--alpha-structure` variable.
-- **Implementation**:
-  ```css
-  @media (forced-colors: active) {
-    .surface-card {
-      background: transparent;
-      border: var(--alpha-structure); /* e.g., 1px solid CanvasText */
-    }
-  }
-  ```
-
-### 4. Build Pipeline Optimization
-
-- **Removed**: The "double-pass" build logic in `src/cli/commands/build.ts`.
-- **Added**: Single-pass generation with all tokens (standard and HC) emitted in one go.
-- **Result**: Faster builds and a single source of truth for tokens.
-
-## Verification
-
-- **Unit Tests**: Updated snapshots in `tests/golden-master.spec.ts` and `src/lib/__tests__/generator.test.ts` to reflect the new token structure and media queries.
-- **Integration Tests**: Verified `tests/verify-colors.spec.ts` passes, ensuring Starlight integration remains intact.
-- **Visual Logic**: Created and ran `tests/hollow-state.spec.ts` to verify that `--alpha-structure` is correctly applied in `forced-colors: active` mode.
-
-## Key Decisions
-
-- **Syntax Fix**: We used `syntax: "*"` for `--alpha-structure` to work around parser limitations with complex border strings.
-- **Baseline 2025**: We fully embraced modern CSS features (`@property`, `oklch`, `light-dark`, `abs()`), assuming a modern browser baseline.
-
-## Next Steps
-
-- Manual visual inspection of the demo site to catch any subtle rendering issues that automated tests might miss.
-
-## Bug Fix: CSS Calculation Syntax
+## [2025-12-08] Fix: Invisible Spotlight Surface in Visualizer
 
 ### Issue
 
-The variable `--_axm-computed-fg-color` was resolving to `transparent` (initial value).
+The "Spotlight (Inverted Context)" surface in the `ContextVisualizer` (on the "Thinking in Surfaces" page) appeared with invisible text. The text was light (correct for an inverted surface), but the background was transparent instead of dark.
 
-### Cause
+### Root Cause
 
-The calculation chain used invalid CSS syntax:
+The `InspectorSurface` component was implemented as a `<button>` with `all: unset` to strip user-agent styles. However, the scoped class on the component had higher specificity than the Axiomatic system's `:where(...)` selectors. As a result, `all: unset` (specifically `background-color: initial`) overrode the Axiomatic `background-color` variable.
 
-```css
---_text-l-raw: oklch(from var(--_axm-text-lightness-source) l);
-```
+### Resolution
 
-`oklch` requires 3 components. This caused the variable to be invalid, cascading failure to `--_axm-computed-fg-color`.
+1.  **Refactored `InspectorSurface`**: Changed the underlying element from `<button>` to `<div>` with `role="button"` and `tabindex="0"`. This avoids the need for `all: unset` to fight user-agent button styles.
+2.  **Removed `all: unset`**: The component now inherits styles naturally, allowing the Axiomatic `:where(...)` selectors to apply the correct surface colors.
+3.  **Cleaned up Usage**: Removed a redundant `text-white` class from `ContextVisualizer.svelte`, proving that the Axiomatic system now correctly calculates the high-contrast text color automatically.
 
-### Fix
+### Verification
 
-Inlined the calculation into the final `oklch` function using the correct `from` syntax:
+Used `scripts/debug-css-cascade.ts` to verify that `.surface-spotlight` now correctly resolves its `background-color` and `color` from the Axiomatic tokens.
 
-```css
---_axm-computed-fg-color: oklch(
-  from var(--_axm-text-lightness-source)
-    calc(l + (0.05 * var(--_axm-computed-fg-C))) var(--_axm-computed-fg-C)
-    var(--alpha-hue)
-);
-```
+## [2025-12-08] Polish: Hue Shifting Documentation & Visualizer
 
-This correctly accesses the `l` component within the function scope.
+### Issues Identified
 
-## Feature Enablement: Tunnel Effect
+1.  **MDX Formatting**: `quick-start.mdx` had broken tabs and code blocks due to indentation issues.
+2.  **Visualizer UI**: `HueShiftVisualizer` had distorted "oval" handles (SVG aspect ratio issue) and uncentered slider thumbs.
+3.  **Comparison Clarity**: The "Visual Comparison" in `hue-shifting.mdx` was confusing. The linear vs. bezier distinction was subtle, and the layout was hard to scan.
+4.  **Narrative Flow**: The `hue-shifting.mdx` page felt disjointed, with redundant diagrams and a weak argument structure.
 
-### Issue
+### Resolutions
 
-The "Tunnel" effect (chroma dampening during mode transitions) was inactive because `--tau` was static at `1`.
+1.  **MDX Fixes**: Corrected indentation and spacing in `quick-start.mdx`.
+2.  **Visualizer Polish**:
+    - Replaced SVG `<circle>` handles with HTML `<div>` overlays to ensure perfect circles regardless of aspect ratio.
+    - Updated CSS variables to use `_axm-` prefix for correct color resolution.
+    - Fixed slider thumb centering.
+3.  **Comparison Redesign**:
+    - Created a new `docs-grid-comparison-v2` layout (side-by-side).
+    - Exaggerated the hue shift (Blue → Orange, 180°) to make the difference obvious.
+    - Added a midpoint stop to the linear gradient to ensure it travels the "long way" around the color wheel (through purple), matching the Bezier curve's path.
+    - Added descriptive text to each row explaining _why_ the linear shift fails (drifting, premature warmth) vs. the Bezier success (stable extremes).
+4.  **Narrative Restructuring**:
+    - Reorganized `hue-shifting.mdx` to follow a logical flow: Goal -> Problem (Linearity) -> Solution (Bezier) -> Proof (Comparison) -> Action (Playground).
+    - Removed redundant/confusing diagrams.
+    - Updated the Interactive Playground to initialize with the same values (180° shift) as the static examples for continuity.
 
-### Fix
+### Outcome
 
-Enabled animation for `--tau` in `css/engine.css`:
+The "Hue Shifting" page now presents a coherent, visually distinct argument for the system's non-linear hue rotation feature.
 
-1.  **Set Target**: Added `@media (prefers-color-scheme: dark) { :root { --tau: -1; } }`.
-2.  **Animate**: Added `transition: --tau 0.3s ease-in-out;` to `:root`.
-
-Now, when switching modes, `--tau` sweeps through `0`, causing `--_tunnel` ($ \tau^2 $) to dip to zero, creating the "Diving Bell" safety effect.
-
-## Bug Fix: Surface Physics Syntax
-
-### Issue
-
-Surfaces were rendering as transparent because the physics engine relied on extracting lightness into a variable using invalid syntax:
-
-```css
---_surface-l: oklch(from var(--axm-surface-token) l);
-```
-
-### Fix
-
-Refactored the physics calculation to happen inline within the `oklch` function, which allows valid access to the `l` component of the source token:
-
-```css
---_axm-computed-surface: oklch(
-  from var(--axm-surface-token) l
-    min(
-      var(--alpha-beta),
-      var(--alpha-beta) * (1 - abs(2 * l - 1)) * var(--tau) * var(--tau)
-    )
-    h
-);
-```
-
-## Build & Test Repair
-
-### Issue 1: ELOOP in `llm-context.spec.ts`
-
-**Problem**: The test runner was traversing into `.locald/build/rootfs/...`, causing infinite recursion (ELOOP) due to symlinks in the build environment.
-**Fix**: Updated `vitest.config.ts` to explicitly exclude `.locald/**`.
-
-### Issue 2: Snapshot Mismatches
-
-**Problem**: The "Grand Unified Algebra" changes (specifically the use of `var(--alpha-beta)` in `light-dark()` functions) caused `tests/golden-master.spec.ts` snapshots to fail.
-**Fix**: Verified the new CSS output was correct (Late Binding) and updated the snapshots.
-
-### Issue 3: Playwright/Vitest Conflict
-
-**Problem**: `tests/brand-button.spec.ts` is a Playwright test but was being picked up by Vitest, causing a crash because it tried to use the Playwright `test()` function in a Vitest environment.
-**Fix**: Added `tests/brand-button.spec.ts` to the `exclude` list in `vitest.config.ts`.
-
-### Issue 4: Missing CSS for Docs
-
-**Problem**: `scripts/generate-llms-txt.ts` failed because `css/theme.css` was missing (likely cleaned).
-**Fix**: Ran `pnpm solve` to regenerate the theme CSS before running the doc generation script.
-
-## Bug Fix: Desktop Hero Visibility (Dark Mode)
+## [2025-12-08] Fix: Broken Shadows (Invalid `light-dark()` Usage)
 
 ### Issue
 
-The H1 title and Action buttons were reported as "missing" on Desktop in Dark Mode.
-**Diagnosis**: The `body` element was not correctly inheriting `color-scheme: dark` from the root, causing the `light-dark()` function in `theme.css` to resolve to the Light Mode value (White background). Since the text color correctly switched to White (via other mechanisms), this resulted in **White Text on White Background**.
+The "Elevation (Shadows)" section in the documentation showed flat cards with no visible shadows. The computed `box-shadow` style was `none`.
 
-### Fix
+### Root Cause
 
-Updated `site/src/styles/starlight-custom.css` to explicitly apply `color-scheme` to the `body` element when the `data-theme` attribute changes:
+The CSS generator was wrapping the entire shadow definition in `light-dark()`:
+`--shadow-sm: light-dark(0 1px 2px 0 oklch(...), 0 1px 2px 0 oklch(...))`
+
+This is invalid CSS because `light-dark()` only accepts `<color>` arguments. It cannot handle complex strings like shadow definitions containing lengths.
+
+### Resolution
+
+Modified `src/lib/generator.ts` to intelligently merge the light and dark shadow definitions. It now parses the shadow string, finds the color components (using `oklch(...)`), and wraps _only_ the colors in `light-dark()`.
+
+**Before:**
+`--shadow-sm: light-dark(0 1px 2px 0 oklch(L C H), 0 1px 2px 0 oklch(L C H))` (Invalid)
+
+**After:**
+`--shadow-sm: 0 1px 2px 0 light-dark(oklch(L C H), oklch(L C H))` (Valid)
+
+### Verification
+
+Used `scripts/debug-css-cascade.ts` to verify that:
+
+1.  The generated CSS variable now contains a valid string.
+2.  The computed `box-shadow` on `.shadow-sm` is correctly parsed by the browser.
+
+## [2025-12-08] Fix: Jammed Buttons in Actions Catalog
+
+### Issue
+
+In the "Action Surfaces" section of the documentation (`catalog/actions`), the example buttons were touching each other with no spacing, making them look jammed together.
+
+### Root Cause
+
+The buttons were rendered inside a `Diagram` component (which renders a `div`) without any layout utility classes. As `inline-block` elements, they relied on whitespace for separation, which was insufficient.
+
+### Resolution
+
+Added the `.docs-flex` utility class to the `Diagram` containers. This applies `display: flex` and `gap: 1rem`, ensuring consistent spacing between the buttons.
+
+### Verification
+
+Verified that the `Diagram` component correctly passes the `class` prop to its root element, and that `.docs-flex` is defined in `docs.css` with the appropriate gap.
+
+## [2025-12-08] Feature: Reactive Chart Algebra
+
+### Issue
+
+The chart colors were implemented as static `light-dark()` pairs, which violated the "Grand Unified Algebra" (Reactive Physics). They did not respond to nested contexts (e.g., charts inside an inverted card) or atmospheric changes (Vibrancy).
+
+### Resolution
+
+Implemented a new "Reactive Chart Algebra" that calculates chart colors dynamically using CSS `calc()` and the system's core variables (`--tau`, `--beta`).
+
+1.  **Reactive Lightness**: $L_{chart} = L_{mid} - (k \times \tau)$. This ensures charts automatically flip their lightness when the context inverts (since $\tau$ flips).
+2.  **Vibrancy Injection**: $C_{chart} = C_{base} + (\beta \times 0.5)$. This allows the chart colors to pick up the "vibe" of the current theme.
+3.  **X-Ray Support**: Added borders to chart elements to ensure visibility in "X-Ray" (high contrast/debug) modes.
+
+### Fix: Invisible Charts
+
+During verification, the charts appeared as empty boxes. Investigation revealed a typo in `src/lib/charts.ts` where the generated CSS variables were missing the `--` prefix (e.g., `axm-chart-1` instead of `--axm-chart-1`).
+
+**Fix**: Updated `src/lib/charts.ts` to use the `v()` helper function, ensuring consistent variable naming. Rebuilt the system to propagate the fix to `theme.css`.
+
+### Verification
+
+- **Visual**: Charts are now visible in the `DataVizDemo` component.
+- **Code**: Verified `theme.css` contains valid `--axm-chart-N` declarations.
+
+## [2025-12-08] Fix: Broken Light/Dark Transition for Charts
+
+### Issue
+
+The user reported that the charts were not transitioning correctly between light and dark modes.
+
+### Root Cause
+
+The reactive chart algebra relies on the `--tau` variable (Time) to flip lightness ($L = L_{mid} - k \times \tau$).
+`--tau` was defined in `css/engine.css` using `@media (prefers-color-scheme: dark)`.
+However, the documentation site uses a manual theme toggle that sets the `data-theme` attribute on the root element. This updates `color-scheme` but **does not trigger the media query** if the OS preference differs from the toggle state.
+As a result, `--tau` remained stuck at `1` (Light Mode) even when the site was in Dark Mode.
+
+### Resolution
+
+Updated `site/src/styles/starlight-custom.css` to explicitly set `--tau` based on the `data-theme` attribute:
 
 ```css
-:root[data-theme="dark"],
-:root[data-theme="dark"] body {
-  color-scheme: dark;
+:root[data-theme="light"] {
+  --tau: 1;
+}
+:root[data-theme="dark"] {
+  --tau: -1;
 }
 ```
 
-This ensures the `light-dark()` function in `theme.css` (which defines tokens on `body`) resolves to the correct Dark Mode surface color.
+### Verification
 
-## Phase 4: Systematic Remediation (Completed)
-
-### 1. Tooling: Headless Violation Checker
-
-We created `scripts/check-violations.ts`, a Playwright-based tool that:
-
-1.  Navigates to a given URL (e.g., `/`).
-2.  Injects the `walker.ts` and `resolver.ts` logic from the `src/lib/inspector` module.
-3.  Crawls the DOM to find elements with "Surface Mismatch" or "Private Token" violations.
-4.  Outputs a structured table of violations to the console.
-
-This allows us to audit the site programmatically rather than relying on manual visual inspection.
-
-### 2. RFC 001: Foreign Element Adapters
-
-We drafted `docs/design/rfcs/001-foreign-element-adapters.md` to formalize the strategy for handling third-party components (like Starlight). The proposal involves:
-
-- **Configuration**: Defining a mapping between external selectors and internal semantic roles.
-- **Generation**: Automatically generating the CSS adapter code (like the manual overrides we wrote in `starlight-custom.css`).
-
-### 3. Remediation Execution
-
-We executed the remediation plan derived from the "Deep Visual & Semantic Audit" to fix visual defects and improve design quality.
-
-#### Global Fixes
-
-- **Sidebar**: Fixed active link color in Dark Mode to match the brand theme by overriding Starlight's default styles in `starlight-custom.css`.
-- **Code Blocks**: Forced `.astro-code` to use semantic surface tokens (`var(--axm-surface-token)`), fixing the "cutout" effect in Dark Mode where code blocks appeared as holes in the surface.
-- **Hero**: Added `z-index: 1` and `color-scheme: dark` safeguards to the Hero section to prevent invisible text in Dark Mode.
-
-#### Page-Specific Fixes
-
-- **Concepts Page**:
-  - Fixed "Ghost Text" in `ContextVisualizer` by replacing hardcoded `text-white` with semantic `.text-strong` tokens. This ensures text correctly inverts when the surface polarity flips.
-  - Fixed Mobile Layout by adding `overflow-x: auto` to tables and adjusting grid gaps.
-- **Tokens Page**:
-  - Renamed `tokens.md` to `tokens.mdx` to enable component usage.
-  - Wrapped token tables in `.surface-card` containers to give them proper visual hierarchy and separation from the background.
-
-#### Design Polish
-
-- **Visual Density**: Increased grid gaps in `thinking-in-surfaces.mdx` from `gap-4` to `gap-6` to reduce visual clutter.
-- **Example Differentiation**: Updated `SurfacePreview` usage in `thinking-in-surfaces.mdx` to include distinct content (buttons, placeholders, tooltips) for different surface types, making the hierarchy visually obvious.
-
-### 4. Verification
-
-We ran `scripts/qa-screenshots.ts` to capture screenshots of all key pages across Mobile, Tablet, and Desktop viewports in both Light and Dark modes. The screenshots confirm that the visual defects have been resolved.
+Verified that `starlight-custom.css` now contains the correct selectors to drive `--tau` from the theme toggle. This ensures the algebra receives the correct time value.

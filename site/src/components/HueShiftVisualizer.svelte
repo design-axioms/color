@@ -267,7 +267,7 @@
               <path
                 d="M 10 0 L 0 0 0 10"
                 fill="none"
-                stroke="var(--computed-border-dec-color)"
+                stroke="var(--_axm-computed-border-dec-color)"
                 stroke-width="0.5"
               />
             </pattern>
@@ -283,7 +283,7 @@
           <path
             d={svgPath}
             fill="none"
-            stroke="var(--computed-fg-color)"
+            stroke="var(--_axm-computed-fg-color)"
             stroke-width="3"
             stroke-linecap="round"
             vector-effect="non-scaling-stroke"
@@ -297,7 +297,7 @@
               y1={toSvgY(0)}
               x2={toSvgX(curve.p1[0])}
               y2={toSvgY(curve.p1[1])}
-              stroke="var(--computed-fg-color)"
+              stroke="var(--_axm-computed-fg-color)"
               stroke-width="1"
               stroke-dasharray="2 2"
               vector-effect="non-scaling-stroke"
@@ -309,7 +309,7 @@
               y1={toSvgY(1)}
               x2={toSvgX(curve.p2[0])}
               y2={toSvgY(curve.p2[1])}
-              stroke="var(--computed-fg-color)"
+              stroke="var(--_axm-computed-fg-color)"
               stroke-width="1"
               stroke-dasharray="2 2"
               vector-effect="non-scaling-stroke"
@@ -317,51 +317,33 @@
             />
 
             <!-- Control Points (Visual Only) -->
-            <!-- P1 -->
-            <circle
-              cx={toSvgX(curve.p1[0])}
-              cy={toSvgY(curve.p1[1])}
-              r="4"
-              fill="var(--computed-bg-color)"
-              stroke="var(--computed-fg-color)"
-              stroke-width="2"
-              vector-effect="non-scaling-stroke"
-              class="control-point"
-            />
-
-            <!-- P2 -->
-            <circle
-              cx={toSvgX(curve.p2[0])}
-              cy={toSvgY(curve.p2[1])}
-              r="4"
-              fill="var(--computed-bg-color)"
-              stroke="var(--computed-fg-color)"
-              stroke-width="2"
-              vector-effect="non-scaling-stroke"
-              class="control-point"
-            />
+            <!-- P1 and P2 circles removed to prevent oval distortion.
+                 The .control-handle buttons now provide the visual representation. -->
           {/if}
 
           <!-- Start/End Points (Fixed) -->
-          <circle
-            cx={toSvgX(0)}
-            cy={toSvgY(0)}
-            r="2"
-            fill="var(--computed-fg-color)"
-            vector-effect="non-scaling-stroke"
-          />
-          <circle
-            cx={toSvgX(1)}
-            cy={toSvgY(1)}
-            r="2"
-            fill="var(--computed-fg-color)"
-            vector-effect="non-scaling-stroke"
-          />
+          <!-- Removed SVG circles to prevent oval distortion.
+               Replaced with HTML elements in the overlay below. -->
         </svg>
 
-        {#if showControls}
-          <!-- Interactive Overlay -->
-          <div class="controls-overlay">
+        <!-- Fixed Start/End Points (HTML to avoid SVG distortion) -->
+        <div class="controls-overlay">
+          <!-- Start Point -->
+          <div
+            class="fixed-point"
+            style:left="{toSvgX(0)}%"
+            style:top="{toSvgY(0)}%"
+          ></div>
+
+          <!-- End Point -->
+          <div
+            class="fixed-point"
+            style:left="{toSvgX(1)}%"
+            style:top="{toSvgY(1)}%"
+          ></div>
+
+          {#if showControls}
+            <!-- Interactive Overlay -->
             <!-- P1 Button -->
             <button
               type="button"
@@ -393,8 +375,8 @@
                 handleMouseDown("p2");
               }}
             ></button>
-          </div>
-        {/if}
+          {/if}
+        </div>
 
         <!-- Axis Labels -->
         <div class="axis-label x-axis text-subtle">Lightness (0 → 100)</div>
@@ -585,15 +567,36 @@
 
   .control-handle {
     position: absolute;
-    width: 20px;
-    height: 20px;
+    width: 16px;
+    height: 16px;
     transform: translate(-50%, -50%);
-    background: transparent;
-    border: none;
+    background: var(--_axm-computed-surface);
+    border: 2px solid var(--_axm-computed-fg-color);
     border-radius: 50%;
     cursor: grab;
     pointer-events: auto;
     padding: 0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    transition: transform 0.1s ease;
+  }
+
+  .control-handle:hover,
+  .control-handle:focus-visible {
+    transform: translate(-50%, -50%) scale(1.2);
+  }
+
+  .control-handle:active {
+    cursor: grabbing;
+  }
+
+  .fixed-point {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    transform: translate(-50%, -50%);
+    background: var(--_axm-computed-fg-color);
+    border-radius: 50%;
+    pointer-events: none;
   }
 
   /* Gradient Preview */
@@ -618,7 +621,7 @@
   .gradient-strip {
     height: 32px;
     border-radius: 4px;
-    border: 1px solid var(--computed-border-dec-color);
+    border: 1px solid var(--_axm-computed-border-dec-color);
   }
 
   .gradient-labels {
@@ -649,7 +652,7 @@
     font-size: 0.85rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    border-bottom: 1px solid var(--computed-border-dec-color);
+    border-bottom: 1px solid var(--_axm-computed-border-dec-color);
     padding-bottom: 0.5rem;
   }
 
@@ -723,7 +726,7 @@
     position: absolute;
     width: 100%;
     height: 4px;
-    background: var(--computed-border-dec-color);
+    background: var(--_axm-computed-border-dec-color);
     border-radius: 2px;
     pointer-events: none;
   }
@@ -744,6 +747,15 @@
     outline: none;
   }
 
+  /* Track Styling for WebKit to ensure consistent height for thumb centering */
+  .styled-slider::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+  }
+
   /* Thumb Styling */
   .styled-slider::-webkit-slider-thumb {
     -webkit-appearance: none;
@@ -751,18 +763,18 @@
     width: 16px;
     height: 16px;
     border-radius: 50%;
-    background: var(--computed-fg-color);
-    border: 2px solid var(--computed-bg-color);
+    background: var(--_axm-computed-fg-color);
+    border: 2px solid var(--_axm-computed-surface);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-    margin-top: -6px; /* Center vertically relative to track if needed, but flex handles it */
+    margin-top: 4px; /* (24px track - 16px thumb) / 2 */
   }
 
   .styled-slider::-moz-range-thumb {
     width: 16px;
     height: 16px;
     border-radius: 50%;
-    background: var(--computed-fg-color);
-    border: 2px solid var(--computed-bg-color);
+    background: var(--_axm-computed-fg-color);
+    border: 2px solid var(--_axm-computed-surface);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
   }
 </style>

@@ -270,7 +270,8 @@
   background: linear-gradient(
     to right,
     oklch(0.2 0.1 260),
-    oklch(0.95 0.1 320)
+    oklch(0.575 0.1 341),
+    oklch(0.95 0.1 62)
   );
 }
 
@@ -278,10 +279,10 @@
   background: linear-gradient(
     to right,
     oklch(0.2 0.1 260),
-    /* Start: Blue */ oklch(0.4 0.1 265),
-    /* Slow start */ oklch(0.6 0.1 290),
-    /* Fast middle */ oklch(0.8 0.1 315),
-    /* Slow end */ oklch(0.95 0.1 320) /* End: Purple */
+    oklch(0.39 0.1 275),
+    oklch(0.57 0.1 350),
+    oklch(0.76 0.1 65),
+    oklch(0.95 0.1 80)
   );
 }
 
@@ -304,19 +305,19 @@
 }
 
 .docs-swatch-bezier-1 {
-  background: oklch(0.1 0.15 265);
+  background: oklch(0.1 0.15 260);
 }
 .docs-swatch-bezier-2 {
-  background: oklch(0.3 0.15 299);
+  background: oklch(0.3 0.15 275);
 }
 .docs-swatch-bezier-3 {
   background: oklch(0.5 0.15 350);
 }
 .docs-swatch-bezier-4 {
-  background: oklch(0.7 0.15 41);
+  background: oklch(0.7 0.15 65);
 }
 .docs-swatch-bezier-5 {
-  background: oklch(0.9 0.15 75);
+  background: oklch(0.9 0.15 80);
 }
 
 /* CTA Button */

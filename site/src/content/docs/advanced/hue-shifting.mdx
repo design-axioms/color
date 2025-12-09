@@ -35,65 +35,135 @@ If you create a color palette by simply changing lightness (e.g., `oklch(0.5 0.2
       <strong class="docs-card-header">Shifted Hue (Dynamic)</strong>
       <div class="docs-gradient-bar docs-gradient-shifted"></div>
       <div class="text-subtle docs-mt-2 docs-text-sm">
-        Rotating hue from Blue (260) to Purple (320) as lightness increases. The
+        Rotating hue from Blue (260) to Orange (80) as lightness increases. The
         result feels more vibrant and natural.
       </div>
     </div>
   </div>
 </Diagram>
 
-## Why Non-Linear Hue Shifting?
+## The Challenge of Linearity
 
-The color system supports optional **hue rotation** across the lightness spectrum. This feature allows surfaces to shift from cooler tones in darker regions to warmer tones in lighter regions (or vice versa), creating a more dynamic and perceptually harmonious color palette.
+While shifting hues is desirable, _how_ we shift them matters. A naive implementation might apply hue rotation linearly (e.g., 1° of rotation for every 1% of lightness).
 
-### The Problem with Linear Shifting
+However, this linear approach often fails to match human perception or design intent:
 
-A naive implementation might apply hue rotation linearly. However, this doesn't match human perception. Our eyes perceive warmth and coolness non-linearly across the lightness spectrum.
+1.  **Drifting Shadows**: Deep shadows lose their "cool" base hue too quickly, becoming muddy or ambiguous.
+2.  **Premature Warmth**: Highlights become warm too early in the lightness scale, losing the crispness of the mid-tones.
+
+We need a way to "pin" the hue in the shadows and highlights while concentrating the shift in the mid-tones where it adds the most vibrancy.
+
+## The Solution: Cubic Bezier Curves
+
+To solve this, we use a **cubic Bezier curve** to map lightness values (0-1) to hue rotation factors (0-1). This creates an "S-curve" that:
+
+1.  **Starts Slowly**: Keeps the hue stable in the deep shadows.
+2.  **Accelerates**: Concentrates the shift in the mid-tones.
+3.  **Ends Smoothly**: Stabilizes the hue in the bright highlights.
+
+### Visual Comparison
+
+The table below demonstrates a 180° hue shift (Blue → Orange) applied linearly vs. using a Bezier curve. Notice how the Bezier curve preserves the identity of the colors at the extremes.
 
 <Diagram>
-  <div class="docs-grid docs-mb-4">
-    <div class="docs-card">
-      <strong class="docs-card-header">No Shift (Static Hue)</strong>
-      <div class="docs-gradient-bar docs-gradient-static"></div>
-      <div class="text-subtle docs-mt-2 docs-text-sm">
-        Shadows can feel "muddy" or flat because they lack the natural coolness
-        of ambient light.
+  <div class="docs-grid-comparison-v2">
+    <div class="comparison-header">
+      <span class="text-subtle">Linear Shift</span>
+      <span class="text-subtle">Bezier Shift (S-Curve)</span>
+    </div>
+    
+    {/* Dark (L=0.1) */}
+    <div class="comparison-row">
+      <div class="row-header">Dark (10%)</div>
+      <div class="swatch-pair">
+        <div class="swatch-col">
+          <div class="docs-swatch docs-swatch-linear-1" title="Linear: +18°"></div>
+          <span class="text-xs">Drifts immediately (+18°)</span>
+        </div>
+        <div class="swatch-col">
+          <div class="docs-swatch docs-swatch-bezier-1" title="Bezier: +0°"></div>
+          <span class="text-xs">Stays at base hue (+0°)</span>
+        </div>
       </div>
     </div>
-    <div class="docs-card">
-      <strong class="docs-card-header">Linear Shift</strong>
-      <div class="docs-gradient-bar docs-gradient-shifted"></div>
-      <div class="text-subtle docs-mt-2 docs-text-sm">
-        A linear shift (0° to 60°) can feel abrupt in the mid-tones, making the
-        color change too noticeable.
+
+    {/* Dark-Mid (L=0.3) */}
+    <div class="comparison-row">
+      <div class="row-header">Shadow (30%)</div>
+      <div class="swatch-pair">
+        <div class="swatch-col">
+          <div class="docs-swatch docs-swatch-linear-2" title="Linear: +54°"></div>
+          <span class="text-xs">Significant shift (+54°)</span>
+        </div>
+        <div class="swatch-col">
+          <div class="docs-swatch docs-swatch-bezier-2" title="Bezier: +15°"></div>
+          <span class="text-xs">Preserves cool tones (+15°)</span>
+        </div>
       </div>
     </div>
+
+    {/* Mid (L=0.5) */}
+    <div class="comparison-row">
+      <div class="row-header">Mid (50%)</div>
+      <div class="swatch-pair">
+        <div class="swatch-col">
+          <div class="docs-swatch docs-swatch-linear-3" title="Linear: +90°"></div>
+          <span class="text-xs">Midpoint (+90°)</span>
+        </div>
+        <div class="swatch-col">
+          <div class="docs-swatch docs-swatch-bezier-3" title="Bezier: +90°"></div>
+          <span class="text-xs">Midpoint (+90°)</span>
+        </div>
+      </div>
+    </div>
+
+    {/* Light-Mid (L=0.7) */}
+    <div class="comparison-row">
+      <div class="row-header">Highlight (70%)</div>
+      <div class="swatch-pair">
+        <div class="swatch-col">
+          <div class="docs-swatch docs-swatch-linear-4" title="Linear: +126°"></div>
+          <span class="text-xs">Steady progression (+126°)</span>
+        </div>
+        <div class="swatch-col">
+          <div class="docs-swatch docs-swatch-bezier-4" title="Bezier: +165°"></div>
+          <span class="text-xs">Accelerates into warmth (+165°)</span>
+        </div>
+      </div>
+    </div>
+
+    {/* Light (L=0.9) */}
+    <div class="comparison-row">
+      <div class="row-header">Light (90%)</div>
+      <div class="swatch-pair">
+        <div class="swatch-col">
+          <div class="docs-swatch docs-swatch-linear-5" title="Linear: +162°"></div>
+          <span class="text-xs">Not fully rotated (+162°)</span>
+        </div>
+        <div class="swatch-col">
+          <div class="docs-swatch docs-swatch-bezier-5" title="Bezier: +180°"></div>
+          <span class="text-xs">Finishes rotation (+180°)</span>
+        </div>
+      </div>
+    </div>
+
   </div>
 </Diagram>
 
-## Cubic Bezier Solution
+## Interactive Playground
 
-Instead, we use a **cubic Bezier curve** to map lightness values (0-1) to hue rotation factors (0-1). This allows us to keep the hue stable in the deep shadows and bright highlights, while concentrating the shift in the mid-tones where it adds the most vibrancy.
+Experiment with the Bezier curve control points to see how they affect the hue shift across the lightness spectrum.
 
-<Diagram>
-  <div class="docs-grid docs-mb-4">
-    <div class="docs-card">
-      <strong class="docs-card-header">No Shift</strong>
-      <div class="docs-gradient-bar docs-gradient-static"></div>
-      <div class="text-subtle docs-mt-2 docs-text-sm">Static hue.</div>
-    </div>
-    <div class="docs-card">
-      <strong class="docs-card-header">Linear Shift</strong>
-      <div class="docs-gradient-bar docs-gradient-shifted"></div>
-      <div class="text-subtle docs-mt-2 docs-text-sm">Abrupt mid-tones.</div>
-    </div>
-    <div class="docs-card">
-      <strong class="docs-card-header">Bezier Shift</strong>
-      <div class="docs-gradient-bar docs-gradient-bezier"></div>
-      <div class="text-subtle docs-mt-2 docs-text-sm">Smooth S-curve.</div>
-    </div>
-  </div>
-</Diagram>
+<HueShiftVisualizer
+  client:load
+  baseHue={260}
+  maxRotation={180}
+  curve={{ p1: [0.5, 0], p2: [0.5, 1] }}
+/>
+
+## Implementation Details
+
+The system uses a standard cubic Bezier function where the curve starts at `(0,0)` and ends at `(1,1)`.
 
 ```typescript
 function cubicBezier(t: number, p1: number, p2: number): number {
@@ -114,121 +184,27 @@ export function calculateHueShift(
 }
 ```
 
-### Interactive Playground
+### Configuration
 
-Experiment with the Bezier curve control points to see how they affect the hue shift across the lightness spectrum.
-
-<HueShiftVisualizer client:load />
-
-### Control Points
-
-The default configuration uses control points that create an S-curve:
+You can customize the curve by adjusting the two control points (`p1` and `p2`) and the maximum rotation angle.
 
 ```json
 {
   "hueShift": {
     "curve": {
-      "p1": [0.5, 0],
-      "p2": [0.5, 1]
+      "p1": [0.5, 0], // Control Point 1 (x, y)
+      "p2": [0.5, 1] // Control Point 2 (x, y)
     },
-    "maxRotation": 180
+    "maxRotation": 180 // Total degrees of rotation
   }
 }
 ```
 
-#### What These Mean
-
-- **P1: `[0.5, 0]`**: First control point at 50% horizontally, 0% vertically
-- **P2: `[0.5, 1]`**: Second control point at 50% horizontally, 100% vertically
-
-This creates a **smooth S-curve** that:
-
-1. **Starts slowly** at lightness = 0 (minimal hue shift in darks)
-2. **Accelerates through mid-tones** (where our eyes are most sensitive)
-3. **Finishes smoothly** at lightness = 1 (full rotation in lights)
-
-### Visual Comparison
-
-Here is how the hue rotation (0° to 180°) is applied across the lightness spectrum (0.1 to 0.9).
-
-<Diagram>
-  <div class="docs-grid-comparison">
-    {/* Linear Row */}
-    <div class="text-subtle text-right">Linear</div>
-    <div class="docs-swatch-grid">
-      <div class="docs-swatch docs-swatch-linear-1" title="L=0.1, H=278 (+18°)"></div>
-      <div class="docs-swatch docs-swatch-linear-2" title="L=0.3, H=314 (+54°)"></div>
-      <div class="docs-swatch docs-swatch-linear-3" title="L=0.5, H=350 (+90°)"></div>
-      <div class="docs-swatch docs-swatch-linear-4" title="L=0.7, H=26 (+126°)"></div>
-      <div class="docs-swatch docs-swatch-linear-5" title="L=0.9, H=62 (+162°)"></div>
-    </div>
-
-    {/* Bezier Row */}
-    <div class="text-subtle text-right">Bezier</div>
-    <div class="docs-swatch-grid">
-      <div class="docs-swatch docs-swatch-bezier-1" title="L=0.1, H=265 (+5°)"></div>
-      <div class="docs-swatch docs-swatch-bezier-2" title="L=0.3, H=299 (+39°)"></div>
-      <div class="docs-swatch docs-swatch-bezier-3" title="L=0.5, H=350 (+90°)"></div>
-      <div class="docs-swatch docs-swatch-bezier-4" title="L=0.7, H=41 (+141°)"></div>
-      <div class="docs-swatch docs-swatch-bezier-5" title="L=0.9, H=75 (+175°)"></div>
-    </div>
-
-    {/* Labels */}
-    <div></div>
-    <div class="docs-grid-labels">
-      <div>Dark</div>
-      <div></div>
-      <div>Mid</div>
-      <div></div>
-      <div>Light</div>
-    </div>
-
-  </div>
-</Diagram>
-
-Notice how the Bezier curve:
-
-- **Flattens** at the extremes (smoother transitions in very dark/light)
-- **Steepens** in the middle (more dramatic shift where it matters)
-
-### Perceptual Benefits
-
-1. **Natural Warmth Progression**: Mimics how we perceive natural lighting (cool shadows → neutral midtones → warm highlights)
-
-2. **Better Mid-Tone Separation**: The steeper middle section ensures distinct hue differences between closely-spaced surfaces in the mid-lightness range (where most UI elements live)
-
-3. **Smooth Extremes**: The flatter curves at 0 and 1 prevent jarring hue jumps in already-extreme lightness values
-
-### Customization
-
-You can customize the curve by adjusting the control points:
-
-```json
-{
-  "hueShift": {
-    "curve": {
-      "p1": [0.3, 0], // Shift acceleration point earlier
-      "p2": [0.7, 1] // Shift deceleration point later
-    },
-    "maxRotation": 120 // Less dramatic overall shift
-  }
-}
-```
-
-**Experiment with:**
-
-- Moving P1/P2 horizontally to change where the acceleration happens
-- Moving P1/P2 vertically to create asymmetric curves
-- Adjusting `maxRotation` for subtler or more dramatic effects
-
-**Tip:** You can also adjust these settings visually in the **Theme Studio**. The UI provides a curve editor where you can drag the control points and see the color palette update in real-time.
-
-### Implementation Note
-
-The cubic Bezier implementation assumes the curve starts at `(0,0)` and ends at `(1,1)`, with only the middle two control points configurable. This constraint ensures the hue shift is always 0° at lightness 0 and `maxRotation` at lightness 1, providing predictable behavior while allowing artistic control over the interpolation.
+- **P1**: Controls the "acceleration" out of the shadows. Moving it right delays the shift; moving it up starts the shift earlier.
+- **P2**: Controls the "deceleration" into the highlights. Moving it left extends the shift; moving it down ends the shift earlier.
 
 ## Related Concepts
 
-- **OKLCH Color Space**: Hue rotations happen in the perceptually uniform OKLCH space, ensuring equal visual impact across the spectrum
-- **Chroma Independence**: Hue shifts don't affect saturation, maintaining consistent vibrancy
-- **CSS `@property`**: Registered custom properties allow smooth animated transitions between hue-shifted values
+- **OKLCH Color Space**: Hue rotations happen in the perceptually uniform OKLCH space, ensuring equal visual impact across the spectrum.
+- **Chroma Independence**: Hue shifts don't affect saturation, maintaining consistent vibrancy.
+- **CSS `@property`**: Registered custom properties allow smooth animated transitions between hue-shifted values.

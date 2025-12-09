@@ -6,11 +6,17 @@
 </script>
 
 <div
-  class="{surface} {tint} p-6 rounded-lg border border-border-subtle transition-all duration-200"
+  class="{surface} {tint} bordered"
+  style="padding: 1.5rem; border-radius: 0.5rem; transition: all 0.2s;"
 >
-  <div class="text-lg font-bold text-text-strong mb-1">{name}</div>
+  <div
+    class="text-strong"
+    style="font-size: 1.125rem; font-weight: bold; margin-bottom: 0.25rem;"
+  >
+    {name}
+  </div>
   {#if description}
-    <div class="text-sm text-text-subtle">{description}</div>
+    <div class="text-subtle" style="font-size: 0.875rem;">{description}</div>
   {/if}
   <slot />
 </div>
