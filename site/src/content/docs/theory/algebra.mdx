@@ -9,7 +9,7 @@ import PlainEnglish from "../../../components/PlainEnglish.svelte";
 
 <style>{`
   .sl-markdown-content {
-    font-family: "Erewhon Math", "Libertinus Math", serif;
+    font-family: "Charter", "Bitstream Charter", "Sitka Text", "Cambria", serif;
     font-size: 1.15rem;
     line-height: 1.8;
     max-width: 75ch;
@@ -35,16 +35,21 @@ import PlainEnglish from "../../../components/PlainEnglish.svelte";
   }
 
   /* Math Centering */
-  .katex-display, math[display="block"] {
-    display: flex !important;
-    justify-content: center;
+  .katex-display {
+    display: block !important;
+    text-align: center;
     margin: 2rem 0;
     width: 100%;
     overflow-x: auto;
   }
+  
+  .katex-display > .katex {
+    display: inline-block;
+    text-align: center;
+  }
 `}</style>
 
-> **Context**: The physics and grammar of the Axiomatic Color system. ([View Changelog](./composition-algebra-changelog.md))
+> **Context**: The physics and grammar of the Axiomatic Color system.
 
 This document defines the "Physics" of the Axiomatic Color system. It replaces the previous static heuristic model with a **Reactive Physics Model** based on continuous state interpolation.
 
@@ -95,8 +100,12 @@ The **Genesis** engine solves the "Hard Math" (APCA Contrast) offline. It calcul
 It also applies a **Helmholtz-Kohlrausch Buffer** to offset the perceptual lightness of vibrant colors.
 
 {/* prettier-ignore */}
-$$ \Psi(K, T) \rightarrow \nu_{constant} $$
-$$ L_{target} = L_{APCA} + (k_{hk} \times \beta) $$
+$$
+\begin{aligned}
+\Psi(K, T) &\rightarrow \nu_{constant} \\
+L_{target} &= L_{APCA} + (k_{hk} \times \beta)
+\end{aligned}
+$$
 
 These constants are baked into the CSS as variables (e.g., `--text-high-L: 98%`).
 

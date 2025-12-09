@@ -1238,3 +1238,21 @@
   - **Vercel CLI**: Created `scripts/check-deploy.ts` to inspect deployments and fetch logs directly from the terminal.
   - **Dependency Management**: Pinned `vite` to `^6.0.0` to resolve a version conflict between `astro` and `vitest`.
   - **Linting**: Updated `knip.ts` to ignore build-time dependencies (`vercel`, `vite`) to pass pre-push checks.
+
+## Epoch 37: Phase 7 - Algebra Page Polish (2025-12-09)
+
+**Goal**: Refine the visual presentation of the "Algebra of Color Design" page to match its academic nature and address specific formatting issues.
+
+**Completed Work**:
+
+- **Visual Polish**:
+  - **"In Plain English" Callout**: Replaced the standard Starlight `<Aside>` with a custom `PlainEnglish` component featuring a serif font and subtle styling to reduce visual noise.
+  - **Academic Typography**: Applied page-specific CSS overrides to `algebra.mdx` to use a serif font stack (`Erewhon Math`, `Libertinus Math`) for body text and headings.
+  - **Math Formatting**:
+    - Centered block formulas (`2577352`) using custom CSS for `.katex-display`.
+    - Replaced LaTeX math in headers (e.g., `$\Sigma$`) with Unicode equivalents to fix Table of Contents rendering issues.
+- **Infrastructure**:
+  - **Linting**: Fixed invalid TeX syntax in `docs/rfcs/001-reactive-charts.md` that was blocking the pre-commit hook.
+- **Verification**:
+  - Verified the build (`pnpm build`) passes.
+  - Confirmed the visual changes match the "academic" aesthetic goal.

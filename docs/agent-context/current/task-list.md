@@ -1,30 +1,25 @@
-# Phase Task List: Algebra Page Polish
+# Phase Task List: Algebra Page Polish (Round 2)
 
 ## Goal
 
-Refine the visual presentation of the "Algebra of Color Design" page to match its academic nature and address specific formatting issues.
+Address user feedback regarding the "Algebra of Color Design" page: fix broken links, ensure math blocks are centered, and refine the academic typography.
 
 ## Tasks
 
-### 1. "In Plain English" Callout
+### 1. Fix Broken Link
 
-- [x] **Redesign Component**: Create a custom `Aside` variant or a new component for "In Plain English" sections.
-- [x] **List Formatting**: Convert the inline list to a proper bulleted list.
-- [x] **Visual Style**: Reduce the "garishness" (likely the background color/border). Aim for a cleaner, more academic look (e.g., subtle gray background, serif font for the "plain english" text).
+- [ ] **Changelog Link**: The link to the changelog in `plan-outline.md` (or wherever it was added) is broken. It points to `history/completed-epochs.md` which might not exist or is the wrong path.
+  - _Action_: Verify the path and fix the link.
 
-### 2. Academic Typography
+### 2. Math Alignment
 
-- [x] **Page-Specific CSS**: Apply specific styles to `site/src/content/docs/theory/algebra.mdx` (using a wrapper class or similar).
-- [x] **Headings**: Adjust heading sizes and spacing to be more balanced and "academic".
-- [x] **Body Text**: Consider using a serif font for the body text of this specific page to differentiate it as a "theoretical" document.
+- [ ] **Center Block Equations**: The screenshot shows the equation $\Psi(K, T) \rightarrow \dots$ is left-aligned.
+  - _Investigation_: Inspect `site/src/content/docs/theory/algebra.mdx` and the CSS. It seems my previous attempt to center `.katex-display` didn't take, or there's a specificity issue.
+  - _Action_: Force centering on `.katex-display` or the wrapper div.
 
-### 3. Math Formatting
+### 3. Typography Refinement
 
-- [x] **Block Formulas**: Ensure `$$` block formulas are properly centered and offset. Check CSS for `.katex-display`.
-- [x] **Header Math**: Investigate why math symbols in headers (e.g., `($\Sigma$)`) are not rendering correctly in the TOC or the header itself.
-  - _Hypothesis_: The TOC generator might be stripping the math markup or the font doesn't support the symbols.
-  - _Fix_: Ensure the TOC supports HTML/Math or use a workaround (e.g., plain text in header, math in content).
-
-### 4. General Polish
-
-- [x] **Review**: Verify the page against the "academic" aesthetic goal.
+- [ ] **Font Selection**: The user dislikes `Erewhon Math` for body text.
+  - _Goal_: "Vibe of an academic paper".
+  - _Suggestion_: `Charter` (great screen serif), `Crimson Pro` (Google Font, very academic), or `EB Garamond`.
+  - _Action_: Update the font stack in `algebra.mdx`.
