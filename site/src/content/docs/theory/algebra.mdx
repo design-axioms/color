@@ -9,21 +9,23 @@ import PlainEnglish from "../../../components/PlainEnglish.svelte";
 
 <style>{`
   .sl-markdown-content {
-    font-family: "Charter", "Bitstream Charter", "Sitka Text", "Cambria", serif;
-    font-size: 1.15rem;
-    line-height: 1.8;
-    max-width: 75ch;
+    font-family: "Georgia", "Cambria", "Times New Roman", serif;
+    font-size: 1.125rem;
+    line-height: 1.6;
+    max-width: 65ch;
+    text-align: justify;
+    hyphens: auto;
   }
 
   /* Headings */
   .sl-markdown-content h2 {
     font-family: var(--sl-font-system);
     font-weight: 700;
-    margin-top: 3.5rem !important;
-    margin-bottom: 1.5rem !important;
+    margin-top: 3rem !important;
+    margin-bottom: 1.25rem !important;
     border-bottom: 1px solid var(--axm-border-dec-token);
     padding-bottom: 0.5rem;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.01em;
   }
 
   .sl-markdown-content h3 {

@@ -1256,3 +1256,20 @@
 - **Verification**:
   - Verified the build (`pnpm build`) passes.
   - Confirmed the visual changes match the "academic" aesthetic goal.
+
+## Epoch 37: Phase 7.1 - Algebra Page Polish (Round 2) (2025-12-09)
+
+**Goal**: Address user feedback regarding the "Algebra of Color Design" page: fix broken links, ensure math blocks are centered, and refine the academic typography.
+
+**Completed Work**:
+
+- **Visual Polish**:
+  - **Typography**: Switched the font stack to `Charter`, `Bitstream Charter`, `Sitka Text`, `Cambria`, `serif` for a more authentic academic paper aesthetic.
+  - **Math Alignment**:
+    - Enforced centering of block equations using `display: block; text-align: center` on the container and `display: inline-block` on the inner KaTeX element.
+    - Combined split equations in the "Genesis" section into a single `aligned` block for better readability.
+- **Fixes**:
+  - **Broken Link**: Removed the dead link to the changelog in `algebra.mdx`.
+  - **Linting**: Fixed remaining invalid TeX syntax in `docs/rfcs/001-reactive-charts.md` (replaced `* {` with `_{`).
+- **Verification**:
+  - Verified the build passes.

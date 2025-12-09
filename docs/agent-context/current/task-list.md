@@ -1,25 +1,24 @@
-# Phase Task List: Algebra Page Polish (Round 2)
+# Phase Task List: Algebra Page Polish (Round 3)
 
 ## Goal
 
-Address user feedback regarding the "Algebra of Color Design" page: fix broken links, ensure math blocks are centered, and refine the academic typography.
+Fine-tune the typography to achieve a true "Academic Paper" aesthetic, addressing the user's doubts about the font and formatting.
 
 ## Tasks
 
-### 1. Fix Broken Link
+### 1. Refine Typography (The "Paper" Look)
 
-- [ ] **Changelog Link**: The link to the changelog in `plan-outline.md` (or wherever it was added) is broken. It points to `history/completed-epochs.md` which might not exist or is the wrong path.
-  - _Action_: Verify the path and fix the link.
+- [ ] **Leading (Line Height)**: Reduce `line-height` from `1.8` (Web/Blog style) to `1.6` or `1.5` (Academic style).
+- [ ] **Justification**: Enable `text-align: justify` and `hyphens: auto`. This is the single biggest factor in making text look like a printed paper.
+- [ ] **Column Width**: Reduce `max-width` slightly (e.g., `65ch`) to accommodate justified text better.
 
-### 2. Math Alignment
+### 2. Font Selection (Charter vs. The World)
 
-- [ ] **Center Block Equations**: The screenshot shows the equation $\Psi(K, T) \rightarrow \dots$ is left-aligned.
-  - _Investigation_: Inspect `site/src/content/docs/theory/algebra.mdx` and the CSS. It seems my previous attempt to center `.katex-display` didn't take, or there's a specificity issue.
-  - _Action_: Force centering on `.katex-display` or the wrapper div.
+- [ ] **Evaluate Charter**: Explain that Charter is a classic TeX font, but it might feel too "technical" or "chunky" compared to the delicate Times/Computer Modern.
+- [ ] **Alternative**: Switch to a stack that prioritizes **Georgia** (screen optimized serif) or **Times New Roman** (classic academic) if Charter isn't landing.
+  - _Proposal_: `font-family: "Georgia", "Times New Roman", "Charter", serif;`
+  - _Reasoning_: Georgia is beautiful on screens and has the "formal" vibe without the "1990s laser printer" vibe of Charter.
 
-### 3. Typography Refinement
+### 3. Visual Hierarchy
 
-- [ ] **Font Selection**: The user dislikes `Erewhon Math` for body text.
-  - _Goal_: "Vibe of an academic paper".
-  - _Suggestion_: `Charter` (great screen serif), `Crimson Pro` (Google Font, very academic), or `EB Garamond`.
-  - _Action_: Update the font stack in `algebra.mdx`.
+- [ ] **Headings**: Ensure headings are serif as well, perhaps slightly closer to the text.
