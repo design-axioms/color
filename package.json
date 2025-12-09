@@ -46,6 +46,7 @@
     "test:visual:update": "playwright test tests/visual.spec.ts --update-snapshots",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage --run",
+    "qa:capture": "node scripts/qa-screenshots.ts",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write",

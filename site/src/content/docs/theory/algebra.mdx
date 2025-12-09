@@ -5,12 +5,50 @@ slug: theory/algebra
 ---
 
 import { Aside } from "@astrojs/starlight/components";
+import PlainEnglish from "../../../components/PlainEnglish.svelte";
+
+<style>{`
+  .sl-markdown-content {
+    font-family: "Erewhon Math", "Libertinus Math", serif;
+    font-size: 1.15rem;
+    line-height: 1.8;
+    max-width: 75ch;
+  }
+
+  /* Headings */
+  .sl-markdown-content h2 {
+    font-family: var(--sl-font-system);
+    font-weight: 700;
+    margin-top: 3.5rem !important;
+    margin-bottom: 1.5rem !important;
+    border-bottom: 1px solid var(--axm-border-dec-token);
+    padding-bottom: 0.5rem;
+    letter-spacing: -0.02em;
+  }
+
+  .sl-markdown-content h3 {
+    font-family: var(--sl-font-system);
+    font-weight: 600;
+    margin-top: 2.5rem !important;
+    margin-bottom: 1rem !important;
+    font-size: 1.4rem !important;
+  }
+
+  /* Math Centering */
+  .katex-display, math[display="block"] {
+    display: flex !important;
+    justify-content: center;
+    margin: 2rem 0;
+    width: 100%;
+    overflow-x: auto;
+  }
+`}</style>
 
 > **Context**: The physics and grammar of the Axiomatic Color system. ([View Changelog](./composition-algebra-changelog.md))
 
 This document defines the "Physics" of the Axiomatic Color system. It replaces the previous static heuristic model with a **Reactive Physics Model** based on continuous state interpolation.
 
-## 1. The State Space ($\Sigma$)
+## 1. The State Space (Σ)
 
 The system state at any point in the DOM tree is defined by the **Unified State Tuple** $\Sigma$. This configuration space represents the continuous interpolation between environmental extremes and system modes.
 
@@ -38,12 +76,13 @@ Where:
       - $0$: **Rich Mode** (Standard).
       - $1$: **X-Ray Mode** (Forced Colors).
 
-<Aside type="note" title="In Plain English">
-  - **Atmosphere ($\alpha$)**: The "Weather" of the room. - **Voice ($\nu$)**:
-  The "Script". - **Time ($\tau$)**: The "Clock". - **Gain ($\gamma$)**: The
-  "Volume Knob". (Turn it up for High Contrast). - **System ($\sigma$)**: The
-  "Physics Engine". (Rich vs. X-Ray).
-</Aside>
+<PlainEnglish>
+- **Atmosphere ($\alpha$)**: The "Weather" of the room.
+- **Voice ($\nu$)**: The "Script".
+- **Time ($\tau$)**: The "Clock".
+- **Gain ($\gamma$)**: The "Volume Knob". (Turn it up for High Contrast).
+- **System ($\sigma$)**: The "Physics Engine". (Rich vs. X-Ray).
+</PlainEnglish>
 
 ## 2. The Architecture: Genesis vs. Algebra
 
@@ -93,7 +132,7 @@ $$ S_{solid}(\langle \alpha, \nu, \tau \rangle) = \langle \alpha_{new}, \nu_{new
 
 To guarantee that text is always readable on Glass Surfaces in **Rich Mode**, we enforce the **Universal Safety Theorem**. The Chroma ($C$) of any Glass Surface is mathematically constrained to lie within the **Safe Bicone**.
 
-### 4.1. The Vibrancy Limit ($C_{limit}$)
+### 4.1. The Vibrancy Limit (Cₗᵢₘᵢₜ)
 
 The maximum allowed Chroma is the intersection of three functions:
 
@@ -109,12 +148,11 @@ $$ C_{limit} = \beta(H) \cdot \text{Taper}(L) \cdot \zeta(\tau) $$
 3.  **The Tunnel ($\zeta(\tau)$)**: The motion-dependent boundary. We use a **Parabolic Ease** to prevent velocity shock during transitions.
     $$ \zeta(\tau) = \tau^2 $$
 
-<Aside type="note" title="In Plain English">
-  - **The Sine Wave**: Yellows can be brighter than Blues. - **The Bicone**: As
-  you get closer to White or Black, the allowed chroma drops linearly to zero. -
-  **The Tunnel**: During the twilight transition, we dim the colors to ensure
-  safety.
-</Aside>
+<PlainEnglish>
+- **The Sine Wave**: Yellows can be brighter than Blues.
+- **The Bicone**: As you get closer to White or Black, the allowed chroma drops linearly to zero.
+- **The Tunnel**: During the twilight transition, we dim the colors to ensure safety.
+</PlainEnglish>
 
 ### 4.2. The Dampening Function
 

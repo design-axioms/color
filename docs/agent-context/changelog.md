@@ -1224,3 +1224,17 @@
   - **Linting**: Resolved all ESLint errors, including strict `no-unnecessary-condition` checks in the overlay and Svelte a11y issues.
   - **Testing**: Updated Golden Master snapshots and fixed generator tests to match the new architecture.
   - **Cleanup**: Removed iteration artifacts and organized debug scripts into `scripts/debug/`.
+
+## Epoch 37: Phase 6 - Deployment & Final Review (2025-12-09)
+
+**Goal**: Deploy the polished site to Vercel and conduct a final review of the live environment.
+
+**Completed Work**:
+
+- **Deployment**:
+  - Merged `fix/website-polish` into `main`.
+  - Triggered Vercel deployment and verified the live URL.
+- **Infrastructure**:
+  - **Vercel CLI**: Created `scripts/check-deploy.ts` to inspect deployments and fetch logs directly from the terminal.
+  - **Dependency Management**: Pinned `vite` to `^6.0.0` to resolve a version conflict between `astro` and `vitest`.
+  - **Linting**: Updated `knip.ts` to ignore build-time dependencies (`vercel`, `vite`) to pass pre-push checks.

@@ -37,3 +37,9 @@ Our CI pipeline runs on GitHub Actions and performs the following checks:
 - **Package Manager**: We use `pnpm`.
 - **Node Version**: We target Node.js v24.
 - **Formatting**: We use Prettier. Run `pnpm format` to format code.
+
+## QA & Visual Audits
+
+We maintain a suite of visual audit tools to verify the design system across different contexts.
+
+- **Capture Screenshots**: Run `pnpm qa:capture` to generate a matrix of screenshots (Pages × Viewports × Themes) in the `qa-audit/` directory. This is useful for manual review and generating audit reports.
