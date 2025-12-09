@@ -9,9 +9,7 @@ export default defineConfig({
       "dist/**",
       "site/**",
       ".locald/**",
-      "tests/verify-colors.spec.ts",
-      "tests/visual.spec.ts",
-      "tests/brand-button.spec.ts",
+      "tests/**/*.spec.ts",
     ],
     coverage: {
       provider: "v8",

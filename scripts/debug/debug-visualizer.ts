@@ -4,7 +4,7 @@ function binarySearch(
   evaluate: (candidate: number) => number,
   target: number,
   epsilon: number = 0.005,
-  maxIterations: number = 40
+  maxIterations: number = 40,
 ): number {
   let low = min;
   let high = max;
@@ -50,7 +50,7 @@ function calculateHueShift(
   config?: {
     curve: { p1: [number, number]; p2: [number, number] };
     maxRotation: number;
-  }
+  },
 ): number {
   if (!config) return 0;
   const { curve, maxRotation } = config;
@@ -62,7 +62,7 @@ function calculateHueShift(
     1,
     (val) => cubicBezier(val, curve.p1[0], curve.p2[0]),
     lightness,
-    0.001
+    0.001,
   );
 
   // Calculate y (hue shift factor) given t
@@ -85,5 +85,5 @@ const configX = {
 };
 console.log(
   "Steep Middle (0.1, 0 / 0.9, 1):",
-  calculateHueShift(0.25, configX)
+  calculateHueShift(0.25, configX),
 );

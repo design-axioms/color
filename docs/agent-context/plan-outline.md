@@ -66,9 +66,15 @@
     - **Goal**: Audit the documentation for clarity, spelling, and broken links.
   - **Phase 4: Performance Audit (Planned)**
     - **Goal**: Ensure the site loads quickly and is accessible (Lighthouse/Axe).
-  - **Phase 5: Manual QA & Iteration (Planned)**
+  - **Phase 5: Manual QA & Iteration (Completed)**
     - **Goal**: Final manual verification and iterative polish with the user.
     - **Strategy**: Open-ended session to address any remaining visual, functional, or content issues identified by the user.
+  - **Phase 6: Deployment & Final Review (Active)**
+    - **Goal**: Deploy the polished site to Vercel and conduct a final review of the live environment.
+    - **Strategy**:
+      1.  **Merge**: Merge `fix/website-polish` into `main`.
+      2.  **Deploy**: Trigger Vercel deployment.
+      3.  **Verify**: Check the live URL for any regression or environment-specific issues.
 
 ## Epoch 38: Interoperability & Ecosystem (Planned)
 

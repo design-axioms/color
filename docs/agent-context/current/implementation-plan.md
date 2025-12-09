@@ -1,50 +1,35 @@
-# Implementation Plan - Phase 5: Manual QA & Iteration
+# Implementation Plan - Phase 6: Deployment & Final Review
 
-**Goal**: Final manual verification and iterative polish with the user to ensure the system meets all quality standards before the major interoperability push.
+**Goal**: Deploy the polished documentation site to Vercel and verify its integrity in the production environment.
 
 ## Strategy
 
-This phase is open-ended and driven by user feedback. We will focus on:
+1.  **Merge & Deploy**:
+    - We will merge the current branch `fix/website-polish` into `main`.
+    - This should trigger the Vercel deployment pipeline (assuming it's connected to `main`).
 
-1.  **User Review**: The user will review the deployed site or local build.
-2.  **Feedback Loop**: We will address specific visual, functional, or content issues identified by the user.
-3.  **Final Polish**: Any remaining "fit and finish" tasks.
-
-## Debugging Workflow
-
-When visual or functional issues are identified, use the `scripts/debug-css-cascade.ts` tool to diagnose the root cause.
-
-### Usage
-
-```bash
-# Basic usage (inspects cascade for a selector)
-node scripts/debug-css-cascade.ts <url> <selector>
-
-# Auto Mode (detects semantic violations)
-node scripts/debug-css-cascade.ts <url> <selector> auto
-```
-
-### Debugging Steps
-
-1.  **Reproduce**: Identify the URL and selector of the problematic element.
-2.  **Diagnose**: Run the debug script in `auto` mode to check for semantic violations (e.g., missing surface tokens, incorrect contrast).
-3.  **Inspect**: If no violations are found, check the "Cascade Report" to see which CSS rules are winning.
-4.  **Fix**: Adjust the CSS (or tokens) based on the findings.
-5.  **Verify**: Re-run the debug script to confirm the fix.
-
-## Constraints
-
-- **Explicit Sign-off**: Do **NOT** propose moving to the next phase until the user explicitly states "We are ready to move on".
-- **No Assumptions**: Assume there is always more polish to be done unless told otherwise.
+2.  **Production Verification**:
+    - Once deployed, we will manually verify the live site.
+    - We will specifically check for:
+      - **Hydration**: Ensure interactive components (Theme Builder, Visualizers) load correctly.
+      - **Routing**: Verify deep links and navigation work as expected.
+      - **Assets**: Confirm fonts, images, and generated CSS load without 404s.
+      - **Dark Mode**: Verify the theme toggle works and persists.
 
 ## Tasks
 
-- [ ] **User Review Session**
-  - [ ] Solicit feedback on the current state.
-  - [ ] Identify any remaining blockers for the next epoch.
-- [ ] **Remediation**
-  - [ ] Address feedback item 1 (TBD)
-  - [ ] Address feedback item 2 (TBD)
-- [ ] **Final Verification**
-  - [ ] Verify all fixes.
-  - [ ] Ensure no regressions.
+- [ ] **Merge to Main**
+  - [ ] Push local changes.
+  - [ ] Create/Merge Pull Request (or push directly if allowed).
+- [ ] **Deployment Monitoring**
+  - [ ] Monitor Vercel build logs for errors.
+- [ ] **Live Verification**
+  - [ ] Smoke test the Home page.
+  - [ ] Test the Theme Builder (interactive).
+  - [ ] Check the "Hue Shifting" visualizer (recently fixed).
+  - [ ] Verify "Data Visualization" charts.
+
+## Constraints
+
+- **No New Code**: This phase is strictly for deployment and verification. No new features should be added.
+- **Hotfix Only**: If a critical production issue is found, we will create a hotfix branch.

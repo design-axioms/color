@@ -1,6 +1,6 @@
 /* eslint-disable */
 import { chromium } from "playwright";
-import { WALKER_LIBRARY } from "./utils/walker.ts";
+import { WALKER_LIBRARY } from "../utils/walker.ts";
 
 async function debugCascade() {
   const args = process.argv.slice(2);

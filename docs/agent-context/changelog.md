@@ -1204,3 +1204,23 @@
 - **Verification**:
   - Ran `scripts/qa-screenshots.ts` to verify fixes across all viewports and themes.
   - Hardened QA scripts (`check-violations.ts`, `qa-semantic.ts`) with strict TypeScript types to pass linting.
+
+## Epoch 37: Phase 5 - Manual QA & Iteration (2025-12-09)
+
+**Goal**: Final manual verification and iterative polish with the user to ensure the system meets all quality standards before the major interoperability push.
+
+**Completed Work**:
+
+- **Visual Polish**:
+  - **Hue Shift Visualizer**: Refactored to use HTML overlays for handles (fixing aspect ratio distortion) and centered thumbs.
+  - **Documentation**: Redesigned `hue-shifting.mdx` with a clearer "Linear vs. Bezier" comparison and improved narrative flow.
+  - **Shadows**: Fixed invalid `light-dark()` syntax in shadow generation, restoring visible elevation.
+  - **Layout**: Added spacing to "Action Surfaces" catalog to prevent button jamming.
+- **Reactive Chart Algebra**:
+  - Implemented a new reactive algebra for charts: $L_{chart} = L_{mid} - (k \times \tau)$.
+  - Ensures charts automatically flip lightness in dark mode and respond to "Vibrancy" injection.
+  - Fixed a bug where the theme toggle didn't update `--tau` correctly by syncing it in `starlight-custom.css`.
+- **Infrastructure**:
+  - **Linting**: Resolved all ESLint errors, including strict `no-unnecessary-condition` checks in the overlay and Svelte a11y issues.
+  - **Testing**: Updated Golden Master snapshots and fixed generator tests to match the new architecture.
+  - **Cleanup**: Removed iteration artifacts and organized debug scripts into `scripts/debug/`.

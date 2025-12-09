@@ -42,6 +42,9 @@ for (const file of files) {
       );
       console.error(`  ${line.trim()}`);
       console.error(`  -> Did you mean '_{' for a subscript?`);
+      console.error(
+        `  -> NOTE: If this file contains valid TeX that Prettier is breaking, add it to .prettierignore.`,
+      );
       hasError = true;
     }
 
