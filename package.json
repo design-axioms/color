@@ -59,6 +59,7 @@
     "build:site": "node scripts/build-site.ts",
     "check:site": "pnpm --filter site check",
     "check:exports": "publint",
+    "check:deploy": "node scripts/check-deploy.ts",
     "vendor:update": "node scripts/update-vendor.ts"
   },
   "exports": {
@@ -119,6 +120,8 @@
     "ts-json-schema-generator": "^2.4.0",
     "tsup": "^8.5.1",
     "typescript-eslint": "^8.48.0",
+    "vercel": "^49.1.2",
+    "vite": "^6.0.0",
     "vitest": "^4.0.14",
     "vue-eslint-parser": "^10.2.0"
   },

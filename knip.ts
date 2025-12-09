@@ -31,6 +31,8 @@ const config: KnipConfig = {
         "prettier-plugin-svelte",
         "globals",
         "@glimmer/env",
+        "vercel",
+        "vite",
       ],
     },
     site: {
