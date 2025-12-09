@@ -203,6 +203,9 @@ importers:
       '@axiomatic-design/color':
         specifier: workspace:*
         version: link:..
+      '@fontsource-variable/eb-garamond':
+        specifier: ^5.2.7
+        version: 5.2.7
       apca-w3:
         specifier: ^0.1.9
         version: 0.1.9
@@ -1186,6 +1189,9 @@ packages:
   '@fastify/busboy@2.1.1':
     resolution: {integrity: sha512-vBZP4NlzfOlerQTnba4aqZoMhE/a9HY7HRqoOPaETQcSQuWEIyZMHGfVu6w9wGtGK5fED5qRs2DteVCjOH60sA==}
     engines: {node: '>=14'}
+
+  '@fontsource-variable/eb-garamond@5.2.7':
+    resolution: {integrity: sha512-TbR+Pun4k5g85lgdxRNSbWka5vJgi9pzdFzFswgf7/7NRhKssvoumft1+ZGz3n91YYet96JcnjWrgPGGj6JTzg==}
 
   '@fontsource-variable/inter@5.2.8':
     resolution: {integrity: sha512-kOfP2D+ykbcX/P3IFnokOhVRNoTozo5/JxhAIVYLpea/UBmCQ/YWPBfWIDuBImXX/15KH+eKh4xpEUyS2sQQGQ==}
@@ -7056,6 +7062,8 @@ snapshots:
       '@expressive-code/core': 0.41.3
 
   '@fastify/busboy@2.1.1': {}
+
+  '@fontsource-variable/eb-garamond@5.2.7': {}
 
   '@fontsource-variable/inter@5.2.8': {}
 
