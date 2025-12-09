@@ -76,7 +76,7 @@
     "./theme.css": "./css/theme.css"
   },
   "bin": {
-    "axiomatic": "./dist/cli/index.js"
+    "axiomatic": "./bin/axiomatic.js"
   },
   "dependencies": {
     "ajv": "^8.17.1",

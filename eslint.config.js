@@ -344,6 +344,7 @@ export default tseslint.config(
       "vendor/**",
       "examples/**",
       ".locald/**",
+      "bin/**",
     ],
   },
   eslintConfigPrettier,
