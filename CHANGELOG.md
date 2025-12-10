@@ -1,5 +1,28 @@
 # Changelog
 
+## Release (2025-12-10)
+
+* @axiomatic-design/color 0.2.0 (minor)
+* @axiomatic-design/eslint-plugin 0.2.0 (minor)
+* @axiomatic-design/vscode-extension 0.1.0 (minor)
+
+#### :rocket: Enhancement
+* `@axiomatic-design/color`, `@axiomatic-design/eslint-plugin`, `@axiomatic-design/vscode-extension`
+  * [#13](https://github.com/design-axioms/color/pull/13) fix: website polish and node 25 support ([@wycats](https://github.com/wycats))
+
+#### :bug: Bug Fix
+* `@axiomatic-design/color`
+  * [#14](https://github.com/design-axioms/color/pull/14) fix: handle git diff errors in vercel-ignore and ignore qa-audit ([@wycats](https://github.com/wycats))
+* `@axiomatic-design/color`, `@axiomatic-design/eslint-plugin`, `@axiomatic-design/vscode-extension`
+  * [#10](https://github.com/design-axioms/color/pull/10) fix: resolve svelte check syntax and type errors ([@wycats](https://github.com/wycats))
+
+#### :house: Internal
+* `@axiomatic-design/color`
+  * [#9](https://github.com/design-axioms/color/pull/9) fix: resolve all linting errors (Epoch 20 Phase 2) ([@wycats](https://github.com/wycats))
+
+#### Committers: 1
+- Yehuda Katz ([@wycats](https://github.com/wycats))
+
 ## Release (2025-12-02)
 
 * @axiomatic-design/color 0.1.0 (minor)
