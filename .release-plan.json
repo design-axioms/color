@@ -1,0 +1,60 @@
+{
+  "solution": {
+    "@axiomatic-design/color": {
+      "impact": "minor",
+      "oldVersion": "0.1.0",
+      "newVersion": "0.2.0",
+      "tagName": "latest",
+      "constraints": [
+        {
+          "impact": "minor",
+          "reason": "Appears in changelog section :rocket: Enhancement"
+        },
+        {
+          "impact": "patch",
+          "reason": "Appears in changelog section :bug: Bug Fix"
+        },
+        {
+          "impact": "patch",
+          "reason": "Appears in changelog section :house: Internal"
+        }
+      ],
+      "pkgJSONPath": "./package.json"
+    },
+    "@axiomatic-design/eslint-plugin": {
+      "impact": "minor",
+      "oldVersion": "0.1.0",
+      "newVersion": "0.2.0",
+      "tagName": "latest",
+      "constraints": [
+        {
+          "impact": "minor",
+          "reason": "Appears in changelog section :rocket: Enhancement"
+        },
+        {
+          "impact": "patch",
+          "reason": "Appears in changelog section :bug: Bug Fix"
+        }
+      ],
+      "pkgJSONPath": "./packages/eslint-plugin/package.json"
+    },
+    "@axiomatic-design/vscode-extension": {
+      "impact": "minor",
+      "oldVersion": "0.0.1",
+      "newVersion": "0.1.0",
+      "tagName": "latest",
+      "constraints": [
+        {
+          "impact": "minor",
+          "reason": "Appears in changelog section :rocket: Enhancement"
+        },
+        {
+          "impact": "patch",
+          "reason": "Appears in changelog section :bug: Bug Fix"
+        }
+      ],
+      "pkgJSONPath": "./packages/vscode-extension/package.json"
+    }
+  },
+  "description": "## Release (2025-12-10)\n\n* @axiomatic-design/color 0.2.0 (minor)\n* @axiomatic-design/eslint-plugin 0.2.0 (minor)\n* @axiomatic-design/vscode-extension 0.1.0 (minor)\n\n#### :rocket: Enhancement\n* `@axiomatic-design/color`, `@axiomatic-design/eslint-plugin`, `@axiomatic-design/vscode-extension`\n  * [#13](https://github.com/design-axioms/color/pull/13) fix: website polish and node 25 support ([@wycats](https://github.com/wycats))\n\n#### :bug: Bug Fix\n* `@axiomatic-design/color`\n  * [#14](https://github.com/design-axioms/color/pull/14) fix: handle git diff errors in vercel-ignore and ignore qa-audit ([@wycats](https://github.com/wycats))\n* `@axiomatic-design/color`, `@axiomatic-design/eslint-plugin`, `@axiomatic-design/vscode-extension`\n  * [#10](https://github.com/design-axioms/color/pull/10) fix: resolve svelte check syntax and type errors ([@wycats](https://github.com/wycats))\n\n#### :house: Internal\n* `@axiomatic-design/color`\n  * [#9](https://github.com/design-axioms/color/pull/9) fix: resolve all linting errors (Epoch 20 Phase 2) ([@wycats](https://github.com/wycats))\n\n#### Committers: 1\n- Yehuda Katz ([@wycats](https://github.com/wycats))\n"
+}
