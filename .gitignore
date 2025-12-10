@@ -9,3 +9,4 @@ coverage/
 .DS_Store.astro/
 check-repro.cjs
 .locald/
+qa-audit/
