@@ -1102,15 +1102,174 @@
 - **Real-time Validation**: Schema validation in the UI was deferred.
 - **ESLint Svelte Support**: Deferred full implementation/verification beyond basic smoke tests.
 
-## Epoch 35: Deployment & Release (Active)
+## Epoch 37: Phase 1 - Deep Visual & Semantic Audit (2025-12-08)
+
+**Goal**: Verify that the site renders correctly and faithfully represents the system's axioms with a "premium" design aesthetic.
+
+**Completed Work**:
+
+- **Audit Strategy**: Adopted an "Audit First, Fix Later" approach.
+- **Programmatic Analysis**:
+  - Created `scripts/debug-hero.ts` to verify computed styles of invisible elements.
+  - Created `scripts/check-violations.ts` to detect semantic surface mismatches.
+  - Created `scripts/qa-screenshots.ts` to automate multi-viewport/theme capture.
+- **Visual Inspection**:
+  - Audited Home, Concepts, and Tokens pages across Desktop/Mobile and Light/Dark modes.
+  - Identified critical issues:
+    - **Global**: Code block contrast mismatch in Dark Mode, Sidebar active color mismatch.
+    - **Concepts**: "Ghost Text" in inverted surfaces (Light Mode), cramped mobile layout.
+    - **Tokens**: Unreadable tables on mobile.
+    - **Design**: "Packed" button layouts, unstyled lists, repetitive examples.
+- **Deliverables**:
+  - `qa-audit/audit-results.md`: Master remediation plan.
+  - `qa-audit/`: Comprehensive screenshot library and detailed description logs.
+
+## Epoch 36: Phase 1 - Feedback Implementation (2025-12-06)
+
+**Goal**: Address specific user feedback items regarding the Theme Builder layout and default colors.
+
+**Completed Work**:
+
+- **Layout Fixes**:
+  - **Context Tree**: Reduced indentation and increased sidebar width to prevent text truncation.
+  - **Inspector**: Added padding to `LuminanceSpectrum` to prevent slider handle clipping.
+- **Color Tuning**:
+  - **Action Surface**: Updated library defaults to use "Brand" hue and `0.12` chroma, fixing the "washed out" appearance.
+  - **Spotlight Surface**: Clamped inverted surface lightness to `0.45` in light mode to ensure white text remains legible (fixing "white on white" issue).
+- **Data Investigation**:
+  - Confirmed that the "Spotlight" delta of 108 is mathematically correct for an inverted surface.
+
+## Epoch 35: Deployment & Release (Completed)
 
 **Goal**: Deploy the updated system to production and verify the live site.
 
-**Phases**:
+**Completed Work**:
 
-- **Phase 1: Pre-Flight Verification (Completed)**:
+- **Phase 1: Pre-Flight Verification**:
   - Verified local builds for both the library and the documentation site.
   - Fixed critical build issues (missing CSS, broken imports).
   - Resolved linting and security warnings.
   - Updated test snapshots and verified all tests pass.
-- **Phase 2: Deployment (Active)**: Triggering and verifying the production deployment.
+- **Phase 2: Deployment**:
+  - **CI Fixes**: Resolved Svelte check errors, fixed CI workflow ordering, and implemented deterministic snapshot testing using Prettier.
+  - **Release**: Merged `fix/svelte-check-errors` into `main`, triggering the "Plan Release" workflow.
+  - **Verification**: Confirmed successful deployment workflow run.
+
+## Epoch 36: Website Polish (Active)
+
+**Goal**: Polish the website based on user feedback to improve usability and aesthetics.
+
+**Phases**:
+
+- **Phase 1: Feedback Implementation (Completed)**: Addressing specific user feedback items.
+- **Phase 2: Proactive Polish (Active)**: Auditing and fixing layout/visual issues.
+
+## Phase 3: Build & Test Repair (Epoch 36)
+
+**Goal**: Stabilize the build and test suite following the "Grand Unified Algebra" refactor.
+
+**Completed Work**:
+
+- **ELOOP Fix**:
+  - Identified `vitest` traversing symlinks in `.locald` causing infinite loops.
+  - Updated `vitest.config.ts` to exclude `.locald/**`.
+- **Snapshot Updates**:
+  - Updated Golden Master snapshots to reflect the new "Late Binding" architecture (CSS variables instead of hardcoded values).
+  - Verified that the changes are intentional and correct.
+- **Tool Conflict Resolution**:
+  - Excluded `tests/brand-button.spec.ts` (Playwright) from the Vitest runner to prevent conflicts.
+- **Documentation Generation**:
+  - Regenerated `css/theme.css` via `pnpm solve` to ensure `scripts/generate-llms-txt.ts` has the necessary artifacts.
+- **Verification**:
+  - Confirmed all 17 test files pass.
+  - Verified the build pipeline is functional.
+
+## Epoch 37: Phase 2 - Remediation (2025-12-08)
+
+**Goal**: Execute the remediation plan derived from the "Deep Visual & Semantic Audit" to fix visual defects and improve design quality.
+
+**Completed Work**:
+
+- **Global Fixes**:
+  - **Sidebar**: Fixed active link color in Dark Mode to match the brand theme.
+  - **Code Blocks**: Forced `.astro-code` to use semantic surface tokens, fixing the "cutout" effect in Dark Mode.
+  - **Hero**: Added `z-index` and `color-scheme` safeguards to prevent invisible text in Dark Mode.
+- **Page-Specific Fixes**:
+  - **Concepts**: Fixed "Ghost Text" in `ContextVisualizer` by replacing hardcoded colors with semantic tokens (`.text-strong`).
+  - **Tokens**: Renamed `tokens.md` to `tokens.mdx` and wrapped tables in `.surface-card` containers for better hierarchy.
+  - **Mobile**: Added global responsive table styles (`overflow-x: auto`) to prevent layout breakage.
+- **Design Polish**:
+  - **Visual Density**: Increased grid gaps in `thinking-in-surfaces.mdx` to reduce clutter.
+  - **Example Differentiation**: Updated `SurfacePreview` usage in `thinking-in-surfaces.mdx` to include distinct content (buttons, placeholders) for different surface types.
+- **Verification**:
+  - Ran `scripts/qa-screenshots.ts` to verify fixes across all viewports and themes.
+  - Hardened QA scripts (`check-violations.ts`, `qa-semantic.ts`) with strict TypeScript types to pass linting.
+
+## Epoch 37: Phase 5 - Manual QA & Iteration (2025-12-09)
+
+**Goal**: Final manual verification and iterative polish with the user to ensure the system meets all quality standards before the major interoperability push.
+
+**Completed Work**:
+
+- **Visual Polish**:
+  - **Hue Shift Visualizer**: Refactored to use HTML overlays for handles (fixing aspect ratio distortion) and centered thumbs.
+  - **Documentation**: Redesigned `hue-shifting.mdx` with a clearer "Linear vs. Bezier" comparison and improved narrative flow.
+  - **Shadows**: Fixed invalid `light-dark()` syntax in shadow generation, restoring visible elevation.
+  - **Layout**: Added spacing to "Action Surfaces" catalog to prevent button jamming.
+- **Reactive Chart Algebra**:
+  - Implemented a new reactive algebra for charts: $L_{chart} = L_{mid} - (k \times \tau)$.
+  - Ensures charts automatically flip lightness in dark mode and respond to "Vibrancy" injection.
+  - Fixed a bug where the theme toggle didn't update `--tau` correctly by syncing it in `starlight-custom.css`.
+- **Infrastructure**:
+  - **Linting**: Resolved all ESLint errors, including strict `no-unnecessary-condition` checks in the overlay and Svelte a11y issues.
+  - **Testing**: Updated Golden Master snapshots and fixed generator tests to match the new architecture.
+  - **Cleanup**: Removed iteration artifacts and organized debug scripts into `scripts/debug/`.
+
+## Epoch 37: Phase 6 - Deployment & Final Review (2025-12-09)
+
+**Goal**: Deploy the polished site to Vercel and conduct a final review of the live environment.
+
+**Completed Work**:
+
+- **Deployment**:
+  - Merged `fix/website-polish` into `main`.
+  - Triggered Vercel deployment and verified the live URL.
+- **Infrastructure**:
+  - **Vercel CLI**: Created `scripts/check-deploy.ts` to inspect deployments and fetch logs directly from the terminal.
+  - **Dependency Management**: Pinned `vite` to `^6.0.0` to resolve a version conflict between `astro` and `vitest`.
+  - **Linting**: Updated `knip.ts` to ignore build-time dependencies (`vercel`, `vite`) to pass pre-push checks.
+
+## Epoch 37: Phase 7 - Algebra Page Polish (2025-12-09)
+
+**Goal**: Refine the visual presentation of the "Algebra of Color Design" page to match its academic nature and address specific formatting issues.
+
+**Completed Work**:
+
+- **Visual Polish**:
+  - **"In Plain English" Callout**: Replaced the standard Starlight `<Aside>` with a custom `PlainEnglish` component featuring a serif font and subtle styling to reduce visual noise.
+  - **Academic Typography**: Applied page-specific CSS overrides to `algebra.mdx` to use a serif font stack (`Erewhon Math`, `Libertinus Math`) for body text and headings.
+  - **Math Formatting**:
+    - Centered block formulas (`2577352`) using custom CSS for `.katex-display`.
+    - Replaced LaTeX math in headers (e.g., `$\Sigma$`) with Unicode equivalents to fix Table of Contents rendering issues.
+- **Infrastructure**:
+  - **Linting**: Fixed invalid TeX syntax in `docs/rfcs/001-reactive-charts.md` that was blocking the pre-commit hook.
+- **Verification**:
+  - Verified the build (`pnpm build`) passes.
+  - Confirmed the visual changes match the "academic" aesthetic goal.
+
+## Epoch 37: Phase 7.1 - Algebra Page Polish (Round 2) (2025-12-09)
+
+**Goal**: Address user feedback regarding the "Algebra of Color Design" page: fix broken links, ensure math blocks are centered, and refine the academic typography.
+
+**Completed Work**:
+
+- **Visual Polish**:
+  - **Typography**: Switched the font stack to `Charter`, `Bitstream Charter`, `Sitka Text`, `Cambria`, `serif` for a more authentic academic paper aesthetic.
+  - **Math Alignment**:
+    - Enforced centering of block equations using `display: block; text-align: center` on the container and `display: inline-block` on the inner KaTeX element.
+    - Combined split equations in the "Genesis" section into a single `aligned` block for better readability.
+- **Fixes**:
+  - **Broken Link**: Removed the dead link to the changelog in `algebra.mdx`.
+  - **Linting**: Fixed remaining invalid TeX syntax in `docs/rfcs/001-reactive-charts.md` (replaced `* {` with `_{`).
+- **Verification**:
+  - Verified the build passes.

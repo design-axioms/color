@@ -19,7 +19,7 @@ export function toRgbTriplet(lightness: number): [number, number, number] {
 // Original contrastForPair implementation (no memoization)
 export function contrastForPair(
   foreground: number,
-  background: number
+  background: number,
 ): number {
   const fgY = sRGBtoY(toRgbTriplet(foreground));
   const bgY = sRGBtoY(toRgbTriplet(background));
@@ -28,7 +28,7 @@ export function contrastForPair(
 
   if (!Number.isFinite(numeric)) {
     throw new Error(
-      `APCAcontrast returned a non-finite value for foreground ${foreground} and background ${background}.`
+      `APCAcontrast returned a non-finite value for foreground ${foreground} and background ${background}.`,
     );
   }
 
@@ -44,6 +44,10 @@ const HIGH_CONTRAST = 108;
 const STRONG_CONTRAST = 105;
 const SUBTLEST_CONTRAST = 75;
 const STEP = (STRONG_CONTRAST - SUBTLEST_CONTRAST) / 3;
+
+// High Contrast Targets (Boosted)
+const HC_OFFSET = 15;
+const SUBTLEST_CONTRAST_HC = SUBTLEST_CONTRAST + HC_OFFSET;
 
 // --- UTILS ---
 
@@ -78,7 +82,7 @@ export function binarySearch(
   evaluate: (candidate: number) => number,
   target: number,
   epsilon: number = 0.005,
-  maxIterations: number = 40
+  maxIterations: number = 40,
 ): number {
   let low = min;
   let high = max;
@@ -124,7 +128,7 @@ export function textLightness(context: Context): number {
 
 export function contrastForBackground(
   context: Context,
-  background: number
+  background: number,
 ): number {
   return contrastForPair(textLightness(context), background);
 }
@@ -147,7 +151,7 @@ export function solveBackgroundForContrast(
   context: Context,
   targetContrast: number,
   lowerBound: number,
-  upperBound: number
+  upperBound: number,
 ): number {
   const [minBg, maxBg] = backgroundBounds(lowerBound, upperBound);
   const clampedTarget = clampContrast(context, targetContrast);
@@ -157,7 +161,7 @@ export function solveBackgroundForContrast(
     maxBg,
     (bg) => contrastForBackground(context, bg),
     clampedTarget,
-    CONTRAST_EPSILON
+    CONTRAST_EPSILON,
   );
 
   return roundLightness(result);
@@ -165,7 +169,7 @@ export function solveBackgroundForContrast(
 
 export function solveForegroundLightness(
   background: number,
-  targetContrast: number
+  targetContrast: number,
 ): number {
   const contrastLighter = contrastForPair(1, background);
   const contrastDarker = contrastForPair(0, background);
@@ -180,7 +184,7 @@ export function solveForegroundLightness(
     range[1],
     (fg) => contrastForPair(fg, background),
     targetContrast,
-    0.0001
+    0.0001,
   );
 
   return formatPrecision(clamp01(result));
@@ -189,7 +193,7 @@ export function solveForegroundLightness(
 export function solveBorderAlpha(
   surfaceL: number,
   textL: number,
-  targetContrast: number
+  targetContrast: number,
 ): number {
   return binarySearch(
     0,
@@ -199,7 +203,7 @@ export function solveBorderAlpha(
       return contrastForPair(borderL, surfaceL);
     },
     targetContrast,
-    0.01
+    0.01,
   );
 }
 
@@ -217,7 +221,7 @@ export function calculateHueShift(
   config?: {
     curve: { p1: [number, number]; p2: [number, number] };
     maxRotation: number;
-  }
+  },
 ): number {
   if (!config) return 0;
   const { curve, maxRotation } = config;
@@ -230,7 +234,7 @@ export function calculateHueShift(
     1,
     (val) => cubicBezier(val, curve.p1[0], curve.p2[0]),
     lightness,
-    0.001
+    0.001,
   );
 
   // Calculate y (hue shift factor) given t
@@ -249,5 +253,11 @@ export function solveForegroundSpec(background: number): ModeSpec {
     "fg-baseline": solver(STRONG_CONTRAST - STEP),
     "fg-subtle": solver(STRONG_CONTRAST - STEP * 2),
     "fg-subtlest": solver(SUBTLEST_CONTRAST),
+    // High Contrast
+    "fg-high-hc": solver(HIGH_CONTRAST), // Already max
+    "fg-strong-hc": solver(HIGH_CONTRAST), // Boost to max
+    "fg-baseline-hc": solver(STRONG_CONTRAST), // Boost to Strong
+    "fg-subtle-hc": solver(STRONG_CONTRAST - STEP), // Boost to Baseline
+    "fg-subtlest-hc": solver(SUBTLEST_CONTRAST_HC), // Boosted floor
   };
 }

@@ -1,68 +1,46 @@
 /*
-   BASELINE 2025: FULL ENGINE
+   BASELINE 2025: GRAND UNIFIED ALGEBRA v4.0
    The core logic for the "Reactive Pipeline".
 */
 
-@property --_axm-base-chroma {
+/* --- 1. STATE TUPLE DEFINITIONS --- */
+
+/* Time (Tau) */
+@property --tau {
   syntax: "<number>";
+  initial-value: 1;
+  inherits: true;
+}
+
+/* Atmosphere (Alpha) */
+/* Alpha = Atmosphere: The environmental context (Hue/Chroma) */
+@property --alpha-hue {
+  syntax: "<number>";
+  initial-value: 0;
+  inherits: true;
+}
+
+@property --alpha-beta {
+  syntax: "<number>"; /* Vibrancy Coefficient (Chroma) */
   initial-value: 0.008;
   inherits: true;
 }
 
-@property --_axm-base-hue {
-  syntax: "<number>";
-  initial-value: 0;
+/* Structure (For X-Ray Mode) */
+@property --alpha-structure {
+  syntax: "*";
   inherits: true;
+  initial-value: 1px solid CanvasText;
 }
+/* Note: @property doesn't support complex border syntax well. We'll rely on var() fallback for structure. */
 
-@property --_axm-hue-brand {
-  syntax: "<number>";
-  initial-value: 0;
-  inherits: true;
-}
+/* Voice (Nu) - Handled via Tokens */
 
-@property --_axm-chroma-brand {
-  syntax: "<number>";
-  initial-value: 0;
-  inherits: true;
-}
+/* Gain (Gamma) - Handled via Media Query */
 
-@property --_axm-surface-transparency {
-  syntax: "<percentage>";
-  initial-value: 0%;
-  inherits: true;
-}
+/* System (Sigma) - Handled via Media Query */
 
-@property --_axm-surface-chroma-adjust {
-  syntax: "<number>";
-  initial-value: 0;
-  inherits: true;
-}
-
-@property --_axm-hue-adjust {
-  syntax: "<number>";
-  initial-value: 0;
-  inherits: true;
-}
-
-/* 
-   Overrides are NOT registered as @property because we rely on var() fallbacks.
-   If we registered them with an initial-value, the fallback would never trigger.
-*/
-
-/*
-@property --surface-lightness {
-  syntax: "<number>";
-  inherits: true;
-  initial-value: 1;
-}
-
-@property --surface-text-lightness {
-  syntax: "<number>";
-  inherits: true;
-  initial-value: 0;
-}
-*/
+/* --- 2. INTERNAL VARIABLES (The Engine) --- */
 
 @property --_axm-computed-surface {
   syntax: "<color>";
@@ -76,21 +54,7 @@
   initial-value: transparent;
 }
 
-/*
-@property --computed-border-color {
-  syntax: "<color>";
-  inherits: true;
-  initial-value: transparent;
-}
-*/
-
 @property --_axm-computed-surface-C {
-  syntax: "<number>";
-  inherits: true;
-  initial-value: 0;
-}
-
-@property --_axm-computed-surface-H {
   syntax: "<number>";
   inherits: true;
   initial-value: 0;
@@ -102,32 +66,28 @@
   initial-value: 0;
 }
 
-@property --_axm-computed-fg-H {
-  syntax: "<number>";
-  inherits: true;
-  initial-value: 0;
-}
-
-@property --_axm-computed-border-alpha {
-  syntax: "<number>";
-  inherits: true;
-  initial-value: 1;
-}
-
-@property --_axm-surface-border-alpha {
-  syntax: "<number>";
-  inherits: true;
-  initial-value: 0;
-}
+/* --- 3. ROOT CONFIGURATION --- */
 
 :root {
   color-scheme: light dark;
+
+  /* Initialize Time */
+  --tau: 1; /* Day Mode by default */
 
   /* Public Shadow Aliases */
   --shadow-sm: var(--axm-shadow-sm);
   --shadow-md: var(--axm-shadow-md);
   --shadow-lg: var(--axm-shadow-lg);
   --shadow-xl: var(--axm-shadow-xl);
+
+  /* Animate Time */
+  transition: --tau 0.3s ease-in-out;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --tau: -1; /* Night Mode */
+  }
 }
 
 /* Proxy tokens that cascade from utilities */
@@ -167,24 +127,8 @@
   initial-value: transparent;
 }
 
-@property --_axm-computed-border-dec-color {
-  syntax: "<color>";
-  inherits: true;
-  initial-value: transparent;
-}
+/* --- 4. THE ALGEBRA (Resolution Function) --- */
 
-@property --_axm-computed-border-int-color {
-  syntax: "<color>";
-  inherits: true;
-  initial-value: transparent;
-}
-
-/*
-   THE SURFACE ENGINE
-   Matches any element with a class starting with "surface-" or containing " surface-"
-   Also matches body to apply the page surface globally.
-   Also matches text utilities to ensure they trigger the color calculation.
-*/
 :where(
   [class^="surface-"],
   [class*=" surface-"],
@@ -192,115 +136,73 @@
   [class*=" text-"],
   body
 ) {
-  /* --- 1. TEXT CALCULATION --- */
+  /* --- TEXT RESOLUTION (Voice) --- */
 
-  /* 
-     Indirection: Lightness Source 
-     Defaults to the High Contrast Text Token.
-     Utilities like .text-subtle will override this variable.
-  */
+  /* 1. Source Selection */
   --_axm-text-lightness-source: var(--axm-text-high-token);
 
-  /* 
-     Indirection: Chroma Source
-     Defaults to Base Chroma.
-     Utilities like .hue-brand will override this.
-  */
-  --_axm-text-chroma-source: var(--_axm-base-chroma, 0);
+  /* 2. Chroma Calculation */
+  /* Text inherits 50% of the ambient vibrancy */
+  --_axm-computed-fg-C: calc(var(--alpha-beta) * 0.5);
 
-  /* 
-     Indirection: Hue Source
-     Defaults to Base Hue.
-     Utilities like .hue-brand will override this.
-  */
-  --_axm-text-hue-source: var(--_axm-base-hue, 0);
-
-  /* Calculate Text Chroma */
-  /* We use the source chroma, potentially scaled for text legibility if needed */
-  --_axm-computed-fg-C: var(
-    --_axm-override-fg-chroma,
-    calc(var(--_axm-text-chroma-source) * 0.5)
-  );
-
-  /* Calculate Text Hue */
-  --_axm-computed-fg-H: var(--_axm-default-fg-hue, var(--_axm-text-hue-source));
-
-  /* Reify Text Color */
-  /* Extract L from the LIGHTNESS SOURCE, apply computed C and H */
+  /* 3. Reify Color with HK Buffer */
+  /* L_target = L_source + (0.05 * Beta) */
   --_axm-computed-fg-color: oklch(
-    from var(--_axm-text-lightness-source) l var(--_axm-computed-fg-C)
-      var(--_axm-computed-fg-H)
+    from var(--_axm-text-lightness-source)
+      calc(l + (0.05 * var(--_axm-computed-fg-C))) var(--_axm-computed-fg-C)
+      var(--alpha-hue)
   );
 
-  /* Apply Text Color */
   color: var(--_axm-computed-fg-color);
 
-  /* --- 2. BORDER CALCULATION --- */
+  /* --- BORDER RESOLUTION --- */
 
-  /* 
-     Border Tokens are already valid oklch colors with Alpha.
-     We just need to apply our Chroma and Hue to them?
-     Wait, the token has L and Alpha. It has 0 Chroma and 0 Hue.
-     We want to apply the Text Chroma and Hue to the border.
-     
-     So we extract L and Alpha, and reconstruct.
-  */
-
-  /* Decorative Border */
-  /* Extract L and alpha from border token, apply text C and H */
+  /* Decorative */
   --_axm-computed-border-dec-color: oklch(
     from var(--axm-border-dec-token) l var(--_axm-computed-fg-C)
-      var(--_axm-computed-fg-H) / alpha
+      var(--alpha-hue) / alpha
   );
 
-  /* Interactive Border */
+  /* Interactive */
   --_axm-computed-border-int-color: oklch(
     from var(--axm-border-int-token) l var(--_axm-computed-fg-C)
-      var(--_axm-computed-fg-H) / alpha
+      var(--alpha-hue) / alpha
   );
 
-  /* Default to Decorative */
   border-color: var(--_axm-computed-border-dec-color);
 }
 
-/* 
-   SURFACE ENGINE & APPLICATION
-   Matches ONLY Surfaces and Body.
-   Calculates Surface Color and applies Background.
-   This prevents text utilities from:
-   1. Painting a background.
-   2. Corrupting the surface context (Ghost Surfaces).
-*/
+/* --- SURFACE RESOLUTION (Physics) --- */
+
 :where([class^="surface-"], [class*=" surface-"], body) {
-  /* --- SURFACE CALCULATION --- */
+  /* 
+     We calculate the surface color using Relative Color Syntax (RCS).
+     We extract 'l' and 'h' from the source token, and calculate 'c' (Chroma)
+     based on the "Safe Bicone" physics model.
+     
+     Model:
+     x = 2L - 1  (Lightness mapped to -1..1)
+     taper = 1 - abs(x) (Chroma availability based on lightness)
+     tunnel = tau^2 (Time dilation)
+     limit = beta * taper * tunnel
+     C = min(beta, limit)
+  */
 
-  /* Calculate Chroma */
-  --_axm-computed-surface-C: calc(
-    var(--_axm-base-chroma, 0) + var(--_axm-surface-chroma-adjust, 0)
-  );
-
-  /* Reify Surface Color */
-  /* Extract L and H (Shift) from token, combine with computed C and base hue */
   --_axm-computed-surface: oklch(
-    from var(--axm-surface-token) var(--_axm-override-surface-lightness, l)
-      var(--_axm-computed-surface-C)
-      calc(var(--_axm-base-hue, 0) + var(--_axm-hue-adjust, 0) + h)
+    from var(--axm-surface-token) l
+      min(
+        var(--alpha-beta),
+        var(--alpha-beta) * (1 - abs(2 * l - 1)) * var(--tau) * var(--tau)
+      )
+      h
   );
 
-  /* --- APPLICATION --- */
-
-  /* Apply Background */
   background-color: var(--_axm-computed-surface);
-
-  /* Apply Scrollbar */
   scrollbar-color: var(--axm-text-subtle-token) var(--axm-surface-token);
 }
 
-/* 
-   TRANSITIONS
-   We only transition the INPUT properties.
-   The browser interpolates these numbers, and the :where rule recalculates the colors every frame.
-*/
+/* --- TRANSITIONS --- */
+
 :where(
   [class^="surface-"],
   [class*=" surface-"],
@@ -316,161 +218,113 @@
     --_axm-computed-border-int-color 0.2s ease-in-out;
 }
 
-/* 
-   The .bordered utility applies the border.
-   It can be used as a standalone class or mixed into a surface.
-*/
+/* --- UTILITIES --- */
+
+.shadow-sm {
+  box-shadow: var(--shadow-sm);
+}
+.shadow-md {
+  box-shadow: var(--shadow-md);
+}
+.shadow-lg {
+  box-shadow: var(--shadow-lg);
+}
+.shadow-xl {
+  box-shadow: var(--shadow-xl);
+}
+
 .bordered {
   border-width: 1px;
   border-style: solid;
 }
 
-/* --- FOCUS RINGS --- */
-
 :focus-visible {
   outline: 2px solid
-    oklch(
-      from var(--_axm-computed-fg-color) l 0.2
-        var(--_axm-hue-brand, var(--_axm-base-hue))
-    );
+    oklch(from var(--_axm-computed-fg-color) l 0.2 var(--alpha-hue));
   outline-offset: 2px;
 }
 
-/* --- HIGHLIGHT & SELECTION --- */
-
-mark {
-  background-color: var(--axm-highlight-surface-color);
-  color: var(--axm-text-high-token);
-}
-
+mark,
 ::selection {
   background-color: var(--axm-highlight-surface-color);
   color: var(--axm-text-high-token);
 }
 
-/* --- FORCED COLORS (High Contrast) --- */
+/* --- X-RAY MODE (Forced Colors) --- */
 
 @media (forced-colors: active) {
   :root {
-    /* 1. Default Mappings (The "Canvas") */
     --_axm-computed-surface: Canvas;
     --_axm-computed-fg-color: CanvasText;
-    --_axm-computed-border-color: CanvasText;
   }
 
-  /* 2. Surface Mappings */
-
-  /* Standard Surfaces (Canvas) */
+  /* The Hollow State: Map Atmosphere to Structure */
   .surface-card,
   .surface-workspace,
   .surface-tinted,
   .surface-spotlight,
   .surface-soft-spotlight {
-    /* Flatten to Canvas, so we enforce a border */
-    border: 1px solid CanvasText;
-
+    /* Disable Physics */
     background-color: Canvas;
     color: CanvasText;
 
-    --_axm-computed-surface: Canvas;
-    --_axm-computed-fg-color: CanvasText;
-    --_axm-computed-border-color: CanvasText;
+    /* Enable Structure */
+    /* Use the structural fallback defined by the Mood */
+    border: var(--alpha-structure, 1px solid CanvasText);
   }
 
-  /* Actions (Buttons) */
   .surface-action {
     background-color: ButtonFace;
     color: ButtonText;
     border: 1px solid ButtonText;
-
-    --_axm-computed-surface: ButtonFace;
-    --_axm-computed-fg-color: ButtonText;
-    --_axm-computed-border-color: ButtonText;
   }
 
-  /* 3. Utility Mappings */
-
-  /* Links */
   .text-link {
     color: LinkText;
   }
 
-  /* Disabled State */
   .state-disabled,
   [disabled] {
-    opacity: 1; /* Opacity is ignored, so we rely on color */
     color: GrayText;
     border-color: GrayText;
-    --_axm-computed-fg-color: GrayText;
-    --_axm-computed-border-color: GrayText;
   }
 
-  /* Selected State */
   .state-selected,
   [aria-selected="true"] {
     background-color: Highlight;
     color: HighlightText;
     border-color: Highlight;
-    --_axm-computed-surface: Highlight;
-    --_axm-computed-fg-color: HighlightText;
   }
 
-  /* Interactive Borders */
-  .border-interactive {
-    --_axm-computed-border-color: Highlight;
-  }
-
-  /* 4. Global Overrides */
-
-  /* Selection */
   ::selection {
     background-color: Highlight;
     color: HighlightText;
   }
 
-  /* Focus Rings */
   :focus-visible {
     outline-color: Highlight;
   }
 }
 
-/* --- PRINT STYLES --- */
+/* --- PRINT --- */
 
 @media print {
   :root {
-    /* Force Light Mode to save ink */
     color-scheme: light;
-
-    /* Remove Chroma to save color ink */
-    --_axm-base-chroma: 0;
-    --_axm-surface-chroma-adjust: 0;
-    --_axm-hue-adjust: 0;
-    --_axm-chroma-brand: 0;
+    --alpha-beta: 0;
+    --tau: 1;
   }
 
-  /* Force white backgrounds for main surfaces */
   .surface-card,
   .surface-workspace,
   .surface-tinted {
-    /*
-       We use white to simulate the paper color and ensure no background ink is used.
-       We do not use 'transparent' to ensure we cover any underlying elements if stacking occurs.
-       We do not use !important because the :where() block in the engine has 0 specificity.
-    */
     background-color: white;
-    --_axm-computed-surface: white;
-
-    /* Add a subtle border to define the surface since the background is gone */
     border: 1px solid var(--axm-text-subtlest-token);
   }
 
-  /* Ensure text is dark (Black ink) */
   body {
     color: black;
   }
-
-  /* Hide purely interactive elements */
-  /* We assume .surface-action is a button/control */
   .surface-action {
     display: none;
   }

@@ -164,9 +164,9 @@ describe("generateTokensCss", () => {
 
     const css = generateTokensCss(groups, theme, undefined, undefined);
 
-    expect(css).toContain("--chart-1");
-    expect(css).toContain("--chart-2");
-    expect(css).toContain("--chart-3");
+    expect(css).toContain("--axm-chart-1");
+    expect(css).toContain("--axm-chart-2");
+    expect(css).toContain("--axm-chart-3");
     expect(css).toContain("oklch(");
     expect(css).toMatchSnapshot();
   });

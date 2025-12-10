@@ -668,3 +668,46 @@ This file tracks key architectural and design decisions made throughout the proj
   - **Standards Compliance**: It strictly enforces CSS syntax (e.g., requiring `initial-value` for `@property`), which caught bugs in our codebase.
   - **Features**: Provides minification, bundling, and automatic vendor prefixing out of the box without complex configuration.
   - **Alignment**: Fits our "Standard CSS First" axiom by acting as a transparent optimizer rather than a transpiler for a custom language.
+
+### [2025-12-08] Foreign Element Adapters
+
+- **Context**: Third-party components (like Starlight's UI) use their own class names and structure, making it impossible to apply our semantic utility classes directly. We need a way to "inject" our physics into their DOM.
+- **Decision**: Implement a "Foreign Element Adapter" pattern where we map external selectors (e.g., `.sl-link-button`) to our internal physics variables (e.g., `--alpha-hue`, `--text-lightness-source`) in a dedicated CSS layer.
+- **Rationale**:
+  - **Non-Invasive**: We don't need to fork or patch the third-party library.
+  - **Maintainability**: The mapping is centralized in one place (`starlight-custom.css` or a future generated file), making it easy to update when the external library changes.
+  - **Consistency**: Ensures that foreign elements participate in the same "Reactive Pipeline" as our native components, respecting mode switches and context nesting.
+
+### [2025-12-08] Headless Violation Checking
+
+- **Context**: Visual inspection is slow and error-prone. We need a way to systematically find "Surface Mismatches" (where an element uses a color that doesn't belong to its context) across the entire site.
+- **Decision**: Create a headless script (`scripts/check-violations.ts`) that uses Playwright to inject the `walker.ts` logic into the page and report violations as a structured table.
+- **Rationale**:
+  - **Automation**: Can be run in CI or as a pre-commit hook.
+  - **Precision**: The script can check thousands of elements in seconds, finding subtle issues that the human eye might miss.
+  - **Actionable**: The output provides the exact selector and reason for the violation, making it easy to fix.
+
+### [2025-12-08] Semantic Token Enforcement in Docs
+
+- **Context**: The `ContextVisualizer` component had hardcoded colors (e.g., `text-white`), which caused "Ghost Text" issues when the surface polarity inverted (Light Mode Spotlight).
+- **Decision**: Replace all hardcoded color classes with semantic token utilities (e.g., `.text-strong`).
+- **Rationale**:
+  - **Correctness**: Semantic tokens automatically adapt to the current context (Page vs. Inverted), ensuring legibility in all states.
+  - **Dogfooding**: Demonstrates the correct usage of the system within its own documentation.
+
+### [2025-12-08] Component-Based Documentation (MDX)
+
+- **Context**: Markdown tables in `tokens.md` were unreadable on mobile and lacked visual hierarchy. Standard Markdown doesn't support wrapping tables in containers.
+- **Decision**: Rename documentation files to `.mdx` and wrap complex content in semantic components (e.g., `<div class="surface-card">`).
+- **Rationale**:
+  - **Control**: MDX allows us to use HTML/Components to control layout and styling beyond what standard Markdown permits.
+  - **Hierarchy**: Wrapping tables in cards visually separates them from the background, improving readability and design quality.
+
+### [2025-12-08] Strict TypeScript in Scripts
+
+- **Context**: Our scripts (e.g., `check-violations.ts`) were using `any` types and loose typing, which led to maintenance issues and potential runtime errors. The linter was configured to be strict, causing build failures.
+- **Decision**: Enforce strict TypeScript typing in all scripts, including `no-explicit-any` and `no-unused-vars`.
+- **Rationale**:
+  - **Reliability**: Scripts are part of the production pipeline (CI/CD). They should be as robust as the application code.
+  - **Maintainability**: Strict typing acts as documentation and prevents "bit rot" where scripts stop working as the codebase evolves.
+  - **Consistency**: The entire monorepo should adhere to the same quality standards.

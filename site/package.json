@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "pnpm generate:theme && astro dev",
     "start": "astro dev",
-    "generate:theme": "pnpm exec axiomatic color-config.json src/styles/theme.css",
+    "generate:theme": "pnpm exec axiomatic ../color-config.json src/styles/theme.css",
+    "check": "astro check",
     "build": "pnpm generate:theme && astro build",
     "preview": "astro preview",
     "astro": "astro",
@@ -19,6 +20,7 @@
     "@astrojs/starlight": "^0.36.3",
     "@astrojs/svelte": "^7.2.2",
     "@axiomatic-design/color": "workspace:*",
+    "@fontsource-variable/eb-garamond": "^5.2.7",
     "apca-w3": "^0.1.9",
     "astro": "^5.6.1",
     "culori": "^4.0.2",

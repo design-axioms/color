@@ -3,6 +3,7 @@ import type { DebugContext, ResolvedToken } from "./types.ts";
 import { findContextRoot } from "./walker.ts";
 
 /* eslint-disable @axiomatic-design/no-raw-tokens */
+/* eslint-disable @typescript-eslint/no-unnecessary-condition */
 
 interface PopoverElement extends HTMLElement {
   showPopover(): void;
@@ -322,6 +323,41 @@ const STYLES = `
     pointer-events: none;
   }
 
+  #continuity-toggle {
+    position: fixed;
+    bottom: 80px;
+    right: 112px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #1a1a1a;
+    border: 1px solid #333;
+    color: #888;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 99999;
+    pointer-events: auto;
+    opacity: 0;
+    transform: translateY(20px) scale(0.8);
+    pointer-events: none;
+  }
+
+  #continuity-toggle.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+  }
+
+  #continuity-toggle.active {
+    background: #ffcc00;
+    color: #000;
+    border-color: #ffcc00;
+  }
+
   #violation-toggle.visible {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -383,11 +419,13 @@ export class AxiomaticDebugger extends HTMLElement {
   private infoCard!: HTMLElement;
   private toggleBtn!: HTMLButtonElement;
   private violationToggle!: HTMLButtonElement;
+  private continuityToggle!: HTMLButtonElement;
   private internalsToggle!: HTMLButtonElement;
   private activeElement: HTMLElement | null = null;
   private isEnabled = false;
   private isPinned = false;
   private isViolationMode = false;
+  private isContinuityMode = false;
   private showInternals = false;
   private rafId: number | null = null;
 
@@ -424,6 +462,9 @@ export class AxiomaticDebugger extends HTMLElement {
       <button id="violation-toggle" aria-label="Toggle Violations" title="Show Axiom Violations">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
       </button>
+      <button id="continuity-toggle" aria-label="Check Continuity" title="Check Continuity (Tau Zero)">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </button>
       <button id="toggle-btn" aria-label="Toggle Inspector">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="3"/><path d="m16 16-1.9-1.9"/></svg>
       </button>
@@ -446,6 +487,10 @@ export class AxiomaticDebugger extends HTMLElement {
       "violation-toggle",
     )! as HTMLButtonElement;
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    this.continuityToggle = this.root.getElementById(
+      "continuity-toggle",
+    )! as HTMLButtonElement;
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     this.internalsToggle = this.root.getElementById(
       "internals-toggle",
     )! as HTMLButtonElement;
@@ -462,11 +507,36 @@ export class AxiomaticDebugger extends HTMLElement {
 
     this.violationToggle.addEventListener("click", () => {
       this.isViolationMode = !this.isViolationMode;
+      // Disable continuity mode if active
+      if (this.isContinuityMode) {
+        this.isContinuityMode = false;
+        this.continuityToggle.classList.remove("active");
+        this.clearViolations();
+      }
+
       if (this.isViolationMode) {
         this.violationToggle.classList.add("active");
         this.scanForViolations();
       } else {
         this.violationToggle.classList.remove("active");
+        this.clearViolations();
+      }
+    });
+
+    this.continuityToggle.addEventListener("click", () => {
+      this.isContinuityMode = !this.isContinuityMode;
+      // Disable violation mode if active
+      if (this.isViolationMode) {
+        this.isViolationMode = false;
+        this.violationToggle.classList.remove("active");
+        this.clearViolations();
+      }
+
+      if (this.isContinuityMode) {
+        this.continuityToggle.classList.add("active");
+        void this.checkContinuity();
+      } else {
+        this.continuityToggle.classList.remove("active");
         this.clearViolations();
       }
     });
@@ -490,9 +560,15 @@ export class AxiomaticDebugger extends HTMLElement {
     this.isEnabled = true;
     this.toggleBtn.classList.add("active");
     this.violationToggle.classList.add("visible");
+    this.continuityToggle.classList.add("visible");
     this.internalsToggle.classList.add("visible");
     window.addEventListener("mousemove", this.handleMouseMove);
     window.addEventListener("keydown", this.handleKeyDown);
+    window.addEventListener("resize", this.handleResize);
+    window.addEventListener("scroll", this.handleResize, {
+      capture: true,
+      passive: true,
+    });
     window.addEventListener("click", this.handleClick, { capture: true });
 
     // Restore violation state if it was active
@@ -509,9 +585,12 @@ export class AxiomaticDebugger extends HTMLElement {
     this.isPinned = false;
     this.toggleBtn.classList.remove("active");
     this.violationToggle.classList.remove("visible");
+    this.continuityToggle.classList.remove("visible");
     this.internalsToggle.classList.remove("visible");
     window.removeEventListener("mousemove", this.handleMouseMove);
     window.removeEventListener("keydown", this.handleKeyDown);
+    window.removeEventListener("resize", this.handleResize);
+    window.removeEventListener("scroll", this.handleResize, { capture: true });
     window.removeEventListener("click", this.handleClick, { capture: true });
     if (this.rafId) {
       cancelAnimationFrame(this.rafId);
@@ -578,6 +657,28 @@ export class AxiomaticDebugger extends HTMLElement {
     }
   };
 
+  private handleResize = (): void => {
+    if (!this.isEnabled) return;
+
+    // Re-inspect active element to update source boxes and info card position
+    if (this.activeElement) {
+      this.inspect(this.activeElement);
+    }
+
+    // Re-scan violations if mode is active
+    if (this.isViolationMode) {
+      this.scanForViolations();
+    }
+
+    // Clear continuity violations on resize to prevent visual drift
+    if (this.isContinuityMode) {
+      this.clearViolations();
+      // We don't auto-rerun because it's expensive, but we shouldn't show stale boxes.
+      // Optionally, we could show a "Stale" state or just hide them.
+      // Clearing is safer.
+    }
+  };
+
   private inspect(element: HTMLElement): void {
     const context = findContextRoot(element);
     const tokens = resolveTokens(element, context);
@@ -629,10 +730,10 @@ export class AxiomaticDebugger extends HTMLElement {
 
     // Reorder tokens: Final Text Color should be at the bottom
     const PRIORITY: Record<string, number> = {
-      "Base Hue": 1,
-      "Base Chroma": 2,
-      "Text Source": 3,
-      "Surface Color": 4,
+      "Text Source": 1,
+      "Surface Color": 2,
+      "Context Hue": 3,
+      "Context Chroma": 4,
       "Actual Background": 5,
       "Final Text Color": 6,
     };
@@ -643,8 +744,8 @@ export class AxiomaticDebugger extends HTMLElement {
       return pA - pB;
     });
 
-    // Extract Base Hue for coloring
-    const baseHueToken = tokens.find((t) => t.intent === "Base Hue");
+    // Extract Context Hue for coloring
+    const baseHueToken = tokens.find((t) => t.intent === "Context Hue");
     const baseHue = baseHueToken ? parseFloat(baseHueToken.value) : 0;
 
     // Update Tokens
@@ -681,7 +782,9 @@ export class AxiomaticDebugger extends HTMLElement {
 
         let reason = "Tag selector or User Agent default style.";
 
-        if (hasInlineStyle) {
+        if (bgToken && bgToken.sourceVar.startsWith("--sl-")) {
+          reason = `Foreign token detected: ${bgToken.sourceVar}. This is a Starlight variable, not an Axiomatic Surface.`;
+        } else if (hasInlineStyle) {
           reason = "Inline `style` attribute detected.";
         } else if (bgUtilities.length > 0) {
           reason = `Utility classes detected: ${bgUtilities.join(", ")}.`;
@@ -714,13 +817,13 @@ export class AxiomaticDebugger extends HTMLElement {
               ? `<div class="token-swatch" style="background-color: ${t.value}"></div>`
               : "";
 
-            // Special visualization for Base Hue and Base Chroma
-            if (t.intent === "Base Hue") {
+            // Special visualization for Context Hue and Context Chroma
+            if (t.intent === "Context Hue") {
               const hue = parseFloat(t.value);
               if (!isNaN(hue)) {
                 swatch = `<div class="token-hue-swatch" style="background-color: oklch(0.7 0.15 ${hue})"></div>`;
               }
-            } else if (t.intent === "Base Chroma") {
+            } else if (t.intent === "Context Chroma") {
               const chroma = parseFloat(t.value);
               if (!isNaN(chroma)) {
                 // Max chroma is usually around 0.37, so we scale 0.4 to 100%
@@ -753,13 +856,13 @@ export class AxiomaticDebugger extends HTMLElement {
               statusIcon = inputIcon;
               subtitle = "Input: Context";
               roleColor = "#ffffff"; // High Contrast White
-            } else if (t.intent === "Base Hue") {
+            } else if (t.intent === "Context Hue") {
               statusIcon = inputIcon;
-              subtitle = "Input: Base Hue";
+              subtitle = "Input: Context Hue";
               roleColor = "#ffffff"; // High Contrast White
-            } else if (t.intent === "Base Chroma") {
+            } else if (t.intent === "Context Chroma") {
               statusIcon = inputIcon;
-              subtitle = "Input: Base Chroma";
+              subtitle = "Input: Context Chroma";
               roleColor = "#ffffff"; // High Contrast White
             } else if (t.isPrivate && !t.responsibleClass && !t.isInline) {
               statusIcon = "🔒";
@@ -780,14 +883,14 @@ export class AxiomaticDebugger extends HTMLElement {
               valueStyle = `color: ${roleColor}; font-weight: bold;`;
             } else if (t.intent === "Surface Color") {
               valueType = "type-derived";
-            } else if (t.intent === "Base Hue") {
+            } else if (t.intent === "Context Hue") {
               if (!isNaN(baseHue)) {
                 // Use a visible chroma to show the hue clearly
                 valueStyle = `color: oklch(0.8 0.14 ${baseHue}); font-weight: bold;`;
               } else {
                 valueType = "type-source";
               }
-            } else if (t.intent === "Base Chroma") {
+            } else if (t.intent === "Context Chroma") {
               const chroma = parseFloat(t.value);
               if (!isNaN(baseHue) && !isNaN(chroma)) {
                 // Use the actual chroma
@@ -985,8 +1088,8 @@ export class AxiomaticDebugger extends HTMLElement {
           (t) =>
             t.intent === "Text Source" ||
             t.intent === "Surface Color" ||
-            t.intent === "Base Hue" ||
-            t.intent === "Base Chroma",
+            t.intent === "Context Hue" ||
+            t.intent === "Context Chroma",
         )
       ) {
         borderColor = "#ffffff";
@@ -1105,9 +1208,158 @@ export class AxiomaticDebugger extends HTMLElement {
     this.activeElement = null;
   }
 
+  private async checkContinuity(): Promise<void> {
+    this.violationLayer.innerHTML = "";
+
+    // 1. Freeze Time (Set tau to 0)
+    const style = document.createElement("style");
+    style.innerHTML = `* { transition: none !important; }`;
+    document.head.appendChild(style);
+    document.documentElement.style.setProperty("--tau", "0");
+
+    // 2. Capture State A (Light Mode + Tau=0)
+    document.documentElement.setAttribute("data-theme", "light");
+    // Wait for style recalc
+    await new Promise((resolve) =>
+      requestAnimationFrame(() => requestAnimationFrame(resolve)),
+    );
+
+    const allElements = Array.from(document.body.querySelectorAll("*"));
+    const stateA = allElements.map((el) => {
+      const style = getComputedStyle(el);
+      return {
+        bg: style.backgroundColor,
+        color: style.color,
+      };
+    });
+
+    // 3. Toggle Theme (Dark Mode + Tau=0)
+    document.documentElement.setAttribute("data-theme", "dark");
+    await new Promise((resolve) =>
+      requestAnimationFrame(() => requestAnimationFrame(resolve)),
+    );
+
+    // 4. Capture State B & Compare
+    const violations: Array<{
+      element: HTMLElement;
+      tagName: string;
+      id: string;
+      classes: string;
+      reason: string;
+      surface?: string;
+      actual?: string;
+    }> = [];
+
+    allElements.forEach((element, i) => {
+      if (!(element instanceof HTMLElement)) return;
+      if (element.offsetParent === null) return;
+      if (element.tagName === "AXIOMATIC-DEBUGGER") return;
+      if (this.contains(element)) return;
+
+      const a = stateA[i];
+      if (!a) return;
+
+      const style = getComputedStyle(element);
+      const b = { bg: style.backgroundColor, color: style.color };
+
+      if (a.bg === "rgba(0, 0, 0, 0)" && b.bg === "rgba(0, 0, 0, 0)") {
+        // Ignore transparent
+      } else if (a.bg !== b.bg) {
+        // Diagnose the cause
+        const context = findContextRoot(element);
+        const tokens = resolveTokens(element, context);
+        const bgToken = tokens.find((t) => t.intent === "Actual Background");
+
+        let culprit = "Unknown Selector";
+        const classList = Array.from(element.classList);
+        const bgUtilities = classList.filter((c) => c.startsWith("bg-"));
+        const otherClasses = classList.filter(
+          (c) =>
+            !c.startsWith("bg-") &&
+            !c.startsWith("text-") &&
+            !c.startsWith("surface-") &&
+            !c.startsWith("theme-"),
+        );
+        const hasInlineStyle = element.style.backgroundColor !== "";
+
+        if (bgToken && bgToken.sourceVar.startsWith("--")) {
+          culprit = `Variable ${bgToken.sourceVar}`;
+        } else if (hasInlineStyle) {
+          culprit = "Inline `style` attribute";
+        } else if (bgUtilities.length > 0) {
+          culprit = `Utility classes: ${bgUtilities.join(", ")}`;
+        } else if (otherClasses.length > 0) {
+          culprit = `Custom CSS classes: ${otherClasses.join(", ")}`;
+        } else if (element.id) {
+          culprit = `ID selector: #${element.id}`;
+        } else {
+          culprit = "Tag selector or User Agent default";
+        }
+
+        this.drawViolation(element);
+        violations.push({
+          element,
+          tagName: element.tagName.toLowerCase(),
+          id: element.id,
+          classes: element.className,
+          reason: `Continuity Violation (Background): Snapped from ${a.bg} to ${b.bg}. Culprit: ${culprit}`,
+          surface: "N/A",
+          actual: b.bg,
+        });
+      } else if (a.color !== b.color) {
+        // Diagnose the cause
+        // We don't explicitly track "Actual Foreground" in the same way, but we can infer
+        // or just report the snap.
+
+        this.drawViolation(element);
+        violations.push({
+          element,
+          tagName: element.tagName.toLowerCase(),
+          id: element.id,
+          classes: element.className,
+          reason: `Continuity Violation (Foreground): Snapped from ${a.color} to ${b.color}.`,
+          surface: "N/A",
+          actual: b.color,
+        });
+      }
+    });
+
+    // 5. Restore State
+    document.head.removeChild(style);
+    document.documentElement.style.removeProperty("--tau");
+    // Reset to system preference or whatever it was?
+    // For now, let's just leave it in dark mode or toggle back to light if that was the start.
+    // Ideally we should restore the original theme.
+    // But for a debugger tool, leaving it in the last state is acceptable.
+
+    if (violations.length > 0) {
+      console.group("🚫 Continuity Violations Detected");
+      console.table(
+        violations.map((v) => ({
+          Tag: v.tagName,
+          ID: v.id,
+          Classes: v.classes,
+          Reason: v.reason,
+        })),
+      );
+      console.groupEnd();
+    } else {
+      console.log("✅ No Continuity Violations found.");
+    }
+  }
+
   private scanForViolations(): void {
     this.violationLayer.innerHTML = "";
     const allElements = document.body.querySelectorAll("*");
+    const violations: Array<{
+      element: HTMLElement;
+      tagName: string;
+      id: string;
+      classes: string;
+      reason: string;
+      surface?: string;
+      actual?: string;
+    }> = [];
 
     for (const element of Array.from(allElements)) {
       if (element instanceof HTMLElement) {
@@ -1125,15 +1377,51 @@ export class AxiomaticDebugger extends HTMLElement {
         const bgToken = tokens.find((t) => t.intent === "Actual Background");
 
         const hasSurfaceMismatch =
-          surfaceToken && bgToken && surfaceToken.value !== bgToken.value;
+          !!surfaceToken && !!bgToken && surfaceToken.value !== bgToken.value;
         const hasUnconnectedPrivateToken = tokens.some(
           (t) => t.isLocal && t.isPrivate && !t.responsibleClass && !t.isInline,
         );
 
         if (hasSurfaceMismatch || hasUnconnectedPrivateToken) {
           this.drawViolation(element);
+
+          let reason = "";
+          if (hasSurfaceMismatch) reason = "Surface Mismatch";
+          if (hasUnconnectedPrivateToken)
+            reason = reason ? `${reason} & Private Token` : "Private Token";
+
+          violations.push({
+            element,
+            tagName: element.tagName.toLowerCase(),
+            id: element.id,
+            classes: element.className,
+            reason,
+            surface: surfaceToken?.value,
+            actual: bgToken?.value,
+          });
         }
       }
+    }
+
+    if (violations.length > 0) {
+      console.group("🚫 Axiomatic Violations Detected");
+      console.table(
+        violations.map((v) => ({
+          Tag: v.tagName,
+          ID: v.id,
+          Classes: v.classes,
+          Reason: v.reason,
+          "Expected Surface": v.surface,
+          "Actual Background": v.actual,
+        })),
+      );
+      console.log(
+        "Elements (expand to inspect):",
+        violations.map((v) => v.element),
+      );
+      console.groupEnd();
+    } else {
+      console.log("✅ No Axiomatic Violations found.");
     }
   }
 

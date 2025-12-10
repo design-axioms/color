@@ -4,7 +4,7 @@
     "page": {
       "light": {
         "start": {
-          "background": 0.98
+          "background": 1
         },
         "end": {
           "adjustable": true,
@@ -13,11 +13,11 @@
       },
       "dark": {
         "start": {
-          "background": 0.0
+          "background": 0.1
         },
         "end": {
           "adjustable": true,
-          "background": 0.15
+          "background": 0.4
         }
       }
     },
@@ -44,30 +44,29 @@
     "keyColors": {
       "brand": "#FF00FF",
       "success": "#00FF00",
-      "warning": "#FFFF00",
-      "error": "#FF0000"
-    },
-    "neutral": "#111111"
+      "warning": "#eab308",
+      "error": "#ef4444"
+    }
   },
   "hueShift": {
     "curve": {
-      "p1": [0.2, 0],
-      "p2": [0.8, 1]
+      "p1": [0.5, 0],
+      "p2": [0.5, 1]
     },
-    "maxRotation": 45
+    "maxRotation": 5
   },
   "borderTargets": {
-    "decorative": 20,
-    "interactive": 50,
-    "critical": 90
+    "decorative": 10,
+    "interactive": 30,
+    "critical": 80
   },
   "palette": {
-    "targetChroma": 0.25,
-    "targetContrast": 75,
-    "hues": [300, 180, 60, 0, 120, 240]
+    "targetChroma": 0.3,
+    "targetContrast": 60,
+    "hues": [25, 190, 45, 250, 85, 280, 125, 320, 150, 360]
   },
   "options": {
-    "prefix": "cyber",
+    "prefix": "axm",
     "selector": ":root"
   },
   "groups": [
@@ -81,14 +80,10 @@
           "polarity": "page"
         },
         {
-          "slug": "panel",
-          "label": "Surface Panel",
-          "description": "A dark panel.",
-          "polarity": "page",
-          "contrastOffset": {
-            "light": 5,
-            "dark": 5
-          }
+          "slug": "workspace",
+          "label": "Surface Workspace",
+          "description": "A very light elevated surface, used for the main workspace area.",
+          "polarity": "page"
         }
       ]
     },
@@ -101,23 +96,81 @@
           "description": "A card-like element.",
           "polarity": "page",
           "contrastOffset": {
-            "light": 10,
-            "dark": 10
+            "light": 15,
+            "dark": 15
           },
           "states": [
             {
               "name": "hover",
               "offset": -5
+            },
+            {
+              "name": "active",
+              "offset": -10
             }
           ]
         },
         {
-          "slug": "neon-button",
-          "label": "Neon Button",
-          "description": "A high-chroma action button.",
-          "polarity": "inverted",
+          "slug": "action",
+          "label": "Surface Action",
+          "description": "A clickable action surface (e.g. button).",
+          "polarity": "page",
           "hue": "brand",
-          "targetChroma": 0.3
+          "targetChroma": 0.12,
+          "contrastOffset": {
+            "light": 25,
+            "dark": 25
+          },
+          "states": [
+            {
+              "name": "hover",
+              "offset": -5
+            },
+            {
+              "name": "active",
+              "offset": -10
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Spotlight",
+      "surfaces": [
+        {
+          "slug": "spotlight",
+          "label": "Surface Spotlight",
+          "description": "The darkest surface.",
+          "polarity": "inverted"
+        }
+      ]
+    },
+    {
+      "name": "Status",
+      "surfaces": [
+        {
+          "slug": "status-success",
+          "label": "Success",
+          "description": "Positive status feedback.",
+          "polarity": "page",
+          "hue": "success",
+          "targetChroma": 0.15
+        },
+        {
+          "slug": "status-warning",
+          "label": "Warning",
+          "description": "Warning status feedback.",
+          "polarity": "page",
+          "hue": "warning",
+          "targetChroma": 0.15
+        },
+        {
+          "slug": "status-error",
+          "label": "Error",
+          "description": "Error status feedback.",
+          "polarity": "page",
+          "hue": "error",
+          "targetChroma": 0.2
         }
       ]
     }

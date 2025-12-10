@@ -29,6 +29,7 @@
       names: [
         "--text-high-token",
         "--text-strong-token",
+        "--text-body-token",
         "--text-subtle-token",
         "--text-subtlest-token",
       ],
@@ -146,11 +147,11 @@
                 {#if token.isLightDark && token.lightValue && token.darkValue}
                   <div class="adaptive-values">
                     <div class="value-item">
-                      <span class="label text-subtler">L</span>
+                      <span class="label text-subtlest">L</span>
                       <span class="value text-strong">{token.lightValue}</span>
                     </div>
                     <div class="value-item">
-                      <span class="label text-subtler">D</span>
+                      <span class="label text-subtlest">D</span>
                       <span class="value text-strong">{token.darkValue}</span>
                     </div>
                   </div>
@@ -179,7 +180,7 @@
     margin-top: 0.5rem;
 
     max-height: 60vh;
-    width: 500px;
+    width: min(500px, 90vw);
 
     border-radius: 8px;
     padding: 1rem;

@@ -31,6 +31,8 @@ const config: KnipConfig = {
         "prettier-plugin-svelte",
         "globals",
         "@glimmer/env",
+        "vercel",
+        "vite",
       ],
     },
     site: {
@@ -45,6 +47,9 @@ const config: KnipConfig = {
         "src/components/algebra/OrthogonalityDemo.svelte",
         "src/components/algebra/StateVectorDemo.svelte",
         "src/components/builder-v2/stage/ExportView.svelte",
+        "src/components/inspector/InspectorPanel.svelte",
+        "src/components/inspector/InspectorSurface.svelte",
+        "src/components/inspector/TokenInspector.svelte",
       ],
       ignoreDependencies: [
         "@astrojs/check",

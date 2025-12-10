@@ -13,7 +13,7 @@ Actions are surfaces that invite user interaction. They are the "buttons" and "c
 
 The primary interactive surface. Used for buttons, toggles, and active states.
 
-<Diagram class="surface-card docs-p-4 docs-rounded">
+<Diagram class="surface-card docs-p-4 docs-rounded docs-flex">
   <button class="surface-action docs-p-2 docs-rounded">Default Action</button>
   <button class="surface-action hue-brand docs-p-2 docs-rounded">
     Brand Action
@@ -27,7 +27,7 @@ The primary interactive surface. Used for buttons, toggles, and active states.
 
 A lower-emphasis interactive surface. Useful for secondary buttons or ghost buttons.
 
-<Diagram class="surface-card docs-p-4 docs-rounded">
+<Diagram class="surface-card docs-p-4 docs-rounded docs-flex">
   <button class="surface-action-soft docs-p-2 docs-rounded">Soft Action</button>
   <button class="surface-action-soft hue-brand docs-p-2 docs-rounded">
     Brand Soft
@@ -86,8 +86,8 @@ Apply the `.focus-ring` utility class to interactive elements. It applies styles
 
 Interactive elements use the standard surface tokens, plus specific tokens for states and focus.
 
-| Token Variable       | Description                     | Usage                                    |
-| :------------------- | :------------------------------ | :--------------------------------------- |
+| Token Variable           | Description                     | Usage                                        |
+| :----------------------- | :------------------------------ | :------------------------------------------- |
 | `--axm-focus-ring-color` | The universal focus ring color. | `outline-color: var(--axm-focus-ring-color)` |
 | `--axm-surface-token`    | The background of the action.   | `background: var(--axm-surface-token)`       |
 | `--axm-text-high-token`  | The text color of the action.   | `color: var(--axm-text-high-token)`          |

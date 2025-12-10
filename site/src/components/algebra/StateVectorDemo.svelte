@@ -187,8 +187,8 @@
 
     <div
       class="preview-card surface-card bordered {intent.value}"
-      style:--base-hue={hue}
-      style:--base-chroma={chroma}
+      style:--alpha-hue={hue}
+      style:--alpha-beta={chroma}
       style:color-scheme={mode}
     >
       <div>
@@ -385,11 +385,11 @@
        The .text-high / .text-subtle classes set --text-lightness-source
        The engine calculates color: var(--computed-fg-color)
        We just need to ensure --computed-fg-C and --computed-fg-H are set.
-       The engine sets them from --base-chroma and --base-hue (which we set in style)
+       The engine sets them from --alpha-beta and --alpha-hue (which we set in style)
     */
 
-    --computed-fg-C: var(--base-chroma);
-    --computed-fg-H: var(--base-hue);
+    --computed-fg-C: var(--alpha-beta);
+    --computed-fg-H: var(--alpha-hue);
   }
 
   .preview-title {

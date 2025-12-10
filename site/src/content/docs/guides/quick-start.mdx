@@ -13,10 +13,20 @@ Run the following commands in your project root:
 
 <Tabs>
   <TabItem label="npm">
-    ```bash npm install -D @axiomatic-design/color npx axiomatic init ```
+
+    ```bash
+    npm install -D @axiomatic-design/color
+    npx axiomatic init
+    ```
+
   </TabItem>
   <TabItem label="pnpm">
-    ```bash pnpm add -D @axiomatic-design/color pnpm exec axiomatic init ```
+
+    ```bash
+    pnpm add -D @axiomatic-design/color
+    pnpm exec axiomatic init
+    ```
+
   </TabItem>
 </Tabs>
 
@@ -28,12 +38,20 @@ Now, generate the CSS and TypeScript definitions.
 
 <Tabs>
   <TabItem label="npm">
-    ```bash npx axiomatic build --out ./src/theme.css npx axiomatic export
-    --format typescript --out ./src/theme.ts ```
+
+    ```bash
+    npx axiomatic build --out ./src/theme.css
+    npx axiomatic export --format typescript --out ./src/theme.ts
+    ```
+
   </TabItem>
   <TabItem label="pnpm">
-    ```bash pnpm exec axiomatic build --out ./src/theme.css pnpm exec axiomatic
-    export --format typescript --out ./src/theme.ts ```
+
+    ```bash
+    pnpm exec axiomatic build --out ./src/theme.css
+    pnpm exec axiomatic export --format typescript --out ./src/theme.ts
+    ```
+
   </TabItem>
 </Tabs>
 
@@ -52,16 +70,14 @@ Let's build a simple "Card" component to see the system in action.
 Then, create a Card component:
 
 ```tsx
-import { tokens } from "./theme";
-
 export function Card() {
   return (
     <div
-      className={tokens.surface.card}
+      className="surface-card"
       style={{ padding: "2rem", borderRadius: "8px" }}
     >
-      <h2 style={{ color: tokens.context.text.high }}>Hello World</h2>
-      <p style={{ color: tokens.context.text.subtle }}>I am a themed card.</p>
+      <h2 className="text-strong">Hello World</h2>
+      <p className="text-subtle">I am a themed card.</p>
     </div>
   );
 }
@@ -101,7 +117,7 @@ Then, create a Card component:
   > **Note**: If you are using a bundler (like Vite, Webpack, or Astro), you should import the CSS file in your JavaScript/TypeScript entry point instead (e.g. `import './theme.css'`).
 
 ```html
-<link rel="stylesheet" href="/theme.css" />
+<link rel="stylesheet" href="./src/theme.css" />
 ```
 
 Then, write the markup using the utility classes:

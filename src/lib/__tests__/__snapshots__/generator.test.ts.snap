@@ -20,17 +20,20 @@ exports[`generateTokensCss > generates correct CSS for a standard surface group 
   --_local-light-c: 0;
   --_local-dark-h: 0;
   --_local-dark-c: 0;
-  --_surface-light-h: var(--_base-hue, var(--_local-light-h));
-  --_surface-light-c: var(--_base-chroma, var(--_local-light-c));
-  --_surface-dark-h: var(--_base-hue, var(--_local-dark-h));
-  --_surface-dark-c: var(--_base-chroma, var(--_local-dark-c));
+  --alpha-hue: 0;
+  --alpha-beta: 0;
+  --alpha-structure: 1px solid CanvasText;
   --surface-token: light-dark(
-    oklch(0.98 var(--_surface-light-c) var(--_surface-light-h)),
-    oklch(0.1 var(--_surface-dark-c) var(--_surface-dark-h))
+    oklch(0.98 var(--alpha-beta) var(--alpha-hue)),
+    oklch(0.1 var(--alpha-beta) var(--alpha-hue))
   );
   --text-high-token: light-dark(
     oklch(0 0 0),
     oklch(1 0 0)
+  );
+  --text-body-token: light-dark(
+    oklch(0.3152 0 0),
+    oklch(0.9416 0 0)
   );
   --text-subtle-token: light-dark(
     oklch(0.4184 0 0),
@@ -39,6 +42,22 @@ exports[`generateTokensCss > generates correct CSS for a standard surface group 
   --text-subtlest-token: light-dark(
     oklch(0.5085 0 0),
     oklch(0.8406 0 0)
+  );
+  --text-high-hc-token: light-dark(
+    oklch(0 0 0),
+    oklch(1 0 0)
+  );
+  --text-body-hc-token: light-dark(
+    oklch(0 0 0),
+    oklch(0.9866 0 0)
+  );
+  --text-subtle-hc-token: light-dark(
+    oklch(0.3152 0 0),
+    oklch(0.9416 0 0)
+  );
+  --text-subtlest-hc-token: light-dark(
+    oklch(0.3696 0 0),
+    oklch(0.9174 0 0)
   );
   --border-dec-token: light-dark(
     oklch(0 0 0 / 0.0515),
@@ -55,8 +74,8 @@ exports[`generateTokensCss > generates correct CSS for a standard surface group 
   --_local-dark-h: 0;
   --_local-dark-c: 0;
   --surface-token: light-dark(
-    oklch(0.95 var(--_base-chroma, var(--_local-light-c)) var(--_base-hue, var(--_local-light-h))),
-    oklch(0.15 var(--_base-chroma, var(--_local-dark-c)) var(--_base-hue, var(--_local-dark-h)))
+    oklch(0.95 var(--alpha-beta) var(--alpha-hue)),
+    oklch(0.15 var(--alpha-beta) var(--alpha-hue))
   );
 }
 
@@ -65,17 +84,20 @@ exports[`generateTokensCss > generates correct CSS for a standard surface group 
   --_local-light-c: 0;
   --_local-dark-h: 0;
   --_local-dark-c: 0;
-  --_surface-light-h: var(--_base-hue, var(--_local-light-h));
-  --_surface-light-c: var(--_base-chroma, var(--_local-light-c));
-  --_surface-dark-h: var(--_base-hue, var(--_local-dark-h));
-  --_surface-dark-c: var(--_base-chroma, var(--_local-dark-c));
+  --alpha-hue: 0;
+  --alpha-beta: 0;
+  --alpha-structure: 1px solid CanvasText;
   --surface-token: light-dark(
-    oklch(1 var(--_surface-light-c) var(--_surface-light-h)),
-    oklch(0.2 var(--_surface-dark-c) var(--_surface-dark-h))
+    oklch(1 var(--alpha-beta) var(--alpha-hue)),
+    oklch(0.2 var(--alpha-beta) var(--alpha-hue))
   );
   --text-high-token: light-dark(
     oklch(0 0 0),
     oklch(1 0 0)
+  );
+  --text-body-token: light-dark(
+    oklch(0.3619 0 0),
+    oklch(0.9446 0 0)
   );
   --text-subtle-token: light-dark(
     oklch(0.4586 0 0),
@@ -84,6 +106,22 @@ exports[`generateTokensCss > generates correct CSS for a standard surface group 
   --text-subtlest-token: light-dark(
     oklch(0.54 0 0),
     oklch(0.8468 0 0)
+  );
+  --text-high-hc-token: light-dark(
+    oklch(0 0 0),
+    oklch(1 0 0)
+  );
+  --text-body-hc-token: light-dark(
+    oklch(0.1935 0 0),
+    oklch(0.9926 0 0)
+  );
+  --text-subtle-hc-token: light-dark(
+    oklch(0.3619 0 0),
+    oklch(0.9446 0 0)
+  );
+  --text-subtlest-hc-token: light-dark(
+    oklch(0.411 0 0),
+    oklch(0.9204 0 0)
   );
   --border-dec-token: light-dark(
     oklch(0.1935 0 0 / 0.0612),
@@ -96,9 +134,16 @@ exports[`generateTokensCss > generates correct CSS for a standard surface group 
 }
 
 /* Core Utilities (Reactive Pipeline) */
+.text-strong { --_text-lightness-source: var(--text-high-token); font-weight: 600; }
+.text-body { --_text-lightness-source: var(--text-body-token); }
 .text-subtle { --_text-lightness-source: var(--text-subtle-token); }
 .text-subtlest { --_text-lightness-source: var(--text-subtlest-token); }
-.text-strong { --_text-lightness-source: var(--text-high-token); font-weight: 600; }
+@media (prefers-contrast: more) {
+  .text-strong { --_text-lightness-source: var(--text-high-hc-token); }
+  .text-body { --_text-lightness-source: var(--text-body-hc-token); }
+  .text-subtle { --_text-lightness-source: var(--text-subtle-hc-token); }
+  .text-subtlest { --_text-lightness-source: var(--text-subtlest-hc-token); }
+}
 
 :root {
   --preset-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
@@ -143,25 +188,44 @@ exports[`generateTokensCss > generates palette tokens when configured 1`] = `
   /* Highlight */
   --highlight-ring-color: light-dark(oklch(0.45 0.2 300), oklch(0.75 0.2 300));
   --highlight-surface-color: light-dark(oklch(0.95 0.05 300), oklch(0.2 0.05 300));
-  /* Data Visualization */
-  --chart-1: light-dark(
-    oklch(0.5 0.15 0),
-    oklch(0.6 0.15 0)
+}
+
+* {
+  /* Data Visualization (Reactive) */
+  --axm-chart-1-h: 0;
+  --axm-chart-1-c: 0.15;
+  --axm-chart-1: oklch(
+    calc(0.55 - (0.05 * var(--tau)))
+    calc(var(--axm-chart-1-c) + (var(--alpha-beta) * 0.5))
+    var(--axm-chart-1-h)
   );
-  --chart-2: light-dark(
-    oklch(0.5 0.15 120),
-    oklch(0.6 0.15 120)
+  --axm-chart-2-h: 120;
+  --axm-chart-2-c: 0.15;
+  --axm-chart-2: oklch(
+    calc(0.55 - (0.05 * var(--tau)))
+    calc(var(--axm-chart-2-c) + (var(--alpha-beta) * 0.5))
+    var(--axm-chart-2-h)
   );
-  --chart-3: light-dark(
-    oklch(0.5 0.15 240),
-    oklch(0.6 0.15 240)
+  --axm-chart-3-h: 240;
+  --axm-chart-3-c: 0.15;
+  --axm-chart-3: oklch(
+    calc(0.55 - (0.05 * var(--tau)))
+    calc(var(--axm-chart-3-c) + (var(--alpha-beta) * 0.5))
+    var(--axm-chart-3-h)
   );
 }
 
 /* Core Utilities (Reactive Pipeline) */
+.text-strong { --_text-lightness-source: var(--text-high-token); font-weight: 600; }
+.text-body { --_text-lightness-source: var(--text-body-token); }
 .text-subtle { --_text-lightness-source: var(--text-subtle-token); }
 .text-subtlest { --_text-lightness-source: var(--text-subtlest-token); }
-.text-strong { --_text-lightness-source: var(--text-high-token); font-weight: 600; }
+@media (prefers-contrast: more) {
+  .text-strong { --_text-lightness-source: var(--text-high-hc-token); }
+  .text-body { --_text-lightness-source: var(--text-body-hc-token); }
+  .text-subtle { --_text-lightness-source: var(--text-subtle-hc-token); }
+  .text-subtlest { --_text-lightness-source: var(--text-subtlest-hc-token); }
+}
 
 :root {
   --preset-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
@@ -213,17 +277,20 @@ exports[`generateTokensCss > handles missing background values gracefully 1`] = 
   --_local-light-c: 0;
   --_local-dark-h: 0;
   --_local-dark-c: 0;
-  --_surface-light-h: var(--_base-hue, var(--_local-light-h));
-  --_surface-light-c: var(--_context-chroma, var(--_local-light-c));
-  --_surface-dark-h: var(--_base-hue, var(--_local-dark-h));
-  --_surface-dark-c: var(--_base-chroma, var(--_local-dark-c));
+  --alpha-hue: 0;
+  --alpha-beta: 0;
+  --alpha-structure: 1px solid CanvasText;
   --surface-token: light-dark(
-    oklch(0 var(--_surface-light-c) var(--_surface-light-h)),
-    oklch(0 var(--_surface-dark-c) var(--_surface-dark-h))
+    oklch(0 var(--alpha-beta) var(--alpha-hue)),
+    oklch(0 var(--alpha-beta) var(--alpha-hue))
   );
   --text-high-token: light-dark(
     oklch(1 0 0),
     oklch(1 0 0)
+  );
+  --text-body-token: light-dark(
+    oklch(0.9416 0 0),
+    oklch(0.9416 0 0)
   );
   --text-subtle-token: light-dark(
     oklch(0.893 0 0),
@@ -233,12 +300,35 @@ exports[`generateTokensCss > handles missing background values gracefully 1`] = 
     oklch(0.8406 0 0),
     oklch(0.8406 0 0)
   );
+  --text-high-hc-token: light-dark(
+    oklch(1 0 0),
+    oklch(1 0 0)
+  );
+  --text-body-hc-token: light-dark(
+    oklch(0.9866 0 0),
+    oklch(0.9866 0 0)
+  );
+  --text-subtle-hc-token: light-dark(
+    oklch(0.9416 0 0),
+    oklch(0.9416 0 0)
+  );
+  --text-subtlest-hc-token: light-dark(
+    oklch(0.9174 0 0),
+    oklch(0.9174 0 0)
+  );
 }
 
 /* Core Utilities (Reactive Pipeline) */
+.text-strong { --_text-lightness-source: var(--text-high-token); font-weight: 600; }
+.text-body { --_text-lightness-source: var(--text-body-token); }
 .text-subtle { --_text-lightness-source: var(--text-subtle-token); }
 .text-subtlest { --_text-lightness-source: var(--text-subtlest-token); }
-.text-strong { --_text-lightness-source: var(--text-high-token); font-weight: 600; }
+@media (prefers-contrast: more) {
+  .text-strong { --_text-lightness-source: var(--text-high-hc-token); }
+  .text-body { --_text-lightness-source: var(--text-body-hc-token); }
+  .text-subtle { --_text-lightness-source: var(--text-subtle-hc-token); }
+  .text-subtlest { --_text-lightness-source: var(--text-subtlest-hc-token); }
+}
 
 :root {
   --preset-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;

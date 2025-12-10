@@ -11,6 +11,6 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
-    "@axiomatic-design/color": "file:axiomatic-design-color-0.1.0.tgz"
+    "@axiomatic-design/color": "file:../../axiomatic-design-color-0.1.0.tgz"
   }
 }

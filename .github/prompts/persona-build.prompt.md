@@ -24,4 +24,4 @@ You are helping the user define a new persona or refine an existing one for the 
     - **Focus**: What specific aspects of the project should we focus on for them?
 
 3.  **Update Documentation**:
-    - Once the user approves the draft, add it to `${workspaceFolder}/docs/design/personas.md`.
+    - Once the user approves the draft, add it to `${workspaceFolder}/docs/design/meta/personas.md`.

@@ -1,6 +1,7 @@
 {
   "name": "@axiomatic-design/color",
   "version": "0.1.0",
+  "packageManager": "pnpm@9.15.0",
   "description": "An Axiomatic approach to color. Automated contrast, platform-native adaptation, and mathematically guaranteed accessibility.",
   "keywords": [
     "color",
@@ -30,31 +31,36 @@
   ],
   "scripts": {
     "solve": "node src/cli/index.ts color-config.json css/theme.css",
+    "solve:dist": "node dist/cli/index.js color-config.json css/theme.css",
     "audit:theme": "node src/cli/index.ts audit",
     "sketch": "node scripts/lightness-lut-sketch.ts",
-    "build": "tsup && pnpm schema && pnpm build:css",
+    "build": "tsup && pnpm solve:dist && pnpm schema && pnpm build:css",
     "build:css": "node scripts/build-css.ts",
     "schema": "ts-json-schema-generator --path 'src/lib/types.ts' --type 'UserConfig' --out 'color-config.schema.json'",
     "prepack": "pnpm build",
     "prepublishOnly": "pnpm test && pnpm build",
     "test": "vitest --run",
     "test:update-snapshots": "vitest -u --run",
+    "test:playwright": "playwright test",
     "test:visual": "playwright test tests/visual.spec.ts",
     "test:visual:update": "playwright test tests/visual.spec.ts --update-snapshots",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage --run",
+    "qa:capture": "node scripts/qa-screenshots.ts",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write",
     "lint:security": "node scripts/check-security.ts",
     "lint:tokens": "./scripts/check-tokens.sh",
-    "lint:math": "node scripts/check-math.ts",
-    "lint:all": "pnpm lint && pnpm lint:security && pnpm lint:tokens && pnpm lint:math",
+    "lint:docs": "node scripts/check-docs.ts",
+    "lint:all": "pnpm lint && pnpm lint:security && pnpm lint:tokens && pnpm lint:docs && pnpm check:site",
     "docs:dev": "pnpm --filter site dev",
     "docs:build": "pnpm --filter site build",
     "dev:site": "pnpm docs:dev & pnpm --filter demo dev",
     "build:site": "node scripts/build-site.ts",
+    "check:site": "pnpm --filter site check",
     "check:exports": "publint",
+    "check:deploy": "node scripts/check-deploy.ts",
     "vendor:update": "node scripts/update-vendor.ts"
   },
   "exports": {
@@ -72,7 +78,7 @@
     "./theme.css": "./css/theme.css"
   },
   "bin": {
-    "axiomatic": "./dist/cli/index.js"
+    "axiomatic": "./bin/axiomatic.js"
   },
   "dependencies": {
     "ajv": "^8.17.1",
@@ -115,11 +121,13 @@
     "ts-json-schema-generator": "^2.4.0",
     "tsup": "^8.5.1",
     "typescript-eslint": "^8.48.0",
+    "vercel": "^49.1.2",
+    "vite": "^6.0.0",
     "vitest": "^4.0.14",
     "vue-eslint-parser": "^10.2.0"
   },
   "engines": {
-    "node": "^24.0.0"
+    "node": ">=24.0.0"
   },
   "publishConfig": {
     "access": "public"

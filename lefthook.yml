@@ -2,7 +2,7 @@ pre-commit:
   parallel: false
   commands:
     sync-lockfile:
-      run: echo "Ensuring lockfile is up to date..." && pnpm install && git add pnpm-lock.yaml
+      run: echo "Ensuring lockfile is up to date..." && CI=true pnpm install && git add pnpm-lock.yaml
     format:
       glob: "*.{ts,js,json,md,yml,css,svelte,astro}"
       exclude: "dist/**/*"
@@ -17,9 +17,9 @@ pre-commit:
     tokens:
       glob: "site/src/components/builder-v2/**/*"
       run: pnpm lint:tokens
-    math:
+    docs:
       glob: "*.{md,mdx}"
-      run: pnpm lint:math
+      run: pnpm lint:docs
     knip:
       run: pnpm knip
     test:

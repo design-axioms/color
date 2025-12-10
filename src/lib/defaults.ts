@@ -87,6 +87,8 @@ export const DEFAULT_CONFIG: SolverConfig = {
           label: "Surface Action",
           description: "A clickable action surface (e.g. button).",
           polarity: "page",
+          hue: "brand",
+          targetChroma: 0.12,
           contrastOffset: { light: 25, dark: 25 },
           states: [
             { name: "hover", offset: -5 },

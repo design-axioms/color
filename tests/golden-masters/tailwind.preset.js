@@ -12,23 +12,23 @@ module.exports = {
           int: "var(--border-int-token)",
         },
         focus:
-          "light-dark(oklch(0.45 0.2 288.0332139382555), oklch(0.75 0.2 288.0332139382555))",
+          "light-dark(oklch(0.45 0.2 292.7172241670128), oklch(0.75 0.2 292.7172241670128))",
         surface: {
-          page: "light-dark(oklch(1 0 293.0332), oklch(0.1 0 288.1078))",
+          page: "light-dark(oklch(1 0 297.7172), oklch(0.1 0 292.7918))",
           workspace:
-            "light-dark(oklch(0.9896 0 293.0325), oklch(0.2156 0 288.4172))",
-          card: "light-dark(oklch(1 0 293.0332), oklch(0.1 0 288.1078))",
-          action: "light-dark(oklch(0.1 0 288.1078), oklch(0.9 0 292.9586))",
+            "light-dark(oklch(0.9926 0 297.7169), oklch(0.1935 0 293.015))",
+          card: "light-dark(oklch(0.9687 0 297.7104), oklch(0.2911 0 293.4658))",
+          action: "light-dark(oklch(0.1 0 292.7918), oklch(0.9 0 297.6427))",
           "action-soft":
-            "light-dark(oklch(1 0 293.0332), oklch(0.1 0 288.1078))",
+            "light-dark(oklch(0.9355 0 297.6879), oklch(0.3543 0 293.8895))",
           spotlight:
-            "light-dark(oklch(0.5554 0 291.0858), oklch(0.5554 0 291.0858))",
+            "light-dark(oklch(0.6056 0.2189 292.7172), oklch(0.6056 0.2189 292.7172))",
           "status-success":
-            "light-dark(oklch(0.9 0.15 151.1464), oklch(0.4 0.15 147.7619))",
+            "light-dark(oklch(0.9 0.15 167.4051), oklch(0.4 0.15 164.0206))",
           "status-warning":
-            "light-dark(oklch(0.9 0.15 79.9338), oklch(0.4 0.15 76.5494))",
+            "light-dark(oklch(0.9 0.15 75.0058), oklch(0.4 0.15 71.6213))",
           "status-error":
-            "light-dark(oklch(0.9 0.2 292.9586), oklch(0.4 0.2 289.5742))",
+            "light-dark(oklch(0.9 0.2 30.2568), oklch(0.4 0.2 26.8723))",
         },
         chart: {
           1: "light-dark(oklch(0.6484 0.14 25), oklch(0.7588 0.14 25))",

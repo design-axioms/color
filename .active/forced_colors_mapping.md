@@ -44,8 +44,9 @@ In Forced Colors mode, subtle distinctions between "Page", "Workspace", and "Car
 | Semantic Text       | System Color | Rationale                                                                                                                |
 | :------------------ | :----------- | :----------------------------------------------------------------------------------------------------------------------- |
 | `text-strong`       | `CanvasText` | Primary content.                                                                                                         |
+| `text-body`         | `CanvasText` | Paragraph content.                                                                                                       |
 | `text-subtle`       | `CanvasText` | Opacity is ignored. We map to standard text to ensure legibility.                                                        |
-| `text-subtler`      | `CanvasText` | Mapping to `GrayText` implies "Disabled", which might be semantically incorrect for metadata. Safer to use `CanvasText`. |
+| `text-subtlest`     | `CanvasText` | Mapping to `GrayText` implies "Disabled", which might be semantically incorrect for metadata. Safer to use `CanvasText`. |
 | `text-on-spotlight` | `CanvasText` | Since spotlight background becomes `Canvas`, text must become `CanvasText`.                                              |
 
 ### 3. Borders
@@ -68,8 +69,8 @@ Borders become critical in Forced Colors mode because background differences (li
 
 ### Gap 1: "Subtle" vs "Disabled"
 
-- **Issue:** Our system has `text-subtle` and `text-subtler` for hierarchy. In Forced Colors, these will look identical to `text-strong`.
-- **Recommendation:** Accept this flattening. It is a feature, not a bug, of High Contrast mode. Do _not_ map `text-subtler` to `GrayText` unless it is truly disabled/non-interactive.
+- **Issue:** Our system has `text-subtle` and `text-subtlest` for hierarchy. In Forced Colors, these will look identical to `text-strong`.
+- **Recommendation:** Accept this flattening. It is a feature, not a bug, of High Contrast mode. Do _not_ map `text-subtlest` to `GrayText` unless it is truly disabled/non-interactive.
 
 ### Gap 2: Card Edges
 

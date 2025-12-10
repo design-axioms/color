@@ -6,6 +6,7 @@ description: The fundamental mental model of Axiomatic Color.
 import ContextVisualizer from "../../../components/ContextVisualizer.svelte";
 import DemoWrapper from "../../../components/DemoWrapper.svelte";
 import Diagram from "../../../components/Diagram.svelte";
+import SurfacePreview from "../../../components/SurfacePreview.svelte";
 
 <DemoWrapper>
 
@@ -27,7 +28,27 @@ Every surface acts as a "Context Provider." It automatically sets a suite of CSS
 
 <Diagram>
   <div class="mb-4 text-sm text-text-subtle">
-    Click on any surface below to inspect its active tokens.
+    Use the global Token Inspector{" "}
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      style="display: inline-block; vertical-align: middle; margin: 0 2px;"
+    >
+      <path d="M3 7V5a2 2 0 0 1 2-2h2" />
+      <path d="M17 3h2a2 2 0 0 1 2 2v2" />
+      <path d="M21 17v2a2 2 0 0 1-2 2h-2" />
+      <path d="M7 21H5a2 2 0 0 1-2-2v-2" />
+      <circle cx="12" cy="12" r="3" />
+      <path d="m16 16-1.9-1.9" />
+    </svg>{" "}
+    to inspect these surfaces.
   </div>
   <ContextVisualizer client:load />
 </Diagram>
@@ -35,8 +56,8 @@ Every surface acts as a "Context Provider." It automatically sets a suite of CSS
 In the visualization above:
 
 1.  The **Page** sets the baseline context (Light Mode).
-2.  The **Card** sits on the Page. It might be slightly lighter or darker, but it maintains the same "Polarity" (Light text on Dark, or Dark text on Light).
-3.  The **Spotlight** (the dark box) _inverts_ the polarity. It tells its children: "I am dark. You must be light."
+2.  The **Card** sits on the Page. It might be slightly lighter or darker, but it maintains the same **Solar Time** (Light text on Dark, or Dark text on Light).
+3.  The **Spotlight** (the dark box) _inverts_ the time. It tells its children: "I am dark. You must be light."
 
 ### 2. Content Adapts to Context
 
@@ -57,29 +78,150 @@ We categorize surfaces based on their physical role in the UI, not their color.
 
 These are the foundations. They recede into the background.
 
-- **Page**: The infinite backdrop.
-- **Workspace**: A dedicated area for tools or navigation.
+<div class="docs-grid not-content my-6">
+  <SurfacePreview
+    surface="surface-page"
+    name="Page"
+    description="The infinite backdrop."
+  >
+    <div
+      class="bordered"
+      style="margin-top: 1rem; height: 6rem; border-style: dashed; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; font-size: 0.875rem;"
+    >
+      <span class="text-subtle">Application Root</span>
+    </div>
+  </SurfacePreview>
+  <SurfacePreview
+    surface="surface-workspace"
+    name="Workspace"
+    description="A dedicated area for tools or navigation."
+  >
+    <div style="margin-top: 1rem; display: flex; gap: 0.5rem; height: 6rem;">
+      <div
+        class="surface-card bordered"
+        style="width: 33%; height: 100%; border-radius: 0.25rem;"
+      ></div>
+      <div
+        class="surface-card bordered"
+        style="width: 66%; height: 100%; border-radius: 0.25rem;"
+      ></div>
+    </div>
+  </SurfacePreview>
+</div>
 
 ### The Objects
 
 These sit _on top_ of the canvas. They hold your content.
 
-- **Card**: The primary container for information.
-- **Tinted**: A subtle grouping mechanism, often used to highlight a section without a hard border.
+<div class="docs-grid not-content my-6">
+  <SurfacePreview
+    surface="surface-card"
+    name="Card"
+    description="The primary container for information."
+  >
+    <div style="margin-top: 1rem; display: flex; flex-direction: column; gap: 0.75rem;">
+      <div
+        class="text-subtle"
+        style="height: 0.5rem; width: 33%; background-color: currentColor; opacity: 0.2; border-radius: 0.125rem;"
+      ></div>
+      <div
+        class="text-subtle"
+        style="height: 0.5rem; width: 75%; background-color: currentColor; opacity: 0.2; border-radius: 0.125rem;"
+      ></div>
+      <div
+        class="text-subtle"
+        style="height: 0.5rem; width: 50%; background-color: currentColor; opacity: 0.2; border-radius: 0.125rem;"
+      ></div>
+    </div>
+  </SurfacePreview>
+  <SurfacePreview
+    surface="surface-card"
+    tint="hue-brand"
+    name="Tinted"
+    description="A subtle grouping mechanism."
+  >
+    <div style="margin-top: 1rem; display: flex; flex-direction: column; gap: 0.75rem;">
+      <div
+        class="text-brand"
+        style="height: 0.5rem; width: 33%; background-color: currentColor; opacity: 0.4; border-radius: 0.125rem;"
+      ></div>
+      <div
+        class="text-brand"
+        style="height: 0.5rem; width: 75%; background-color: currentColor; opacity: 0.3; border-radius: 0.125rem;"
+      ></div>
+    </div>
+  </SurfacePreview>
+</div>
 
 ### The Interactors
 
 These are actionable. They invite touch.
 
-- **Action**: Buttons, toggles, and controls.
+<div class="docs-grid not-content my-6">
+  <SurfacePreview
+    surface="surface-card"
+    name="Action"
+    description="Buttons, toggles, and controls."
+  >
+    <button
+      class="surface-action text-strong"
+      style="margin-top: 1rem; display: flex; align-items: center; justify-content: center; height: 3rem; width: 100%; border-radius: 0.25rem; font-weight: bold; font-size: 0.875rem; border: none; cursor: pointer;"
+    >
+      Click Me
+    </button>
+  </SurfacePreview>
+  <SurfacePreview
+    surface="surface-card"
+    name="Soft Action"
+    description="Secondary interactive elements."
+  >
+    <button
+      class="surface-action-soft bordered"
+      style="margin-top: 1rem; display: flex; align-items: center; justify-content: center; height: 3rem; width: 100%; border-radius: 0.25rem; font-weight: 500; font-size: 0.875rem; cursor: pointer;"
+    >
+      Cancel
+    </button>
+  </SurfacePreview>
+</div>
 
 ### The Spotlights
 
 These demand attention. They often break the current polarity to stand out.
 
-- **Spotlight**: Tooltips, toasts, and primary calls-to-action.
+<div class="docs-grid not-content my-6">
+  <SurfacePreview
+    surface="surface-spotlight"
+    name="Spotlight"
+    description="Tooltips, toasts, and primary calls-to-action."
+  >
+    <div style="margin-top: 1rem; display: flex; align-items: center; gap: 0.75rem;">
+      <div
+        class="surface-status-success"
+        style="width: 0.5rem; height: 0.5rem; border-radius: 9999px;"
+      ></div>
+      <span style="font-size: 0.875rem; font-weight: 500;">
+        Changes saved successfully
+      </span>
+    </div>
+  </SurfacePreview>
+</div>
 
 **Note on Inversion**: Spotlight surfaces perform a "Hard Flip" of the theme. If your app is in Light Mode, a Spotlight surface forces its internals into Dark Mode (and vice versa). This ensures that native browser controls (like scrollbars and checkboxes) render correctly inside the inverted area.
+
+## X-Ray Mode (Forced Colors)
+
+What happens when the user turns on "High Contrast Mode" in Windows?
+
+In this mode, the operating system strips away all background colors to ensure maximum legibility. This can be disastrous for modern UIs that rely on background colors to define structure (like a white card on a gray background).
+
+Axiomatic Color handles this with **X-Ray Mode**.
+
+When the system detects `forced-colors: active`, it automatically switches from "Rich Mode" (painting pixels) to "X-Ray Mode" (drawing outlines).
+
+- **Rich Mode**: A card has a white background and no border.
+- **X-Ray Mode**: The background becomes transparent, and a **Border** appears automatically.
+
+This ensures that your UI structure remains visible ("Fail Visible") even when the user strips away the paint.
 
 ## Why This Matters
 
