@@ -28,6 +28,12 @@ git diff --quiet "$VERCEL_GIT_PREVIOUS_SHA" "$VERCEL_GIT_COMMIT_SHA" -- \
 # Capture the exit code
 EXIT_CODE=$?
 
+# If git diff failed (e.g. bad object), default to building
+if [ $EXIT_CODE -gt 1 ]; then
+  echo "Error comparing commits (exit code $EXIT_CODE). Proceeding with build."
+  exit 1
+fi
+
 if [ $EXIT_CODE -eq 1 ]; then
   echo "Changes detected in watched files. Proceeding with build."
 else
