@@ -13,12 +13,14 @@
     },
     "keyColors": {
       "brand": "#8b5cf6",
+      "gray": "#64748b",
       "success": "#10b981",
       "warning": "#f59e0b",
       "danger": "#ef4444",
       "highlight": "#d946ef",
       "blue": "#3b82f6",
-      "info": "#6366f1"
+      "info": "#6366f1",
+      "indigo": "info"
     }
   },
   "groups": [
@@ -58,6 +60,13 @@
             { "name": "hover", "offset": 5 },
             { "name": "active", "offset": 8 }
           ]
+        },
+        {
+          "slug": "input",
+          "label": "Input",
+          "polarity": "page",
+          "hue": "brand",
+          "targetChroma": 0
         }
       ]
     },
@@ -69,6 +78,10 @@
           "label": "Primary Action",
           "polarity": "inverted",
           "hue": "brand",
+          "override": {
+            "light": "#0070f3",
+            "dark": "#0070f3"
+          },
           "states": [
             { "name": "hover", "offset": 5 },
             { "name": "active", "offset": 8 }

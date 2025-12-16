@@ -1,5 +1,5 @@
-import { generateTokensCss } from "./generator.ts";
-import { solve } from "./solver.ts";
+import { generateTokensCss } from "./generator/index.ts";
+import { solve } from "./solver/index.ts";
 import type { SolverConfig } from "./types.ts";
 
 /**

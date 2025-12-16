@@ -45,12 +45,12 @@ We propose extending the State Tuple $\Sigma$ to govern Chart Colors.
 
 Instead of static tokens, chart colors should be calculated relative to the **Local Surface Lightness**.
 
-$$ L*{chart} = f(L*{surface}, \tau) $$
+$$ L_{chart} = f(L_{surface}, \tau) $$
 
 **The Logic:**
 
-- In a **Light Context** ($\tau=1$), chart colors must be darker (lower $L$) to pass APCA contrast against the white background.
-- In a **Dark Context** ($\tau=-1$), chart colors must be lighter (higher $L$) to pass APCA contrast against the dark background.
+- In a **Light Context** ($\tau=1$), chart colors must be darker (lower $) to pass APCA contrast against the white background.
+- In a **Dark Context** ($\tau=-1$), chart colors must be lighter (higher $) to pass APCA contrast against the dark background.
 
 **Implementation:**
 We can use the same "Late-Binding" technique used for text.
@@ -65,7 +65,7 @@ Charts usually need to be distinct (high chroma), but they can still participate
 **Proposal: Vibrancy Injection**
 Instead of shifting hues (which risks merging categories or creating muddy colors), we allow the **Atmosphere Vibrancy** ($\beta$) to influence the chart chroma.
 
-$$ C*{chart(i)} = C*{base(i)} + (\beta \times k) $$
+$$ C_{chart(i)} = C_{base(i)} + (\beta \times k) $$
 
 This ensures that in a "Vibrant" theme (high $\beta$), the charts become slightly more vivid to match the energy. In a "Muted" theme (low $\beta$), they remain standard. This is a safer and more harmonious approach than hue rotation.
 

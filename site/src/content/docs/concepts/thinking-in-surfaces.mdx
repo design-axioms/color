@@ -27,7 +27,7 @@ When you place an element on a surface, you aren't just painting pixels. You are
 Every surface acts as a "Context Provider." It automatically sets a suite of CSS variables that determine how text, borders, and other elements should look _when sitting on that specific surface_.
 
 <Diagram>
-  <div class="mb-4 text-sm text-text-subtle">
+  <div class="mb-4 text-sm text-subtle">
     Use the global Token Inspector{" "}
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -50,7 +50,7 @@ Every surface acts as a "Context Provider." It automatically sets a suite of CSS
     </svg>{" "}
     to inspect these surfaces.
   </div>
-  <ContextVisualizer client:load />
+  <ContextVisualizer />
 </Diagram>
 
 In the visualization above:
@@ -122,15 +122,15 @@ These sit _on top_ of the canvas. They hold your content.
     <div style="margin-top: 1rem; display: flex; flex-direction: column; gap: 0.75rem;">
       <div
         class="text-subtle"
-        style="height: 0.5rem; width: 33%; background-color: currentColor; opacity: 0.2; border-radius: 0.125rem;"
+        style="height: 0.5rem; width: 33%; box-shadow: inset 0 0 0 9999px currentColor; opacity: 0.2; border-radius: 0.125rem;"
       ></div>
       <div
         class="text-subtle"
-        style="height: 0.5rem; width: 75%; background-color: currentColor; opacity: 0.2; border-radius: 0.125rem;"
+        style="height: 0.5rem; width: 75%; box-shadow: inset 0 0 0 9999px currentColor; opacity: 0.2; border-radius: 0.125rem;"
       ></div>
       <div
         class="text-subtle"
-        style="height: 0.5rem; width: 50%; background-color: currentColor; opacity: 0.2; border-radius: 0.125rem;"
+        style="height: 0.5rem; width: 50%; box-shadow: inset 0 0 0 9999px currentColor; opacity: 0.2; border-radius: 0.125rem;"
       ></div>
     </div>
   </SurfacePreview>
@@ -143,11 +143,11 @@ These sit _on top_ of the canvas. They hold your content.
     <div style="margin-top: 1rem; display: flex; flex-direction: column; gap: 0.75rem;">
       <div
         class="text-brand"
-        style="height: 0.5rem; width: 33%; background-color: currentColor; opacity: 0.4; border-radius: 0.125rem;"
+        style="height: 0.5rem; width: 33%; box-shadow: inset 0 0 0 9999px currentColor; opacity: 0.4; border-radius: 0.125rem;"
       ></div>
       <div
         class="text-brand"
-        style="height: 0.5rem; width: 75%; background-color: currentColor; opacity: 0.3; border-radius: 0.125rem;"
+        style="height: 0.5rem; width: 75%; box-shadow: inset 0 0 0 9999px currentColor; opacity: 0.3; border-radius: 0.125rem;"
       ></div>
     </div>
   </SurfacePreview>

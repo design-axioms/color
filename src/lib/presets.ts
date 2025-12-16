@@ -57,4 +57,30 @@ export const PRESETS: Preset[] = [
       },
     },
   },
+  {
+    id: "vercel",
+    name: "Vercel",
+    description: "A Vercel-inspired theme with cool grays and high contrast.",
+    config: {
+      ...DEFAULT_CONFIG,
+      anchors: {
+        ...DEFAULT_CONFIG.anchors,
+        keyColors: {
+          ...DEFAULT_CONFIG.anchors.keyColors,
+          brand: "oklch(0.5 0.18 260)",
+          neutral: "oklch(0.5 0.005 260)",
+        },
+        page: {
+          light: {
+            start: { background: 1 },
+            end: { adjustable: true, background: 1 },
+          },
+          dark: {
+            start: { background: 0 },
+            end: { adjustable: true, background: 0 },
+          },
+        },
+      },
+    },
+  },
 ];

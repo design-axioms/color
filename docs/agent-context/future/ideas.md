@@ -2,7 +2,6 @@
 
 ## Infrastructure
 
-- **CSS Bundling**: Currently, `scripts/update-docs.sh` uses `cat` to concatenate CSS files for the documentation. We should switch to a proper bundler like Lightning CSS to handle this more reliably and enable features like minification and transpilation if needed.
 - **CSP Reporting**: Investigate using [report-uri.com](https://report-uri.com/) or a similar service to collect and analyze Content Security Policy (CSP) violation reports. This would allow us to monitor for potential security issues or misconfigurations in production without breaking the site for users (using `Content-Security-Policy-Report-Only`).
 
 ## UI/UX

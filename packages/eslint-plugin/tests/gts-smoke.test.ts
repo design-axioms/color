@@ -26,7 +26,6 @@ beforeAll(() => {
 
 const ruleTester = new RuleTester({
   languageOptions: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment
     parser: emberParser as any,
     parserOptions: {
       parser: tsParser,

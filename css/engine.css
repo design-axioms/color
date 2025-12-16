@@ -66,6 +66,50 @@
   initial-value: 0;
 }
 
+/* --- 2b. BRIDGE EXPORTS (Integration Adapters) --- */
+
+@property --axm-bridge-surface {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --axm-bridge-fg {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --axm-bridge-fg-high {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --axm-bridge-fg-body {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --axm-bridge-fg-subtle {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --axm-bridge-border-dec {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --axm-bridge-border-int {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+
 /* --- 3. ROOT CONFIGURATION --- */
 
 :root {
@@ -80,12 +124,28 @@
   --shadow-lg: var(--axm-shadow-lg);
   --shadow-xl: var(--axm-shadow-xl);
 
-  /* Animate Time */
+  /* Animate Time (gated): avoid boot-time animate-in as CSS loads */
+  transition: none;
+}
+
+/* Enable tau transitions only after an integration marks the page as ready.
+   ThemeManager sets `data-axm-ready="true"` after the initial sync. */
+:root[data-axm-ready="true"] {
   transition: --tau 0.3s ease-in-out;
 }
 
+/* ThemeManager semantic state (steady-state driver) */
+:root[data-axm-resolved-mode="light"] {
+  --tau: 1;
+}
+
+:root[data-axm-resolved-mode="dark"] {
+  --tau: -1;
+}
+
+/* Fallback for pre-init pages (no semantic state yet) */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-axm-resolved-mode]) {
     --tau: -1; /* Night Mode */
   }
 }
@@ -145,12 +205,41 @@
   /* Text inherits 50% of the ambient vibrancy */
   --_axm-computed-fg-C: calc(var(--alpha-beta) * 0.5);
 
+  /* Adapter-safe duplicate (avoid aliasing private computed vars in exports). */
+  --_axm-bridge-fg-C: calc(var(--alpha-beta) * 0.5);
+
   /* 3. Reify Color with HK Buffer */
   /* L_target = L_source + (0.05 * Beta) */
   --_axm-computed-fg-color: oklch(
     from var(--_axm-text-lightness-source)
       calc(l + (0.05 * var(--_axm-computed-fg-C))) var(--_axm-computed-fg-C)
       var(--alpha-hue)
+  );
+
+  /* Bridge exports (public, adapter-safe) */
+  /*
+     NOTE: Do not alias computed colors via `var(--_axm-...)` here.
+     Chromium can fail to invalidate dependent custom properties consistently.
+     Compute directly from the same inputs so adapters see stable values.
+  */
+  --axm-bridge-fg: oklch(
+    from var(--_axm-text-lightness-source)
+      calc(l + (0.05 * var(--_axm-bridge-fg-C))) var(--_axm-bridge-fg-C)
+      var(--alpha-hue)
+  );
+
+  /* Semantic bridge exports (text-role variants) */
+  --axm-bridge-fg-high: oklch(
+    from var(--axm-text-high-token) calc(l + (0.05 * var(--_axm-bridge-fg-C)))
+      var(--_axm-bridge-fg-C) var(--alpha-hue)
+  );
+  --axm-bridge-fg-body: oklch(
+    from var(--axm-text-body-token) calc(l + (0.05 * var(--_axm-bridge-fg-C)))
+      var(--_axm-bridge-fg-C) var(--alpha-hue)
+  );
+  --axm-bridge-fg-subtle: oklch(
+    from var(--axm-text-subtle-token) calc(l + (0.05 * var(--_axm-bridge-fg-C)))
+      var(--_axm-bridge-fg-C) var(--alpha-hue)
   );
 
   color: var(--_axm-computed-fg-color);
@@ -165,6 +254,16 @@
 
   /* Interactive */
   --_axm-computed-border-int-color: oklch(
+    from var(--axm-border-int-token) l var(--_axm-computed-fg-C)
+      var(--alpha-hue) / alpha
+  );
+
+  /* Bridge exports (public, adapter-safe) */
+  --axm-bridge-border-dec: oklch(
+    from var(--axm-border-dec-token) l var(--_axm-computed-fg-C)
+      var(--alpha-hue) / alpha
+  );
+  --axm-bridge-border-int: oklch(
     from var(--axm-border-int-token) l var(--_axm-computed-fg-C)
       var(--alpha-hue) / alpha
   );
@@ -188,13 +287,39 @@
      C = min(beta, limit)
   */
 
+  /*
+     NOTE: We intentionally avoid `oklch(from var(--axm-surface-token) ...)`.
+     Chromium currently fails to consistently invalidate recomputation when the
+     `var(--axm-surface-token)` value changes (e.g. theme flips via `--tau`).
+     Instead, compute the surface channels directly from the per-surface light/dark
+     endpoints which are already generated into theme CSS.
+  */
+
+  --_axm-surface-L: calc(
+    var(--_axm-local-light-l) +
+      (var(--_axm-local-dark-l) - var(--_axm-local-light-l)) *
+      var(--_axm-mode-mix)
+  );
+
   --_axm-computed-surface: oklch(
-    from var(--axm-surface-token) l
+    var(--_axm-surface-L)
       min(
         var(--alpha-beta),
-        var(--alpha-beta) * (1 - abs(2 * l - 1)) * var(--tau) * var(--tau)
+        var(--alpha-beta) * (1 - abs(2 * var(--_axm-surface-L) - 1)) *
+          var(--tau) * var(--tau)
       )
-      h
+      var(--alpha-hue)
+  );
+
+  /* Bridge exports (public, adapter-safe) */
+  --axm-bridge-surface: oklch(
+    var(--_axm-surface-L)
+      min(
+        var(--alpha-beta),
+        var(--alpha-beta) * (1 - abs(2 * var(--_axm-surface-L) - 1)) *
+          var(--tau) * var(--tau)
+      )
+      var(--alpha-hue)
   );
 
   background-color: var(--_axm-computed-surface);
@@ -203,19 +328,28 @@
 
 /* --- TRANSITIONS --- */
 
-:where(
-  [class^="surface-"],
-  [class*=" surface-"],
-  [class^="state-"],
-  [class*=" state-"],
-  [class^="text-"],
-  [class*=" text-"]
-) {
+/* Motion policy:
+   - Default: allow output transitions for discrete surface/token changes.
+   - `data-axm-motion="tau"`: disable output transitions so only `--tau` drives motion.
+*/
+:root:not([data-axm-motion="tau"])
+  :where(
+    [class^="surface-"],
+    [class*=" surface-"],
+    [class^="state-"],
+    [class*=" state-"],
+    [class^="text-"],
+    [class*=" text-"]
+  ) {
   transition:
     --_axm-computed-surface 0.2s ease-in-out,
     --_axm-computed-fg-color 0.2s ease-in-out,
     --_axm-computed-border-dec-color 0.2s ease-in-out,
-    --_axm-computed-border-int-color 0.2s ease-in-out;
+    --_axm-computed-border-int-color 0.2s ease-in-out,
+    --axm-bridge-surface 0.2s ease-in-out,
+    --axm-bridge-fg 0.2s ease-in-out,
+    --axm-bridge-border-dec 0.2s ease-in-out,
+    --axm-bridge-border-int 0.2s ease-in-out;
 }
 
 /* --- UTILITIES --- */

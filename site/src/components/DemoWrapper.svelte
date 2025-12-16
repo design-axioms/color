@@ -2,7 +2,7 @@
   import type { Snippet } from "svelte";
   import StateProvider from "./StateProvider.svelte";
 
-  let { children } = $props<{ children: Snippet }>();
+  const { children } = $props<{ children: Snippet }>();
 </script>
 
 <StateProvider>

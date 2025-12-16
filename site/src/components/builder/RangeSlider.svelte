@@ -20,7 +20,7 @@
     onChange?: (start: number, end: number) => void;
   }
 
-  let {
+  const {
     start,
     end,
     min = 0,
@@ -30,7 +30,7 @@
     label = "Range",
     trackClass = "",
     fillClass = "surface-action",
-    handleClass = "surface-action",
+    handleClass = "surface-action text-inverse",
     startHandleShape = "circle",
     endHandleShape = "circle",
     startHandleLabel = "",
@@ -143,10 +143,10 @@
     window.removeEventListener("pointerup", handlePointerUp);
   }
 
-  let startPercent = $derived(getPercentage(start));
-  let endPercent = $derived(getPercentage(end));
-  let left = $derived(Math.min(startPercent, endPercent));
-  let width = $derived(Math.abs(endPercent - startPercent));
+  const startPercent = $derived(getPercentage(start));
+  const endPercent = $derived(getPercentage(end));
+  const left = $derived(Math.min(startPercent, endPercent));
+  const width = $derived(Math.abs(endPercent - startPercent));
 </script>
 
 <div class="range-slider {disabled ? 'disabled' : ''}" bind:this={trackElement}>
@@ -167,7 +167,7 @@
 
   <!-- Start Handle -->
   <button
-    class="handle start {handleClass} shape-{startHandleShape}"
+    class="handle start {handleClass} shadow-sm shape-{startHandleShape}"
     type="button"
     style="left: {startPercent}%; {startHandleStyle}"
     onpointerdown={(e) => {
@@ -183,7 +183,7 @@
 
   <!-- End Handle -->
   <button
-    class="handle end {handleClass} shape-{endHandleShape}"
+    class="handle end {handleClass} shadow-sm shape-{endHandleShape}"
     type="button"
     style="left: {endPercent}%; {endHandleStyle}"
     onpointerdown={(e) => {
@@ -218,7 +218,8 @@
     right: 0;
     height: 4px;
     transform: translateY(-50%);
-    background-color: rgba(128, 128, 128, 0.2);
+    background-color: currentColor;
+    opacity: 0.2;
     border-radius: 2px;
   }
 
@@ -245,9 +246,7 @@
     height: 24px;
     transform: translate(-50%, -50%);
     cursor: col-resize;
-    /* background-color: var(--surface-1);  Let the handleClass control the background */
-    border: 2px solid var(--border-interactive);
-    box-shadow: var(--shadow-sm);
+    border: 2px solid currentColor;
     padding: 0;
     z-index: 2;
     display: flex;
@@ -255,7 +254,7 @@
     justify-content: center;
     font-size: 10px;
     font-weight: bold;
-    color: var(--computed-fg-color);
+    color: inherit;
   }
 
   .handle.shape-circle {
@@ -279,13 +278,11 @@
   .handle:hover {
     transform: translate(-50%, -50%) scale(1.1);
     z-index: 3;
-    border-color: var(--border-active);
   }
 
   .handle:active {
     transform: translate(-50%, -50%) scale(1.1);
     cursor: grabbing;
-    border-color: var(--border-active);
   }
 
   .handle-label {

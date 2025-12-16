@@ -1,5 +1,69 @@
 # Changelog
 
+## Epoch 44: Phase 1 - Vercel Preset (The Foundation) (2025-12-13)
+
+**Goal**: Build a Vercel-like demo and harden Inspector infrastructure to support the upcoming "Hard Flip" demo.
+
+**Completed Work**:
+
+- **Demo App**: Implemented `examples/vercel-demo` as a consumer-style Vite + React integration.
+- **Theme Configuration**: Replicated Geist Blue (Hue 212) via `color-config.json` rather than hardcoding theme logic.
+- **Inspector Upgrade**: Refactored Inspector internals to support Baseline 2025 cascade features (`@layer`, `@scope`) and modern specificity.
+- **Entry Point Docs**: Enforced and added JSDoc block comments on package entry points via `eslint-plugin-jsdoc`.
+- **Architecture Coherence**: Documented Inspector runtime constraints (cross-origin `cssRules` access, native selector matching) in the inspector architecture doc.
+
+**Verification**:
+
+- `scripts/agent/verify-phase.sh` (Vitest + ESLint)
+
+## Epoch 44: Phase 1.1 - Transition Smoothness (2025-12-14)
+
+**Goal**: Eliminate perceptual snapping during real light↔dark transitions in the docs site.
+
+**Completed Work**:
+
+- **Snap Detector**: Extended `scripts/check-violations.ts` to detect transition-time snaps beyond bg/fg, including border separators, box-shadow, and outline geometry.
+- **Focus Probe**: Added an optional `--snaps-focus` mode to ensure focus outlines can participate in snap detection.
+
+**Verification**:
+
+- Run via `pnpm check:violations -- --snaps` / `--snaps-theme` / `--snaps-focus` on representative pages.
+
+## Epoch 44: Phase 1.2 - Continuity Auditing v2 Foundations (2025-12-14)
+
+**Goal**: Prepare RFC 011’s refactor path (trace-first + finite measurement plane) and remove workflow hazards that block automation.
+
+**Completed Work**:
+
+- **No Dialogs Policy**: Removed `alert()` / `confirm()` usage from non-vendor code paths and enforced via ESLint (`no-alert`).
+- **Snaps Logging Codec**: Centralized snaps log shaping/serialization in a dedicated codec module to reduce runner coupling.
+- **Headless Clarity**: Made headless behavior explicit in CLI parsing so flags aren’t silently ignored.
+- **Runner Refactor**: Reduced the `check-violations` runner’s orchestration complexity by extracting helpers (keeps lint constraints green).
+
+**Verification**:
+
+- `./scripts/agent/verify-phase.sh` (Vitest + ESLint)
+
+## Epoch 44: Phase 2 - Visual Polish (The Hard Flip & DevTools) (2025-12-14)
+
+**Goal**: Continue RFC 011’s refactor while keeping the docs/devtools experience smooth, reproducible, and CI-friendly.
+
+**Completed Work**:
+
+- **RFC 011: Trace-First Refactor**: Implemented modular checks with module-owned option builders + printing and a branch-free runner spine.
+- **Replay Mode**: Added log-only analysis support so checks can be replayed without Playwright.
+- **Shared Log Helpers**: Centralized common ObservationLog parsing/scanning utilities to reduce repetition.
+- **Documentation Governance**: Added the “Stable Spine” axiom and expanded RFC 011 with the adjacent engineering guardrails.
+- **Inspector Overlay UX**:
+  - Prevent continuity audits from auto-running during state restore.
+  - Make continuity audits abortable when closing the overlay mid-run.
+  - Hide reset button unless there are actual overlay fixes to revert.
+- **Tests**: Added unit-level regression tests for the overlay behaviors.
+
+**Verification**:
+
+- `./scripts/agent/verify-phase.sh` (Vitest + ESLint)
+
 ## Epoch 1: Packaging & Consumption
 
 **Focus:** Transforming the project from a local workspace into a distributable NPM package.
@@ -538,7 +602,7 @@
 
 ## Phase: Fresh Eyes Audit & Polish (Epoch 11)
 
-**Focus**: Addressing visual and interactive gaps identified in the "Fresh Eyes" audit, specifically polishing the Hue Shift Visualizer.
+**Focus:** Addressing visual and interactive gaps identified in the "Fresh Eyes" audit, specifically polishing the Hue Shift Visualizer.
 
 ### Key Changes
 
@@ -1273,3 +1337,176 @@
   - **Linting**: Fixed remaining invalid TeX syntax in `docs/rfcs/001-reactive-charts.md` (replaced `* {` with `_{`).
 - **Verification**:
   - Verified the build passes.
+
+## Epoch 37: Phase 7.2 - Algebra Page Polish (Round 3) (2025-12-09)
+
+**Goal**: Finalize the "Academic Paper" aesthetic for the Algebra page by switching to EB Garamond and enabling full text justification.
+
+**Completed Work**:
+
+- **Typography Overhaul**:
+  - **Font**: Switched from `Charter` to **EB Garamond** (via `@fontsource-variable/eb-garamond`) for a classic, high-quality serif look.
+  - **Justification**: Enabled `text-align: justify` and `hyphens: auto` to mimic printed academic journals.
+  - **Leading**: Reduced `line-height` to `1.6` for a denser, more formal reading experience.
+- **Math Alignment**:
+  - Enforced strict centering of KaTeX block equations using `display: block; text-align: center` overrides.
+- **Infrastructure**:
+  - **Dependencies**: Added `@fontsource-variable/eb-garamond` to `site/package.json`.
+  - **Linting**: Resolved persistent TeX syntax errors in RFC documents to unblock the commit.
+
+## Epoch 37: Phase 7.3 - Algebra Page Polish (Round 4) (2025-12-09)
+
+**Goal**: Add final "Academic Flair" to the Algebra page and ensure robust math alignment.
+
+**Completed Work**:
+
+- **Visual Polish**:
+  - **Plain English Component**: Updated `PlainEnglish.svelte` with a double-border design, "floral heart" (❧) bullets, and deep-linking support.
+  - **Math Alignment**: Implemented `p:has(> .katex:only-child)` selector to reliably center paragraph-wrapped math equations.
+- **Infrastructure**:
+  - **Linting**: Fixed linting errors in `scripts/scaffold-doc-site.ts` and TeX syntax in `docs/rfcs/001-reactive-charts.md` to pass strict pre-commit hooks.
+
+## Epoch 37: Phase 8 - Tufte Sidenotes (2025-12-09)
+
+**Goal**: Implement a robust, CSS-native "Tufte Layout" for the Algebra page, replacing standard footnotes with semantic sidenotes using the CSS Anchor Positioning API.
+
+**Completed Work**:
+
+- **CSS Architecture**:
+  - Implemented a pure CSS "Anchor Chain" strategy in `site/src/styles/tufte.css`.
+  - Uses `position-anchor` to link sidenotes to paragraphs.
+  - Uses `top: max(anchor(top), anchor(--prev-note bottom))` to prevent overlap.
+- **Rehype Plugin**:
+  - Created `site/src/lib/rehype-anchor-chain.ts` to transform Markdown footnotes into `<aside class="sidenote">` elements.
+  - Handles HAST property normalization and injects unique `anchor-name` styles.
+- **Verification**:
+  - Verified the build output confirms correct HTML structure and style injection.
+  - Confirmed the plugin correctly extracts and positions footnotes.
+
+## Epoch 37: Phase 9 - Tufte Polish (2025-12-09)
+
+**Goal**: Refine the "Sophisticated Preprint" layout based on user feedback to achieve a cleaner, more readable aesthetic.
+
+**Completed Work**:
+
+- **Visual Polish**:
+  - **Sidebar Width**: Increased from `22ch` to `26ch` to improve line length and readability.
+  - **Typography**: Increased sidenote font size to `0.9rem` (from `0.85rem`) for better legibility.
+  - **Content Cleanup**: Removed complex mathematical notation ($\LaTeX$) from the sidebar to strictly enforce the "Plain English" narrative separation.
+- **Feature**:
+  - **Reference Tracking**: Updated the Rehype plugin to inject the footnote number (`<sup>1</sup>`) at the start of the sidenote content, ensuring clear visual linkage.
+- **Documentation**:
+  - **RFC Update**: Updated `RFC 008` to codify the new width, font size, and content rules.
+
+## Epoch 38: Fresh Eyes & 0-to-1
+
+### Phase 1: Fresh Eyes Audit & 0-to-1 Test (Completed)
+
+**Summary**:
+Simulated a "Zero to One" adoption journey to validate usability. The core flow (Install -> Init -> Build -> Import) was verified as functional in a modern Vite environment.
+
+**Key Achievements**:
+
+- **Simulation**: Created to verify the "Happy Path".
+- **Standalone Mode**: Implemented in the CLI to support vanilla HTML/CSS workflows without a bundler.
+- **Physics Tuner**: Implemented a "HUD" ( and ) to allow real-time parameter tuning, solving specificity issues with a brute-force override strategy.
+- **Documentation**: Identified and noted minor inconsistencies in CLI output vs. README.
+
+## Epoch 38: Fresh Eyes & 0-to-1
+
+### Phase 1: Fresh Eyes Audit & 0-to-1 Test (Completed)
+
+**Summary**:
+Simulated a "Zero to One" adoption journey to validate usability. The core flow (Install -> Init -> Build -> Import) was verified as functional in a modern Vite environment.
+
+**Key Achievements**:
+
+- **Simulation**: Created `examples/zero-to-one-simulation` to verify the "Happy Path".
+- **Standalone Mode**: Implemented `--copy-engine` in the CLI to support vanilla HTML/CSS workflows without a bundler.
+- **Physics Tuner**: Implemented a "HUD" (`DebugVisualizer.svelte` and `AxiomaticTuner`) to allow real-time parameter tuning, solving specificity issues with a brute-force override strategy.
+- **Documentation**: Identified and noted minor inconsistencies in CLI output vs. README.
+
+## Epoch 39: Consolidation & Optimization (2025-12-10)
+
+**Goal**: Optimize the development loop (linting speed) and reduce codebase complexity ("Diet Mode") by consolidating legacy components.
+
+**Completed Work**:
+
+- **Performance Optimization**:
+  - **ESLint**: Adopted a tiered linting strategy. Disabled `projectService` for the `site` directory, reducing linting time from ~42s to ~11s.
+  - **Strictness**: Maintained strict type-checking for `src/lib` (core logic) while relaxing it for `site` (UI) to improve iteration speed.
+- **Code Cleanup ("Diet Mode")**:
+  - **Knip Audit**: Used `knip` to scientifically identify and remove unused exports.
+  - **Deletions**: Removed ~15 unused files, including the entire `tufte` and `inspector` directories, and legacy components like `ThemeBuilder.svelte` and `Visualizer.svelte`.
+- **Refactoring**:
+  - **Builder Consolidation**: Merged `site/src/components/builder/` into `site/src/components/builder-v2/`.
+  - **Component Migration**: Moved `ContrastBadge`, `LuminanceSpectrum`, and `RangeSlider` to the new directory.
+  - **Import Updates**: Updated all references in `ContextTreeNode`, `GlobalInspector`, and `SurfaceInspector` to point to the new locations.
+
+## Epoch 39: Phase 2 - Diet & Canonicalization (2025-12-11)
+
+**Goal**: Continue the "Diet Mode" cleanup by removing sediment and canonicalizing directory structures.
+
+**Completed Work**:
+
+- **Canonicalization**:
+  - **Renamed**: `site/src/components/builder-v2` -> `site/src/components/builder`. The "v2" suffix is no longer needed as the legacy builder is gone.
+  - **Updated**: References in `studio.astro` and `lefthook.yml` to point to the canonical path.
+- **Sediment Removal**:
+  - **Deleted**: `temp-math/` (Unused scratchpad).
+  - **Deleted**: `examples/axiomatic-design-color-0.1.0.tgz` (Stale build artifact).
+  - **Cleaned**: Removed commented-out legacy CSS from `ContextTreeNode.svelte`.
+- **Verification**:
+  - **Knip**: Confirmed zero unused exports after the restructure.
+
+## Epoch 39: Phase 3 - Generator Refactor (2025-12-11)
+
+**Goal**: Refactor the monolithic `generator.ts` into a modular pipeline to improve maintainability and separation of concerns.
+
+**Completed Work**:
+
+- **Refactoring**:
+  - **Split**: Decomposed `src/lib/generator.ts` (God Object) into:
+    - `src/lib/generator/primitives.ts`: Handles Shadows, Focus, Highlight, Key Colors.
+    - `src/lib/generator/surfaces.ts`: Handles Surface token generation and state modifiers.
+    - `src/lib/generator/core-utilities.ts`: Handles reactive utility classes (`.text-*`, `.hue-*`).
+    - `src/lib/generator/index.ts`: Orchestrates the pipeline.
+  - **Updated Consumers**: Updated `src/cli/commands/build.ts`, `src/lib/runtime.ts`, and tests to use the new module structure.
+- **Verification**:
+  - **Tests**: Verified all tests pass, including snapshot tests (after fixing a minor whitespace regression).
+  - **Behavior**: Confirmed that the refactoring is purely structural and preserves existing functionality.
+
+## Epoch 39: Phase 4 - Anchor Chain Refactor (2025-12-11)
+
+**Goal**: Modularize the `rehype-anchor-chain` plugin to separate the distinct phases of the layout engine.
+
+**Completed Work**:
+
+- **Refactoring**:
+  - **Split**: Decomposed `site/src/lib/rehype-anchor-chain.ts` into:
+    - `phases/extraction.ts`: Footnote extraction logic.
+    - `phases/injection.ts`: Sidenote injection logic.
+    - `phases/anchoring.ts`: CSS Anchor Positioning ID generation and dependency graph.
+    - `utils.ts`: Shared helpers.
+    - `index.ts`: Main plugin entry point.
+- **Verification**:
+  - **Build**: Verified `pnpm --filter site build` passes successfully.
+  - **Functionality**: Confirmed the site generates correctly with the new plugin structure.
+
+## Epoch 39: Phase 5 - Lint Performance (2025-12-11)
+
+**Goal**: Optimize the developer experience by significantly reducing linting time for the documentation site.
+
+**Completed Work**:
+
+- **Performance Investigation**:
+  - Identified that `site/src` linting was taking ~3.3s despite being configured for "Fast Base".
+  - Traced the bottleneck to `projectService: true` being implicitly enabled for `.svelte.ts` files via a global config block.
+- **Optimization**:
+  - **Config Update**: Modified `eslint.config.js` to explicitly disable `projectService` for `site/**/*.svelte.ts` files.
+  - **Parser Override**: Forced `typescript-eslint/parser` for these files to ensure correct parsing without the overhead of the full type-aware service.
+- **Results**:
+  - **Site Linting**: Reduced from ~3.3s to ~1.5s (~55% improvement).
+  - **Full Lint**: Reduced from ~11.5s to ~7.2s (~37% improvement).
+- **Safety**:
+  - Confirmed that type safety is still enforced via `pnpm check:site` (Astro Check), allowing ESLint to focus purely on speed and style.

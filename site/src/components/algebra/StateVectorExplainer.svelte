@@ -11,7 +11,7 @@
     { label: "Faint", value: "text-subtlest", token: "text-subtlest" },
   ];
 
-  let intent = $derived(intents[intentIndex]);
+  const intent = $derived(intents[intentIndex]);
 
   // Scrubbing Logic
   let scrubbing = $state<"hue" | "chroma" | null>(null);
@@ -79,13 +79,14 @@
         <mtext>
           <span
             class="interactive-term"
-            class:highlight={highlighted === "hue"}
+            class:surface-soft-spotlight={highlighted === "hue"}
+            class:bordered={highlighted === "hue"}
           >
             <span class="term-stack">
               <span class="term-ghost">360°</span>
               <button
                 class="term-value text-high"
-                style:color={`oklch(0.7 0.2 ${hue})`}
+                class:text-brand={highlighted === "hue"}
                 onmousedown={(e) => {
                   startScrub(e, "hue", hue);
                 }}
@@ -108,7 +109,8 @@
         <mtext>
           <span
             class="interactive-term"
-            class:highlight={highlighted === "chroma"}
+            class:surface-soft-spotlight={highlighted === "chroma"}
+            class:bordered={highlighted === "chroma"}
           >
             <span class="term-stack">
               <span class="term-ghost">0.30</span>
@@ -136,7 +138,8 @@
         <mtext>
           <span
             class="interactive-term"
-            class:highlight={highlighted === "intent"}
+            class:surface-soft-spotlight={highlighted === "intent"}
+            class:bordered={highlighted === "intent"}
           >
             <span class="term-stack">
               <span class="term-ghost">Subtle</span>
@@ -159,7 +162,8 @@
         <mtext>
           <span
             class="interactive-term"
-            class:highlight={highlighted === "mode"}
+            class:surface-soft-spotlight={highlighted === "mode"}
+            class:bordered={highlighted === "mode"}
           >
             <span class="term-stack">
               <span class="term-ghost">Light</span>
@@ -188,10 +192,12 @@
     <div
       class="def-item"
       class:active={highlighted === "hue"}
+      class:surface-soft-spotlight={highlighted === "hue"}
+      class:bordered={highlighted === "hue"}
       onmouseenter={() => (highlighted = "hue")}
       onmouseleave={() => (highlighted = null)}
     >
-      <span class="math-symbol">H</span>
+      <span class="math-symbol text-subtle">H</span>
       <div class="def-content">
         <strong>Context Hue</strong>
         <span class="text-subtle"
@@ -203,10 +209,12 @@
     <div
       class="def-item"
       class:active={highlighted === "chroma"}
+      class:surface-soft-spotlight={highlighted === "chroma"}
+      class:bordered={highlighted === "chroma"}
       onmouseenter={() => (highlighted = "chroma")}
       onmouseleave={() => (highlighted = null)}
     >
-      <span class="math-symbol">C</span>
+      <span class="math-symbol text-subtle">C</span>
       <div class="def-content">
         <strong>Context Chroma</strong>
         <span class="text-subtle"
@@ -218,10 +226,12 @@
     <div
       class="def-item"
       class:active={highlighted === "intent"}
+      class:surface-soft-spotlight={highlighted === "intent"}
+      class:bordered={highlighted === "intent"}
       onmouseenter={() => (highlighted = "intent")}
       onmouseleave={() => (highlighted = null)}
     >
-      <span class="math-symbol">L<sub>src</sub></span>
+      <span class="math-symbol text-subtle">L<sub>src</sub></span>
       <div class="def-content">
         <strong>Intent Lightness</strong>
         <span class="text-subtle"
@@ -233,10 +243,12 @@
     <div
       class="def-item"
       class:active={highlighted === "mode"}
+      class:surface-soft-spotlight={highlighted === "mode"}
+      class:bordered={highlighted === "mode"}
       onmouseenter={() => (highlighted = "mode")}
       onmouseleave={() => (highlighted = null)}
     >
-      <span class="math-symbol">α</span>
+      <span class="math-symbol text-subtle">α</span>
       <div class="def-content">
         <strong>Polarity</strong>
         <span class="text-subtle">The local resolved mode (Light/Dark).</span>
@@ -339,12 +351,6 @@
     transition: background-color 0.2s;
   }
 
-  .interactive-term.highlight {
-    background-color: var(--computed-surface-highlight, rgba(255, 255, 0, 0.1));
-    box-shadow: 0 0 0 4px
-      var(--computed-surface-highlight, rgba(255, 255, 0, 0.1));
-  }
-
   .term-stack {
     display: grid;
     grid-template-areas: "stack";
@@ -375,14 +381,6 @@
     border: none;
     transition: background-color 0.2s;
     font-size: inherit;
-  }
-
-  .term-value:hover {
-    background-color: rgba(0, 0, 0, 0.05);
-  }
-
-  :global(.scheme-dark) .term-value:hover {
-    background-color: rgba(255, 255, 255, 0.1);
   }
 
   .intent-value,
@@ -430,25 +428,12 @@
     border: 1px solid transparent;
   }
 
-  .def-item:hover,
-  .def-item.active {
-    background-color: var(--computed-surface-highlight, rgba(0, 0, 0, 0.03));
-    border-color: var(--computed-border-dec-color, rgba(0, 0, 0, 0.1));
-  }
-
-  :global(.scheme-dark) .def-item:hover,
-  :global(.scheme-dark) .def-item.active {
-    background-color: rgba(255, 255, 255, 0.05);
-    border-color: rgba(255, 255, 255, 0.1);
-  }
-
   .math-symbol {
     font-family: var(--font-stix-two-math), serif;
     font-size: 1.5rem;
     font-style: italic;
     width: 2.5rem;
     text-align: center;
-    color: var(--computed-text-subtle);
     flex-shrink: 0;
     line-height: 1;
     margin-top: 0.125rem;
@@ -470,7 +455,6 @@
   }
 
   .arrow-container {
-    color: var(--computed-text-subtlest);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -498,14 +482,12 @@
     letter-spacing: 0.1em;
     font-size: 0.625rem;
     font-weight: bold;
-    color: var(--computed-text-subtlest);
   }
 
   .function-name {
     font-family: var(--font-stix-two-math), serif;
     font-style: italic;
     font-size: 1.25rem;
-    color: var(--computed-text-subtle);
   }
 
   .preview-card {
@@ -518,21 +500,6 @@
     justify-content: center;
     text-align: center;
     transition: all 0.3s;
-    --computed-fg-C: var(--alpha-beta);
-    --computed-fg-H: var(--alpha-hue);
-
-    /* More subtle appearance */
-    background-color: oklch(0.96 var(--alpha-beta) var(--alpha-hue));
-    border: 1px solid oklch(0.9 var(--alpha-beta) var(--alpha-hue));
-    box-shadow: 0 4px 20px -4px
-      oklch(0.9 var(--alpha-beta) var(--alpha-hue) / 0.5);
-  }
-
-  :global(.scheme-dark) .preview-card {
-    background-color: oklch(0.2 var(--alpha-beta) var(--alpha-hue));
-    border: 1px solid oklch(0.3 var(--alpha-beta) var(--alpha-hue));
-    box-shadow: 0 4px 20px -4px
-      oklch(0.1 var(--alpha-beta) var(--alpha-hue) / 0.5);
   }
 
   .preview-title {

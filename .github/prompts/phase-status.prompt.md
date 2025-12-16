@@ -8,10 +8,10 @@ description: This prompt is used to get a status report on the current phase.
 When asked for the status of the current phase, perform the following actions:
 
 1.  **Gather Context**:
-    - Read `${workspaceFolder}/docs/agent-context/current/task-list.md` to see what is done and what is pending.
+    - Read `${workspaceFolder}/docs/agent-context/brain/state/active_tasks.md` to see what is done and what is pending.
     - Read `${workspaceFolder}/docs/agent-context/current/implementation-plan.md` to understand the goals and scope.
     - Read `${workspaceFolder}/docs/agent-context/current/walkthrough.md` to see the narrative of progress so far.
-    - Read `${workspaceFolder}/docs/agent-context/plan-outline.md` to identify the current phase number and title.
+    - Read `${workspaceFolder}/docs/agent-context/brain/state/plan.md` to identify the current phase number and title.
 
 2.  **Generate Report**:
     - **Phase Identity**: State the current phase number and title.

@@ -17,6 +17,8 @@ describe("ThemeManager", () => {
         setProperty: vi.fn(),
         removeProperty: vi.fn(),
       },
+      setAttribute: vi.fn(),
+      removeAttribute: vi.fn(),
     };
 
     global.document = {
@@ -68,6 +70,18 @@ describe("ThemeManager", () => {
       "color-scheme",
       "light",
     );
+    expect(mockRoot.setAttribute).toHaveBeenCalledWith(
+      "data-axm-mode",
+      "light",
+    );
+    expect(mockRoot.setAttribute).toHaveBeenCalledWith(
+      "data-axm-resolved-mode",
+      "light",
+    );
+    expect(mockRoot.setAttribute).toHaveBeenCalledWith(
+      "data-axm-ready",
+      "true",
+    );
   });
 
   it("should set mode to dark", () => {
@@ -77,6 +91,15 @@ describe("ThemeManager", () => {
     expect(mockRoot.style.setProperty).toHaveBeenCalledWith(
       "color-scheme",
       "dark",
+    );
+    expect(mockRoot.setAttribute).toHaveBeenCalledWith("data-axm-mode", "dark");
+    expect(mockRoot.setAttribute).toHaveBeenCalledWith(
+      "data-axm-resolved-mode",
+      "dark",
+    );
+    expect(mockRoot.setAttribute).toHaveBeenCalledWith(
+      "data-axm-ready",
+      "true",
     );
   });
 

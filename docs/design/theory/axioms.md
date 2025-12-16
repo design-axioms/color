@@ -74,8 +74,13 @@ Users express what they want (Accessibility, Vibe), and the system handles the m
 **Transitions must preserve semantic intent, not just minimize distance.**
 We reject linear interpolation when it violates the semantic meaning of the transition (e.g., forcing a "Cool -> Warm" hue shift to go the long way around the wheel).
 
+### [XI. The Law of the Stable Spine](axioms/11-stable-spine.md)
+
+**Keep the spine generic. Push variability to the edges.**
+We prevent “glue drift” by keeping orchestrators branch-free and pushing configuration, analysis, and output policies into typed module hooks.
+
 ## Missing / Implicit Axioms (To Be Formalized)
 
 The following principles guide our work but have not yet been codified into Law:
 
-- (None currently - all known axioms have been formalized)
+- (None currently)

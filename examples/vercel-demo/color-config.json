@@ -1,0 +1,120 @@
+{
+  "$schema": "../../color-config.schema.json",
+  "anchors": {
+    "inverted": {
+      "light": {
+        "start": { "background": 0.0 },
+        "end": { "background": 1.0 }
+      },
+      "dark": {
+        "start": { "background": 1.0 },
+        "end": { "background": 0.0 }
+      }
+    },
+    "page": {
+      "light": {
+        "start": { "background": 1.0 },
+        "end": { "background": 0.0 }
+      },
+      "dark": {
+        "start": { "background": 0.0 },
+        "end": { "background": 1.0 }
+      }
+    },
+    "keyColors": {
+      "brand": "#0070f3",
+      "success": "#0070f3",
+      "warning": "#f5a623",
+      "danger": "#e00000",
+      "highlight": "#f81ce5",
+      "cyan": "#50e3c2",
+      "violet": "#7928ca"
+    }
+  },
+  "groups": [
+    {
+      "name": "Page",
+      "surfaces": [
+        {
+          "slug": "page",
+          "label": "Page Background",
+          "polarity": "page",
+          "hue": "brand",
+          "targetChroma": 0
+        }
+      ]
+    },
+    {
+      "name": "Content",
+      "surfaces": [
+        {
+          "slug": "card",
+          "label": "Card",
+          "polarity": "page",
+          "hue": "brand",
+          "targetChroma": 0,
+          "states": [
+            { "name": "hover", "offset": 0.05 },
+            { "name": "active", "offset": 0.08 }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Actions",
+      "surfaces": [
+        {
+          "slug": "action",
+          "label": "Primary Action",
+          "polarity": "inverted",
+          "hue": "brand",
+          "override": {
+            "light": "#0070f3",
+            "dark": "#0070f3"
+          },
+          "states": [
+            { "name": "hover", "offset": 0.05 },
+            { "name": "active", "offset": 0.08 }
+          ]
+        },
+        {
+          "slug": "action-secondary",
+          "label": "Secondary Action",
+          "polarity": "page",
+          "hue": "brand",
+          "targetChroma": 0,
+          "states": [
+            { "name": "hover", "offset": 0.05 },
+            { "name": "active", "offset": 0.08 }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Feedback",
+      "surfaces": [
+        {
+          "slug": "status-success",
+          "label": "Success",
+          "polarity": "page",
+          "hue": "success",
+          "targetChroma": 0.12
+        },
+        {
+          "slug": "status-warning",
+          "label": "Warning",
+          "polarity": "page",
+          "hue": "warning",
+          "targetChroma": 0.15
+        },
+        {
+          "slug": "status-error",
+          "label": "Error",
+          "polarity": "page",
+          "hue": "danger",
+          "targetChroma": 0.15
+        }
+      ]
+    }
+  ]
+}

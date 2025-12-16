@@ -1,13 +1,68 @@
-import { mkdirSync, readFileSync, watch, writeFileSync } from "node:fs";
-import { dirname, resolve } from "node:path";
-import { generateTokensCss } from "../../lib/generator.ts";
+import {
+  copyFileSync,
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  watch,
+  writeFileSync,
+} from "node:fs";
+import { dirname, join, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+import { generateTokensCss } from "../../lib/generator/index.ts";
 import { resolveConfig, solve } from "../../lib/index.ts";
 import type { SolverConfig } from "../../lib/types.ts";
+
+type ClassTokenManifest = {
+  schemaVersion: 1;
+  sourceConfigPath: string;
+  generatedCssPath: string;
+  reservedPrefixes: string[];
+  classTokens: string[];
+};
+
+function extractCssClassTokens(css: string): string[] {
+  const tokens = new Set<string>();
+  const re = /(^|[^a-zA-Z0-9_-])\.([a-zA-Z_][a-zA-Z0-9_-]*)/g;
+  let match: RegExpExecArray | null;
+  while ((match = re.exec(css)) !== null) {
+    const token = match[2];
+    if (token) tokens.add(token);
+  }
+  return [...tokens].sort();
+}
+
+function findEngineCssPath(): string | null {
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = dirname(__filename);
+
+  const candidates = [
+    resolve(__dirname, "../../../css/engine.css"),
+    resolve(__dirname, "../../css/engine.css"),
+    resolve(__dirname, "../css/engine.css"),
+  ];
+
+  for (const candidate of candidates) {
+    if (existsSync(candidate)) return candidate;
+  }
+  return null;
+}
+
+const RESERVED_PREFIXES = [
+  "surface",
+  "text",
+  "hue",
+  "bg",
+  "border",
+  "shadow",
+  "fg",
+  "preset",
+];
 
 export function buildCommand(args: string[], cwd: string): void {
   let configPath = "color-config.json";
   let outPath = "theme.css";
   let isWatch = false;
+  let copyEngine = false;
 
   for (let i = 0; i < args.length; i++) {
     const nextArg = args[i + 1];
@@ -19,6 +74,8 @@ export function buildCommand(args: string[], cwd: string): void {
       i++;
     } else if (args[i] === "--watch") {
       isWatch = true;
+    } else if (args[i] === "--copy-engine") {
+      copyEngine = true;
     }
   }
 
@@ -73,6 +130,60 @@ export function buildCommand(args: string[], cwd: string): void {
     console.log("Writing CSS to:", absOutPath);
     mkdirSync(dirname(absOutPath), { recursive: true });
     writeFileSync(absOutPath, css);
+
+    // Emit the solver-derived token manifest next to the CSS output.
+    // This is intended to be the canonical source for per-config strict RFC010 enforcement
+    // and for downstream tooling (e.g. editor completions).
+    const tokensOutPath = absOutPath.endsWith(".css")
+      ? absOutPath.replace(/\.css$/u, ".class-tokens.json")
+      : `${absOutPath}.class-tokens.json`;
+
+    const manifest: ClassTokenManifest = {
+      schemaVersion: 1,
+      sourceConfigPath: configPath,
+      generatedCssPath: outPath,
+      reservedPrefixes: RESERVED_PREFIXES,
+      classTokens: (() => {
+        const themeTokens = extractCssClassTokens(css);
+        const enginePath = findEngineCssPath();
+        if (!enginePath) return themeTokens;
+
+        const engineCss = readFileSync(enginePath, "utf8");
+        const engineTokens = extractCssClassTokens(engineCss);
+        return [...new Set([...engineTokens, ...themeTokens])].sort();
+      })(),
+    };
+
+    writeFileSync(tokensOutPath, JSON.stringify(manifest, null, 2) + "\n");
+    console.log("Writing class-token manifest to:", tokensOutPath);
+
+    if (copyEngine) {
+      const __filename = fileURLToPath(import.meta.url);
+      const __dirname = dirname(__filename);
+
+      // Try to find engine.css in likely locations
+      const candidates = [
+        resolve(__dirname, "../../../css/engine.css"),
+        resolve(__dirname, "../../css/engine.css"),
+        resolve(__dirname, "../css/engine.css"),
+      ];
+
+      let enginePath: string | null = null;
+      for (const candidate of candidates) {
+        if (existsSync(candidate)) {
+          enginePath = candidate;
+          break;
+        }
+      }
+
+      if (enginePath) {
+        const engineOutPath = join(dirname(absOutPath), "engine.css");
+        console.log("Copying engine.css to:", engineOutPath);
+        copyFileSync(enginePath, engineOutPath);
+      } else {
+        console.warn("Warning: Could not find engine.css to copy.");
+      }
+    }
 
     console.log("Done!");
   };

@@ -1,0 +1,416 @@
+/* site/src/styles/tufte.css */
+
+/* 
+   RFC 008: The "Sophisticated Preprint" Layout Engine 
+   Architecture v3: The CSS Anchor Chain
+*/
+
+:root {
+  --gutter: 1rem;
+  --measure-main: 60ch;
+  --measure-side: 26ch;
+  --gap-main: 4rem;
+
+  /* Typography Configuration */
+  --font-serif: "EB Garamond Variable", "EB Garamond", serif;
+  --font-mono: "SF Mono", "Menlo", "Monaco", "Courier New", monospace;
+  --ink-code: currentColor;
+}
+
+/* Desktop Layout (Anchor Chain) */
+@media (min-width: 1200px) {
+  .tufte-layout .sl-markdown-content {
+    display: block;
+    width: var(--measure-main);
+    /* Center the whole composition (Main + Gap + Side) roughly */
+    margin-left: auto;
+    margin-right: calc(var(--measure-side) + var(--gap-main) + var(--gutter));
+    position: relative; /* Establish containing block context */
+    anchor-name: --main-content; /* Establish the primary anchor */
+
+    /* Reset max-width from Starlight defaults */
+    max-width: none !important;
+    padding-inline: 0 !important;
+  }
+
+  /* The Sidenote (Anchored) */
+  .tufte-layout .sidenote {
+    position: absolute;
+    width: var(--measure-side);
+    margin-left: 0;
+
+    /* Typography */
+    font-size: 0.9rem;
+    line-height: 1.4;
+
+    /* Visuals */
+    border-left-width: 3px;
+    border-left-style: solid;
+    border-radius: 2px;
+    padding: 0.5rem 1rem;
+  }
+
+  /* Topology: Direct Tether (Note -> Paragraph) */
+  .tufte-layout .sidenote.tether-direct {
+    top: anchor(top);
+    left: calc(anchor(right) + var(--gap-main));
+  }
+
+  /* Topology: Stack Tether (Note -> Note) */
+  .tufte-layout .sidenote.tether-stack {
+    top: anchor(bottom);
+    left: anchor(left);
+    margin-top: 0.5rem; /* Visual gap between notes */
+  }
+}
+
+/* Global Sidenote Fixes */
+/* Forces the first element inside the note to hit the 'ceiling' of the container */
+.tufte-layout aside.sidenote > *:first-child {
+  margin-top: 0 !important;
+}
+
+/* Mobile Layout (Linear Stack) */
+@media (max-width: 1199px) {
+  .tufte-layout .sl-markdown-content {
+    display: flex;
+    flex-direction: column;
+    max-width: 65ch;
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  /* Mobile Sidenote Styling */
+  .tufte-layout .sidenote {
+    display: block;
+    position: static !important; /* Override anchor positioning */
+    top: auto !important;
+    left: auto !important;
+    width: 90%;
+    margin: 1rem auto;
+    padding: 1rem;
+    border-left-width: 3px;
+    border-left-style: solid;
+    border-radius: 2px;
+  }
+}
+
+/* --- Typography & Rhythm --- */
+
+.tufte-layout .sl-markdown-content p {
+  text-align: justify;
+  hyphens: auto;
+  text-wrap: pretty;
+  hanging-punctuation: first last;
+}
+
+/* Indentation Strategy (Stream of Truth) */
+.tufte-layout .sl-markdown-content p + p {
+  text-indent: 1.5em;
+  margin-top: 0;
+}
+
+/* Lists & Enumerations (Stream of Truth) */
+.tufte-layout .sl-markdown-content ul,
+.tufte-layout .sl-markdown-content ol {
+  padding-left: 1.5em; /* Align list text with paragraph indent */
+  margin-left: 0;
+  margin-top: 0; /* Flow from text */
+  list-style-position: outside;
+}
+
+/* Level 2 List Marker (Lower Alpha) - Enforced for all lists per RFC 008 Amendment C */
+.tufte-layout .sl-markdown-content ol ol,
+.tufte-layout .sl-markdown-content ul ul,
+.tufte-layout .sl-markdown-content ol ul,
+.tufte-layout .sl-markdown-content ul ol {
+  list-style-type: lower-alpha;
+}
+
+/* Level 3 List Marker (Lower Roman) - Enforced for all lists */
+.tufte-layout .sl-markdown-content ol ol ol,
+.tufte-layout .sl-markdown-content ul ul ul,
+.tufte-layout .sl-markdown-content ol ul ul,
+.tufte-layout .sl-markdown-content ul ol ul {
+  list-style-type: lower-roman;
+}
+
+.tufte-layout .sl-markdown-content li {
+  margin-bottom: 0.15em; /* Tight inter-item spacing */
+  padding-left: 0.25em;
+  line-height: 1.6; /* Relaxed intra-item spacing */
+}
+
+/* Reset indent inside list items to avoid double indentation */
+.tufte-layout .sl-markdown-content li p {
+  text-indent: 0;
+}
+
+/* Math Typography */
+.tufte-layout .katex,
+.tufte-layout math {
+  font-size: 0.9em !important;
+  white-space: nowrap !important;
+  font-family: "Garamond-Math", "EB Garamond", serif;
+}
+
+/* Inline Code (De-boxed) */
+.tufte-layout .sl-markdown-content :not(pre) > code {
+  background-color: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  font-family: var(--font-mono);
+  font-size: 0.85em !important;
+  color: var(--ink-code); /* Monochromatic "Print" aesthetic */
+  font-weight: 500;
+}
+
+/* Block Code (Monochromatic Override) */
+.tufte-layout .sl-markdown-content pre code,
+.tufte-layout .sl-markdown-content pre code span {
+  color: var(--ink-code) !important;
+  font-family: var(--font-mono);
+}
+
+/* Spacing overrides */
+.tufte-layout .sl-markdown-content > * {
+  margin-bottom: 1em;
+}
+
+.tufte-layout .sl-markdown-content > p {
+  margin-bottom: 0;
+}
+
+/* Compact Lists in Sidenotes */
+.tufte-layout .sidenote ul,
+.tufte-layout .sidenote ol,
+.tufte-layout .marginalia ul {
+  padding-left: 1.2em;
+  margin-left: 0;
+  list-style-type: lower-alpha;
+}
+
+.tufte-layout .sidenote li {
+  margin-bottom: 0.25em;
+}
+
+/* Academic Label Styling */
+.tufte-layout .sidenote strong,
+.tufte-layout .sidenote em {
+  font-family: var(--font-serif);
+  font-variant: small-caps;
+  font-variant-caps: all-small-caps;
+  text-transform: lowercase;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+  font-size: 1.1em;
+  color: inherit;
+  font-style: normal;
+}
+
+/* Font Override */
+.tufte-layout .sl-markdown-content {
+  font-family: var(--font-serif);
+  font-size: 1.125rem;
+  line-height: 1.5;
+}
+
+/* Headings */
+.tufte-layout .sl-markdown-content h1 {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: 2.5rem !important;
+  line-height: 1.1;
+  margin-bottom: 1.5rem !important;
+}
+
+.tufte-layout .sl-markdown-content h2 {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  margin-top: 2.5rem !important;
+  margin-bottom: 1rem !important;
+  border-bottom: 1px solid currentColor;
+  padding-bottom: 0.5rem;
+  letter-spacing: -0.01em;
+  font-size: 2rem !important;
+}
+
+.tufte-layout .sl-markdown-content h3 {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  margin-top: 2rem !important;
+  margin-bottom: 0.75rem !important;
+  font-size: 1.5rem !important;
+  font-style: italic;
+}
+
+.tufte-layout .sl-markdown-content h4 {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  margin-top: 1.5rem !important;
+  margin-bottom: 0.5rem !important;
+  font-size: 1.25rem !important;
+  font-variant: small-caps;
+}
+
+/* Visual Tethering (Flash on Target) */
+.tufte-layout .sidenote:target {
+  border-radius: 4px;
+  padding: 0.5rem;
+  margin-left: -0.5rem;
+  margin-right: -0.5rem;
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+/* Math Centering */
+.tufte-layout .katex-display,
+.tufte-layout .math-block,
+.tufte-layout math[display="block"] {
+  display: block !important;
+  text-align: center;
+  text-indent: 0; /* Overrides the global paragraph indent */
+  margin: 2rem 0;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden; /* Prevent vertical scrollbars */
+  scrollbar-width: thin;
+  padding-inline: 0.5rem; /* Prevent clipping of italic swashes */
+}
+
+.tufte-layout .katex-display::-webkit-scrollbar,
+.tufte-layout math[display="block"]::-webkit-scrollbar {
+  height: 6px;
+}
+
+.tufte-layout .katex-display::-webkit-scrollbar-thumb,
+.tufte-layout math[display="block"]::-webkit-scrollbar-thumb {
+  background-color: CanvasText;
+  border-radius: 3px;
+}
+
+.tufte-layout .katex-display > .katex {
+  display: inline-block;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.tufte-layout p:has(> .katex:only-child),
+.tufte-layout p:has(> math:only-child) {
+  text-align: center;
+  margin: 2rem 0;
+  text-indent: 0; /* Fix centering shift */
+}
+
+/* Suppress indentation for text following an equation (e.g., "Where:") */
+.tufte-layout p:has(> .katex:only-child) + p,
+.tufte-layout p:has(> math:only-child) + p,
+.tufte-layout math[display="block"] + p {
+  text-indent: 0;
+}
+
+/* Abstract & Subtitle */
+.tufte-layout .abstract {
+  font-size: 1.1rem;
+  line-height: 1.5;
+  margin: 2rem 0;
+  font-style: italic;
+}
+
+.tufte-layout .subtitle {
+  display: block;
+  font-style: italic;
+  font-size: 1.1rem;
+  color: currentColor;
+  opacity: 0.75;
+  margin-bottom: 2rem;
+  margin-top: -0.5rem;
+}
+
+/* Footnote Styling */
+.tufte-layout .sl-markdown-content sup a {
+  text-decoration: none;
+  color: inherit;
+  font-weight: 500;
+  margin-left: 1px;
+  font-size: 0.75em;
+}
+
+/* Hypertext Styling (RFC 008 Section 3.6) */
+.tufte-layout .sl-markdown-content a:not(sup a) {
+  text-decoration: none;
+  cursor: pointer;
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
+.tufte-layout .sl-markdown-content a:not(sup a):hover {
+  text-decoration-thickness: 2px;
+}
+
+/* --- Starlight Aside Overrides (The Sidenote Protocol) --- */
+/* 
+   RFC 008 Amendment: Starlight <Aside> components must render as 
+   marginalia, not inline alert boxes.
+*/
+
+@media (min-width: 1200px) {
+  .tufte-layout .sl-markdown-content aside {
+    /* Topology: Remove from flow and anchor to margin */
+    position: absolute;
+    position-anchor: --main-content; /* Anchor to the main text column */
+    left: calc(anchor(right) + var(--gap-main));
+    width: var(--measure-side);
+    margin-left: 0;
+    margin-top: 0;
+
+    /* Visuals: Remove "Alert Box" styling */
+    background-color: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+
+    /* Typography: Academic Sidenote */
+    font-size: 0.9rem;
+    line-height: 1.4;
+    color: currentColor;
+    opacity: 0.75;
+    font-family: var(--font-serif);
+  }
+
+  /* Hide the Starlight Icon */
+  .tufte-layout .sl-markdown-content aside .starlight-aside__icon,
+  .tufte-layout .sl-markdown-content aside svg {
+    display: none !important;
+  }
+
+  /* Transform the Title into a Label */
+  .tufte-layout .sl-markdown-content aside .starlight-aside__title {
+    font-family: var(--font-serif);
+    font-variant: small-caps;
+    font-variant-caps: all-small-caps;
+    text-transform: lowercase;
+    letter-spacing: 0.05em;
+    font-weight: 700;
+    font-size: 1.1em;
+    color: inherit;
+    margin-bottom: 0.25em;
+    display: block;
+    padding-left: 0;
+  }
+
+  /* Reset Content Styling */
+  .tufte-layout .sl-markdown-content aside .starlight-aside__content {
+    font-size: inherit;
+    color: inherit;
+  }
+
+  /* Remove default margins from paragraphs inside the aside */
+  .tufte-layout .sl-markdown-content aside p {
+    margin-bottom: 0.5em;
+    text-indent: 0; /* Sidenotes don't indent */
+  }
+}

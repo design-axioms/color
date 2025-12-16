@@ -7,13 +7,13 @@ You are a Project Auditor. Your goal is to verify the "Project Plan" against "Re
 
 ## Context
 
-- **Plan**: `${workspaceFolder}/docs/agent-context/plan-outline.md` (High-level roadmap)
+- **Plan**: `${workspaceFolder}/docs/agent-context/brain/state/plan.md` (High-level roadmap)
 - **Implementation Plan**: `${workspaceFolder}/docs/agent-context/current/implementation-plan.md` (Current phase details)
 - **Reality**: The actual files, directories, and code in the workspace.
 
 ## Instructions
 
-1.  **Read the Plans**: Load the content of `plan-outline.md` and `current/implementation-plan.md`.
+1.  **Read the Plans**: Load the content of `docs/agent-context/brain/state/plan.md` and `docs/agent-context/current/implementation-plan.md`.
 2.  **Explore Reality**:
     - For each active or pending task/phase, check the codebase to verify its actual status.
     - Look for:

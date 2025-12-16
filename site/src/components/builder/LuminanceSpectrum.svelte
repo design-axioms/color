@@ -8,21 +8,23 @@
   const configState = getContext<ConfigState>("config");
 
   // Dark Mode: Page (Start) -> Limit (End)
-  let darkPage = $derived(
+  const darkPage = $derived(
     configState.config.anchors.page.dark.start.background,
   );
-  let darkLimit = $derived(configState.config.anchors.page.dark.end.background);
+  const darkLimit = $derived(
+    configState.config.anchors.page.dark.end.background,
+  );
 
   // Light Mode: Limit (End) -> Page (Start)
-  let lightLimit = $derived(
+  const lightLimit = $derived(
     configState.config.anchors.page.light.end.background,
   );
-  let lightPage = $derived(
+  const lightPage = $derived(
     configState.config.anchors.page.light.start.background,
   );
 
   // Count surfaces using 'page' polarity
-  let pageSurfaceCount = $derived(
+  const pageSurfaceCount = $derived(
     configState.config.groups.reduce((count, group) => {
       return count + group.surfaces.filter((s) => s.polarity === "page").length;
     }, 0),
@@ -47,15 +49,14 @@
     return Math.abs(typeof contrast === "number" ? contrast : 0);
   }
 
-  let darkContrast = getAPCA(darkLimit, darkPage);
-  let lightContrast = getAPCA(lightLimit, lightPage);
+  const darkContrast = getAPCA(darkLimit, darkPage);
+  const lightContrast = getAPCA(lightLimit, lightPage);
 
   function getHandleStyle(l: number): string {
-    const rgb = toRgb({ mode: "oklch", l, c: 0, h: 0 });
-    const bg = `rgb(${Math.round(rgb.r * 255)}, ${Math.round(rgb.g * 255)}, ${Math.round(rgb.b * 255)})`;
-    const color = l > 0.5 ? "black" : "white";
-    const borderColor = l > 0.5 ? "rgba(0,0,0,0.1)" : "rgba(255,255,255,0.3)";
-    return `background-color: ${bg} !important; color: ${color} !important; border: 1px solid ${borderColor} !important;`;
+    void l;
+    // RFC010: avoid emitting color literals/functions in consumer code.
+    // Handles already have token classes; keep this empty.
+    return "";
   }
 
   function handleDarkChange(start: number, end: number): void {
@@ -75,10 +76,14 @@
   </div>
 
   <div class="spectrum-track-wrapper">
-    <div class="zone-label top-left">Light Mode</div>
+    <div
+      class="zone-label top-left surface-workspace preset-bordered text-strong"
+    >
+      Light Mode
+    </div>
 
     <!-- The Track Container -->
-    <div class="spectrum-track surface-workspace">
+    <div class="spectrum-track surface-workspace bordered">
       <!-- Gradient Background (The Ruler) -->
       <div class="gradient-bg"></div>
 
@@ -94,7 +99,7 @@
           label="Light Mode"
           trackClass="invisible-track"
           fillClass="surface-action bridge"
-          handleClass="surface-action"
+          handleClass="surface-action text-inverse"
           startHandleShape="pill"
           endHandleShape="pill"
           startHandleLabel="Limit"
@@ -109,8 +114,8 @@
           class="contrast-badge font-mono"
           style="left: {((lightLimit + lightPage) / 2) * 100}%"
         >
-          <div class="badge-content">
-            <span class="badge-text"
+          <div class="badge-content surface-workspace preset-bordered">
+            <span class="badge-text text-subtle"
               >Lc {Math.round(lightContrast)} spread over {pageSurfaceCount} surface{pageSurfaceCount !==
               1
                 ? "s"
@@ -132,7 +137,7 @@
           label="Dark Mode"
           trackClass="invisible-track"
           fillClass="surface-action bridge"
-          handleClass="surface-action"
+          handleClass="surface-action text-inverse"
           startHandleShape="pill"
           endHandleShape="pill"
           startHandleLabel="Page"
@@ -147,8 +152,8 @@
           class="contrast-badge font-mono"
           style="left: {((darkPage + darkLimit) / 2) * 100}%"
         >
-          <div class="badge-content">
-            <span class="badge-text"
+          <div class="badge-content surface-workspace preset-bordered">
+            <span class="badge-text text-subtle"
               >Lc {Math.round(darkContrast)} spread over {pageSurfaceCount} surface{pageSurfaceCount !==
               1
                 ? "s"
@@ -159,7 +164,11 @@
       </div>
     </div>
 
-    <div class="zone-label bottom-left">Dark Mode</div>
+    <div
+      class="zone-label bottom-left surface-workspace preset-bordered text-strong"
+    >
+      Dark Mode
+    </div>
   </div>
 </div>
 
@@ -208,9 +217,8 @@
     right: 0;
     height: 20px;
     transform: translateY(-50%);
-    background: linear-gradient(to right, black, white);
+    background: linear-gradient(to right, CanvasText, Canvas);
     border-radius: 2px;
-    border: 1px solid rgba(0, 0, 0, 0.1);
     z-index: 0;
   }
 
@@ -222,11 +230,8 @@
     bottom: 0;
     left: 0;
     right: 0;
-    background: linear-gradient(
-      to right,
-      rgba(128, 128, 128, 0.8) 1px,
-      transparent 1px
-    );
+    background: linear-gradient(to right, currentColor 1px, transparent 1px);
+    opacity: 0.2;
     background-size: 50% 100%;
     pointer-events: none;
   }
@@ -237,7 +242,8 @@
     bottom: 0;
     right: 0;
     width: 1px;
-    background: rgba(128, 128, 128, 0.8);
+    background: currentColor;
+    opacity: 0.2;
     pointer-events: none;
   }
 
@@ -262,12 +268,9 @@
   .zone-label {
     font-size: 0.7rem;
     font-weight: 700;
-    color: var(--text-strong);
     text-transform: uppercase;
     letter-spacing: 0.05em;
     padding: 4px 8px;
-    background: var(--surface-workspace);
-    border: 1px solid var(--border-subtle);
     border-radius: 4px;
     align-self: flex-start;
   }
@@ -285,7 +288,8 @@
     position: absolute;
     width: 1px;
     background-color: transparent;
-    border-left: 1px dashed rgba(0, 0, 0, 0.5); /* Darker, more visible */
+    border-left: 1px dashed currentColor;
+    opacity: 0.25;
     z-index: 0;
   }
 
@@ -325,11 +329,6 @@
   }
 
   /* General Handle Styling */
-  .slider-layer :global(.handle) {
-    box-shadow: var(--shadow-sm);
-    /* Background and color are now handled by inline styles */
-  }
-
   .contrast-badge {
     position: absolute;
     transform: translateX(-50%);
@@ -348,7 +347,8 @@
     position: absolute;
     left: 50%;
     width: 1px;
-    background: var(--border-decorative);
+    background: currentColor;
+    opacity: 0.25;
     z-index: -1;
   }
 
@@ -382,14 +382,11 @@
     display: flex;
     align-items: center;
     gap: 4px;
-    background: var(--surface-workspace);
     padding: 2px 6px;
     border-radius: 4px;
-    border: 1px solid var(--border-subtle);
   }
 
   .badge-text {
-    color: var(--text-subtle);
     font-weight: 600;
     font-size: 0.75rem;
   }

@@ -5,8 +5,8 @@
   let isDragging = $state(false);
 
   // Derived state
-  let inSurface = $derived(position > 50);
-  let currentIntent = $derived(inSurface ? "text-high" : outerIntent);
+  const inSurface = $derived(position > 50);
+  const currentIntent = $derived(inSurface ? "text-high" : outerIntent);
 
   // Drag logic
   let track: HTMLElement | undefined = $state();
@@ -40,10 +40,6 @@
     const rawPos = (clientX - rect.left) / rect.width;
     position = Math.max(0, Math.min(100, rawPos * 100));
   }
-
-  const titleColor =
-    // eslint-disable-next-line @axiomatic-design/no-raw-tokens
-    "oklch(from var(--text-lightness-source) l var(--alpha-beta) var(--alpha-hue))";
 </script>
 
 <div class="demo-container surface-card bordered">
@@ -68,6 +64,9 @@
           class:text-subtle={outerIntent !== "text-subtle"}
           class:text-strong={outerIntent === "text-subtle"}
           class:active={outerIntent === "text-subtle"}
+          class:surface-card={outerIntent === "text-subtle"}
+          class:bordered={outerIntent === "text-subtle"}
+          class:shadow-sm={outerIntent === "text-subtle"}
           onclick={() => (outerIntent = "text-subtle")}>Subtle</button
         >
         <button
@@ -75,6 +74,9 @@
           class:text-subtle={outerIntent !== "text-subtlest"}
           class:text-strong={outerIntent === "text-subtlest"}
           class:active={outerIntent === "text-subtlest"}
+          class:surface-card={outerIntent === "text-subtlest"}
+          class:bordered={outerIntent === "text-subtlest"}
+          class:shadow-sm={outerIntent === "text-subtlest"}
           onclick={() => (outerIntent = "text-subtlest")}>Faint</button
         >
       </div>
@@ -113,7 +115,7 @@
       >
         <div class="avatar surface-workspace">👤</div>
         <div class="text-content">
-          <div class="element-title" style:color={titleColor}>Hello World</div>
+          <div class="element-title text-strong">Hello World</div>
           <div class="element-subtitle text-subtlest">
             {currentIntent}
           </div>
@@ -189,8 +191,6 @@
   }
 
   .toggle-btn.active {
-    background: var(--computed-surface);
-    box-shadow: var(--shadow-sm);
   }
 
   .stage {
@@ -211,22 +211,14 @@
     padding-bottom: 1.5rem;
     position: relative;
     border-radius: 0.5rem; /* Round corners individually */
-    background-color: var(--computed-surface); /* Default background */
-    border: 1px dashed var(--computed-border-dec-color);
+    border: 1px dashed currentColor;
   }
 
   .zone-outer {
-    background-color: oklch(
-      from var(--computed-surface) l 0.02 var(--alpha-hue) / 0.3
-    );
     border-right: none;
   }
 
   .zone-inner {
-    background-color: oklch(
-      from var(--computed-surface) l 0.05 140 / 0.1
-    ); /* Subtle green tint */
-    transition: background-color 0.3s;
     border-left: none;
   }
 
@@ -278,8 +270,6 @@
     gap: 0.75rem;
     pointer-events: none;
     width: 180px;
-    background: var(--computed-surface);
-    box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.1);
   }
 
   .avatar {
@@ -291,7 +281,6 @@
     align-items: center;
     justify-content: center;
     font-size: 1.75rem;
-    background-color: rgba(0, 0, 0, 0.05);
   }
 
   .text-content {
@@ -325,7 +314,6 @@
     border-radius: 9999px;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   }
 
   .caption {

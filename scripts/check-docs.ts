@@ -1,5 +1,6 @@
 import { glob } from "glob";
 import fs from "node:fs";
+import path from "node:path";
 
 const files = await glob("**/*.{md,mdx}", {
   ignore: ["node_modules/**", "dist/**"],
@@ -84,6 +85,85 @@ for (const file of files) {
     }
   }
 }
+
+async function checkRelativeLinks(): Promise<void> {
+  const DOCS_DIR = path.resolve("site/src/content/docs");
+
+  if (!fs.existsSync(DOCS_DIR)) {
+    console.warn(
+      `\n[WARNING] Docs directory not found: ${DOCS_DIR}. Skipping link checks.`,
+    );
+    return;
+  }
+
+  const docFiles = await glob("**/*.{md,mdx}", { cwd: DOCS_DIR });
+  console.log(`\nChecking relative links in ${docFiles.length} docs files...`);
+
+  for (const relativeFile of docFiles) {
+    const filePath = path.join(DOCS_DIR, relativeFile);
+    const content = fs.readFileSync(filePath, "utf-8");
+    const lines = content.split("\n");
+
+    let inCodeBlock = false;
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      if (line === undefined) continue;
+
+      if (line.trim().startsWith("```")) {
+        inCodeBlock = !inCodeBlock;
+        continue;
+      }
+
+      if (inCodeBlock) continue;
+
+      const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+      let match: RegExpExecArray | null;
+
+      while ((match = linkRegex.exec(line)) !== null) {
+        const link = match[2];
+        if (!link) continue;
+
+        // Ignore external links, anchors, and absolute paths.
+        if (
+          link.startsWith("http") ||
+          link.startsWith("#") ||
+          link.startsWith("/") ||
+          link.startsWith("mailto:") ||
+          link.startsWith("tel:")
+        ) {
+          continue;
+        }
+
+        // Strip query/hash for file existence checks.
+        const linkPath = link.split("#")[0]?.split("?")[0] ?? link;
+        if (!linkPath) continue;
+
+        const dir = path.dirname(filePath);
+        const resolvedPath = path.resolve(dir, linkPath);
+
+        let exists = fs.existsSync(resolvedPath);
+        if (!exists && !path.extname(resolvedPath)) {
+          if (fs.existsSync(resolvedPath + ".md")) exists = true;
+          else if (fs.existsSync(resolvedPath + ".mdx")) exists = true;
+          else if (fs.existsSync(path.join(resolvedPath, "index.md")))
+            exists = true;
+          else if (fs.existsSync(path.join(resolvedPath, "index.mdx")))
+            exists = true;
+        }
+
+        if (!exists) {
+          console.error(
+            `\n[ERROR] Broken link in ${relativeFile}:${i + 1}: ${link} -> ${resolvedPath}`,
+          );
+          hasError = true;
+        }
+      }
+    }
+  }
+}
+
+await checkRelativeLinks();
 
 if (hasError) {
   console.log("\n❌ Docs syntax check failed.");

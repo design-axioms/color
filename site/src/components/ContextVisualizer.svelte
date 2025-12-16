@@ -9,16 +9,18 @@
       style="padding: 2rem; border-radius: 0.5rem;"
     >
       <div
-        style="margin-bottom: 1rem; font-weight: bold; font-size: 0.875rem; color: var(--axm-text-subtle-token);"
+        class="text-subtle"
+        style="margin-bottom: 1rem; font-weight: bold; font-size: 0.875rem;"
       >
         Page (Light Context)
       </div>
       <div
-        class="surface-card bordered"
-        style="padding: 2rem; border-radius: 0.5rem; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);"
+        class="surface-card bordered shadow-sm"
+        style="padding: 2rem; border-radius: 0.5rem;"
       >
         <div
-          style="margin-bottom: 1rem; font-weight: bold; font-size: 0.875rem; color: var(--axm-text-subtle-token);"
+          class="text-subtle"
+          style="margin-bottom: 1rem; font-weight: bold; font-size: 0.875rem;"
         >
           Card (Nested)
         </div>

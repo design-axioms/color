@@ -98,15 +98,6 @@
   font-display: swap;
 }
 
-@font-face {
-  font-family: "Pennstander Math";
-  src: url("/fonts/PennstanderMath-Regular.otf") format("opentype");
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-/* Global MathML Styling */
 @layer overrides {
   :root {
     --font-math:
@@ -114,9 +105,7 @@
       serif;
   }
 
-  :root.font-pennstander {
-    --font-math: "Pennstander Math", "Erewhon Math", serif;
-  }
+  /* Global MathML Styling */
 
   math {
     font-family: var(--font-math);
@@ -130,8 +119,8 @@
   }
 
   .sl-markdown-content code:not(:where(.not-content *)) {
-    background-color: var(--axm-surface-token);
-    border: 1px solid var(--axm-border-dec-token);
+    background-color: transparent !important;
+    border: 1px solid currentColor;
     padding: 0.1em 0.3em;
     border-radius: 0.25em;
   }
@@ -156,151 +145,34 @@
 
   /* Mapping the Axiomatic Color System to Starlight's variables */
 
-  :root[data-theme="light"],
-  :root[data-theme="light"] body {
-    color-scheme: light;
-  }
-
-  :root[data-theme="dark"],
-  :root[data-theme="dark"] body {
-    color-scheme: dark;
-  }
-
-  /* 
-   * We apply these mappings on `body` because `theme.css` defines the 
-   * Axiomatic tokens on `body` (and .surface-page), not :root.
+  /*
+   * NOTE: Starlight injects constructed stylesheets late that frequently apply
+   * `var(--sl-*)` colors (sometimes `!important`) to Starlight-owned chrome and
+   * markdown-rendered elements.
+   *
+  * We cannot bridge `--sl-*` to Axiomatic *private* internals here.
+  * Instead, we map `--sl-*` to the public bridge exports (`--axm-bridge-*`).
+   *
+   * Instead we neutralize Starlight's color overrides by forcing key elements
+   * to inherit text/surface from the Axiomatic system.
    */
+
+  .sl-anchor-icon {
+    color: inherit !important;
+  }
+
+  /* Starlight buttons/cards: avoid Starlight-owned surfaces/colors. */
+  .sl-link-button {
+    color: inherit !important;
+    background-color: transparent !important;
+  }
+
+  .card {
+    background-color: transparent !important;
+  }
+
   body {
-    /* --- TOTAL VARIABLE TAKEOVER --- */
-    /* 
-     * We map EVERY Starlight variable that could possibly be used for a background
-     * or surface to our single reactive token. This defeats "Variable Swapping".
-     */
-
-    /* 1. The Usual Suspects (Backgrounds) */
-    --sl-color-bg: var(--axm-surface-token);
-    --sl-color-bg-nav: var(--axm-surface-token);
-    --sl-color-bg-sidebar: var(--axm-surface-token);
-    --sl-color-bg-inline-code: var(--axm-surface-token);
-    --sl-color-bg-sidebar-mobile: var(--axm-surface-token);
-
-    /* 2. The Swappers (Grays & Absolute Colors) */
-    /* Starlight uses these directly in Light/Dark mode. We hijack them. */
-    --sl-color-black: var(--axm-surface-token);
-    --sl-color-white: var(
-      --axm-text-high-token
-    ); /* White is text in Light mode */
-
-    --sl-color-gray-1: var(--axm-text-high-token);
-    --sl-color-gray-2: var(--axm-text-subtle-token);
-    --sl-color-gray-3: var(--axm-text-subtlest-token);
-    --sl-color-gray-4: var(--axm-border-int-token);
-    --sl-color-gray-5: var(--axm-border-dec-token);
-    --sl-color-gray-6: var(
-      --axm-surface-token
-    ); /* Often used for bg in dark mode */
-    --sl-color-gray-7: var(
-      --axm-surface-token
-    ); /* Often used for bg in dark mode */
-
-    /* 3. Borders (Prevent Border Snap) */
-    --sl-color-hairline: var(--axm-border-dec-token);
-    --sl-color-hairline-light: var(--axm-border-dec-token);
-    --sl-color-hairline-shade: var(--axm-border-dec-token);
-    --sl-color-border: var(--axm-border-int-token);
-
-    /* 4. Brand Colors */
-    --sl-color-accent-low: oklch(0.4 0.1 var(--_axm-hue-brand));
-    --sl-color-accent: oklch(0.6 0.15 var(--_axm-hue-brand));
-    --sl-color-accent-high: oklch(0.8 0.1 var(--_axm-hue-brand));
-
-    /* 5. Text */
-    --sl-color-text: var(--axm-text-high-token);
-    --sl-color-text-invert: light-dark(oklch(1 0 0), oklch(0 0 0));
-    --sl-color-text-accent: var(--sl-color-accent);
-
-    /* 6. Shadows */
-    --sl-shadow-sm: var(--axm-shadow-sm);
-    --sl-shadow-md: var(--axm-shadow-md);
-    --sl-shadow-lg: var(--axm-shadow-lg);
-
-    /* 7. Fonts */
-    --sl-font-system:
-      ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-      Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
-      "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
-      "Noto Color Emoji";
-    --sl-font-heading: "Space Grotesk Variable", var(--sl-font-system);
-    --sl-font-mono:
-      "JetBrains Mono Variable", ui-monospace, SFMono-Regular, Menlo, Monaco,
-      Consolas, "Liberation Mono", "Courier New", monospace;
-
-    /* 8. Layout */
     --sl-sidebar-width: 18rem;
-
-    /* 9. Reactive Asides (The "Exceptions") */
-    /* 
-     * Starlight uses *-low variables for backgrounds and *-high for text/borders.
-     * We replace the static swap with a continuous function of --tau.
-     * L_bg(t) = 0.6 + 0.35t  (Light: 0.95, Dark: 0.25)
-     * L_fg(t) = 0.6 - 0.30t  (Light: 0.30, Dark: 0.90)
-     */
-
-    /* Orange (Caution) */
-    --sl-color-orange-low: oklch(
-      calc(0.6 + (0.35 * var(--tau))) 0.1 var(--sl-hue-orange)
-    );
-    --sl-color-orange-high: oklch(
-      calc(0.6 - (0.3 * var(--tau))) 0.15 var(--sl-hue-orange)
-    );
-    --sl-color-orange: oklch(0.65 0.2 var(--sl-hue-orange)); /* Mid-tone */
-
-    /* Green (Success/Tip - though Starlight uses Purple for Tip usually) */
-    --sl-color-green-low: oklch(
-      calc(0.6 + (0.35 * var(--tau))) 0.1 var(--sl-hue-green)
-    );
-    --sl-color-green-high: oklch(
-      calc(0.6 - (0.3 * var(--tau))) 0.15 var(--sl-hue-green)
-    );
-    --sl-color-green: oklch(0.65 0.2 var(--sl-hue-green));
-
-    /* Blue (Note) */
-    --sl-color-blue-low: oklch(
-      calc(0.6 + (0.35 * var(--tau))) 0.1 var(--sl-hue-blue)
-    );
-    --sl-color-blue-high: oklch(
-      calc(0.6 - (0.3 * var(--tau))) 0.15 var(--sl-hue-blue)
-    );
-    --sl-color-blue: oklch(0.65 0.2 var(--sl-hue-blue));
-
-    /* Purple (Tip) */
-    --sl-color-purple-low: oklch(
-      calc(0.6 + (0.35 * var(--tau))) 0.1 var(--sl-hue-purple)
-    );
-    --sl-color-purple-high: oklch(
-      calc(0.6 - (0.3 * var(--tau))) 0.15 var(--sl-hue-purple)
-    );
-    --sl-color-purple: oklch(0.65 0.2 var(--sl-hue-purple));
-
-    /* Red (Danger) */
-    --sl-color-red-low: oklch(
-      calc(0.6 + (0.35 * var(--tau))) 0.1 var(--sl-hue-red)
-    );
-    --sl-color-red-high: oklch(
-      calc(0.6 - (0.3 * var(--tau))) 0.15 var(--sl-hue-red)
-    );
-    --sl-color-red: oklch(0.65 0.2 var(--sl-hue-red));
-  }
-
-  /* --- DIRECT OVERRIDES (The Nuclear Option) --- */
-  /* 
-   * Force structural elements to use the reactive surface token directly.
-   * This bypasses Starlight's variable swapping logic entirely.
-   */
-  body,
-  .header,
-  .sidebar-pane {
-    background-color: var(--axm-surface-token) !important;
   }
 
   .sl-markdown-content p,
@@ -332,13 +204,10 @@
   display: block;
   margin-bottom: 1rem;
   font-size: 0.9em;
-  color: var(--sl-color-gray-3);
+  color: inherit;
+  opacity: 0.75;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-}
-
-.debug-marker {
-  color: red;
 }
 
 /* Comparison Grid V2 */
@@ -347,8 +216,8 @@
   flex-direction: column;
   gap: 1rem;
   margin: 2rem 0;
-  background: var(--axm-surface-token);
-  border: 1px solid var(--axm-border-dec-token);
+  background: transparent;
+  border: 1px solid currentColor;
   border-radius: 0.5rem;
   padding: 1.5rem;
 }
@@ -358,7 +227,7 @@
   grid-template-columns: 1fr 1fr;
   gap: 1rem;
   padding-bottom: 0.5rem;
-  border-bottom: 1px solid var(--axm-border-dec-token);
+  border-bottom: 1px solid currentColor;
   margin-bottom: 0.5rem;
 }
 
@@ -389,7 +258,8 @@
 
 .swatch-col .text-xs {
   font-size: 0.8rem;
-  color: var(--axm-text-subtle-token);
+  color: inherit;
+  opacity: 0.75;
   line-height: 1.2;
 }
 
@@ -397,13 +267,14 @@
   width: 100%;
   height: 48px;
   border-radius: 4px;
-  border: 1px solid var(--axm-border-dec-token);
+  border: 1px solid currentColor;
 }
 
 .row-header {
   font-size: 0.9rem;
   font-weight: bold;
-  color: var(--axm-text-subtle-token);
+  color: inherit;
+  opacity: 0.75;
   margin-bottom: 0.25rem;
 }
 
@@ -414,50 +285,25 @@
   font-size: 0.9rem;
 }
 
-/* --- Axiomatic Overrides for Starlight Components --- */
+/* --- Starlight Component Tweaks (RFC010-safe) --- */
 
-/* 1. Primary Action Button -> Surface Action (Brand) */
 .sl-link-button.primary {
-  /* Brand Context */
-  --alpha-hue: var(--_axm-hue-brand);
-  --alpha-beta: var(--_axm-chroma-brand);
-
-  /* Surface Action Tokens (Copied from theme.css) */
-  --axm-surface-token: light-dark(
-    oklch(0.1 var(--alpha-beta) var(--alpha-hue)),
-    oklch(0.9 var(--alpha-beta) var(--alpha-hue))
-  );
-
-  --axm-text-high-token: light-dark(oklch(1 0 0), oklch(0 0 0));
-
-  /* Reset Starlight */
-  border: none;
+  background-color: transparent;
+  color: inherit;
+  border: 1px solid currentColor;
   text-decoration: none;
 }
 
-/* 2. Cards -> Surface Card */
 .card {
-  /* Surface Card Tokens (Copied from theme.css) */
-  --axm-surface-token: light-dark(
-    oklch(0.9687 var(--alpha-beta) var(--alpha-hue)),
-    oklch(0.2911 var(--alpha-beta) var(--alpha-hue))
-  );
-
-  /* Reset Starlight */
-  background-color: transparent; /* Let the physics take over */
-  border: 1px solid var(--axm-border-dec-token);
+  background-color: transparent;
+  border: 1px solid currentColor;
 }
 
-/* 3. Search Button -> Surface Input/Action Soft */
 site-search button {
-  /* Surface Action Soft Tokens (Copied from theme.css) */
-  --axm-surface-token: light-dark(
-    oklch(0.9355 var(--alpha-beta) var(--alpha-hue)),
-    oklch(0.3543 var(--alpha-beta) var(--alpha-hue))
-  );
-
-  border: 1px solid var(--axm-border-dec-token);
+  background-color: transparent;
+  border: 1px solid var(--axm-bridge-border-int);
   border-radius: 0.5rem;
+  color: inherit;
 }
 
 site-search button kbd {
@@ -467,56 +313,19 @@ site-search button kbd {
   color: inherit;
 }
 
-/* Apply Reactive Pipeline Logic to these selectors */
-.sl-link-button.primary,
-.card,
-site-search button,
+/* Sidebar active state */
 a[aria-current="page"] {
-  /* Text Resolution */
-  --_axm-text-lightness-source: var(--axm-text-high-token);
-  --_axm-computed-fg-C: calc(var(--alpha-beta) * 0.5);
-  --_axm-computed-fg-color: oklch(
-    from var(--_axm-text-lightness-source)
-      calc(l + (0.05 * var(--_axm-computed-fg-C))) var(--_axm-computed-fg-C)
-      var(--alpha-hue)
-  );
-  color: var(--_axm-computed-fg-color);
-
-  /* Surface Resolution */
-  --_axm-computed-surface: oklch(
-    from var(--axm-surface-token) l
-      min(
-        var(--alpha-beta),
-        var(--alpha-beta) * (1 - abs(2 * l - 1)) * var(--tau) * var(--tau)
-      )
-      h
-  );
-  background-color: var(--_axm-computed-surface);
+  background-color: transparent;
+  color: inherit;
 }
 
 /* 4. Code Blocks -> Surface Workspace */
 .astro-code,
 .expressive-code .frame {
-  /* Surface Workspace Tokens (Copied from theme.css) */
-  --axm-surface-token: light-dark(
-    oklch(0.9926 var(--alpha-beta) var(--alpha-hue)),
-    oklch(0.1935 var(--alpha-beta) var(--alpha-hue))
-  );
-
   /* Force override of Shiki's inline styles */
-  background-color: var(--axm-surface-token) !important;
-  border: 1px solid var(--axm-border-dec-token);
+  background-color: transparent !important;
+  border: 1px solid currentColor;
   border-radius: 0.5rem;
-
-  /* Reactive Pipeline: Ensure computed surface matches */
-  --_axm-computed-surface: oklch(
-    from var(--axm-surface-token) l
-      min(
-        var(--alpha-beta),
-        var(--alpha-beta) * (1 - abs(2 * l - 1)) * var(--tau) * var(--tau)
-      )
-      h
-  );
 }
 
 .astro-code pre,
@@ -553,23 +362,102 @@ a[aria-current="page"] {
 }
 
 /* 7. Sidebar Active State -> Surface Action Soft */
-a[aria-current="page"] {
-  /* Surface Action Soft Tokens (Copied from theme.css) */
-  --axm-surface-token: light-dark(
-    oklch(0.9355 var(--alpha-beta) var(--alpha-hue)),
-    oklch(0.3543 var(--alpha-beta) var(--alpha-hue))
-  );
-  --axm-text-high-token: light-dark(oklch(0 0 0), oklch(1 0 0));
-}
-
 /* 8. Headings -> Text High Token */
 .sl-markdown-content :is(h1, h2, h3, h4, h5, h6):not(:where(.not-content *)) {
-  color: var(--axm-text-high-token) !important;
+  color: inherit !important;
 }
 
 /* 9. Hero/Large Text -> Text High Token */
 .large {
-  color: var(--axm-text-high-token) !important;
+  color: inherit;
+}
+
+/* --- Contract-safe neutralization of Starlight palette --- */
+/* Goal: eliminate mismatches by letting Axiomatic surfaces/text cascade naturally. */
+
+/*
+ * IMPORTANT: do not force `.page` to inherit its background.
+ *
+ * The docs site applies `surface-*` tokens to Starlight-owned chrome (via
+ * runtime DOM wiring). Those tokens must be allowed to paint.
+ *
+ * A previous approach set `.page { background-color: inherit !important; }`,
+ * which can collapse the entire page surface to transparent (blank canvas)
+ * depending on what the parent paints.
+ */
+
+/* Higher specificity than Starlight's constructed `.header { ... !important }`. */
+.page > .header {
+  background: none !important;
+  background-color: inherit !important;
+}
+
+.site-title,
+.site-title * {
+  color: inherit !important;
+}
+
+starlight-theme-select,
+starlight-theme-select * {
+  color: inherit !important;
+}
+
+/*
+ * Theme select must be explicitly styled.
+ *
+ * Leaving the control transparent causes UA-native option menus to fall back
+ * to light palette defaults in some browsers, producing white-on-white in
+ * dark mode.
+ */
+starlight-theme-select select {
+  background-color: inherit !important;
+  border: 1px solid var(--axm-bridge-border-int) !important;
+}
+
+starlight-theme-select option {
+  background-color: inherit !important;
+}
+
+html[data-theme="light"] starlight-theme-select {
+  color-scheme: light;
+}
+
+html[data-theme="dark"] starlight-theme-select {
+  color-scheme: dark;
+}
+
+.hero h1,
+.hero .tagline {
+  color: inherit;
+}
+
+/* Starlight page title heading (rendered outside `.sl-markdown-content`). */
+.content-panel > .sl-container > h1 {
+  color: var(--axm-bridge-fg-high) !important;
+}
+
+.hero .tagline {
+  opacity: 0.85;
+}
+
+.card .title,
+.card .title * {
+  color: inherit;
+}
+
+.meta {
+  color: inherit;
+  opacity: 0.85;
+}
+
+.sl-markdown-content a {
+  color: inherit !important;
+}
+
+/* Starlight chrome links (skip link + social icons) */
+a[href="#_top"],
+.social-icons a {
+  color: inherit;
 }
 
 /* Optional: Make the description column wrap if we want to avoid scrolling, 
@@ -579,153 +467,158 @@ a[aria-current="page"] {
 /* --- Unlayered Overrides for Animation --- */
 /* We place these outside of @layer to ensure they have high specificity and priority */
 
-:root {
-  /* Ensure transition is present on the element where --tau changes */
-  transition: --tau 0.3s ease-in-out;
-}
-
-:root[data-theme="light"] {
-  --tau: 1;
-}
-
-:root[data-theme="dark"] {
-  --tau: -1;
-}
-
-/* Force transition to persist even if Starlight tries to kill it */
+:root,
+:root[data-theme],
 html,
-html[data-theme],
-:root[data-theme] {
-  transition: --tau 0.3s ease-in-out !important;
+html[data-theme] {
+  /* Continuity invariant: `data-theme` must not change system color resolution
+    while `--tau` is locked. Starlight may set `color-scheme` per theme; force
+    a stable value so `light-dark()` + UA colors don't snap. */
+  color-scheme: light dark !important;
+
+  /* --- Starlight Color Neutralization ---
+     Starlight's constructed styles can run after user CSS and reassert
+     `--sl-color-*` variables. Use `!important` so our Axiomatic mappings win.
+  */
+  /* Do not force `--tau` transitions from the Starlight adapter.
+     The engine gates tau transitions via `data-axm-ready` to avoid boot animate-in. */
 }
 
-/* --- View Transition Overrides --- */
-/* -----------------------------------------------------------------
-   1. DISABLE VIEW TRANSITIONS ON ROOT
-   This prevents the browser from "freezing" the page to take a snapshot.
-   It ensures your CSS transition on --tau remains the active visual.
-   ----------------------------------------------------------------- */
-html,
-:root {
-  view-transition-name: none !important;
+/* --- Starlight Palette Mapping (Bridge File) ---
+   Important: assign foreign palette variables on *near* ancestors (body/page/sidebar)
+   so late `:root` reassertions from constructed styles can't win via source order.
+*/
+:root body,
+:root .page.sl-flex,
+:root .page.sl-flex > .header,
+:root #starlight__sidebar.axm-starlight-sidebar-host,
+:root #starlight__sidebar.axm-starlight-sidebar-host > .axm-starlight-sidebar {
+  /* Map Starlight's palette into Axiomatic bridge exports.
+      Avoid using the CSS keyword `inherit` here: if Starlight uses
+      `background-color: var(--sl-color-white)`, `inherit` can cause chrome to
+      inherit the *body* background, bypassing per-surface computation.
+    */
+  --sl-color-text: var(--axm-bridge-fg) !important;
+  /*
+   * Starlight semantics:
+   * - `--sl-color-white` is the high-contrast “ink” endpoint.
+   * - `--sl-color-black` is the “paper/surface” endpoint.
+   */
+  --sl-color-white: var(--axm-bridge-fg-high) !important;
+  --sl-color-black: var(--axm-bridge-surface) !important;
+
+  /* Starlight grays: align to semantics (gray-2 is core text). */
+  --sl-color-gray-1: var(--axm-bridge-fg-high) !important;
+  --sl-color-gray-2: var(--axm-bridge-fg) !important;
+  --sl-color-gray-3: var(--axm-bridge-fg-subtle) !important;
+
+  /* Chrome borders/dividers. */
+  --sl-color-gray-4: var(--axm-bridge-border-int) !important;
+  --sl-color-gray-5: var(--axm-bridge-border-dec) !important;
+
+  /* Hairlines/separators. */
+  --sl-color-gray-6: var(--axm-bridge-surface) !important;
+  --sl-color-hairline: var(--axm-bridge-border-dec) !important;
+  /* Starlight uses this alias for certain chrome hairlines (e.g. sidebar tree guides). */
+  --sl-color-hairline-light: var(--axm-bridge-border-dec) !important;
+
+  /* Role colors: map to bridge exports so they inherit per surface/hue context. */
+  --sl-color-text-accent: var(--axm-bridge-fg) !important;
+  --sl-color-text-invert: var(--axm-bridge-fg) !important;
+  --sl-color-bg-accent: var(--axm-bridge-surface) !important;
+
+  /* Backgrounds. */
+  --sl-color-bg: var(--axm-bridge-surface) !important;
+  --sl-color-bg-nav: var(--axm-bridge-surface) !important;
 }
 
-/* -----------------------------------------------------------------
-   2. REACTIVE CHARTS (The Data)
-   We replace static light-dark() with the Linear State Equation:
-   L(tau) = L_mid + (k * tau)
-   
-   Derived from your engine.css values: 
-   Day (tau=1): 0.6484, Night (tau=-1): 0.7588
-   ----------------------------------------------------------------- */
-:root {
-  /* L_mid = 0.7036, k = -0.0552 */
-  --_chart-L: calc(0.7036 - (0.0552 * var(--tau)));
+/* Intentionally no `--tau` transition forcing here. */
 
-  --axm-chart-1: oklch(var(--_chart-L) 0.14 25);
-  --axm-chart-2: oklch(var(--_chart-L) 0.14 190);
-  --axm-chart-3: oklch(var(--_chart-L) 0.14 45);
-  --axm-chart-4: oklch(var(--_chart-L) 0.14 250);
-  --axm-chart-5: oklch(var(--_chart-L) 0.14 85);
-  --axm-chart-6: oklch(var(--_chart-L) 0.14 280);
-  --axm-chart-7: oklch(var(--_chart-L) 0.14 125);
-  --axm-chart-8: oklch(var(--_chart-L) 0.14 320);
-  --axm-chart-9: oklch(var(--_chart-L) 0.14 150);
-  --axm-chart-10: oklch(var(--_chart-L) 0.14 360);
+/* --- Starlight Chrome Continuity Contract ---
+   Starlight may apply mode-dependent backgrounds and/or temporarily disable
+   transitions via late constructed stylesheets. For Axiomatic continuity, the
+   chrome must not paint its own discrete background; it must either inherit
+   the page surface or paint via Axiomatic surface classes.
+
+   These rules are intentionally UNLAYERED and high-specificity so they can
+   outrank Starlight's constructed rules.
+*/
+
+:root body {
+  background: none !important;
 }
 
-/* -----------------------------------------------------------------
-   3. REACTIVE SURFACES (The Stage)
-   Required to make the "Tunnel Effect" (tau^2) work. 
-   Without this, the background lightness will snap while chroma fades.
-   ----------------------------------------------------------------- */
-
-/* Page: Day(1.0) -> Night(0.1) */
-.surface-page,
-body {
-  --axm-surface-token: oklch(
-    calc(0.55 + (0.45 * var(--tau))) var(--alpha-beta) var(--alpha-hue)
-  ) !important;
-
-  /* Text Interpolation */
-  --axm-text-high-token: oklch(calc(0.5 - (0.5 * var(--tau))) 0 0) !important;
-  --axm-text-body-token: oklch(
-    calc(0.6518 - (0.2899 * var(--tau))) 0 0
-  ) !important;
-  --axm-text-subtle-token: oklch(
-    calc(0.6758 - (0.2172 * var(--tau))) 0 0
-  ) !important;
-  --axm-text-subtlest-token: oklch(
-    calc(0.6903 - (0.1503 * var(--tau))) 0 0
-  ) !important;
+:root .page.sl-flex.axm-starlight-page {
+  background: var(--axm-bridge-surface) !important;
+  background-color: var(--axm-bridge-surface) !important;
+  color: var(--axm-bridge-fg) !important;
 }
 
-/* Workspace: Day(0.9926) -> Night(0.1935) */
-.surface-workspace,
-.astro-code {
-  --axm-surface-token: oklch(
-    calc(0.593 + (0.3995 * var(--tau))) var(--alpha-beta) var(--alpha-hue)
-  ) !important;
-
-  /* Text Interpolation */
-  --axm-text-high-token: oklch(calc(0.5 - (0.5 * var(--tau))) 0 0) !important;
-  --axm-text-body-token: oklch(
-    calc(0.6475 - (0.2971 * var(--tau))) 0 0
-  ) !important;
-  --axm-text-subtle-token: oklch(
-    calc(0.6719 - (0.2242 * var(--tau))) 0 0
-  ) !important;
-  --axm-text-subtlest-token: oklch(
-    calc(0.6882 - (0.1587 * var(--tau))) 0 0
-  ) !important;
+:root .page.sl-flex > .header {
+  background: none !important;
+  color: var(--axm-bridge-fg) !important;
+  border-bottom: 1px solid var(--axm-bridge-border-int) !important;
 }
 
-/* Card: Day(0.9687) -> Night(0.2911) */
-.surface-card,
-.card {
-  --axm-surface-token: oklch(
-    calc(0.6299 + (0.3388 * var(--tau))) var(--alpha-beta) var(--alpha-hue)
-  ) !important;
-
-  /* Text Interpolation */
-  --axm-text-high-token: oklch(calc(0.5 - (0.5 * var(--tau))) 0 0) !important;
-  --axm-text-body-token: oklch(
-    calc(0.6234 - (0.3363 * var(--tau))) 0 0
-  ) !important;
-  --axm-text-subtle-token: oklch(
-    calc(0.6574 - (0.2539 * var(--tau))) 0 0
-  ) !important;
-  --axm-text-subtlest-token: oklch(
-    calc(0.6765 - (0.1857 * var(--tau))) 0 0
-  ) !important;
+:root .page.sl-flex > .header.axm-starlight-header.axm-starlight-header {
+  background: none !important;
+  color: var(--axm-bridge-fg) !important;
+  border-bottom: 1px solid var(--axm-bridge-border-int) !important;
 }
 
-/* Action: Day(0.6) -> Night(0.9) (Note: Inverted Polarity) */
-.surface-action,
-.sl-link-button.primary {
-  --axm-surface-token: oklch(
-    calc(0.75 - (0.15 * var(--tau))) var(--alpha-beta) var(--alpha-hue)
-  ) !important;
-
-  /* Text Interpolation */
-  --axm-text-high-token: oklch(calc(0.5 + (0.5 * var(--tau))) 0 0) !important;
-  --axm-text-body-token: oklch(calc(0.5 + (0.5 * var(--tau))) 0 0) !important;
-  --axm-text-subtle-token: oklch(
-    calc(0.6078 + (0.3922 * var(--tau))) 0 0
-  ) !important;
-  --axm-text-subtlest-token: oklch(
-    calc(0.6848 + (0.3152 * var(--tau))) 0 0
-  ) !important;
+:root header.axm-starlight-header.axm-starlight-header {
+  background: none !important;
+  color: var(--axm-bridge-fg) !important;
+  border-bottom: 1px solid var(--axm-bridge-border-int) !important;
 }
 
-/* Action Soft: Day(0.9355) -> Night(0.3543) */
-.surface-action-soft,
-site-search button,
-a[aria-current="page"] {
-  --axm-surface-token: oklch(
-    calc(0.6449 + (0.2906 * var(--tau))) var(--alpha-beta) var(--alpha-hue)
-  ) !important;
+/* Sidebar: the host stays transparent; the inner wrapper paints `surface-workspace`. */
+:root #starlight__sidebar.axm-starlight-sidebar-host {
+  background: none !important;
+  border-right-color: var(--axm-bridge-border-dec) !important;
+}
 
-  /* Text Interpolation: Black(0) -> White(1) */
-  --axm-text-high-token: oklch(calc(0.5 - (0.5 * var(--tau))) 0 0) !important;
+/* Sidebar section tree guides: bridge-route the left borders explicitly.
+   Starlight applies these via component-scoped selectors, so we override the
+   shorthand with `!important` at the sidebar root. */
+:root #starlight__sidebar ul ul li {
+  border-inline-start: 1px solid var(--axm-bridge-border-dec) !important;
+}
+
+:root #starlight__sidebar.axm-starlight-sidebar-host > .axm-starlight-sidebar {
+  min-height: 100%;
+}
+
+/* Starlight chrome regions that commonly use --sl-color-* directly.
+   Force paint through public bridge exports (adapter contract). */
+:root .dialog-frame {
+  color: var(--sl-color-text) !important;
+}
+
+:root .display-current,
+:root .link-title {
+  color: var(--sl-color-text) !important;
+}
+
+/* Search: ensure the Pagefind input doesn't paint a discrete high-contrast
+   color that diverges from the Axiomatic text pipeline. */
+:root #starlight__search .pagefind-ui__search-input {
+  color: var(--sl-color-text) !important;
+}
+
+/* Expressive Code: the filename/title chip must not paint a discrete mode background.
+   It should inherit/compose with the surrounding surface instead. */
+:root .expressive-code .frame.has-title > .header > .title {
+  background: none !important;
+}
+
+/* Expressive Code: copy button chrome must not snap on theme toggles while `--tau` is locked. */
+:root .expressive-code button,
+:root .expressive-code button > * {
+  background: none !important;
+}
+
+/* Landing page "Why This Matters" icons: treat as transparent chrome (no theme-dependent background). */
+:root .sl-markdown-content article svg.icon {
+  background: none !important;
 }

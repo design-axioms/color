@@ -1,9 +1,14 @@
-import { resolveTokens } from "./resolver.ts";
+import { AxiomaticInspectorEngine, type Violation } from "./engine.ts";
+import { STYLES } from "./styles.ts";
+import { AxiomaticTheme } from "../theme.ts";
 import type { DebugContext, ResolvedToken } from "./types.ts";
-import { findContextRoot } from "./walker.ts";
-
-/* eslint-disable @axiomatic-design/no-raw-tokens */
-/* eslint-disable @typescript-eslint/no-unnecessary-condition */
+import { findWinningRule, formatSpecificity } from "./css-utils.ts";
+import { converter, formatCss } from "culori";
+import {
+  renderAdvice,
+  renderTokenList,
+  updateAdviceWithAnalysis,
+} from "./view.ts";
 
 interface PopoverElement extends HTMLElement {
   showPopover(): void;
@@ -14,413 +19,84 @@ function isPopoverElement(element: HTMLElement): element is PopoverElement {
   return "showPopover" in (element as unknown as Record<string, unknown>);
 }
 
-const STYLES = `
-  :host {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 99999;
-    font-family: system-ui, -apple-system, sans-serif;
-    
-    --color-local: #00ff9d;
-    --color-ancestor-1: #00ccff;
-    --color-ancestor-2: #ffcc00;
-    --color-ancestor-3: #ff66cc;
-    --color-ancestor-4: #cc66ff;
-  }
+const BaseElement = (
+  typeof HTMLElement !== "undefined"
+    ? HTMLElement
+    : class Base {
+        _ = 0;
+      }
+) as typeof HTMLElement;
 
-  #highlight-layer, #violation-layer, #source-layer {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-  }
+interface InspectorState {
+  isEnabled: boolean;
+  isPinned: boolean;
+  isViolationMode: boolean;
+  isContinuityMode: boolean;
+  showInternals: boolean;
+}
 
-  .highlight-box {
-    position: absolute;
-    border: 2px solid #ff00ff;
-    background-color: rgba(255, 0, 255, 0.05);
-    pointer-events: none;
-    box-sizing: border-box;
-    anchor-name: --inspector-target;
-    z-index: 10;
-  }
+const toRgb = converter("rgb");
 
-  .source-box {
-    position: absolute;
-    border: 2px dashed;
-    pointer-events: none;
-    box-sizing: border-box;
-    z-index: 5;
-    opacity: 0.4;
-    transition: opacity 0.2s, border-width 0.2s;
-  }
+function safeElementLabel(element: HTMLElement): string {
+  const id = element.id ? `#${element.id}` : "";
+  const classes = element.className
+    ? "." + element.className.trim().split(/\s+/).slice(0, 3).join(".")
+    : "";
+  return `<${element.tagName.toLowerCase()}>${id}${classes}`;
+}
 
-  .source-box.active-source {
-    opacity: 1;
-    border-width: 3px;
-    z-index: 20;
-    background-color: rgba(255, 255, 255, 0.05);
-  }
-  
-  .source-label {
-    position: absolute;
-    top: -20px;
-    left: 0;
-    background: #1a1a1a;
-    color: #fff;
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-size: 10px;
-    display: flex;
-    gap: 4px;
-    white-space: nowrap;
-    border: 1px solid currentColor;
-    z-index: 21;
-  }
+function resolveCssValueInContext(
+  contextElement: HTMLElement,
+  property: "color" | "background-color",
+  value: string,
+): string {
+  const probe = document.createElement("div");
+  probe.style.position = "absolute";
+  probe.style.visibility = "hidden";
+  probe.style.pointerEvents = "none";
+  probe.style.width = "0";
+  probe.style.height = "0";
+  probe.style.overflow = "hidden";
+  probe.style.setProperty(property, value);
+  contextElement.appendChild(probe);
+  const resolved =
+    getComputedStyle(probe).getPropertyValue(property).trim() || "";
+  probe.remove();
+  return resolved;
+}
 
-  .violation-box {
-    position: absolute;
-    border: 2px dashed #ff4444;
-    background-color: rgba(255, 68, 68, 0.2);
-    pointer-events: none;
-    box-sizing: border-box;
-  }
+function canonicalizeColor(
+  raw: string,
+  contextElement: HTMLElement,
+  property: "color" | "background-color",
+): string | null {
+  if (!raw) return null;
+  const direct = toRgb(raw);
+  if (direct) return formatCss(direct);
 
-  #info-card {
-    position: fixed;
-    background: #1a1a1a;
-    color: #fff;
-    padding: 12px;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    border: 1px solid #333;
-    font-size: 12px;
-    line-height: 1.4;
-    max-width: 420px;
-    pointer-events: auto;
-    display: none;
-    backdrop-filter: blur(8px);
-    
-    /* Anchor Positioning */
-    position-anchor: --inspector-target;
-    position-area: bottom span-right;
-    position-try-fallbacks: flip-block, flip-inline;
-    margin: 0;
-    
-    /* Reset popover defaults */
-    inset: auto;
-  }
+  const resolved = resolveCssValueInContext(contextElement, property, raw);
+  const viaResolved = resolved ? toRgb(resolved) : null;
+  return viaResolved ? formatCss(viaResolved) : null;
+}
 
-  #info-card:popover-open {
-    display: block;
-  }
-
-  /* Fallback for browsers without anchor positioning */
-  @supports not (position-area: bottom center) {
-    #info-card {
-      /* JS positioning will override this */
-    }
-  }
-
-  .card-header {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 8px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid #333;
-  }
-
-  .badge {
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-weight: 600;
-    font-size: 10px;
-    text-transform: uppercase;
-  }
-
-  .badge-surface { background: #333; color: #fff; }
-  .badge-light { background: #fff; color: #000; }
-  .badge-dark { background: #000; color: #fff; border: 1px solid #333; }
-
-  .token-list {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-
-  .token-row {
-    display: grid;
-    grid-template-columns: 12px auto auto 1fr;
-    align-items: start;
-    gap: 12px;
-    padding: 6px 8px;
-    border-radius: 4px;
-    cursor: default;
-    white-space: nowrap;
-  }
-
-  .token-row:hover {
-    background: rgba(255, 255, 255, 0.1);
-  }
-
-  .token-name { color: #888; }
-  .token-name-row { display: flex; align-items: center; gap: 6px; }
-  .status-icon-slot { display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; }
-  .token-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-  .token-subtitle { font-size: 9px; opacity: 0.5; font-weight: normal; font-family: system-ui, sans-serif; margin-left: 20px; }
-  .token-value-group { display: flex; align-items: center; gap: 6px; justify-self: end; margin-top: 0; }
-  .token-value { font-family: monospace; color: #00ff9d; }
-  .token-value.type-specified { color: #ffffff; font-weight: 700; text-shadow: 0 0 8px rgba(255, 255, 255, 0.2); }
-  .token-value.type-derived { color: #888888; }
-  .token-value.type-source { color: #ffcc00; }
-  .token-value.warning { color: #ff4444; font-weight: bold; }
-  .token-swatch {
-    width: 12px;
-    height: 12px;
-    border-radius: 2px;
-    border: 1px solid #333;
-    display: inline-block;
-  }
-  
-  .token-hue-swatch {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    border: 1px solid #333;
-    display: inline-block;
-  }
-  
-  .token-chroma-bar {
-    width: 20px;
-    height: 6px;
-    background: #333;
-    border-radius: 2px;
-    overflow: hidden;
-    display: inline-block;
-  }
-  
-  .token-chroma-fill {
-    height: 100%;
-    background: #00ff9d;
-  }
-
-  .token-empty { color: #666; font-style: italic; text-align: center; padding: 8px 0; }
-
-  .token-source-icon {
-    font-size: 10px;
-    width: 16px;
-    text-align: center;
-    cursor: help;
-    opacity: 0.7;
-  }
-  
-  .token-source-pill {
-    display: inline-block;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    border: 1px solid currentColor;
-    margin-top: 5px;
-  }
-  
-  .token-source-label {
-    font-size: 10px;
-    opacity: 0.6;
-    font-family: monospace;
-    text-align: left;
-    margin-top: 1px;
-  }
-  
-  /* Source indicators */
-  .source-local { color: #00ff9d; --source-color: #00ff9d; }
-  .source-ancestor-1 { color: #00ccff; --source-color: #00ccff; }
-  .source-ancestor-2 { color: #ffcc00; --source-color: #ffcc00; }
-  .source-ancestor-3 { color: #ff66cc; --source-color: #ff66cc; }
-  .source-ancestor-4 { color: #cc66ff; --source-color: #cc66ff; }
-  
-  .token-name.source-local, .token-name.source-ancestor-1, 
-  .token-name.source-ancestor-2, .token-name.source-ancestor-3, 
-  .token-name.source-ancestor-4 {
-    color: var(--source-color);
-    opacity: 0.9;
-  }
-  
-  .token-source-pill.source-local, .token-source-pill.source-ancestor-1,
-  .token-source-pill.source-ancestor-2, .token-source-pill.source-ancestor-3,
-  .token-source-pill.source-ancestor-4 {
-    background-color: var(--source-color);
-    box-shadow: 0 0 4px var(--source-color);
-  }
-
-  .advice-box {
-    margin-top: 12px;
-    padding: 8px;
-    background: rgba(255, 68, 68, 0.1);
-    border: 1px solid #ff4444;
-    border-radius: 4px;
-    color: #ffaaaa;
-    font-size: 11px;
-  }
-  .advice-title { font-weight: bold; margin-bottom: 4px; display: block; color: #ff4444; }
-
-  #toggle-btn {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    background: #1a1a1a;
-    border: 1px solid #333;
-    color: #fff;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    transition: all 0.2s ease;
-    z-index: 100000;
-    pointer-events: auto;
-  }
-
-  #toggle-btn:hover {
-    background: #333;
-    transform: scale(1.05);
-  }
-
-  #toggle-btn.active {
-    background: #00ff9d;
-    color: #000;
-    border-color: #00ff9d;
-  }
-
-  #violation-toggle {
-    position: fixed;
-    bottom: 80px;
-    right: 28px;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: #1a1a1a;
-    border: 1px solid #333;
-    color: #888;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    z-index: 99999;
-    pointer-events: auto;
-    opacity: 0;
-    transform: translateY(20px) scale(0.8);
-    pointer-events: none;
-  }
-
-  #continuity-toggle {
-    position: fixed;
-    bottom: 80px;
-    right: 112px;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: #1a1a1a;
-    border: 1px solid #333;
-    color: #888;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    z-index: 99999;
-    pointer-events: auto;
-    opacity: 0;
-    transform: translateY(20px) scale(0.8);
-    pointer-events: none;
-  }
-
-  #continuity-toggle.visible {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-    pointer-events: auto;
-  }
-
-  #continuity-toggle.active {
-    background: #ffcc00;
-    color: #000;
-    border-color: #ffcc00;
-  }
-
-  #violation-toggle.visible {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-    pointer-events: auto;
-  }
-
-  #violation-toggle.active {
-    background: #ff4444;
-    color: #fff;
-    border-color: #ff4444;
-  }
-
-  #internals-toggle {
-    position: fixed;
-    bottom: 80px;
-    right: 70px;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: #1a1a1a;
-    border: 1px solid #333;
-    color: #888;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    z-index: 99999;
-    pointer-events: auto;
-    opacity: 0;
-    transform: translateY(20px) scale(0.8);
-    pointer-events: none;
-  }
-
-  #internals-toggle.visible {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-    pointer-events: auto;
-  }
-
-  #internals-toggle.active {
-    background: #00ccff;
-    color: #fff;
-    border-color: #00ccff;
-  }
-
-  .highlight-box.pinned {
-    border-color: #00ff9d;
-    background-color: rgba(0, 255, 157, 0.1);
-  }
-`;
-
-export class AxiomaticDebugger extends HTMLElement {
-  private root: ShadowRoot;
+export class AxiomaticDebugger extends BaseElement {
+  private root!: ShadowRoot;
   private highlightLayer!: HTMLElement;
   private violationLayer!: HTMLElement;
   private sourceLayer!: HTMLElement;
   private infoCard!: HTMLElement;
+  private toastEl: HTMLElement | null = null;
   private toggleBtn!: HTMLButtonElement;
   private violationToggle!: HTMLButtonElement;
   private continuityToggle!: HTMLButtonElement;
-  private internalsToggle!: HTMLButtonElement;
+  private resetBtn!: HTMLButtonElement;
+  private themeToggleMain!: HTMLButtonElement;
+  private elementConsoleBtn!: HTMLButtonElement;
+  private elementInternalsBtn!: HTMLButtonElement;
+  private theme: AxiomaticTheme;
+  private themeUnsubscribe: (() => void) | null = null;
+  private themeAnimationRaf: number | null = null;
+  private engine: AxiomaticInspectorEngine;
   private activeElement: HTMLElement | null = null;
   private isEnabled = false;
   private isPinned = false;
@@ -428,19 +104,371 @@ export class AxiomaticDebugger extends HTMLElement {
   private isContinuityMode = false;
   private showInternals = false;
   private rafId: number | null = null;
+  private modifiedElements = new Map<
+    HTMLElement,
+    { className: string; style: string }
+  >();
+  private continuityViolations = new Map<HTMLElement, Violation>();
+
+  private continuityAbort: AbortController | null = null;
+  private toastTimeout: number | null = null;
+
+  private showToast(
+    message: string,
+    kind: "info" | "success" | "warn" | "error" = "info",
+    timeoutMs = 2200,
+  ): void {
+    if (!this.toastEl) return;
+
+    this.toastEl.textContent = message;
+    this.toastEl.setAttribute("data-kind", kind);
+    this.toastEl.setAttribute("data-open", "true");
+
+    if (this.toastTimeout) {
+      window.clearTimeout(this.toastTimeout);
+      this.toastTimeout = null;
+    }
+
+    this.toastTimeout = window.setTimeout(() => {
+      this.toastEl?.setAttribute("data-open", "false");
+      this.toastTimeout = null;
+    }, timeoutMs);
+  }
+
+  private isVerbose(): boolean {
+    try {
+      return localStorage.getItem("axiomatic-inspector-verbose") === "true";
+    } catch {
+      return false;
+    }
+  }
+
+  private dumpEmpiricalDiagnostics(): void {
+    const element = this.activeElement;
+    if (!element) {
+      console.warn("[Axiomatic] No active element to diagnose.");
+      return;
+    }
+
+    const result = this.engine.inspect(element);
+    const context = result.context;
+
+    const surfaceToken = result.tokens.find(
+      (t) => t.intent === "Surface Color",
+    );
+    const bgToken = result.tokens.find((t) => t.intent === "Actual Background");
+    const finalTextToken = result.tokens.find(
+      (t) => t.intent === "Final Text Color",
+    );
+    const actualTextToken = result.tokens.find(
+      (t) => t.intent === "Actual Text Color",
+    );
+
+    const bgMismatch =
+      !!surfaceToken && !!bgToken && surfaceToken.value !== bgToken.value;
+    const textMismatch =
+      !!finalTextToken &&
+      !!actualTextToken &&
+      finalTextToken.value !== actualTextToken.value;
+
+    const bgWinningRule = findWinningRule(element, "background-color");
+    const textWinningRule = findWinningRule(element, "color");
+
+    const bgExpectedRaw = surfaceToken?.value || "";
+    const bgActualRaw = bgToken?.value || "";
+    const textExpectedRaw = finalTextToken?.value || "";
+    const textActualRaw = actualTextToken?.value || "";
+
+    const bgExpectedCanon = surfaceToken
+      ? canonicalizeColor(
+          surfaceToken.value,
+          context.element,
+          "background-color",
+        )
+      : null;
+    const bgActualCanon = bgToken
+      ? canonicalizeColor(bgToken.value, context.element, "background-color")
+      : null;
+
+    const textExpectedCanon = finalTextToken
+      ? canonicalizeColor(finalTextToken.value, context.element, "color")
+      : null;
+    const textActualCanon = actualTextToken
+      ? canonicalizeColor(actualTextToken.value, context.element, "color")
+      : null;
+
+    const payload = {
+      element: {
+        label: safeElementLabel(element),
+        id: element.id,
+        classes: element.className,
+      },
+      context: {
+        surface: context.surface,
+        polarity: context.polarity,
+        contextElement: safeElementLabel(context.element),
+        contextId: context.element.id,
+        contextClasses: context.element.className,
+      },
+      background: {
+        mismatch: bgMismatch,
+        expectedRaw: bgExpectedRaw,
+        actualRaw: bgActualRaw,
+        expectedCanonical: bgExpectedCanon,
+        actualCanonical: bgActualCanon,
+        canonicalEqual:
+          bgExpectedCanon !== null &&
+          bgActualCanon !== null &&
+          bgExpectedCanon === bgActualCanon,
+        winningRule: bgWinningRule
+          ? {
+              selector: bgWinningRule.selector,
+              value: bgWinningRule.value,
+              stylesheet: bgWinningRule.stylesheet,
+              specificity: formatSpecificity(bgWinningRule.specificity),
+              important: bgWinningRule.isImportant,
+              layered: bgWinningRule.isLayered,
+              scopeProximity: bgWinningRule.scopeProximity,
+            }
+          : null,
+      },
+      text: {
+        mismatch: textMismatch,
+        expectedRaw: textExpectedRaw,
+        actualRaw: textActualRaw,
+        expectedCanonical: textExpectedCanon,
+        actualCanonical: textActualCanon,
+        canonicalEqual:
+          textExpectedCanon !== null &&
+          textActualCanon !== null &&
+          textExpectedCanon === textActualCanon,
+        winningRule: textWinningRule
+          ? {
+              selector: textWinningRule.selector,
+              value: textWinningRule.value,
+              stylesheet: textWinningRule.stylesheet,
+              specificity: formatSpecificity(textWinningRule.specificity),
+              important: textWinningRule.isImportant,
+              layered: textWinningRule.isLayered,
+              scopeProximity: textWinningRule.scopeProximity,
+            }
+          : null,
+      },
+    };
+
+    (globalThis as unknown as Record<string, unknown>)[
+      "__AXIOMATIC_INSPECTOR_ELEMENT_DIAGNOSTICS__"
+    ] = payload;
+
+    console.groupCollapsed(
+      `[Axiomatic] Empirical diagnostics: ${payload.element.label}`,
+    );
+    console.log(payload);
+    console.log(
+      "[Axiomatic] Copy/paste tip: JSON.stringify(globalThis.__AXIOMATIC_INSPECTOR_ELEMENT_DIAGNOSTICS__, null, 2)",
+    );
+    console.groupEnd();
+  }
+
+  private publishViolationReport(violations: Violation[]): Array<{
+    Tag: string;
+    ID: string;
+    Classes: string;
+    Reason: string;
+    Property: "color" | "background-color" | "unknown";
+    Expected: string | undefined;
+    Actual: string | undefined;
+    WinningSelector?: string;
+    WinningValue?: string;
+    WinningStylesheet?: string;
+    WinningSpecificity?: string;
+    WinningImportant?: boolean;
+    WinningLayered?: boolean;
+    WinningScopeProximity?: number;
+    WinningVarRefs?: string[];
+  }> {
+    const extractVarRefs = (
+      value: string | undefined,
+    ): string[] | undefined => {
+      if (!value) return undefined;
+      const re = /var\(\s*(--[a-z0-9-]+)\s*\)/gi;
+      const vars = new Set<string>();
+      let m: RegExpExecArray | null;
+      while ((m = re.exec(value)) !== null) {
+        const varName = m[1];
+        if (varName) vars.add(varName);
+        if (m.index === re.lastIndex) re.lastIndex++;
+      }
+      return vars.size ? Array.from(vars).sort() : undefined;
+    };
+
+    const rows = violations.map((v) => {
+      const element = v.element;
+      const inspection = this.engine.inspect(element);
+      const surfaceToken = inspection.tokens.find(
+        (t) => t.intent === "Surface Color",
+      );
+      const bgToken = inspection.tokens.find(
+        (t) => t.intent === "Actual Background",
+      );
+      const fgToken = inspection.tokens.find(
+        (t) => t.intent === "Final Text Color",
+      );
+      const actualFgToken = inspection.tokens.find(
+        (t) => t.intent === "Actual Text Color",
+      );
+
+      const surfaceMismatch =
+        !!surfaceToken && !!bgToken && surfaceToken.value !== bgToken.value;
+      const textMismatch =
+        !!fgToken && !!actualFgToken && fgToken.value !== actualFgToken.value;
+
+      const property: "color" | "background-color" | "unknown" = surfaceMismatch
+        ? "background-color"
+        : textMismatch
+          ? "color"
+          : "unknown";
+
+      const winningRule =
+        property === "unknown" ? null : findWinningRule(element, property);
+      const winningVarRefs = extractVarRefs(winningRule?.value);
+
+      return {
+        Tag: v.tagName,
+        ID: v.id,
+        Classes: v.classes,
+        Reason: v.reason,
+        Property: property,
+        Expected: v.surface,
+        Actual: v.actual,
+        WinningSelector: winningRule?.selector,
+        WinningValue: winningRule?.value,
+        WinningStylesheet: winningRule?.stylesheet ?? undefined,
+        WinningSpecificity: winningRule
+          ? formatSpecificity(winningRule.specificity)
+          : undefined,
+        WinningImportant: winningRule?.isImportant,
+        WinningLayered: winningRule?.isLayered,
+        WinningScopeProximity: winningRule?.scopeProximity,
+        WinningVarRefs: winningVarRefs,
+      };
+    });
+
+    (globalThis as unknown as Record<string, unknown>)[
+      "__AXIOMATIC_INSPECTOR_VIOLATIONS__"
+    ] = rows;
+
+    return rows;
+  }
+
+  private publishContinuityReport(violations: Violation[]): Array<{
+    Tag: string;
+    ID: string;
+    Classes: string;
+    Reason: string;
+  }> {
+    const rows = violations.map((v) => ({
+      Tag: v.tagName,
+      ID: v.id,
+      Classes: v.classes,
+      Reason: v.reason,
+    }));
+
+    (globalThis as unknown as Record<string, unknown>)[
+      "__AXIOMATIC_INSPECTOR_CONTINUITY__"
+    ] = rows;
+
+    return rows;
+  }
+
+  private logCopyPasteHint(kind: "violations" | "continuity"): void {
+    const key =
+      kind === "violations"
+        ? "__AXIOMATIC_INSPECTOR_VIOLATIONS__"
+        : "__AXIOMATIC_INSPECTOR_CONTINUITY__";
+
+    console.log(
+      `[Axiomatic] Copy/paste tip: run JSON.stringify(globalThis.${key}, null, 2) to dump the report as JSON.`,
+    );
+  }
 
   constructor() {
     super();
     this.root = this.attachShadow({ mode: "open" });
+    this.theme = AxiomaticTheme.get();
+    this.engine = new AxiomaticInspectorEngine();
   }
 
   connectedCallback(): void {
     this.render();
     this.setupToggle();
+    this.themeUnsubscribe = this.theme.subscribe((state) => {
+      // Keep the button semantically in sync with mode.
+      const mode = state.tau >= 0 ? "light" : "dark";
+      this.themeToggleMain.setAttribute("data-mode", mode);
+      this.themeToggleMain.title =
+        mode === "light"
+          ? "Toggle to Dark (animates tau)"
+          : "Toggle to Light (animates tau)";
+    });
+    this.loadState();
+    this.updateResetButtonState();
   }
 
   disconnectedCallback(): void {
     this.disable();
+    if (this.themeUnsubscribe) {
+      this.themeUnsubscribe();
+      this.themeUnsubscribe = null;
+    }
+    if (this.themeAnimationRaf) {
+      cancelAnimationFrame(this.themeAnimationRaf);
+      this.themeAnimationRaf = null;
+    }
+  }
+
+  private saveState(): void {
+    const state = {
+      isEnabled: this.isEnabled,
+      isPinned: this.isPinned,
+      isViolationMode: this.isViolationMode,
+      isContinuityMode: this.isContinuityMode,
+      showInternals: this.showInternals,
+    };
+    localStorage.setItem("axiomatic-inspector-state", JSON.stringify(state));
+  }
+
+  private loadState(): void {
+    const saved = localStorage.getItem("axiomatic-inspector-state");
+    if (saved) {
+      try {
+        const state = JSON.parse(saved) as InspectorState;
+        if (state.isEnabled) this.enable();
+        if (state.isPinned) {
+          this.isPinned = true;
+          // We can't restore the pinned element easily without a selector,
+          // but we can restore the mode.
+        }
+        if (state.isViolationMode) {
+          this.isViolationMode = true;
+          this.violationToggle.classList.add("active");
+          if (state.isEnabled) {
+            this.scanForViolations().catch(console.error);
+          }
+        }
+        if (state.isContinuityMode) {
+          this.isContinuityMode = true;
+          this.continuityToggle.classList.add("active");
+          // Never auto-run continuity on load: it flashes theme/tau.
+        }
+        if (state.showInternals) {
+          this.showInternals = true;
+          this.elementInternalsBtn.classList.add("active");
+        }
+      } catch (e) {
+        console.warn("Failed to load inspector state", e);
+      }
+    }
   }
 
   private render(): void {
@@ -449,51 +477,226 @@ export class AxiomaticDebugger extends HTMLElement {
       <div id="source-layer"></div>
       <div id="violation-layer"></div>
       <div id="highlight-layer"></div>
+      <div id="toast" role="status" aria-live="polite" aria-atomic="true" data-open="false" data-kind="info"></div>
       <div id="info-card" popover="manual">
         <div class="card-header">
           <span class="badge badge-surface" id="surface-badge">Surface</span>
           <span class="badge" id="polarity-badge">Mode</span>
+          <div class="card-actions">
+            <button id="element-console-btn" class="inspector-btn card-action-btn" aria-label="Log Element Summary" title="Log selected element summary to console">
+              Console
+            </button>
+            <button id="element-internals-btn" class="inspector-btn card-action-btn" aria-label="Toggle Internals" title="Show internal tokens">
+              Internals
+            </button>
+          </div>
         </div>
         <div class="token-list" id="token-list"></div>
       </div>
-      <button id="internals-toggle" aria-label="Toggle Internals" title="Show Internal Plumbing">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-      </button>
-      <button id="violation-toggle" aria-label="Toggle Violations" title="Show Axiom Violations">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-      </button>
-      <button id="continuity-toggle" aria-label="Check Continuity" title="Check Continuity (Tau Zero)">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-      </button>
-      <button id="toggle-btn" aria-label="Toggle Inspector">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="3"/><path d="m16 16-1.9-1.9"/></svg>
-      </button>
+      <div id="controls" aria-label="Axiomatic Inspector Controls">
+        <div id="controls-secondary" aria-label="Axiomatic Inspector Secondary Controls">
+          <button id="violation-toggle" aria-label="Toggle Violations" title="Show Axiom Violations (Shift+Click to Fix All)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          </button>
+          <button id="continuity-toggle" aria-label="Check Continuity" title="Run Continuity Audit (Flashes Theme)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </button>
+          <button id="reset-btn" aria-label="Reset Element" title="Revert Changes (Shift+Click to Reset All)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+          </button>
+          <button id="theme-toggle-main" aria-label="Toggle Theme" title="Toggle Light/Dark Mode">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"/><path d="M12 4v16a8 8 0 0 0 0-16z"/></svg>
+          </button>
+        </div>
+        <button id="toggle-btn" aria-label="Toggle Inspector">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><circle cx="12" cy="12" r="3"/><path d="m16 16-1.9-1.9"/></svg>
+        </button>
+      </div>
     `;
 
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    this.highlightLayer = this.root.getElementById("highlight-layer")!;
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    this.violationLayer = this.root.getElementById("violation-layer")!;
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    this.sourceLayer = this.root.getElementById("source-layer")!;
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    this.infoCard = this.root.getElementById("info-card")!;
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    this.highlightLayer = this.root.getElementById(
+      "highlight-layer",
+    ) as unknown as HTMLElement;
+    this.violationLayer = this.root.getElementById(
+      "violation-layer",
+    ) as unknown as HTMLElement;
+    this.sourceLayer = this.root.getElementById(
+      "source-layer",
+    ) as unknown as HTMLElement;
+    this.infoCard = this.root.getElementById(
+      "info-card",
+    ) as unknown as HTMLElement;
+    this.toastEl = this.root.getElementById("toast");
     this.toggleBtn = this.root.getElementById(
       "toggle-btn",
-    )! as HTMLButtonElement;
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    ) as unknown as HTMLButtonElement;
     this.violationToggle = this.root.getElementById(
       "violation-toggle",
-    )! as HTMLButtonElement;
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    ) as unknown as HTMLButtonElement;
     this.continuityToggle = this.root.getElementById(
       "continuity-toggle",
-    )! as HTMLButtonElement;
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    this.internalsToggle = this.root.getElementById(
-      "internals-toggle",
-    )! as HTMLButtonElement;
+    ) as unknown as HTMLButtonElement;
+    this.resetBtn = this.root.getElementById(
+      "reset-btn",
+    ) as unknown as HTMLButtonElement;
+    this.themeToggleMain = this.root.getElementById(
+      "theme-toggle-main",
+    ) as unknown as HTMLButtonElement;
+    this.elementConsoleBtn = this.root.getElementById(
+      "element-console-btn",
+    ) as unknown as HTMLButtonElement;
+    this.elementInternalsBtn = this.root.getElementById(
+      "element-internals-btn",
+    ) as unknown as HTMLButtonElement;
+  }
+
+  private animateTauTo(targetTau: 1 | -1): void {
+    if (this.themeAnimationRaf) {
+      cancelAnimationFrame(this.themeAnimationRaf);
+      this.themeAnimationRaf = null;
+    }
+
+    const startTau = this.theme.getState().tau;
+    const durationMs = 300;
+    let startTime: number | null = null;
+
+    const easeInOutQuad = (t: number): number =>
+      t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+
+    const step = (now: number): void => {
+      if (startTime === null) startTime = now;
+      const elapsed = now - startTime;
+      const t = Math.min(1, Math.max(0, elapsed / durationMs));
+      const eased = easeInOutQuad(t);
+
+      const nextTau = startTau + (targetTau - startTau) * eased;
+      this.theme.set({ tau: nextTau });
+
+      if (t < 1) {
+        this.themeAnimationRaf = requestAnimationFrame(step);
+      } else {
+        // Snap to exact endpoint to ensure framework sync happens.
+        this.theme.set({ tau: targetTau });
+        this.themeAnimationRaf = null;
+      }
+    };
+
+    this.themeAnimationRaf = requestAnimationFrame(step);
+  }
+
+  private toggleThemeAnimated(): void {
+    const current = this.theme.getState();
+    const target: 1 | -1 = current.tau >= 0 ? -1 : 1;
+    this.animateTauTo(target);
+  }
+
+  private updateResetButtonState(): void {
+    const count = this.modifiedElements.size;
+    const hasAny = count > 0;
+
+    this.resetBtn.disabled = !hasAny;
+    this.resetBtn.classList.toggle("active", hasAny);
+    this.resetBtn.classList.toggle(
+      "visible",
+      this.isEnabled && this.isViolationMode && hasAny,
+    );
+    this.resetBtn.title = hasAny
+      ? `Revert ${count} overlay fix${count === 1 ? "" : "es"} (Shift+Click to reset all, Alt+Click diagnostics)`
+      : "No overlay fixes to revert (Alt+Click diagnostics)";
+  }
+
+  private logElementSummary(element: HTMLElement): void {
+    const inspection = this.engine.inspect(element);
+    const continuity = this.continuityViolations.get(element);
+
+    const surfaceToken = inspection.tokens.find(
+      (t) => t.intent === "Surface Color",
+    );
+    const actualBg = inspection.tokens.find(
+      (t) => t.intent === "Actual Background",
+    );
+    const finalText = inspection.tokens.find(
+      (t) => t.intent === "Final Text Color",
+    );
+    const actualText = inspection.tokens.find(
+      (t) => t.intent === "Actual Text Color",
+    );
+
+    const bgMismatch =
+      !!surfaceToken && !!actualBg && surfaceToken.value !== actualBg.value;
+    const textMismatch =
+      !!finalText && !!actualText && finalText.value !== actualText.value;
+
+    const mismatchProperty: "background-color" | "color" | null = bgMismatch
+      ? "background-color"
+      : textMismatch
+        ? "color"
+        : null;
+
+    const winningRule = mismatchProperty
+      ? findWinningRule(element, mismatchProperty)
+      : null;
+
+    const elementLabel = safeElementLabel(element);
+
+    const payload: Record<string, unknown> = {
+      element: {
+        label: elementLabel,
+        tag: element.tagName.toLowerCase(),
+        id: element.id,
+        classes: element.className,
+      },
+      context: inspection.context as unknown,
+      violations: {
+        axiomMismatch: inspection.hasMismatch,
+        backgroundMismatch: bgMismatch,
+        textMismatch: textMismatch,
+        mismatchProperty,
+        continuity: continuity
+          ? { reason: continuity.reason, surface: continuity.surface }
+          : null,
+        winningRule: winningRule
+          ? {
+              selector: winningRule.selector,
+              value: winningRule.value,
+              stylesheet: winningRule.stylesheet,
+              specificity: formatSpecificity(winningRule.specificity),
+              important: winningRule.isImportant,
+              layered: winningRule.isLayered,
+              scopeProximity: winningRule.scopeProximity,
+            }
+          : null,
+      },
+      tokens: (inspection.tokens as unknown[]).map((t) => {
+        const token = t as Record<string, unknown>;
+        const tokenElement = token["element"];
+
+        return {
+          intent: token["intent"],
+          name: token["name"],
+          value: token["value"],
+          sourceValue: token["sourceValue"],
+          isPrivate: token["isPrivate"],
+          isLocal: token["isLocal"],
+          element:
+            tokenElement instanceof HTMLElement
+              ? safeElementLabel(tokenElement)
+              : null,
+        };
+      }),
+    };
+
+    const globals = globalThis as unknown as {
+      __AXIOMATIC_INSPECTOR_ACTIVE_ELEMENT__?: Record<string, unknown>;
+    };
+    globals.__AXIOMATIC_INSPECTOR_ACTIVE_ELEMENT__ = payload;
+
+    console.groupCollapsed(`[Axiomatic] Element summary: ${elementLabel}`);
+    console.log(payload);
+    console.log(
+      "[Axiomatic] Copy/paste tip: JSON.stringify(globalThis.__AXIOMATIC_INSPECTOR_ACTIVE_ELEMENT__, null, 2)",
+    );
+    console.groupEnd();
   }
 
   private setupToggle(): void {
@@ -503,11 +706,21 @@ export class AxiomaticDebugger extends HTMLElement {
       } else {
         this.enable();
       }
+      this.saveState();
     });
 
-    this.violationToggle.addEventListener("click", () => {
+    this.violationToggle.addEventListener("click", (e) => {
+      if (e.altKey) {
+        // Diagnostics mode: don't toggle, just dump the current scan.
+        this.scanForViolations(true).catch(console.error);
+        return;
+      }
+      if (e.shiftKey) {
+        this.fixAllViolations();
+        return;
+      }
+
       this.isViolationMode = !this.isViolationMode;
-      // Disable continuity mode if active
       if (this.isContinuityMode) {
         this.isContinuityMode = false;
         this.continuityToggle.classList.remove("active");
@@ -516,16 +729,21 @@ export class AxiomaticDebugger extends HTMLElement {
 
       if (this.isViolationMode) {
         this.violationToggle.classList.add("active");
-        this.scanForViolations();
+        this.scanForViolations().catch(console.error);
       } else {
         this.violationToggle.classList.remove("active");
         this.clearViolations();
       }
+      this.saveState();
     });
 
-    this.continuityToggle.addEventListener("click", () => {
+    this.continuityToggle.addEventListener("click", (e) => {
+      if (e.altKey) {
+        // Diagnostics mode: don't toggle, just run and dump.
+        this.checkContinuity(true).catch(console.error);
+        return;
+      }
       this.isContinuityMode = !this.isContinuityMode;
-      // Disable violation mode if active
       if (this.isViolationMode) {
         this.isViolationMode = false;
         this.violationToggle.classList.remove("active");
@@ -534,24 +752,44 @@ export class AxiomaticDebugger extends HTMLElement {
 
       if (this.isContinuityMode) {
         this.continuityToggle.classList.add("active");
-        void this.checkContinuity();
+        this.checkContinuity().catch(console.error);
       } else {
         this.continuityToggle.classList.remove("active");
         this.clearViolations();
+        this.continuityViolations.clear();
+        if (this.activeElement) {
+          this.inspect(this.activeElement);
+        }
+      }
+      this.saveState();
+    });
+
+    this.resetBtn.addEventListener("click", (e) => {
+      if (e.altKey) {
+        this.dumpEmpiricalDiagnostics();
+      } else if (e.shiftKey) {
+        this.resetAll();
+      } else if (this.activeElement) {
+        this.handleReset(this.activeElement);
       }
     });
 
-    this.internalsToggle.addEventListener("click", () => {
+    this.themeToggleMain.addEventListener("click", () => {
+      this.toggleThemeAnimated();
+    });
+
+    this.elementConsoleBtn.addEventListener("click", () => {
+      if (!this.activeElement) return;
+      this.logElementSummary(this.activeElement);
+    });
+
+    this.elementInternalsBtn.addEventListener("click", () => {
       this.showInternals = !this.showInternals;
-      if (this.showInternals) {
-        this.internalsToggle.classList.add("active");
-      } else {
-        this.internalsToggle.classList.remove("active");
-      }
-      // Refresh current view if active
+      this.elementInternalsBtn.classList.toggle("active", this.showInternals);
       if (this.activeElement) {
         this.inspect(this.activeElement);
       }
+      this.saveState();
     });
   }
 
@@ -561,7 +799,7 @@ export class AxiomaticDebugger extends HTMLElement {
     this.toggleBtn.classList.add("active");
     this.violationToggle.classList.add("visible");
     this.continuityToggle.classList.add("visible");
-    this.internalsToggle.classList.add("visible");
+    this.themeToggleMain.classList.add("visible");
     window.addEventListener("mousemove", this.handleMouseMove);
     window.addEventListener("keydown", this.handleKeyDown);
     window.addEventListener("resize", this.handleResize);
@@ -571,10 +809,11 @@ export class AxiomaticDebugger extends HTMLElement {
     });
     window.addEventListener("click", this.handleClick, { capture: true });
 
-    // Restore violation state if it was active
     if (this.isViolationMode) {
-      this.scanForViolations();
+      this.scanForViolations().catch(console.error);
     }
+
+    this.updateResetButtonState();
 
     this.loop();
   }
@@ -583,10 +822,16 @@ export class AxiomaticDebugger extends HTMLElement {
     if (!this.isEnabled) return;
     this.isEnabled = false;
     this.isPinned = false;
+
+    if (this.continuityAbort) {
+      this.continuityAbort.abort();
+      this.continuityAbort = null;
+    }
     this.toggleBtn.classList.remove("active");
     this.violationToggle.classList.remove("visible");
     this.continuityToggle.classList.remove("visible");
-    this.internalsToggle.classList.remove("visible");
+    this.resetBtn.classList.remove("visible");
+    this.themeToggleMain.classList.remove("visible");
     window.removeEventListener("mousemove", this.handleMouseMove);
     window.removeEventListener("keydown", this.handleKeyDown);
     window.removeEventListener("resize", this.handleResize);
@@ -598,6 +843,7 @@ export class AxiomaticDebugger extends HTMLElement {
     }
     this.clearHighlight();
     this.clearViolations();
+    this.continuityViolations.clear();
     this.clearSourceHighlights();
   }
 
@@ -611,17 +857,14 @@ export class AxiomaticDebugger extends HTMLElement {
 
   private handleClick = (e: MouseEvent): void => {
     const target = e.target as HTMLElement;
-
-    // Ignore clicks on the debugger UI itself
     if (target === this || this.contains(target)) return;
 
-    // Toggle pinned state
     e.preventDefault();
     e.stopPropagation();
 
     this.isPinned = !this.isPinned;
+    this.saveState();
 
-    // Update visual state of highlight box
     const boxes = this.highlightLayer.querySelectorAll(".highlight-box");
     boxes.forEach((box) => {
       if (this.isPinned) {
@@ -634,10 +877,7 @@ export class AxiomaticDebugger extends HTMLElement {
 
   private handleMouseMove = (e: MouseEvent): void => {
     if (this.isPinned) return;
-
     const target = e.target as HTMLElement;
-
-    // Ignore self
     if (target === this || this.contains(target)) return;
 
     if (target !== this.activeElement) {
@@ -647,7 +887,6 @@ export class AxiomaticDebugger extends HTMLElement {
   };
 
   private handleKeyDown = (e: KeyboardEvent): void => {
-    // Toggle with Ctrl+Shift+X
     if (e.ctrlKey && e.shiftKey && e.key === "X") {
       if (this.isEnabled) {
         this.disable();
@@ -659,33 +898,24 @@ export class AxiomaticDebugger extends HTMLElement {
 
   private handleResize = (): void => {
     if (!this.isEnabled) return;
-
-    // Re-inspect active element to update source boxes and info card position
     if (this.activeElement) {
       this.inspect(this.activeElement);
     }
-
-    // Re-scan violations if mode is active
     if (this.isViolationMode) {
-      this.scanForViolations();
+      this.scanForViolations().catch(console.error);
     }
-
-    // Clear continuity violations on resize to prevent visual drift
     if (this.isContinuityMode) {
       this.clearViolations();
-      // We don't auto-rerun because it's expensive, but we shouldn't show stale boxes.
-      // Optionally, we could show a "Stale" state or just hide them.
-      // Clearing is safer.
     }
+
+    this.updateResetButtonState();
   };
 
   private inspect(element: HTMLElement): void {
-    const context = findContextRoot(element);
-    const tokens = resolveTokens(element, context);
+    const result = this.engine.inspect(element);
 
-    // Draw highlight and position card immediately
     this.drawHighlight(element);
-    this.updateInfoCardContent(context, tokens);
+    this.updateInfoCardContent(result, element);
     this.updateInfoCardPosition(element);
   }
 
@@ -693,10 +923,17 @@ export class AxiomaticDebugger extends HTMLElement {
     this.highlightLayer.innerHTML = "";
     const rects = element.getClientRects();
 
+    let didSetAnchor = false;
     for (const rect of Array.from(rects)) {
       const box = document.createElement("div");
       box.className = "highlight-box";
       if (this.isPinned) box.classList.add("pinned");
+      // Only set a single anchor source; multiple anchors with the same name
+      // can yield surprising positioning in some implementations.
+      if (!didSetAnchor) {
+        box.style.setProperty("anchor-name", "--inspector-target");
+        didSetAnchor = true;
+      }
       box.style.top = `${rect.top}px`;
       box.style.left = `${rect.left}px`;
       box.style.width = `${rect.width}px`;
@@ -706,10 +943,15 @@ export class AxiomaticDebugger extends HTMLElement {
   }
 
   private updateInfoCardContent(
-    context: DebugContext,
-    tokens: ResolvedToken[],
+    result: {
+      context: DebugContext;
+      tokens: ResolvedToken[];
+      hasMismatch: boolean;
+    },
+    element: HTMLElement,
   ): void {
-    let adviceHtml = "";
+    const { context, tokens, hasMismatch } = result;
+
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const surfaceBadge = this.root.getElementById("surface-badge")!;
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -717,335 +959,65 @@ export class AxiomaticDebugger extends HTMLElement {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const tokenList = this.root.getElementById("token-list")!;
 
-    // Update Header
     surfaceBadge.textContent = context.surface || "Unknown";
-
     polarityBadge.textContent = context.polarity === "dark" ? "Dark" : "Light";
     polarityBadge.className = `badge badge-${context.polarity || "light"}`;
 
-    // Filter tokens based on visibility settings
-    const visibleTokens = tokens.filter(
-      (t) => this.showInternals || !t.isPrivate,
+    const uniqueSources = new Set<HTMLElement>();
+    tokens.forEach((t) => {
+      if (t.element) uniqueSources.add(t.element);
+    });
+    const sourceList = Array.from(uniqueSources);
+
+    const adviceHtml = renderAdvice(
+      result,
+      element,
+      this.continuityViolations.get(element)?.reason,
+    );
+    const tokensHtml = renderTokenList(
+      tokens,
+      this.showInternals,
+      hasMismatch,
+      sourceList,
     );
 
-    // Reorder tokens: Final Text Color should be at the bottom
-    const PRIORITY: Record<string, number> = {
-      "Text Source": 1,
-      "Surface Color": 2,
-      "Context Hue": 3,
-      "Context Chroma": 4,
-      "Actual Background": 5,
-      "Final Text Color": 6,
-    };
+    tokenList.innerHTML = tokensHtml + adviceHtml;
 
-    visibleTokens.sort((a, b) => {
-      const pA = PRIORITY[a.intent] || 99;
-      const pB = PRIORITY[b.intent] || 99;
-      return pA - pB;
-    });
-
-    // Extract Context Hue for coloring
-    const baseHueToken = tokens.find((t) => t.intent === "Context Hue");
-    const baseHue = baseHueToken ? parseFloat(baseHueToken.value) : 0;
-
-    // Update Tokens
-    if (visibleTokens.length === 0) {
-      tokenList.innerHTML = `<div class="token-empty">No axiomatic tokens found</div>`;
-    } else {
-      // Check for mismatch
-      const surfaceToken = tokens.find((t) => t.intent === "Surface Color");
-      const bgToken = tokens.find((t) => t.intent === "Actual Background");
-      const hasMismatch =
-        surfaceToken && bgToken && surfaceToken.value !== bgToken.value;
-
-      // Identify unique source elements to assign colors
-      const uniqueSources = new Set<HTMLElement>();
-      visibleTokens.forEach((t) => {
-        if (t.element) uniqueSources.add(t.element);
-      });
-      const sourceList = Array.from(uniqueSources);
-
-      if (hasMismatch && this.activeElement) {
-        const classList = Array.from(this.activeElement.classList);
-        // Filter for background-related utilities specifically
-        const bgUtilities = classList.filter((c) => c.startsWith("bg-"));
-        // Filter out system classes to highlight custom ones
-        const otherClasses = classList.filter(
-          (c) =>
-            !c.startsWith("bg-") &&
-            !c.startsWith("text-") &&
-            !c.startsWith("surface-") &&
-            !c.startsWith("theme-"),
-        );
-
-        const hasInlineStyle = this.activeElement.style.backgroundColor !== "";
-
-        let reason = "Tag selector or User Agent default style.";
-
-        if (bgToken && bgToken.sourceVar.startsWith("--sl-")) {
-          reason = `Foreign token detected: ${bgToken.sourceVar}. This is a Starlight variable, not an Axiomatic Surface.`;
-        } else if (hasInlineStyle) {
-          reason = "Inline `style` attribute detected.";
-        } else if (bgUtilities.length > 0) {
-          reason = `Utility classes detected: ${bgUtilities.join(", ")}.`;
-        } else if (otherClasses.length > 0) {
-          reason = `Custom CSS classes detected: ${otherClasses.join(", ")}. Check your stylesheets.`;
-        } else if (this.activeElement.id) {
-          reason = `ID selector detected: #${this.activeElement.id}. Check your stylesheets.`;
-        }
-
-        adviceHtml = `
-          <div class="advice-box">
-            <span class="advice-title">Axiom Violation</span>
-            The background color does not match the Surface token.
-            <br><br>
-            <strong>Cause:</strong> ${reason}
-            <br><br>
-            <strong>Fix:</strong> Remove the override or wrap this element in a new Surface context.
-          </div>
-        `;
+    const adviceBox = tokenList.querySelector<HTMLElement>("#advice-box");
+    if (adviceBox) {
+      if (adviceBox.dataset.async === "true") {
+        updateAdviceWithAnalysis(element, adviceBox).catch(console.error);
       }
 
-      tokenList.innerHTML =
-        visibleTokens
-          .map((t) => {
-            const isColor =
-              t.value.startsWith("oklch") ||
-              t.value.startsWith("#") ||
-              t.value.startsWith("rgb");
-            let swatch = isColor
-              ? `<div class="token-swatch" style="background-color: ${t.value}"></div>`
-              : "";
-
-            // Special visualization for Context Hue and Context Chroma
-            if (t.intent === "Context Hue") {
-              const hue = parseFloat(t.value);
-              if (!isNaN(hue)) {
-                swatch = `<div class="token-hue-swatch" style="background-color: oklch(0.7 0.15 ${hue})"></div>`;
-              }
-            } else if (t.intent === "Context Chroma") {
-              const chroma = parseFloat(t.value);
-              if (!isNaN(chroma)) {
-                // Max chroma is usually around 0.37, so we scale 0.4 to 100%
-                const width = Math.min(100, (chroma / 0.4) * 100);
-                swatch = `<div class="token-chroma-bar"><div class="token-chroma-fill" style="width: ${width}%"></div></div>`;
-              }
-            }
-
-            const isWarning = hasMismatch && t.intent === "Actual Background";
-
-            // Determine icon and tooltip based on token type
-            let statusIcon = "";
-            let statusTooltip = "";
-            let subtitle = "";
-            let roleColor = ""; // Semantic color for the role
-            let isResult = false;
-
-            const inputIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>`; // Input/Plus icon
-
-            if (t.intent === "Final Text Color") {
-              statusIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h20"/><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-6"/><path d="M12 12v6"/></svg>`; // Result/Equals icon metaphor
-              subtitle = "Result";
-              roleColor = "#00ff9d"; // Green (Result)
-              isResult = true;
-            } else if (t.intent === "Text Source") {
-              statusIcon = inputIcon;
-              subtitle = "Input: Lightness";
-              roleColor = "#ffffff"; // High Contrast White
-            } else if (t.intent === "Surface Color") {
-              statusIcon = inputIcon;
-              subtitle = "Input: Context";
-              roleColor = "#ffffff"; // High Contrast White
-            } else if (t.intent === "Context Hue") {
-              statusIcon = inputIcon;
-              subtitle = "Input: Context Hue";
-              roleColor = "#ffffff"; // High Contrast White
-            } else if (t.intent === "Context Chroma") {
-              statusIcon = inputIcon;
-              subtitle = "Input: Context Chroma";
-              roleColor = "#ffffff"; // High Contrast White
-            } else if (t.isPrivate && !t.responsibleClass && !t.isInline) {
-              statusIcon = "🔒";
-              statusTooltip = "Private Token";
-            } else if (t.isDefault) {
-              statusIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.7;"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>`;
-              statusTooltip = "System Default";
-            }
-
-            // Determine value type for coloring
-            let valueType = "";
-            let valueStyle = "";
-
-            if (t.intent === "Text Source") {
-              valueType = "type-specified";
-            } else if (t.intent === "Final Text Color") {
-              // Result should be green (roleColor)
-              valueStyle = `color: ${roleColor}; font-weight: bold;`;
-            } else if (t.intent === "Surface Color") {
-              valueType = "type-derived";
-            } else if (t.intent === "Context Hue") {
-              if (!isNaN(baseHue)) {
-                // Use a visible chroma to show the hue clearly
-                valueStyle = `color: oklch(0.8 0.14 ${baseHue}); font-weight: bold;`;
-              } else {
-                valueType = "type-source";
-              }
-            } else if (t.intent === "Context Chroma") {
-              const chroma = parseFloat(t.value);
-              if (!isNaN(baseHue) && !isNaN(chroma)) {
-                // Use the actual chroma
-                valueStyle = `color: oklch(0.8 ${chroma} ${baseHue}); font-weight: bold;`;
-              } else {
-                valueType = "type-source";
-              }
-            }
-
-            const valueClass = isWarning
-              ? "token-value warning"
-              : `token-value ${valueType}`;
-            const warningIcon = isWarning
-              ? `<span title="Mismatch with Surface Color">⚠️</span>`
-              : "";
-
-            const statusIndicator = `<span class="status-icon-slot" title="${statusTooltip}" style="${roleColor ? `color: ${roleColor}; opacity: 1;` : ""}">${statusIcon}</span>`;
-            const subtitleHtml = subtitle
-              ? `<span class="token-subtitle">${subtitle}</span>`
-              : "";
-
-            // Source visualization
-            let sourceClass = "";
-            let sourcePill = "";
-            let sourceTitle = "";
-            let sourceIndex: number = -1;
-            let responsibleClassLabel = "";
-
-            if (t.isDefault) {
-              sourceClass = "source-system";
-              sourceTitle = "System Default";
-              // If roleColor is set, use it. Otherwise default to system style.
-              const pillStyle = roleColor
-                ? `background-color: ${roleColor}; box-shadow: 0 0 4px ${roleColor}; border: none;`
-                : `border: 1px solid #666; background: #333; opacity: 0.8;`;
-
-              sourcePill = `<span class="token-source-pill" style="${pillStyle}" title="${sourceTitle}"></span>`;
-              responsibleClassLabel = `<span class="token-source-label" style="color: #aaa;">${sourceTitle}</span>`;
-
-              if (t.element) {
-                sourceIndex = sourceList.indexOf(t.element);
-              }
-            } else if (t.element) {
-              sourceIndex = sourceList.indexOf(t.element);
-              // If it's local, use green. If it's remote, cycle through colors.
-              if (t.isLocal) {
-                sourceClass = "source-local";
-                sourceTitle = "Local Element";
-                // If roleColor is set, override the local green
-                const pillClass = roleColor ? "" : `source-local`;
-                const pillStyle = roleColor
-                  ? `background-color: ${roleColor}; box-shadow: 0 0 4px ${roleColor};`
-                  : "";
-                sourcePill = `<span class="token-source-pill ${pillClass}" style="${pillStyle}" title="${sourceTitle}"></span>`;
-              } else {
-                sourceClass = `source-ancestor-${(sourceIndex % 4) + 1}`;
-
-                const tagName = t.element.tagName.toLowerCase();
-                const idStr = t.element.id ? `#${t.element.id}` : "";
-                sourceTitle = `Inherited from ${tagName}${idStr}`;
-
-                // If roleColor is set, override the ancestor color
-                const pillClass = roleColor ? "" : sourceClass;
-                const pillStyle = roleColor
-                  ? `background-color: ${roleColor}; box-shadow: 0 0 4px ${roleColor};`
-                  : "";
-
-                sourcePill = `<span class="token-source-pill ${pillClass}" style="${pillStyle}" title="${sourceTitle}"></span>`;
-              }
-
-              if (t.responsibleClass) {
-                responsibleClassLabel = `<span class="token-source-label" style="color: ${roleColor || "var(--source-color)"}">${t.responsibleClass}</span>`;
-              } else if (t.isInline) {
-                responsibleClassLabel = `<span class="token-source-label" style="color: ${roleColor || "var(--source-color)"}; font-style: italic;">inline style</span>`;
-              } else {
-                // Fallback: Show the tag name if no specific class is responsible
-                const tagName = t.element.tagName.toLowerCase();
-                const idStr = t.element.id ? `#${t.element.id}` : "";
-                responsibleClassLabel = `<span class="token-source-label" style="color: ${roleColor || "var(--source-color)"}; opacity: 0.6;">${tagName}${idStr}</span>`;
-              }
-            }
-
-            // Override the name color if roleColor is present
-            const nameStyle = roleColor
-              ? `color: ${roleColor}; opacity: 1; font-weight: ${isResult ? "bold" : "normal"};`
-              : "";
-
-            // Special styling for the Result row
-            const rowStyle = isResult
-              ? `
-              margin-top: 8px; 
-              padding-top: 8px; 
-              border-top: 1px solid #333; 
-              background: rgba(0, 255, 157, 0.05);
-            `
-              : "";
-
-            // Hide responsible class for Result to avoid redundancy
-            if (isResult) {
-              responsibleClassLabel = "";
-            }
-
-            // Deduplicate Text Source label if it matches the value
-            if (
-              t.intent === "Text Source" &&
-              responsibleClassLabel.includes(t.sourceValue)
-            ) {
-              // If it's a default, keep the "(default)" part but maybe dim it?
-              // Actually, if we just hide it, it looks cleaner.
-              // But we want to know if it's default.
-              if (t.isDefault) {
-                responsibleClassLabel = `<span class="token-source-label" style="color: #666; font-style: italic;">(default)</span>`;
-              } else {
-                responsibleClassLabel = "";
-              }
-            }
-
-            return `
-        <div class="token-row" data-source-index="${sourceIndex}" style="${rowStyle}">
-            ${sourcePill}
-            <div class="token-info">
-              <div class="token-name-row">
-                ${statusIndicator}
-                <span class="token-name ${roleColor ? "" : sourceClass}" style="${nameStyle}">${t.intent}</span>
-              </div>
-              ${subtitleHtml}
-            </div>
-            ${responsibleClassLabel}
-          <div class="token-value-group">
-            ${warningIcon}
-            ${swatch}
-            <span class="${valueClass}" style="${valueStyle}" title="${t.value}">${t.sourceValue}</span>
-          </div>
-        </div>
-      `;
-          })
-          .join("") + adviceHtml;
-
-      // Draw source highlights on the page
-      this.drawSources(visibleTokens);
-
-      // Add hover listeners to token rows
-      const rows = tokenList.querySelectorAll(".token-row");
-      rows.forEach((row) => {
-        row.addEventListener("mouseenter", () => {
-          const index = parseInt(row.getAttribute("data-source-index") || "-1");
-          if (index >= 0) {
-            this.highlightSource(index);
-          }
+      const copyFixBtn = adviceBox.querySelector("#copy-fix-btn");
+      if (copyFixBtn) {
+        copyFixBtn.addEventListener("click", () => {
+          this.handleCopyFix(adviceBox);
         });
-        row.addEventListener("mouseleave", () => {
-          this.clearSourceHighlight();
+      }
+
+      const applyFixBtn = adviceBox.querySelector("#apply-fix-btn");
+      if (applyFixBtn) {
+        applyFixBtn.addEventListener("click", () => {
+          this.handleApplyFix(element, adviceBox);
         });
-      });
+      }
     }
+
+    this.drawSources(tokens);
+
+    const rows = tokenList.querySelectorAll(".token-row");
+    rows.forEach((row) => {
+      row.addEventListener("mouseenter", () => {
+        const index = parseInt(row.getAttribute("data-source-index") || "-1");
+        if (index >= 0) {
+          this.highlightSource(index);
+        }
+      });
+      row.addEventListener("mouseleave", () => {
+        this.clearSourceHighlight();
+      });
+    });
 
     const infoCard = this.infoCard;
     if (infoCard.matches(":popover-open")) {
@@ -1067,11 +1039,6 @@ export class AxiomaticDebugger extends HTMLElement {
     const sourceList = Array.from(uniqueSources);
 
     sourceList.forEach((element, index) => {
-      // Skip if it's the active element (already highlighted by the main box)
-      // UNLESS we want to show that it is also a source.
-      // Let's show it but maybe with a different style?
-      // For now, let's show all sources to be explicit.
-
       const rects = element.getClientRects();
       const elementTokens = tokens.filter((t) => t.element === element);
       const isLocal = elementTokens.some((t) => t.isLocal);
@@ -1079,7 +1046,6 @@ export class AxiomaticDebugger extends HTMLElement {
       let borderColor = "";
       let labelColor = "";
 
-      // Check for semantic roles first to match the token list
       if (elementTokens.some((t) => t.intent === "Final Text Color")) {
         borderColor = "#00ff9d";
         labelColor = "#00ff9d";
@@ -1109,7 +1075,6 @@ export class AxiomaticDebugger extends HTMLElement {
         if (!rect) continue;
         const box = document.createElement("div");
         box.className = "source-box";
-        // Add index for hover targeting
         box.setAttribute("data-source-index", index.toString());
 
         box.style.top = `${rect.top}px`;
@@ -1118,7 +1083,6 @@ export class AxiomaticDebugger extends HTMLElement {
         box.style.height = `${rect.height}px`;
         box.style.borderColor = borderColor;
 
-        // Only add label to the first rect of the element
         if (rectIndex === 0) {
           const label = document.createElement("div");
           label.className = "source-label";
@@ -1160,36 +1124,55 @@ export class AxiomaticDebugger extends HTMLElement {
   }
 
   private updateInfoCardPosition(element: HTMLElement): void {
-    // TODO(cleanup): Remove this JS fallback in January 2026.
-    // CSS Anchor Positioning (`position-area`) is targeted for Baseline 2025.
-    // Once widely supported, this manual positioning logic is redundant.
+    // Always clear any anchor nudge before re-evaluating.
+    this.infoCard.style.setProperty("--_inspector-nudge-x", "0px");
+    this.infoCard.style.setProperty("--_inspector-nudge-y", "0px");
 
-    // If anchor positioning is supported, we don't need manual positioning
-    if (CSS.supports("position-area: bottom center")) return;
+    // If anchor positioning is available, let CSS do the heavy lifting, but
+    // still clamp to the viewport to avoid off-screen popovers.
+    if (CSS.supports("position-area: bottom center")) {
+      // Give the browser a chance to lay out the anchored position.
+      const cardRect = this.infoCard.getBoundingClientRect();
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+      const margin = 10;
+
+      let dx = 0;
+      let dy = 0;
+
+      if (cardRect.left < margin) dx += margin - cardRect.left;
+      if (cardRect.right > viewportWidth - margin)
+        dx -= cardRect.right - (viewportWidth - margin);
+      if (cardRect.top < margin) dy += margin - cardRect.top;
+      if (cardRect.bottom > viewportHeight - margin)
+        dy -= cardRect.bottom - (viewportHeight - margin);
+
+      if (dx !== 0)
+        this.infoCard.style.setProperty("--_inspector-nudge-x", `${dx}px`);
+      if (dy !== 0)
+        this.infoCard.style.setProperty("--_inspector-nudge-y", `${dy}px`);
+
+      return;
+    }
 
     const rect = element.getBoundingClientRect();
     const cardRect = this.infoCard.getBoundingClientRect();
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
 
-    // Reset margin to avoid double spacing with manual positioning
     this.infoCard.style.margin = "0";
 
-    // Default: Bottom-Left aligned
     let top = rect.bottom + 10;
     let left = rect.left;
 
-    // Vertical Flip: If it goes off bottom, put it above
     if (top + cardRect.height > viewportHeight) {
       top = rect.top - cardRect.height - 10;
     }
 
-    // Horizontal Shift: If it goes off right, align to right edge
     if (left + cardRect.width > viewportWidth) {
       left = viewportWidth - cardRect.width - 10;
     }
 
-    // Safety clamp
     if (top < 0) top = 10;
     if (left < 0) left = 10;
 
@@ -1208,221 +1191,217 @@ export class AxiomaticDebugger extends HTMLElement {
     this.activeElement = null;
   }
 
-  private async checkContinuity(): Promise<void> {
+  private async checkContinuity(logToConsole = false): Promise<void> {
+    if (!this.isEnabled) return;
+
+    if (this.continuityAbort) {
+      this.continuityAbort.abort();
+    }
+
+    const abortController = new AbortController();
+    this.continuityAbort = abortController;
+
     this.violationLayer.innerHTML = "";
+    this.continuityViolations.clear();
 
-    // 1. Freeze Time (Set tau to 0)
-    const style = document.createElement("style");
-    style.innerHTML = `* { transition: none !important; }`;
-    document.head.appendChild(style);
-    document.documentElement.style.setProperty("--tau", "0");
+    let violations: Violation[];
+    try {
+      violations = await this.engine.checkContinuity(this, {
+        signal: abortController.signal,
+      });
+    } catch (e) {
+      const err = e as { name?: string };
+      if (err.name === "AbortError") return;
+      throw e;
+    }
 
-    // 2. Capture State A (Light Mode + Tau=0)
-    document.documentElement.setAttribute("data-theme", "light");
-    // Wait for style recalc
-    await new Promise((resolve) =>
-      requestAnimationFrame(() => requestAnimationFrame(resolve)),
-    );
-
-    const allElements = Array.from(document.body.querySelectorAll("*"));
-    const stateA = allElements.map((el) => {
-      const style = getComputedStyle(el);
-      return {
-        bg: style.backgroundColor,
-        color: style.color,
-      };
-    });
-
-    // 3. Toggle Theme (Dark Mode + Tau=0)
-    document.documentElement.setAttribute("data-theme", "dark");
-    await new Promise((resolve) =>
-      requestAnimationFrame(() => requestAnimationFrame(resolve)),
-    );
-
-    // 4. Capture State B & Compare
-    const violations: Array<{
-      element: HTMLElement;
-      tagName: string;
-      id: string;
-      classes: string;
-      reason: string;
-      surface?: string;
-      actual?: string;
-    }> = [];
-
-    allElements.forEach((element, i) => {
-      if (!(element instanceof HTMLElement)) return;
-      if (element.offsetParent === null) return;
-      if (element.tagName === "AXIOMATIC-DEBUGGER") return;
-      if (this.contains(element)) return;
-
-      const a = stateA[i];
-      if (!a) return;
-
-      const style = getComputedStyle(element);
-      const b = { bg: style.backgroundColor, color: style.color };
-
-      if (a.bg === "rgba(0, 0, 0, 0)" && b.bg === "rgba(0, 0, 0, 0)") {
-        // Ignore transparent
-      } else if (a.bg !== b.bg) {
-        // Diagnose the cause
-        const context = findContextRoot(element);
-        const tokens = resolveTokens(element, context);
-        const bgToken = tokens.find((t) => t.intent === "Actual Background");
-
-        let culprit = "Unknown Selector";
-        const classList = Array.from(element.classList);
-        const bgUtilities = classList.filter((c) => c.startsWith("bg-"));
-        const otherClasses = classList.filter(
-          (c) =>
-            !c.startsWith("bg-") &&
-            !c.startsWith("text-") &&
-            !c.startsWith("surface-") &&
-            !c.startsWith("theme-"),
-        );
-        const hasInlineStyle = element.style.backgroundColor !== "";
-
-        if (bgToken && bgToken.sourceVar.startsWith("--")) {
-          culprit = `Variable ${bgToken.sourceVar}`;
-        } else if (hasInlineStyle) {
-          culprit = "Inline `style` attribute";
-        } else if (bgUtilities.length > 0) {
-          culprit = `Utility classes: ${bgUtilities.join(", ")}`;
-        } else if (otherClasses.length > 0) {
-          culprit = `Custom CSS classes: ${otherClasses.join(", ")}`;
-        } else if (element.id) {
-          culprit = `ID selector: #${element.id}`;
-        } else {
-          culprit = "Tag selector or User Agent default";
-        }
-
-        this.drawViolation(element);
-        violations.push({
-          element,
-          tagName: element.tagName.toLowerCase(),
-          id: element.id,
-          classes: element.className,
-          reason: `Continuity Violation (Background): Snapped from ${a.bg} to ${b.bg}. Culprit: ${culprit}`,
-          surface: "N/A",
-          actual: b.bg,
-        });
-      } else if (a.color !== b.color) {
-        // Diagnose the cause
-        // We don't explicitly track "Actual Foreground" in the same way, but we can infer
-        // or just report the snap.
-
-        this.drawViolation(element);
-        violations.push({
-          element,
-          tagName: element.tagName.toLowerCase(),
-          id: element.id,
-          classes: element.className,
-          reason: `Continuity Violation (Foreground): Snapped from ${a.color} to ${b.color}.`,
-          surface: "N/A",
-          actual: b.color,
-        });
-      }
-    });
-
-    // 5. Restore State
-    document.head.removeChild(style);
-    document.documentElement.style.removeProperty("--tau");
-    // Reset to system preference or whatever it was?
-    // For now, let's just leave it in dark mode or toggle back to light if that was the start.
-    // Ideally we should restore the original theme.
-    // But for a debugger tool, leaving it in the last state is acceptable.
+    if (!this.toggleBtn.classList.contains("active")) return;
 
     if (violations.length > 0) {
-      console.group("🚫 Continuity Violations Detected");
-      console.table(
-        violations.map((v) => ({
-          Tag: v.tagName,
-          ID: v.id,
-          Classes: v.classes,
-          Reason: v.reason,
-        })),
-      );
-      console.groupEnd();
+      const report = this.publishContinuityReport(violations);
+
+      if (logToConsole || this.isVerbose()) {
+        console.groupCollapsed(
+          `🚫 Continuity Violations Detected (${report.length})`,
+        );
+        console.table(report);
+        this.logCopyPasteHint("continuity");
+        console.groupEnd();
+      }
+
+      violations.forEach((v) => {
+        this.drawViolation(v.element);
+        this.continuityViolations.set(v.element, v);
+      });
+
+      if (this.activeElement) {
+        this.inspect(this.activeElement);
+      }
     } else {
-      console.log("✅ No Continuity Violations found.");
+      if (logToConsole || this.isVerbose()) {
+        console.log("✅ No Continuity Violations found.");
+      }
+      this.showToast(
+        "No continuity violations found. All elements interpolate smoothly.",
+        "success",
+      );
     }
   }
 
-  private scanForViolations(): void {
+  private async waitForStableThemeState(options?: {
+    timeoutMs?: number;
+  }): Promise<void> {
+    const timeoutMs = options?.timeoutMs ?? 900;
+    const start = performance.now();
+
+    const readTau = (): number | null => {
+      const raw = getComputedStyle(document.documentElement)
+        .getPropertyValue("--tau")
+        .trim();
+      const tau = Number.parseFloat(raw);
+      return Number.isFinite(tau) ? tau : null;
+    };
+
+    const getExpectedMode = (): "light" | "dark" | null => {
+      const resolved = document.documentElement.getAttribute(
+        "data-axm-resolved-mode",
+      );
+      if (resolved === "light" || resolved === "dark") return resolved;
+      const theme = document.documentElement.getAttribute("data-theme");
+      if (theme === "light" || theme === "dark") return theme;
+      return null;
+    };
+
+    const bodyLooksLikeMode = (mode: "light" | "dark"): boolean => {
+      const cs = getComputedStyle(document.body);
+      const color = cs.color;
+      const match = color.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+      if (!match) return false;
+      const r = Number(match[1]);
+      const g = Number(match[2]);
+      const b = Number(match[3]);
+      if (mode === "dark") return r > 200 && g > 200 && b > 200;
+      return r < 80 && g < 80 && b < 80;
+    };
+
+    const epsilon = 1e-6;
+    let lastTau: number | null = null;
+    let stableFrames = 0;
+
+    while (performance.now() - start < timeoutMs) {
+      await new Promise((resolve) => requestAnimationFrame(resolve));
+
+      const tau = readTau();
+      if (tau === null) continue;
+
+      const expectedMode = getExpectedMode();
+      if (expectedMode) {
+        const expectedTau = expectedMode === "dark" ? -1 : 1;
+        const atEndpoint = Math.abs(tau - expectedTau) < epsilon;
+        if (!atEndpoint) {
+          stableFrames = 0;
+          lastTau = tau;
+          continue;
+        }
+        if (!bodyLooksLikeMode(expectedMode)) {
+          stableFrames = 0;
+          lastTau = tau;
+          continue;
+        }
+      }
+
+      if (lastTau !== null && Math.abs(tau - lastTau) < epsilon) {
+        stableFrames++;
+      } else {
+        stableFrames = 0;
+      }
+      lastTau = tau;
+
+      if (stableFrames >= 1) return;
+    }
+  }
+
+  private async scanForViolations(logToConsole = false): Promise<void> {
+    // Avoid transient false positives during tau/bridge transitions.
+    // If we can't prove stability quickly, we still scan (best-effort).
+    try {
+      await this.waitForStableThemeState();
+    } catch {
+      // Ignore.
+    }
+
     this.violationLayer.innerHTML = "";
-    const allElements = document.body.querySelectorAll("*");
-    const violations: Array<{
-      element: HTMLElement;
-      tagName: string;
-      id: string;
-      classes: string;
-      reason: string;
-      surface?: string;
-      actual?: string;
-    }> = [];
+    const axiomViolations = this.engine.scanForViolations(document, this);
+    const chromeContractViolations =
+      this.engine.scanForStarlightChromeContractViolations({
+        ignoreContainer: this,
+      });
 
-    for (const element of Array.from(allElements)) {
-      if (element instanceof HTMLElement) {
-        // Skip hidden elements
-        if (element.offsetParent === null) continue;
+    const allViolations = [...axiomViolations, ...chromeContractViolations];
+    const violations = allViolations.filter(
+      (v) => !this.isElementInColorMotion(v.element),
+    );
 
-        // Skip the debugger itself
-        if (element.tagName === "AXIOMATIC-DEBUGGER") continue;
-        if (this.contains(element)) continue;
+    // Always publish the report so automation can reliably assert “0 violations”.
+    const report = this.publishViolationReport(violations);
 
-        const context = findContextRoot(element);
-        const tokens = resolveTokens(element, context);
-
-        const surfaceToken = tokens.find((t) => t.intent === "Surface Color");
-        const bgToken = tokens.find((t) => t.intent === "Actual Background");
-
-        const hasSurfaceMismatch =
-          !!surfaceToken && !!bgToken && surfaceToken.value !== bgToken.value;
-        const hasUnconnectedPrivateToken = tokens.some(
-          (t) => t.isLocal && t.isPrivate && !t.responsibleClass && !t.isInline,
+    if (violations.length > 0) {
+      if (logToConsole || this.isVerbose()) {
+        console.groupCollapsed(
+          `🚫 Axiomatic Violations Detected (${report.length})`,
         );
+        console.table(report);
+        this.logCopyPasteHint("violations");
+        console.groupEnd();
+      }
 
-        if (hasSurfaceMismatch || hasUnconnectedPrivateToken) {
-          this.drawViolation(element);
+      violations.forEach((v) => {
+        this.drawViolation(v.element);
+      });
+    } else {
+      if (logToConsole || this.isVerbose()) {
+        console.log("✅ No Axiomatic Violations found.");
+      }
+    }
+  }
 
-          let reason = "";
-          if (hasSurfaceMismatch) reason = "Surface Mismatch";
-          if (hasUnconnectedPrivateToken)
-            reason = reason ? `${reason} & Private Token` : "Private Token";
+  private isElementInColorMotion(element: Element): boolean {
+    const maybeAnimatable = element as unknown as {
+      getAnimations?: (options?: GetAnimationsOptions) => Animation[];
+    };
+    if (typeof maybeAnimatable.getAnimations !== "function") return false;
 
-          violations.push({
-            element,
-            tagName: element.tagName.toLowerCase(),
-            id: element.id,
-            classes: element.className,
-            reason,
-            surface: surfaceToken?.value,
-            actual: bgToken?.value,
-          });
+    const animations = maybeAnimatable.getAnimations({ subtree: false });
+    for (const animation of animations) {
+      if (animation.playState !== "running") continue;
+
+      const effect = animation.effect;
+      if (!effect || !(effect instanceof KeyframeEffect)) continue;
+
+      for (const keyframe of effect.getKeyframes()) {
+        const kf = keyframe as Record<string, unknown>;
+        for (const prop of Object.keys(kf)) {
+          if (
+            prop === "color" ||
+            prop === "backgroundColor" ||
+            prop === "background-color"
+          ) {
+            return true;
+          }
+
+          // Custom properties that directly influence computed/painted colors.
+          if (
+            prop === "--tau" ||
+            prop.startsWith("--axm-bridge-") ||
+            prop.startsWith("--_axm-computed-")
+          ) {
+            return true;
+          }
         }
       }
     }
 
-    if (violations.length > 0) {
-      console.group("🚫 Axiomatic Violations Detected");
-      console.table(
-        violations.map((v) => ({
-          Tag: v.tagName,
-          ID: v.id,
-          Classes: v.classes,
-          Reason: v.reason,
-          "Expected Surface": v.surface,
-          "Actual Background": v.actual,
-        })),
-      );
-      console.log(
-        "Elements (expand to inspect):",
-        violations.map((v) => v.element),
-      );
-      console.groupEnd();
-    } else {
-      console.log("✅ No Axiomatic Violations found.");
-    }
+    return false;
   }
 
   private drawViolation(element: HTMLElement): void {
@@ -1442,9 +1421,183 @@ export class AxiomaticDebugger extends HTMLElement {
   private clearViolations(): void {
     this.violationLayer.innerHTML = "";
   }
+
+  private fixAllViolations(): void {
+    const violations = this.engine.scanForViolations(document, this);
+    if (violations.length === 0) {
+      this.showToast("No violations to fix.", "info");
+      return;
+    }
+
+    let fixedCount = 0;
+    violations.forEach((v) => {
+      const surface = v.surface || "surface-default";
+
+      if (!this.modifiedElements.has(v.element)) {
+        this.modifiedElements.set(v.element, {
+          className: v.element.className,
+          style: v.element.style.cssText,
+        });
+      }
+
+      v.element.classList.add(surface);
+      if (v.element.style.backgroundColor) {
+        v.element.style.removeProperty("background-color");
+      }
+
+      v.element.style.setProperty(
+        "background-color",
+        "var(--_axm-computed-surface)",
+        "important",
+      );
+
+      fixedCount++;
+    });
+
+    console.log(`[Axiomatic] ⚡ Batch fixed ${fixedCount} elements.`);
+    this.scanForViolations().catch(console.error);
+    this.updateResetButtonState();
+    this.showToast(`Batch fixed ${fixedCount} element(s).`, "success");
+  }
+
+  private resetAll(): void {
+    if (this.modifiedElements.size === 0) return;
+
+    const count = this.modifiedElements.size;
+
+    this.modifiedElements.forEach((state, element) => {
+      element.className = state.className;
+      element.style.cssText = state.style;
+    });
+
+    this.modifiedElements.clear();
+    console.log("[Axiomatic] ↩️ Reset all changes.");
+    this.showToast(`Reset ${count} element(s).`, "success");
+
+    if (this.activeElement) {
+      this.inspect(this.activeElement);
+    }
+    this.updateResetButtonState();
+  }
+
+  private handleCopyFix(adviceBox: HTMLElement): void {
+    const surface = adviceBox.dataset.surface || "surface-default";
+    const ruleSelector = adviceBox.dataset.ruleSelector;
+    const ruleFile = adviceBox.dataset.ruleFile;
+    const isInline = adviceBox.dataset.isInline === "true";
+    const bgUtilities = adviceBox.dataset.bgUtilities
+      ? adviceBox.dataset.bgUtilities.split(",")
+      : [];
+
+    let text = "";
+
+    if (isInline) {
+      text = `1. Remove inline \`style\` attribute (specifically background-color).\n2. Add class \`${surface}\` to the element.`;
+    } else if (ruleSelector && ruleFile) {
+      text = `1. In \`${ruleFile}\`, find the rule \`${ruleSelector}\`:\n   - Remove \`background-color\` property.\n2. Add class \`${surface}\` to the element.`;
+    } else if (bgUtilities.length > 0) {
+      const utils = bgUtilities.map((c) => `\`${c}\``).join(", ");
+      text = `1. Remove conflicting utility classes: ${utils}.\n2. Add class \`${surface}\` to the element.`;
+    } else {
+      // Fallback
+      text = `1. Remove any conflicting background styles.\n2. Add class \`${surface}\` to the element.`;
+    }
+
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        const btn = adviceBox.querySelector(
+          "#copy-fix-btn",
+        ) as HTMLButtonElement;
+        const originalText = btn.textContent;
+        btn.textContent = "Copied!";
+        setTimeout(() => {
+          btn.textContent = originalText;
+        }, 2000);
+      })
+      .catch(console.error);
+  }
+
+  private handleApplyFix(element: HTMLElement, adviceBox: HTMLElement): void {
+    const surface = adviceBox.dataset.surface || "surface-default";
+    const ruleSelector = adviceBox.dataset.ruleSelector;
+    const isInline = adviceBox.dataset.isInline === "true";
+    const bgUtilities = adviceBox.dataset.bgUtilities
+      ? adviceBox.dataset.bgUtilities.split(",")
+      : [];
+
+    // 0. Save State (if not already saved)
+    if (!this.modifiedElements.has(element)) {
+      this.modifiedElements.set(element, {
+        className: element.className,
+        style: element.style.cssText,
+      });
+    }
+
+    // 1. Add Surface Class
+    element.classList.add(surface);
+
+    // 2. Remove Utility Classes
+    if (bgUtilities.length > 0) {
+      element.classList.remove(...bgUtilities);
+    }
+
+    // 3. Remove Inline Style
+    if (isInline) {
+      element.style.removeProperty("background-color");
+    }
+
+    // 4. Override CSS Rule if necessary
+    if (ruleSelector && !isInline && bgUtilities.length === 0) {
+      // Force the axiomatic surface variable to win
+      element.style.setProperty(
+        "background-color",
+        "var(--_axm-computed-surface)",
+        "important",
+      );
+    }
+
+    // Log to console
+    const tag = element.tagName.toLowerCase();
+    const id = element.id ? `#${element.id}` : "";
+    console.group(`[Axiomatic] 🔧 Fixed <${tag}${id}>`);
+    console.log(`Added: .${surface}`);
+    if (bgUtilities.length)
+      console.log(`Removed Utilities: ${bgUtilities.join(", ")}`);
+    if (isInline) console.log(`Removed Inline Style: background-color`);
+    if (ruleSelector) console.log(`Overrode Rule: ${ruleSelector}`);
+    console.groupEnd();
+
+    // Feedback
+    const btn = adviceBox.querySelector("#apply-fix-btn") as HTMLButtonElement;
+    btn.textContent = "Applied!";
+    btn.disabled = true;
+
+    // Re-inspect to show the green state
+    setTimeout(() => {
+      this.inspect(element);
+      this.updateResetButtonState();
+    }, 100);
+  }
+
+  private handleReset(element: HTMLElement): void {
+    const originalState = this.modifiedElements.get(element);
+    if (!originalState) return;
+
+    element.className = originalState.className;
+    element.style.cssText = originalState.style;
+
+    this.modifiedElements.delete(element);
+
+    const tag = element.tagName.toLowerCase();
+    const id = element.id ? `#${element.id}` : "";
+    console.log(`[Axiomatic] ↩️ Reset <${tag}${id}> to original state.`);
+
+    this.inspect(element);
+    this.updateResetButtonState();
+  }
 }
 
-// Auto-register if in browser
 if (
   typeof customElements !== "undefined" &&
   !customElements.get("axiomatic-debugger")
