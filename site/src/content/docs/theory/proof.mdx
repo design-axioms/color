@@ -6,29 +6,29 @@ slug: theory/proof
 
 import { Aside } from '@astrojs/starlight/components';
 
-> **Context**: An algebraic derivation showing how the system's state space supports the high-level intuition `Color = f(Context, Intent)`.
+> *Context*: An algebraic derivation showing how the system's state space supports the high-level intuition `Color = f(Context, Intent)`.
 
 ## 1. Proposition
 
-The Axiomatic Color system posits that a resolved color is a pure function of two independent variables: **Context** (the environment) and **Intent** (the semantic role).
+The Axiomatic Color system posits that a resolved color is a pure function of two independent variables: *Context* (the environment) and *Intent* (the semantic role).
 
 $$ \text{Color} = f(\text{Context}, \text{Intent}) $$
 
-This document derives this property from the definitions in [The Algebra of Color Design](./composition-algebra.md).
+This document derives this property from the definitions in [The Algebra of Color Design](./algebra.mdx).
 
 ## 2. State Space Decomposition
 
-Let the system state $\mathcal{S}$ be defined as the **Configuration Space** of two subspaces: Context ($\Gamma$) and Intent ($\iota$).
+Let the system state $\mathcal{S}$ be defined as the *Configuration Space* of two subspaces: Context ($\Gamma$) and Intent ($\iota$).
 
 $$ \mathcal{S} = \Gamma \times \iota $$
 
 ### 2.1. The Subspaces
 
-1.  **Context Space ($\Gamma$)**: The environmental variables.
+1.  *Context Space* ($\Gamma$): The environmental variables.
     $$ \Gamma = \text{Hue} \times \text{Chroma} \times \text{Polarity} $$
     $$ \gamma \in \Gamma = \langle H, C, \rho \rangle $$
 
-2.  **Intent Space ($\iota$)**: The semantic variables.
+2.  *Intent Space* ($\iota$): The semantic variables.
     $$ \iota = \text{Tokens} $$
     $$ i \in \iota = \langle L_{src} \rangle $$
 
@@ -37,8 +37,8 @@ $$ \sigma = (\gamma, i) $$
 
 <Aside type="note" title="In Plain English">
 We are splitting the system's "DNA" into two separate strands.
-*   **Context ($\Gamma$)**: The "Atmosphere" (Lighting, Mode).
-*   **Intent ($\iota$)**: The "Meaning" (Text Importance).
+*   *Context* ($\Gamma$): The "Atmosphere" (Lighting, Mode).
+*   *Intent* ($\iota$): The "Meaning" (Text Importance).
 
 This separation allows us to change the lighting without changing the meaning, and vice versa.
 </Aside>
@@ -72,12 +72,12 @@ Where $m: \Gamma \rightarrow \Gamma$ and $k: \iota \rightarrow \iota$ are the sp
 
 ### 4.2. Commutativity Proof (General Case)
 
-We examine the composition of these operators in both orders for **Neutral Intents**.
+We examine the composition of these operators in both orders for *Neutral Intents*.
 
-**Case 1: Intent then Modifier ($M \circ I$)**
+**Case 1**: Intent then Modifier ($M \circ I$)
 $$ M(I(\gamma, i)) = M(\gamma, k(i)) = (m(\gamma), k(i)) $$
 
-**Case 2: Modifier then Intent ($I \circ M$)**
+**Case 2**: Modifier then Intent ($I \circ M$)
 $$ I(M(\gamma, i)) = I(m(\gamma), i) = (m(\gamma), k(i)) $$
 
 **Result**:
@@ -95,7 +95,7 @@ Both result in "Subtle Brand-Colored Text."
 
 ### 4.3. The Semantic Exception
 
-For **Chromatic Intents** (e.g., Error), the Intent function $I_{chromatic}$ acts on *both* subspaces to enforce semantic meaning.
+For *Chromatic Intents* (e.g., Error), the Intent function $I_{chromatic}$ acts on *both* subspaces to enforce semantic meaning.
 
 $$ I_{chromatic}(\gamma, i) = (\gamma_{override}, k(i)) $$
 
@@ -107,7 +107,7 @@ An Error Message is *always* Red. It doesn't care if the room is lit with Blue l
 
 ## 5. Surface Scoping
 
-The **Surface Operator** ($S$) is a special transformation that acts on both subspaces.
+The *Surface Operator* ($S$) is a special transformation that acts on both subspaces.
 
 ### 5.1 Glass Surface ($S_{glass}$)
 Preserves Context, Resets Intent.
@@ -121,8 +121,8 @@ $$ S_{solid}(\gamma, i) = (\gamma_{neutral}, i_{reset}) $$
 
 By modeling the state $\mathcal{S}$ as the product $\Gamma \times \iota$, we have derived that:
 
-1.  **Separability**: The resolution function $\Phi$ is defined over the pair $(\gamma, i)$.
-2.  **Independence**: Operations on $\Gamma$ and $\iota$ are commutative (except for Semantic Dominance).
-3.  **Scoping**: Surfaces act as filters that reset $\iota$, and optionally reset $\Gamma$ (if Solid).
+1.  *Separability*: The resolution function $\Phi$ is defined over the pair $(\gamma, i)$.
+2.  *Independence*: Operations on $\Gamma$ and $\iota$ are commutative (except for Semantic Dominance).
+3.  *Scoping*: Surfaces act as filters that reset $\iota$, and optionally reset $\Gamma$ (if Solid).
 
 This confirms that `Color = f(Context, Intent)` is structurally enforced by the algebra.

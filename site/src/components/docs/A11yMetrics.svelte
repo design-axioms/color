@@ -14,7 +14,10 @@
 
 <div class="metric" class:align-end={align === "end"}>
   <span class="metric-label font-mono text-subtle">WCAG Equiv.</span>
-  <span class="metric-value badge-wcag font-mono text-strong">{wcag}</span>
+  <span
+    class="metric-value badge-wcag font-mono text-strong surface-status-success bordered"
+    >{wcag}</span
+  >
 </div>
 
 <style>
@@ -47,18 +50,9 @@
   }
 
   .badge-wcag {
-    background: var(--surface-success-subtle-token, #dcfce7);
-    color: var(--text-success-strong-token, #166534);
     padding: 0.25rem 0.6rem;
     border-radius: 6px;
     font-weight: 700;
     font-size: 0.85rem;
-    border: 1px solid transparent;
-  }
-
-  :global([data-theme="dark"]) .badge-wcag {
-    background: var(--surface-success-subtle-token, #14532d);
-    color: var(--text-success-strong-token, #dcfce7);
-    border: 1px solid var(--border-success-subtle-token, #14532d);
   }
 </style>

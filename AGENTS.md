@@ -19,12 +19,12 @@ A chat reflects one or more phases, but typically operates within a single phase
 
 The context for the phased development workflow is stored in the `docs/agent-context` directory. The key files are:
 
-- `docs/agent-context/plan-outline.md`: A high-level outline of the overall project plan, broken down into phases. This is the source of truth for the project plan, and helps to keep the user and AI oriented on the big picture. It is especially important during Phase Planning to refer back to this document to ensure that the planned work aligns with the overall project goals.
+- `docs/agent-context/brain/state/plan.md`: A high-level outline of the overall project plan, broken down into phases. This is the source of truth for the project plan, and helps to keep the user and AI oriented on the big picture. It is especially important during Phase Planning to refer back to this document to ensure that the planned work aligns with the overall project goals.
 - `docs/agent-context/changelog.md`: A log of completed phases, including summaries of the work done. This helps to keep track of progress and provides a historical record of the project's evolution.
-- `docs/agent-context/decisions.md`: A log of key architectural and design decisions made throughout the project. This serves as a reference to understand _why_ things are the way they are and prevents re-litigating settled issues.
+- `docs/agent-context/brain/decisions/log.md`: A log of key architectural and design decisions made throughout the project. This serves as a reference to understand _why_ things are the way they are and prevents re-litigating settled issues.
 - `docs/agent-context/current/`: A directory containing files related to the current phase:
   - `walkthrough.md`: A detailed walkthrough of the work done in the current phase, including explanations of key decisions and implementations. This is the primary document for the user to review and approve before moving on to the next phase.
-  - `task-list.md`: A list of tasks to be completed in the current phase. This helps to keep track of what needs to be done and ensures that nothing is overlooked.
+  - `docs/agent-context/brain/state/active_tasks.md`: A list of tasks to be completed in the current phase. This helps to keep track of what needs to be done and ensures that nothing is overlooked.
 - `implementation-plan.md`: A detailed plan for implementing the work in the current phase. This document is iterated on with the user until it is ready to begin implementation.
 - `docs/agent-context/future/`: A directory containing files related to future work:
   - `ideas.md`: A list of ideas for future work that may be considered in later phases.
@@ -61,11 +61,17 @@ To prepare for the next phase after a transition, use the `.github/prompts/prepa
 
 ## 📜 The Constitution (Axioms)
 
-The project is governed by a set of core principles defined in `docs/design/axioms/`. These are not suggestions; they are the laws of the system.
+The project is governed by a set of core principles defined in `docs/design/theory/axioms/`. These are not suggestions; they are the laws of the system.
 
-- **Consult Early**: Before designing a feature, check the relevant axioms (e.g., `physics.md`, `architecture.md`).
+- **Consult Early**: Before designing a feature, check the relevant axioms (e.g., `02-physics.md`, `03-architecture.md`, `04-integration.md`).
 - **Verify Often**: During implementation, ask yourself: "Does this violate the Law of Late Binding? Is this deterministic?"
 - **Update**: If a new pattern emerges that contradicts an axiom, we must either refine the axiom or refactor the code. We do not ignore the contradiction.
+
+High-signal pointers (integration/theme work):
+
+- Constitution index: `docs/design/theory/axioms.md`
+- Consumer contract & boundaries: RFC010 + RFC013
+- Theme integration contract: RFC014
 
 ## Tooling & Conventions
 
@@ -83,11 +89,21 @@ The project is governed by a set of core principles defined in `docs/design/axio
   - **Do not** use `ts-node`, `tsx`, or experimental flags (`--experimental-strip-types`). Node 24 supports this natively. - **Never install** `ts-node` or `tsx`.
   - **Troubleshooting**: If running a `.ts` file with `node` fails, **STOP**. Do not assume these instructions are outdated. Do not try to install other tools. Surface the error to the user immediately.
 
+### Linting (ESLint)
+
+- Entry point modules are required to have JSDoc block comments (enforced via `eslint-plugin-jsdoc`).
+- If you add/move an entry point, update the targeted file list override in `eslint.config.js`.
+- If VS Code doesn’t pick up new ESLint config/plugins, run “ESLint: Restart ESLint Server”.
+
+### UX / Automation Policy
+
+- **No Browser Dialogs**: Do not use `alert()`, `confirm()`, or `prompt()` in non-vendor code (`src/**`, `site/src/**`, `scripts/**`). Use state-driven notices/toasts instead. This is enforced via ESLint.
+
 ### Directory Management
 
 - **Stay in Root**: Always execute commands from the workspace root. Do not change the global working directory.
 - **Subdirectories**: If a command must run in a subdirectory, use chaining (e.g., `cd site && pnpm build`) or the `-C` / `--filter` flags where available.
-- **Paths**: Refer to files relative to the workspace root (e.g., `docs/agent-context/task-list.md`).
+- **Paths**: Refer to files relative to the workspace root (e.g., `docs/agent-context/brain/state/active_tasks.md`).
 
 ### Development Environment
 
@@ -95,6 +111,13 @@ The project is governed by a set of core principles defined in `docs/design/axio
 - **URL**: Access the site at `https://color-system.localhost/`.
 - **No Manual Start**: Do NOT run `pnpm docs:dev` or `pnpm dev` manually. Assume the server is up.
 - **Troubleshooting**: If the server is down, run `locald up`. If that fails, **STOP** and raise the issue to the user.
+
+### Refactoring Protocols
+
+- **Atomic Context Switching**: Never initiate a new refactoring task until the previous one is verified (Green).
+  - _Implementation_: Refactor A -> Verify A (Test/Build) -> Read files for Refactor B.
+- **Destructive Safety**: If a file must be deleted to be replaced, the replacement must happen in the **immediate next tool call**.
+  - _Rule_: No reads, no searches, no thinking in between `rm` and `create_file`.
 
 ### Project Structure
 

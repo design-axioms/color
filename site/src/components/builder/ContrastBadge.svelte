@@ -1,6 +1,6 @@
 <script lang="ts">
   import { contrastForPair } from "@axiomatic-design/color/math";
-  import type { ColorSpec, Theme } from "@axiomatic-design/color/types";
+  import type { Theme } from "@axiomatic-design/color/types";
 
   interface Props {
     slug: string;
@@ -9,60 +9,56 @@
     showStatus?: boolean;
   }
 
-  let { slug, mode, solved, showStatus: _showStatus = false }: Props = $props();
+  const {
+    slug,
+    mode,
+    solved,
+    showStatus: _showStatus = false,
+  }: Props = $props();
 
-  let surface = $derived(solved?.surfaces.find((s) => s.slug === slug));
-  let computed = $derived(surface?.computed);
+  const surface = $derived(solved?.surfaces.find((s) => s.slug === slug));
+  const computed = $derived(surface?.computed);
 
   // Lightness values for math
-  let bgL = $derived(computed ? computed[mode].background : null);
-  let polarity = $derived(surface?.polarity);
-
-  // Color specs for visualization
-  let bgSpec = $derived(solved?.backgrounds.get(slug)?.[mode]);
+  const bgL = $derived(computed ? computed[mode].background : null);
+  const polarity = $derived(surface?.polarity);
 
   // Page Background (for Hierarchy Delta)
-  let pageBg = $derived(solved?.backgrounds.get("page")?.[mode]);
-  let pageL = $derived(pageBg?.l ?? (mode === "light" ? 1 : 0));
+  const pageBg = $derived(solved?.backgrounds.get("page")?.[mode]);
+  const pageL = $derived(pageBg?.l ?? (mode === "light" ? 1 : 0));
 
   // Hierarchy Delta (Surface vs Page)
-  let deltaLc = $derived(
+  const deltaLc = $derived(
     bgL !== null ? Math.round(Math.abs(contrastForPair(pageL, bgL))) : 0,
   );
 
   // Text Contrast (Safety)
   // Logic from math.ts textLightness
-  let textL = $derived(
+  const textL = $derived(
     polarity === "page" ? (mode === "light" ? 0 : 1) : mode === "light" ? 1 : 0,
   );
 
-  let contrast = $derived(bgL !== null ? contrastForPair(textL, bgL) : 0);
-  let score = $derived(Math.round(contrast));
+  const contrast = $derived(bgL !== null ? contrastForPair(textL, bgL) : 0);
+  const score = $derived(Math.round(contrast));
 
-  let status = $derived.by(() => {
+  const status = $derived.by(() => {
     if (score < 45) return "Fail";
     if (score < 60) return "Weak";
     if (score < 75) return "Good";
     return "High";
   });
 
-  let strokeClass = $derived.by(() => {
-    if (score < 45) return "stroke-error";
-    if (score < 60) return "stroke-warning";
-    return "stroke-success";
+  const toneClass = $derived.by(() => {
+    if (score < 60) return "text-warning";
+    return "text-positive";
   });
-
-  function toCss(c: ColorSpec | undefined | null): string {
-    if (!c) return "transparent";
-    return `oklch(${c.l} ${c.c} ${c.h})`;
-  }
 </script>
 
 {#if surface && computed}
   <div class="badge-group font-mono">
     <!-- Hierarchy Badge (Delta from Page) -->
     <span
-      class="hierarchy-badge surface-workspace bordered"
+      class="hierarchy-badge surface-workspace bordered {toneClass}"
       title="Hierarchy: {deltaLc} Lc units from Page background
 Text Contrast: {score} Lc ({status})"
     >
@@ -73,17 +69,15 @@ Text Contrast: {score} Lc ({status})"
         class="hierarchy-icon"
         aria-hidden="true"
       >
-        <!-- Outer Circle (Page) -->
-        <circle cx="12" cy="12" r="12" fill={toCss(pageBg)} />
-        <!-- Inner Circle (Surface) -->
         <circle
           cx="12"
           cy="12"
-          r="6"
-          fill={toCss(bgSpec)}
-          class={strokeClass}
+          r="10"
+          fill="none"
+          stroke="currentColor"
           stroke-width="2"
         />
+        <circle cx="12" cy="12" r="5" fill="currentColor" opacity="0.25" />
       </svg>
       <span class="delta-value">Δ L<sup>c</sup> {deltaLc}</span>
     </span>
@@ -110,7 +104,6 @@ Text Contrast: {score} Lc ({status})"
 
   .hierarchy-icon {
     border-radius: 50%;
-    border: 1px solid var(--computed-border-dec-color);
   }
 
   /* Status Colors mapped to CSS variables */

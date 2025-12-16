@@ -1,6 +1,5 @@
 ---
 import DefaultHead from "@astrojs/starlight/components/Head.astro";
-import type { Props } from "@astrojs/starlight/props";
 
 import "../styles/fonts.css";
 ---
@@ -13,25 +12,28 @@ import "../styles/fonts.css";
   crossorigin
 />
 <script is:inline>
-  // Easter egg: Check for ?font=pennstander or ?fun=true to enable the handwritten font
-  if (typeof window !== "undefined") {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get("font") === "pennstander" || params.get("fun") === "true") {
-      document.documentElement.classList.add("font-pennstander");
-      console.log(
-        "%cPennstander Mode Activated! 🖊️",
-        "font-family: 'Pennstander Math'; font-size: 20px; color: #ff007f;",
-      );
-    }
-  }
+  (() => {
+    const root = document.documentElement;
+
+    // Bootstrap semantic theme state for first paint.
+    // This avoids a boot-time "animate into dark" when the user is already in dark mode.
+    // ThemeManager will take over and keep this in sync.
+    root.setAttribute("data-axm-motion", "tau");
+
+    const theme = root.getAttribute("data-theme");
+    const mode = theme === "dark" || theme === "light" ? theme : "system";
+    const systemResolved = matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light";
+    const resolved = mode === "system" ? systemResolved : mode;
+
+    root.setAttribute("data-axm-mode", mode);
+    root.setAttribute("data-axm-resolved-mode", resolved);
+  })();
 </script>
 <script>
-  import "@axiomatic-design/color/inspector";
+  import { initStarlightAxiomatic } from "../lib/starlight-axiomatic";
 
-  // Always inject the debugger (it starts in a dormant state with a toggle button)
-  if (!document.querySelector("axiomatic-debugger")) {
-    const el = document.createElement("axiomatic-debugger");
-    document.body.appendChild(el);
-  }
+  initStarlightAxiomatic();
 </script>
 <DefaultHead {...Astro.props} />

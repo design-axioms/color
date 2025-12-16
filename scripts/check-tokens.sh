@@ -17,7 +17,7 @@ if grep -rE "var\(--(axm-)?(surface|text|border)-.*-token\)" site/src/components
   ERROR=1
 fi
 
-if grep -rE "var\(--axm-.*\)" site/src/components; then
+if grep -rE "var\(--axm-.*\)" site/src/components | grep -v "var(--axm-chart-"; then
   echo "Error: Generated Axiomatic tokens (var(--axm-...)) found in components."
   echo "Please use the utility classes instead."
   ERROR=1

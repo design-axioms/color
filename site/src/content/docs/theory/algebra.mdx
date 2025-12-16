@@ -2,111 +2,64 @@
 title: The Algebra of Color Design
 description: The Grand Unified Algebra (v4.1) for UI rendering.
 slug: theory/algebra
+tableOfContents: false
 ---
 
 import { Aside } from "@astrojs/starlight/components";
-import PlainEnglish from "../../../components/PlainEnglish.svelte";
+import TufteLayoutActivator from "../../../components/TufteLayoutActivator.astro";
 import "@fontsource-variable/eb-garamond";
 
-<style>{`
-  .sl-markdown-content {
-    font-family: "EB Garamond Variable", "EB Garamond", serif;
-    font-size: 1.25rem;
-    line-height: 1.6;
-    max-width: 65ch;
-    text-align: justify;
-    hyphens: auto;
-  }
+<TufteLayoutActivator />
 
-  /* Headings */
-  .sl-markdown-content h2 {
-    font-family: "EB Garamond Variable", "EB Garamond", serif;
-    font-weight: 600;
-    margin-top: 3rem !important;
-    margin-bottom: 1.25rem !important;
-    border-bottom: 1px solid var(--axm-border-dec-token);
-    padding-bottom: 0.5rem;
-    letter-spacing: -0.01em;
-  }
+> _Context_: The physics and grammar of the color system.[^axiomatic]
 
-  .sl-markdown-content h3 {
-    font-family: "EB Garamond Variable", "EB Garamond", serif;
-    font-weight: 500;
-    margin-top: 2.5rem !important;
-    margin-bottom: 1rem !important;
-    font-size: 1.5rem !important;
-  }
+This document defines the "Physics" of the color system. It replaces the previous static heuristic model with a _Reactive Physics Model_ based on continuous state interpolation.
 
-  /* Math Centering */
-  .katex-display {
-    display: block !important;
-    text-align: center;
-    margin: 2rem 0;
-    width: 100%;
-    overflow-x: auto;
-  }
-  
-  .katex-display > .katex {
-    display: inline-block;
-    text-align: center;
-  }
-`}</style>
+## 1. The State Space ($\Sigma$)
 
-> **Context**: The physics and grammar of the Axiomatic Color system.
+> **Definition 1** (State Configuration $\Sigma$). The system configuration is a 5-tuple $\Sigma = \langle \alpha, \mathcal{V}, \tau, \gamma, \mu \rangle$ where:
 
-This document defines the "Physics" of the Axiomatic Color system. It replaces the previous static heuristic model with a **Reactive Physics Model** based on continuous state interpolation.
+1.  **Atmosphere** ($\alpha$): The environmental vector $\alpha = \langle H, \beta \rangle$.
+    - $H \in S^1$: _Hue_. The base angle of the environment.
+    - $\beta \in [ 0, 1 ]$: _Vibrancy Coefficient_. A scalar multiplier acting on the maximum potential chroma ($C$) of the environment.
+2.  **Voice** ($\mathcal{V}$): The semantic intent.
+    - Let $T$ be the set of pre-solved lightness constants derived by the lighting function $f_L$ (see Section 2.1).
+    - $\mathcal{V} \in T$: A reference to a specific semantic intent (e.g., _High Contrast_).
+      <Aside type="note" title="Implementation">
+        In the Axiomatic system, intents map to tokens like `text-high` and
+        `text-subtle`.
+      </Aside>
+3.  **Time** ($\tau$): The normalized temporal parameter.
+    - $\tau \in [ -1, 1 ]$: Represents the shift from Night ($-1$) to Day ($+1$).
+4.  **Gain** ($\gamma$): The user's contrast preference.
+    - $\gamma \in [ 1, \infty )$. Amplifies the _Voice_ ($\mathcal{V}$) target contrast. Used for _High Contrast Mode_.
+5.  **Mode** ($\mu$): The rendering technique.
+    - $\mu \in \{ 0, 1 \}$:
+      - 0: _Rich Mode_ (Standard).
+      - 1: _X-Ray Mode_ (Forced Colors).[^remark1]
 
-## 1. The State Space (Σ)
+[^remark1]: **Remark**:
 
-The system state at any point in the DOM tree is defined by the **Unified State Tuple** $\Sigma$. This configuration space represents the continuous interpolation between environmental extremes and system modes.
+    - **Atmosphere**: The "Weather" of the room.
+    - **Voice**: The "Script".
+    - **Time**: The "Clock".
+    - **Gain**: The "Volume Knob". (Turn it up for High Contrast).
+    - **Mode**: The "Physics Engine". (Rich vs. X-Ray).
 
-$$ \Sigma = \langle \alpha, \nu, \tau, \gamma, \sigma \rangle $$
-
-Where:
-
-1.  **Atmosphere ($\alpha$)**: The environmental vector.
-    $$ \alpha = \langle H, \beta \rangle $$
-    - $H \in S^1$: **Hue**. The base angle of the environment.
-    - $\beta \in [0, 1]$: **Vibrancy Coefficient**. The maximum potential chroma of the environment.
-
-2.  **Voice ($\nu$)**: The semantic intent.
-    - $\nu \in \text{Tokens}$: A reference to a pre-solved lightness constant derived by **Genesis** (e.g., `text-high`, `text-subtle`).
-
-3.  **Time ($\tau$)**: The continuous temporal scalar.
-    - $\tau \in [-1, 1]$: Represents the shift from Night ($-1$) to Day ($+1$).
-
-4.  **Gain ($\gamma$)**: The user's contrast preference.
-    - $\gamma \ge 1.0$: Amplifies the Voice ($\nu$) target contrast.
-    - Used for **High Contrast Mode**.
-
-5.  **System ($\sigma$)**: The rendering mode.
-    - $\sigma \in \{0, 1\}$:
-      - $0$: **Rich Mode** (Standard).
-      - $1$: **X-Ray Mode** (Forced Colors).
-
-<PlainEnglish>
-- **Atmosphere ($\alpha$)**: The "Weather" of the room.
-- **Voice ($\nu$)**: The "Script".
-- **Time ($\tau$)**: The "Clock".
-- **Gain ($\gamma$)**: The "Volume Knob". (Turn it up for High Contrast).
-- **System ($\sigma$)**: The "Physics Engine". (Rich vs. X-Ray).
-</PlainEnglish>
-
-## 2. The Architecture: Genesis vs. Algebra
+## 2. The Architecture: Static Initialization vs. Runtime Algebra
 
 The system is explicitly split into two domains to guarantee performance and correctness.
 
-### 2.1. Genesis (Build Time)
+### 2.1. Pre-Computation Routine (Static Phase)
 
-The **Genesis** engine solves the "Hard Math" (APCA Contrast) offline. It calculates the exact Lightness ($L$) required for a specific Voice ($\nu$) to be legible against a specific background.
+The _initialization routine_[^genesis] solves the "Hard Math" (APCA Contrast) offline. It calculates the exact Lightness ($L$) required for a specific Voice ($\mathcal{V}$) to be legible against a specific background.
 
-It also applies a **Helmholtz-Kohlrausch Buffer** to offset the perceptual lightness of vibrant colors.
+It also applies a _Helmholtz-Kohlrausch Buffer_ to offset the perceptual lightness of vibrant colors.
 
-{/* prettier-ignore */}
 $$
 \begin{aligned}
-\Psi(K, T) &\rightarrow \nu_{constant} \\
-L_{target} &= L_{APCA} + (k_{hk} \times \beta)
+\Psi(K, \tau) &\to \mathcal{V}_{\text{constant}} \\
+L_{\text{target}} &= L_{\text{APCA}} + (k_{hk} \cdot \beta)
 \end{aligned}
 $$
 
@@ -114,79 +67,120 @@ These constants are baked into the CSS as variables (e.g., `--text-high-L: 98%`)
 
 ### 2.2. Algebra (Render Time)
 
-The **Algebra** (CSS Engine) is a "Switching Mixer." It resolves the final color based on the System Mode ($\sigma$).
+The _Algebra_ (CSS Engine)[^algebra] is a "Switching Mixer." It resolves the final color based on the System Mode ($\mu$).
 
-$$ \Phi(\Sigma) = \begin{cases} \Phi_{rich}(\alpha, \nu, \tau, \gamma) & \text{if } \sigma = 0 \\ \Phi_{xray}(\alpha, \nu) & \text{if } \sigma = 1 \end{cases} $$
+$$
+\Phi(\Sigma) = \begin{cases}
+\Phi_{\text{rich}}(\alpha, \mathcal{V}, \tau, \gamma) & \text{if } \mu = 0 \\
+\Phi_{\text{xray}}(\alpha, \mathcal{V}) & \text{if } \mu = 1
+\end{cases}
+$$
 
 ## 3. The Operators
 
-Classes in the system are **Operators** that transform the state $\Sigma \rightarrow \Sigma'$.
+Classes in the system are _Operators_ that transform the state $\Sigma \to \Sigma'$.
 
 ### 3.1. The Surface Split
 
 We distinguish between two topological types of surfaces.
 
-#### 3.1.1. Glass Surfaces ($S_{glass}$)
+#### 3.1.1. Glass Surfaces ($S_{\text{glass}}$)
 
-Glass surfaces are **Filters**. They inherit the Atmosphere ($\alpha$) from their parent but apply **Bicone Dampening** to ensure the background remains a subtle tint, safe for text.
-
-{/* prettier-ignore */}
-$$ S_{glass}(\langle \alpha, \nu, \tau \rangle) = \langle \text{Dampen}(\alpha), \nu_{reset}, \tau \rangle $$
-
-#### 3.1.2. Solid Surfaces ($S_{solid}$)
-
-Solid surfaces are **Emitters**. They represent "Genesis Pairs" (like Primary Buttons) where the color is derived at build-time to be maximal. They do _not_ dampen. They establish a _new_ Atmosphere.
+Glass surfaces are _Filters_. They inherit the Atmosphere ($\alpha$) from their parent but apply _Bicone Dampening_ to ensure the background remains a subtle tint, safe for text.
 
 {/* prettier-ignore */}
-$$ S_{solid}(\langle \alpha, \nu, \tau \rangle) = \langle \alpha_{new}, \nu_{new}, \tau \rangle $$
+$$
+S_{\text{glass}}(\langle \alpha, \mathcal{V}, \tau \rangle) = \langle \text{Dampen}(\alpha), \mathcal{V}_{\text{reset}}, \tau \rangle
+$$
+
+#### 3.1.2. Solid Surfaces ($S_{\text{solid}}$)
+
+Solid surfaces are _Emitters_. They represent "pre-calculated pairs" (like Primary Buttons) where the color is derived at build-time to be maximal. They do _not_ dampen. They establish a _new_ Atmosphere.
+
+{/* prettier-ignore */}
+$$
+S_{\text{solid}}(\langle \alpha, \mathcal{V}, \tau \rangle) = \langle \alpha_{\text{new}}, \mathcal{V}_{\text{new}}, \tau \rangle
+$$
 
 ## 4. The Universal Safety Theorem (Adaptive Clamping)
 
-To guarantee that text is always readable on Glass Surfaces in **Rich Mode**, we enforce the **Universal Safety Theorem**. The Chroma ($C$) of any Glass Surface is mathematically constrained to lie within the **Safe Bicone**.
+To guarantee that text is always readable on Glass Surfaces in _Rich Mode_, we enforce the _Universal Safety Theorem_. The Chroma ($C$) of any Glass Surface is mathematically constrained to lie within the _Safe Bicone_.
 
-### 4.1. The Vibrancy Limit (Cₗᵢₘᵢₜ)
+### 4.1. The Vibrancy Limit ($C_{\text{limit}}$)
 
 The maximum allowed Chroma is the intersection of three functions:
 
-$$ C_{limit} = \beta(H) \cdot \text{Taper}(L) \cdot \zeta(\tau) $$
+$$
+C_{\text{limit}} = \beta(H) \cdot \text{Taper}(L) \cdot \zeta(\tau)
+$$
 
-1.  **The Sine Wave ($\beta(H)$)**: The hue-dependent boundary.
-    {/* prettier-ignore */}
-    $$ \beta(H) \approx C_{floor} + (C_{ceil} - C_{floor}) \cdot \frac{1 + \sin(H + \phi)}{2} $$
+1.  _The Sine Wave_ ($\beta(H)$): The hue-dependent boundary.
 
-2.  **The Bicone Taper ($\text{Taper}(L)$)**: The lightness-dependent boundary. We use a **Linear Taper** (Absolute Value) to ensure precise containment within the sRGB gamut.
-    $$ \text{Taper}(L) = 1 - |2L - 1| $$
+    $$
+    \beta(H) = C_{\text{floor}} + (C_{\text{ceil}} - C_{\text{floor}}) \cdot \left( \frac{1 + \sin(H + \phi)}{2} \right)
+    $$
 
-3.  **The Tunnel ($\zeta(\tau)$)**: The motion-dependent boundary. We use a **Parabolic Ease** to prevent velocity shock during transitions.
-    $$ \zeta(\tau) = \tau^2 $$
+2.  _The Bicone Taper_ ($\text{Taper}(L)$): The lightness-dependent boundary. Defined as a _Linear Taper_ (Absolute Value).
 
-<PlainEnglish>
-- **The Sine Wave**: Yellows can be brighter than Blues.
-- **The Bicone**: As you get closer to White or Black, the allowed chroma drops linearly to zero.
-- **The Tunnel**: During the twilight transition, we dim the colors to ensure safety.
-</PlainEnglish>
+    <Aside type="note" title="Rationale">
+      The linear absolute value ensures precise containment within the sRGB
+      gamut.
+    </Aside>
+
+    $$
+    \text{Taper}(L) = 1 - |2L - 1|
+    $$
+
+3.  _The Tunnel_ ($\zeta(\tau)$): The motion-dependent boundary. Defined as a _Parabolic Ease_ function.
+
+    <Aside type="note" title="Note">
+      Parabolic easing prevents velocity shock (derivative discontinuity) during
+      state transitions.
+    </Aside>
+
+    $$
+    \zeta(\tau) = \tau^2
+    $$
+
+    [^remark2]
+
+[^remark2]: **Remark**:
+
+    - _The Sine Wave_: Yellows can be brighter than Blues.
+    - _The Bicone_: As you get closer to White or Black, the allowed chroma drops linearly to zero.
+    - _The Tunnel_: During the twilight transition, we dim the colors to ensure safety.
 
 ### 4.2. The Dampening Function
 
 For Glass Surfaces, the resolved Chroma is the minimum of the requested Vibrancy and the Limit.
 
 {/* prettier-ignore */}
-$$ C_{resolved} = \min(C_{requested}, C_{limit}) $$
+$$
+C_{\text{resolved}} = \min(C_{\text{requested}}, C_{\text{limit}})
+$$
 
 ## 5. The Hollow State (X-Ray Mode)
 
-When $\sigma = 1$ (Forced Colors), the system enters **X-Ray Mode**.
+When $\mu = 1$ (Forced Colors), the system enters _X-Ray Mode_.
 
-- **Physics is Disabled**: The Bicone/Tunnel math is skipped.
-- **Topology is Transformed**: Surfaces are no longer defined by **Area** (Background Color) but by **Boundary** (Border).
+- _Physics is Disabled_: The Bicone/Tunnel math is skipped.
+- _Topology is Transformed_: Surfaces are no longer defined by _Area_ (Background Color) but by _Boundary_ (Border).
 
-$$ P(\alpha) \rightarrow \text{BorderWidth} \times \text{SystemColor} $$
+$$
+P(\alpha) \to \text{BorderWidth} \times \text{SystemColor}
+$$
 
 This ensures that the semantic structure of the UI is preserved even when the operating system strips all background colors.
 
 ## 6. Summary
 
-1.  **State is Unified**: $\Sigma = \langle \alpha, \nu, \tau, \gamma, \sigma \rangle$.
-2.  **Safety is Geometric**: The **Safe Bicone** ensures text legibility by clamping Chroma linearly.
-3.  **Mode is Topological**: **Rich Mode** paints pixels; **X-Ray Mode** draws lines (The Hollow State).
-4.  **Execution is Split**: Genesis solves the goals; Algebra enforces the constraints.
+1.  _State is Unified_: $\Sigma = \langle \alpha, \mathcal{V}, \tau, \gamma, \mu \rangle$.
+2.  _Safety is Geometric_: The _Safe Bicone_ ensures text legibility by clamping Chroma linearly.
+3.  _Mode is Topological_: _Rich Mode_ paints pixels; _X-Ray Mode_ draws lines (The Hollow State).
+4.  _Execution is Split_: The initialization routine solves the goals; Algebra enforces the constraints.
+
+[^axiomatic]: The **Axiomatic Color** system (v4.1).
+
+[^genesis]: The **Genesis Engine** implements this routine in v2.0.
+
+[^algebra]: Implemented by the **Axiomatic CSS** runtime.

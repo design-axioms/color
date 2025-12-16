@@ -5,7 +5,7 @@
     style?: string | Record<string, string | number>;
   }
 
-  let { children, class: clazz = "", style = "", ...props }: Props = $props();
+  const { children, class: clazz = "", style = "", ...props }: Props = $props();
 
   // Combine class
   const finalClass = (["not-content", clazz || ""] as string[])

@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Check if we are in an active phase
-if [ ! -s "docs/agent-context/current/task-list.md" ]; then
-  echo "Error: No active phase detected (task-list.md is empty)."
+if [ ! -s "docs/agent-context/brain/state/active_tasks.md" ]; then
+  echo "Error: No active phase detected (active_tasks.md is empty)."
   echo "Please use the 'Starting a New Phase' workflow if you are beginning a new phase."
   exit 1
 fi

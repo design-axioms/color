@@ -47,7 +47,7 @@
 
 <div class="token-visualizer">
   {#each tokens as token (token.name)}
-    <div class="token-card surface-card bordered">
+    <div class="token-card surface-card bordered shadow-sm">
       <div class="card-header surface-workspace">
         <div class="token-info">
           <div class="token-name">
@@ -108,15 +108,25 @@
   .token-card {
     border-radius: 12px;
     overflow: hidden;
-    box-shadow: var(--shadow-sm);
   }
 
   .card-header {
+    position: relative;
     padding: 1.25rem 1.5rem;
-    border-bottom: 1px solid var(--computed-border-dec-color);
     display: flex;
     justify-content: space-between;
     align-items: center;
+  }
+
+  .card-header::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.12;
   }
 
   .token-info {
@@ -181,9 +191,20 @@
 
   .card-metrics-mobile {
     display: none;
+    position: relative;
     padding: 1rem 1.5rem;
     gap: 2rem;
-    border-top: 1px solid var(--computed-border-dec-color);
+  }
+
+  .card-metrics-mobile::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.12;
   }
 
   .unit {

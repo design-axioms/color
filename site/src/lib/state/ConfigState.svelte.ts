@@ -24,6 +24,8 @@ export class ConfigState {
   config = $state<SolverConfig>(DEFAULT_CONFIG);
   vibeId = $state<string>("");
   syncDark = $state<boolean>(true);
+  notice = $state<string | null>(null);
+  error = $state<string | null>(null);
 
   constructor() {
     if (
@@ -142,14 +144,12 @@ export class ConfigState {
   }
 
   resetConfig(): void {
-    if (
-      confirm(
-        "Are you sure you want to reset to the default configuration? All changes will be lost.",
-      )
-    ) {
-      this.config = DEFAULT_CONFIG;
-      this.vibeId = "";
-    }
+    // UI should provide an explicit non-blocking confirmation affordance.
+    // This method performs the reset; callers can use `notice` to inform the user.
+    this.config = DEFAULT_CONFIG;
+    this.vibeId = "";
+    this.notice = "Reset to default configuration.";
+    this.error = null;
   }
 
   loadVibe(newVibeId: string): void {
@@ -195,9 +195,13 @@ export class ConfigState {
       // TODO: Validate schema?
       this.config = parsed;
       this.vibeId = ""; // Treat as custom
+      this.notice = `Loaded configuration from ${file.name}.`;
+      this.error = null;
     } catch (e) {
       console.error("Failed to load config file", e);
-      alert("Failed to load configuration file. Please check the format.");
+      this.error =
+        "Failed to load configuration file. Please check the format.";
+      this.notice = null;
     }
   }
 
@@ -236,7 +240,7 @@ export class ConfigState {
 
   removeKeyColor(key: string): void {
     this.markAsCustom();
-    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+
     delete this.config.anchors.keyColors[key];
   }
 
@@ -260,7 +264,6 @@ export class ConfigState {
         if (color) {
           surface.override[mode] = color;
         } else {
-          // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
           delete surface.override[mode];
         }
         return;

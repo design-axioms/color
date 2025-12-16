@@ -1,5 +1,0 @@
-- [x] **Scaffold**: Initialize a new VS Code extension project in `packages/vscode-extension`.
-- [x] **Infrastructure**: Set up `web-tree-sitter` and download necessary WASM grammars.
-- [x] **Language Server**: Implement the `CompletionItemProvider` using the defined queries.
-- [x] **Autocomplete**: Provide completion items for all generated tokens.
-- [x] **Decorators**: Render color swatches (squares) next to known token classes or variables.

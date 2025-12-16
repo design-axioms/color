@@ -24,8 +24,8 @@ try {
 }
 ---
 
-<div class="snippet-container not-content">
-  <div class="preview-header">
+<div class="snippet-container not-content bordered">
+  <div class="preview-header surface-workspace text-subtle">
     <span class="label">Preview</span>
   </div>
   <div class="preview-area surface-workspace">
@@ -39,24 +39,17 @@ try {
 <style>
   .snippet-container {
     margin: 2rem 0;
-    border: 1px solid var(--computed-border-dec-color);
     border-radius: 8px;
     overflow: hidden;
   }
 
   .preview-header {
-    background-color: var(--surface-workspace);
     padding: 0.5rem 1rem;
-    border-bottom: 1px solid var(--computed-border-dec-color);
     font-size: 0.875rem;
     font-weight: bold;
-    color: var(--computed-fg-color);
   }
 
   .preview-area {
     padding: 2rem;
-    /* Use a neutral background for the preview area to let surfaces stand out */
-    background-color: var(--surface-workspace);
-    border-bottom: 1px solid var(--computed-border-dec-color);
   }
 </style>

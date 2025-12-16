@@ -86,9 +86,9 @@
   });
 </script>
 
-<div class="demo-container surface-card">
+<div class="demo-container surface-card bordered">
   <!-- Graph -->
-  <div class="graph-container surface-workspace">
+  <div class="graph-container surface-workspace bordered">
     <svg viewBox="0 0 100 100" preserveAspectRatio="none" class="graph-svg">
       <!-- Grid -->
       <line
@@ -96,9 +96,11 @@
         y1="50"
         x2="100"
         y2="50"
-        stroke="var(--computed-border-dec-color)"
+        class="text-subtlest"
+        stroke="currentColor"
         stroke-width="0.5"
         stroke-dasharray="2 2"
+        opacity="0.4"
       />
 
       <!-- HSL Line (Wavy) -->
@@ -147,11 +149,7 @@
           >Lc {contrastScore}</span
         >
       </div>
-      <div
-        class="result-preview"
-        style:background-color={`oklch(${L_BG} ${C_BG} ${hue})`}
-        style:color="white"
-      >
+      <div class="result-preview surface-action text-inverse bordered">
         <span class="preview-text">Readable</span>
       </div>
       <div class="result-desc text-subtle">
@@ -165,11 +163,7 @@
         <span class="result-label text-subtle">Traditional (HSL)</span>
         <span class="result-score text-subtle">Lc {hslContrastScore}</span>
       </div>
-      <div
-        class="result-preview"
-        style:background-color={`hsl(${hue} 50% ${L_BG * 100}%)`}
-        style:color="white"
-      >
+      <div class="result-preview surface-action-soft text-inverse bordered">
         <span class="preview-text">Variable</span>
       </div>
       <div class="result-desc text-subtle">
@@ -183,8 +177,6 @@
   .demo-container {
     padding: 2rem;
     border-radius: 1rem;
-    border: 1px solid var(--computed-border-dec-color);
-    background: var(--computed-surface);
     user-select: none;
     font-family: var(--font-body, sans-serif);
   }
@@ -192,16 +184,10 @@
   .graph-container {
     position: relative;
     height: 14rem;
-    /* We can't easily use surface-workspace here because it's inside a surface-card */
-    /* But we can use the token if we must, or just use a hardcoded color for the graph bg */
-    /* Or better, use the surface-workspace class on the div */
-    background: var(--computed-surface);
     border-radius: 0.75rem;
-    border: 1px solid var(--computed-border-dec-color);
     margin-bottom: 2.5rem;
     overflow: hidden;
     cursor: crosshair;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
   }
 
   .graph-svg {
@@ -215,9 +201,9 @@
     top: 0;
     bottom: 0;
     width: 2px;
-    background: var(--computed-fg-color);
+    background: CanvasText;
+    opacity: 0.35;
     pointer-events: none;
-    box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
   }
 
   .graph-input {
@@ -292,9 +278,6 @@
     align-items: center;
     justify-content: center;
     height: 9rem;
-    box-shadow:
-      0 4px 6px -1px rgba(0, 0, 0, 0.1),
-      0 2px 4px -1px rgba(0, 0, 0, 0.06);
   }
 
   .preview-text {

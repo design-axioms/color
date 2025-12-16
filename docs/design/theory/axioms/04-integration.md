@@ -62,6 +62,34 @@ We adopt features that are "Newly Available" in major browsers (last 2 versions)
 - **CSS Features**: `light-dark()`, `@property`, `popover`, `:has()`.
 - **Runtime**: Node 24.
 
+## 11. Theme Switching: Endpoints vs. Continuity (The `light-dark()` Contract)
+
+We use `light-dark()` to select the correct **endpoint** for a given context (derived from `color-scheme`), but we do **not** rely on “animating `light-dark()`”.
+
+The continuity contract is:
+
+- **Endpoints**: `light-dark()` resolves immediately when `color-scheme` changes.
+- **Continuity**: the pixels stay continuous because we transition **registered, computed properties** (e.g. the surface/text colors derived from tokens) and/or a continuous state variable like `--tau`.
+
+In other words, `light-dark()` is a switch; the animation happens in the computed values that paint.
+
+### Integration Warning
+
+If an integration layer (a component library, theme framework, or a constructed stylesheet) sets `background-color`/`color` directly to mode-dependent values, or temporarily disables transitions (e.g. `transition: none`), it can defeat the continuity path even though the engine is correct. The fix is to let Axiomatic surfaces own the painted properties (or inherit them), and ensure transitions remain enabled for those properties.
+
+## Theme integration contract (runtime + adapters)
+
+Theme switching must remain deterministic, auditable, and boundary-scoped.
+
+- **Runtime**: Theme mode MUST be bridged through `ThemeManager` into an engine-owned semantic state on the root (e.g. `data-axm-mode`, `data-axm-resolved-mode`). Runtime code MUST NOT write/read CSS variables as an integration mechanism.
+- **Adapters**: Foreign paint systems MUST consume Axiomatic through adapter mappings that are confined to a single bridge stylesheet per adapter, and adapters MUST consume bridge exports (not engine-private plumbing).
+
+See the normative contracts:
+
+- RFC010 (consumer contract: no engine addressing)
+- RFC013 (adapters + bridge exports, single bridge file)
+- RFC014 (ThemeManager integration surface; semantic state; no plumbing)
+
 ## 10. Standard CSS First
 
 We write standard CSS, not a proprietary dialect.

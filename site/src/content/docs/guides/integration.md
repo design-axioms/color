@@ -71,6 +71,8 @@ By default, the generated CSS uses the `light-dark()` function and media queries
 
 You don't need to do anything. If the user's OS is in Dark Mode, your app is in Dark Mode.
 
+> **Note on smooth transitions**: `light-dark()` selects endpoints based on context; smoothness comes from transitioning the computed colors that actually paint (and optionally from continuous state like `--tau`). If another framework sets mode-dependent `background-color`/`color` directly (or disables transitions during toggles), you can see “snaps” even though the Axiomatic engine is correct.
+
 ### Strategy B: Manual Toggle
 
 If you want to offer a toggle button, you can force a specific mode by adding a class to the `<body>` (or any container).

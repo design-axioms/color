@@ -6,19 +6,22 @@
   <div class="grid-layout">
     <!-- Top Left: Base -->
     <div class="cell cell-base surface-card bordered shadow-sm">
-      <div class="avatar surface-workspace">A</div>
+      <div class="avatar surface-spotlight bordered">A</div>
       <div class="label text-subtle">Base</div>
     </div>
 
     <!-- Top Arrow -->
     <button
       type="button"
-      class="arrow-container arrow-top"
+      class="arrow-container arrow-top text-subtlest"
       class:active={activePath === "top"}
+      class:text-action={activePath === "top"}
       onmouseenter={() => (activePath = "top")}
       onmouseleave={() => (activePath = null)}
     >
-      <span class="arrow-label text-subtlest">+ Hue Brand</span>
+      <span class="arrow-label surface-page preset-bordered text-subtlest">
+        + Hue Brand
+      </span>
       <svg class="arrow-svg" viewBox="0 0 100 24" preserveAspectRatio="none">
         <path d="M0 12H98" stroke="currentColor" stroke-width="2" />
         <path
@@ -32,19 +35,24 @@
 
     <!-- Top Right: Hue -->
     <div class="cell cell-hue surface-card hue-brand bordered shadow-sm">
-      <div class="avatar surface-workspace">B</div>
+      <div class="avatar surface-spotlight bordered">B</div>
       <div class="label text-subtle">Hue</div>
     </div>
 
     <!-- Left Arrow -->
     <button
       type="button"
-      class="arrow-container arrow-left"
+      class="arrow-container arrow-left text-subtlest"
       class:active={activePath === "bottom"}
+      class:text-action={activePath === "bottom"}
       onmouseenter={() => (activePath = "bottom")}
       onmouseleave={() => (activePath = null)}
     >
-      <span class="arrow-label vertical text-subtlest">+ Text Subtle</span>
+      <span
+        class="arrow-label vertical surface-page preset-bordered text-subtlest"
+      >
+        + Text Subtle
+      </span>
       <svg
         class="arrow-svg vertical"
         viewBox="0 0 24 100"
@@ -62,10 +70,15 @@
 
     <!-- Right Arrow -->
     <div
-      class="arrow-container arrow-right"
+      class="arrow-container arrow-right text-subtlest"
       class:active={activePath === "top"}
+      class:text-action={activePath === "top"}
     >
-      <span class="arrow-label vertical text-subtlest">+ Text Subtle</span>
+      <span
+        class="arrow-label vertical surface-page preset-bordered text-subtlest"
+      >
+        + Text Subtle
+      </span>
       <svg
         class="arrow-svg vertical"
         viewBox="0 0 24 100"
@@ -83,16 +96,19 @@
 
     <!-- Bottom Left: Subtle -->
     <div class="cell cell-subtle surface-card bordered shadow-sm text-subtle">
-      <div class="avatar surface-workspace">C</div>
+      <div class="avatar surface-spotlight bordered">C</div>
       <div class="label text-subtle">Subtle</div>
     </div>
 
     <!-- Bottom Arrow -->
     <div
-      class="arrow-container arrow-bottom"
+      class="arrow-container arrow-bottom text-subtlest"
       class:active={activePath === "bottom"}
+      class:text-action={activePath === "bottom"}
     >
-      <span class="arrow-label text-subtlest">+ Hue Brand</span>
+      <span class="arrow-label surface-page preset-bordered text-subtlest">
+        + Hue Brand
+      </span>
       <svg class="arrow-svg" viewBox="0 0 100 24" preserveAspectRatio="none">
         <path d="M0 12H98" stroke="currentColor" stroke-width="2" />
         <path
@@ -108,7 +124,7 @@
     <div
       class="cell cell-combined surface-card hue-brand bordered shadow-sm text-subtle"
     >
-      <div class="avatar surface-workspace">D</div>
+      <div class="avatar surface-spotlight bordered">D</div>
       <div class="label text-subtle">Combined</div>
     </div>
   </div>
@@ -156,7 +172,6 @@
 
   .cell:hover {
     transform: scale(1.05);
-    box-shadow: var(--shadow-md);
     z-index: 10;
   }
 
@@ -169,7 +184,6 @@
     justify-content: center;
     font-weight: bold;
     font-size: 1.5rem;
-    background-color: rgba(0, 0, 0, 0.05);
   }
 
   .arrow-container {
@@ -179,7 +193,6 @@
     justify-content: center;
     width: 100%;
     height: 100%;
-    color: var(--computed-text-subtlest);
     opacity: 0.3;
     transition: all 0.3s;
     background: none;
@@ -191,7 +204,6 @@
   .arrow-container:hover,
   .arrow-container.active {
     opacity: 1;
-    color: var(--computed-surface-action);
   }
 
   .arrow-svg {
@@ -210,7 +222,6 @@
     font-size: 0.625rem;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    background: var(--computed-surface-page);
     padding: 0.25rem 0.5rem;
     z-index: 1;
     white-space: nowrap;

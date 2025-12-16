@@ -70,6 +70,10 @@ export interface ThemeManagerOptions {
   faviconGenerator?: (color: string) => string;
 }
 
+/**
+ * Manages the theme (light/dark/system) for the application.
+ * Handles system preference changes, manual overrides, and inverted surfaces.
+ */
 export class ThemeManager {
   private root: HTMLElement | null;
   private lightClass?: string;
@@ -79,13 +83,19 @@ export class ThemeManager {
   private mediaQuery: MediaQueryList | null = null;
   private invertedSelectors: string[] = [];
   private observer: MutationObserver | null = null;
+  private hasMarkedReady = false;
 
+  /**
+   * Creates a new ThemeManager instance.
+   * @param options Configuration options for the manager.
+   */
   constructor(options: ThemeManagerOptions = {}) {
     if (typeof document !== "undefined") {
       this.root = options.root ?? document.documentElement;
       this.lightClass = options.lightClass;
       this.darkClass = options.darkClass;
       this.faviconGenerator = options.faviconGenerator;
+
       this.mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
       this.mediaQuery.addEventListener("change", this.handleSystemChange);
 
@@ -97,6 +107,27 @@ export class ThemeManager {
     } else {
       // Fallback for SSR/testing
       this.root = null;
+    }
+  }
+
+  private syncSemanticState(): void {
+    if (!this.root) return;
+    this.root.setAttribute("data-axm-mode", this._mode);
+    this.root.setAttribute("data-axm-resolved-mode", this.resolvedMode);
+
+    // Gate `--tau` transitions until after the initial semantic state is present.
+    // This prevents a boot-time animate-in when CSS loads with a non-default tau.
+    if (!this.hasMarkedReady) {
+      this.hasMarkedReady = true;
+      if (typeof requestAnimationFrame !== "undefined") {
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            this.root?.setAttribute("data-axm-ready", "true");
+          });
+        });
+      } else {
+        this.root.setAttribute("data-axm-ready", "true");
+      }
     }
   }
 
@@ -187,10 +218,19 @@ export class ThemeManager {
     });
   }
 
+  /**
+   * Gets the current theme mode setting.
+   * @returns The current mode ('light', 'dark', or 'system').
+   */
   get mode(): ThemeMode {
     return this._mode;
   }
 
+  /**
+   * Gets the resolved theme mode (actual appearance).
+   * If mode is 'system', returns the system preference.
+   * @returns The resolved mode ('light' or 'dark').
+   */
   get resolvedMode(): "light" | "dark" {
     if (this._mode === "system") {
       if (this.mediaQuery) {
@@ -201,7 +241,15 @@ export class ThemeManager {
     return this._mode;
   }
 
+  /**
+   * Sets the theme mode.
+   * @param mode The new mode ('light', 'dark', or 'system').
+   */
   setMode(mode: ThemeMode): void {
+    this.applyMode(mode);
+  }
+
+  private applyMode(mode: ThemeMode): void {
     this._mode = mode;
     this.apply();
     this.sync();
@@ -209,6 +257,7 @@ export class ThemeManager {
 
   private handleSystemChange = (): void => {
     if (this._mode === "system") {
+      this.syncSemanticState();
       this.sync();
     }
   };
@@ -238,6 +287,9 @@ export class ThemeManager {
       }
     }
 
+    // Keep semantic state consistent even if consumers never call setMode again.
+    this.syncSemanticState();
+
     this.updateInvertedSurfaces();
   }
 
@@ -253,6 +305,9 @@ export class ThemeManager {
     }
   }
 
+  /**
+   * Cleans up event listeners and observers.
+   */
   dispose(): void {
     if (this.mediaQuery) {
       this.mediaQuery.removeEventListener("change", this.handleSystemChange);

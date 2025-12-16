@@ -6,7 +6,7 @@ description: How to use the visual Theme Studio to generate your configuration.
 The **Theme Studio** is a web-based tool that allows you to visually design your theme and export the configuration for your project.
 
 <div class="docs-cta-container">
-  <a href="/studio/" class="docs-cta-button">
+    <a href="/studio/" class="docs-cta-button surface-action hue-brand bordered">
     Launch Theme Studio →
   </a>
 </div>

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { generateTokensCss } from "../generator.ts";
+import { generateTokensCss } from "../generator/index.ts";
 import type { ColorSpec, Mode, SurfaceGroup, Theme } from "../types.ts";
 
 describe("generateTokensCss", () => {

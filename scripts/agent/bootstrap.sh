@@ -1,6 +1,16 @@
 #!/bin/bash
 set -e
 
+# SAFETY: This script is intended for initializing a brand-new repo.
+# In this workspace we already have an established agent workflow (Brain paths,
+# agent scripts, and prompts). Re-running bootstrap would overwrite those files
+# and break phase continuity.
+if [ -f "scripts/agent/restore-context.sh" ] || [ -d "docs/agent-context/brain" ]; then
+    echo "Refusing to run: agent workflow already initialized."
+    echo "If you truly need to re-bootstrap, remove scripts/agent and docs/agent-context/brain first."
+    exit 1
+fi
+
 # 1. Create .github/prompts files
 mkdir -p .github/prompts
 
@@ -53,10 +63,10 @@ description: This prompt is used to get a status report on the current phase.
 When asked for the status of the current phase, perform the following actions:
 
 1.  **Gather Context**:
-    - Read `${workspaceFolder}/docs/agent-context/current/task-list.md` to see what is done and what is pending.
+    - Read `${workspaceFolder}/docs/agent-context/brain/state/active_tasks.md` to see what is done and what is pending.
     - Read `${workspaceFolder}/docs/agent-context/current/implementation-plan.md` to understand the goals and scope.
     - Read `${workspaceFolder}/docs/agent-context/current/walkthrough.md` to see the narrative of progress so far.
-    - Read `${workspaceFolder}/docs/agent-context/plan-outline.md` to identify the current phase number and title.
+    - Read `${workspaceFolder}/docs/agent-context/brain/state/plan.md` to identify the current phase number and title.
 
 2.  **Generate Report**:
     - **Phase Identity**: State the current phase number and title.
@@ -78,14 +88,14 @@ description: This prompt is used to end the current phase in the phased developm
 
 ### Phase Transitions
 
-- **Completion Check**: Before marking a phase as complete in `${workspaceFolder}/docs/agent-context/current/task-list.md`, ensure all related tasks are done.
+- **Completion Check**: Before marking a phase as complete in `${workspaceFolder}/docs/agent-context/brain/state/active_tasks.md`, ensure all related tasks are done.
 - **Verification**: Run `${workspaceFolder}/scripts/agent/verify-phase.sh`. This script runs tests and clippy, and provides a checklist for the next steps.
 - **Meta-Review**: Update `${workspaceFolder}/AGENTS.md` with any new instructions or changes in workflow. If something didn't work well in this phase, fix the process now.
 - **Coherence Check**: Verify that coherence between the documentation and codebase is increasing. If necessary, update documentation to reflect recent changes.
 - **Walkthrough**: After all checks pass, update the `${workspaceFolder}/docs/agent-context/current/walkthrough.md` file to reflect the work done since the last phase transition and surface it to the user for review.
 - **Finalize**: Once the user has approved the walkthrough:
   - Run `${workspaceFolder}/scripts/agent/prepare-phase-transition.sh`. This script will display the current context and remind you of the necessary updates.
-  - Follow the script's output to update `${workspaceFolder}/docs/agent-context/changelog.md`, `${workspaceFolder}/docs/agent-context/decisions.md`, and `${workspaceFolder}/docs/agent-context/plan-outline.md`.
+    - Follow the script's output to update `${workspaceFolder}/docs/agent-context/changelog.md`, `${workspaceFolder}/docs/agent-context/brain/decisions/log.md`, and `${workspaceFolder}/docs/agent-context/brain/state/plan.md`.
   - Once the documentation is updated, run `${workspaceFolder}/scripts/agent/complete-phase-transition.sh "<commit_message>"`. This script will commit the changes, empty the current context files, and display the future work context.
 EOF
 
@@ -100,7 +110,7 @@ description: This prompt is used to prepare the next phase in the phased develop
 - The `complete-phase-transition.sh` script will have displayed the contents of `docs/agent-context/future/`. Review this output and the chat history.
 - Propose a high-level outline for the next phase to the user.
 - Once the user has approved the high-level outline, update `${workspaceFolder}/docs/agent-context/current/implementation-plan.md` with the agreed outline. Do not include detailed implementation steps yet.
-- Update `${workspaceFolder}/docs/agent-context/plan-outline.md` to reflect the portion of the outline that will be tackled in the next phase.
+- Update `${workspaceFolder}/docs/agent-context/brain/state/plan.md` to reflect the portion of the outline that will be tackled in the next phase.
 - Update `${workspaceFolder}/docs/agent-context/future/` files to remove any items that will be addressed in the next phase, and add any new ideas or deferred work that arose during the iteration with the user.
 EOF
 
@@ -159,16 +169,19 @@ You are helping the user define a new persona or refine an existing one for the 
 EOF
 
 # 2. Bootstrap docs/agent-context files
+mkdir -p docs/agent-context/brain/state
+mkdir -p docs/agent-context/brain/decisions
 mkdir -p docs/agent-context/current
 mkdir -p docs/agent-context/future
 mkdir -p docs/design
 
-touch docs/agent-context/plan-outline.md
+touch docs/agent-context/brain/state/plan.md
 touch docs/agent-context/changelog.md
-touch docs/agent-context/decisions.md
-touch docs/agent-context/current/task-list.md
+touch docs/agent-context/brain/decisions/log.md
+touch docs/agent-context/brain/state/active_tasks.md
 touch docs/agent-context/current/implementation-plan.md
 touch docs/agent-context/current/walkthrough.md
+touch docs/agent-context/current/report.md
 touch docs/agent-context/future/ideas.md
 touch docs/agent-context/future/deferred_work.md
 

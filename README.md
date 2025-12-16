@@ -4,14 +4,14 @@
 
 ## Features
 
-|                     |                                                                   |
-| ------------------- | ----------------------------------------------------------------- |
-| Automated Contrast  | APCA algorithm ensures readability across all surfaces            |
-| Smooth Transitions  | Theme changes animate seamlessly via `@property` + `light-dark()` |
-| Platform-Native     | Automatic High Contrast mode support                              |
-| 7 Semantic Surfaces | Page, Card, Action, Spotlight, Sidebar, Overlay, Popover          |
-| 6 Hue Modifiers     | Monochrome, Brand, Blue, Success, Warning, Error                  |
-| Fully Tested        | 33 unit tests with 91% coverage on core math utilities            |
+|                     |                                                                                                                        |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| Automated Contrast  | APCA algorithm ensures readability across all surfaces                                                                 |
+| Smooth Transitions  | Theme changes stay continuous via `@property` + transitioned computed colors (with `light-dark()` selecting endpoints) |
+| Platform-Native     | Automatic High Contrast mode support                                                                                   |
+| 7 Semantic Surfaces | Page, Card, Action, Spotlight, Sidebar, Overlay, Popover                                                               |
+| 6 Hue Modifiers     | Monochrome, Brand, Blue, Success, Warning, Error                                                                       |
+| Fully Tested        | 33 unit tests with 91% coverage on core math utilities                                                                 |
 
 ## Installation
 
@@ -123,6 +123,12 @@ The system consists of three main components:
 4. **Apply**: Surfaces automatically adapt to system theme preferences
 
 See [System Intuition](./docs/intuition.md) for the mental model, and [solver-architecture.md](./docs/solver-architecture.md) for technical details.
+
+### CSS Inspector
+
+The library includes a robust CSS Inspector for debugging style resolution, supporting modern features like `@scope`, `@layer`, and complex specificity.
+
+See [Inspector Architecture](./src/lib/inspector/ARCHITECTURE.md) for details.
 
 ## Development
 

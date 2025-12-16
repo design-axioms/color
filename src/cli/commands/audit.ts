@@ -8,6 +8,12 @@ import type { SolverConfig } from "../../lib/types.ts";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
+type AjvLike = {
+  compile(schema: unknown): ((data: unknown) => boolean) & {
+    errors?: Array<{ instancePath?: string; message?: string }> | null;
+  };
+};
+
 export function auditCommand(args: string[], cwd: string): void {
   let configPath = "color-config.json";
 
@@ -33,6 +39,19 @@ export function auditCommand(args: string[], cwd: string): void {
   const errors: string[] = [];
   const warnings: string[] = [];
 
+  // Some consumers include a top-level "$schema" key for IDE tooling.
+  // This should not cause schema validation to fail.
+  const configForValidation: unknown = (() => {
+    if (rawConfig && typeof rawConfig === "object") {
+      const record = rawConfig as Record<string, unknown>;
+      if ("$schema" in record) {
+        const { $schema: _schema, ...rest } = record;
+        return rest;
+      }
+    }
+    return rawConfig;
+  })();
+
   // 0. Schema Validation
   console.log("Validating schema...");
   try {
@@ -57,45 +76,25 @@ export function auditCommand(args: string[], cwd: string): void {
     }
 
     if (schemaContent) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const schema = JSON.parse(schemaContent);
+      const schema: unknown = JSON.parse(schemaContent);
 
-      // Patch schema to allow $schema property
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      if (schema.definitions && schema.definitions.SolverConfig) {
-        // If the root refers to SolverConfig, we might need to patch SolverConfig definition
-        // But here schema is the root schema.
-        // The root schema has "$ref": "#/definitions/SolverConfig"
-        // So we need to patch definitions.SolverConfig.properties
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        if (!schema.definitions.SolverConfig.properties.$schema) {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-          schema.definitions.SolverConfig.properties.$schema = {
-            type: "string",
-          };
-        }
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      } else if (schema.properties && !schema.properties.$schema) {
-        // Fallback if structure is different
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        schema.properties.$schema = { type: "string" };
-      }
+      // AJV will validate the actual configuration payload; we strip "$schema" above.
+      const ajv = new (Ajv as unknown as { new (options: unknown): AjvLike })({
+        allErrors: true,
+        strict: false,
+      });
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-explicit-any
-      const ajv = new (Ajv as any)({ allErrors: true, strict: false });
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
       const validate = ajv.compile(schema);
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-assignment
-      const valid = validate(rawConfig);
+      const valid = validate(configForValidation);
 
       if (!valid) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-        if (validate.errors) {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-explicit-any
-          validate.errors.forEach((err: any) => {
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-            errors.push(`Schema Error: ${err.instancePath} ${err.message}`);
-          });
+        const errs = validate.errors;
+        if (errs) {
+          for (const err of errs) {
+            errors.push(
+              `Schema Error: ${err.instancePath || ""} ${err.message || ""}`.trim(),
+            );
+          }
         }
       }
     } else {

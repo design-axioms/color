@@ -3,7 +3,7 @@ import path from "node:path";
 import { chromium } from "playwright";
 
 const BASE_URL = "https://color-system.localhost";
-const OUTPUT_ROOT = path.join(process.cwd(), "qa-audit");
+const OUTPUT_ROOT = path.join(process.cwd(), ".tmp/qa-audit");
 
 const PAGES = [
   { name: "index", path: "/" },

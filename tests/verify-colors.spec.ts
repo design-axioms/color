@@ -7,9 +7,10 @@ test("Starlight variables should be mapped to Axiomatic tokens", async ({
   await page.waitForSelector("body");
 
   const mappings = [
+    { sl: "--sl-color-text", axm: "--_axm-computed-fg-color" },
     { sl: "--sl-color-gray-1", axm: "--axm-text-high-token" },
-    { sl: "--sl-color-gray-2", axm: "--axm-text-subtle-token" },
-    { sl: "--sl-color-gray-3", axm: "--axm-text-subtlest-token" },
+    { sl: "--sl-color-gray-2", axm: "--_axm-computed-fg-color" },
+    { sl: "--sl-color-gray-3", axm: "--axm-text-subtle-token" },
     { sl: "--sl-color-gray-4", axm: "--axm-border-int-token" },
     { sl: "--sl-color-gray-5", axm: "--axm-border-dec-token" },
     { sl: "--sl-color-gray-6", axm: "--axm-surface-token" },

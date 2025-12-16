@@ -16,7 +16,7 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "=== Emptying Current Context ==="
-truncate -s 0 docs/agent-context/current/task-list.md
+truncate -s 0 docs/agent-context/brain/state/active_tasks.md
 truncate -s 0 docs/agent-context/current/walkthrough.md
 truncate -s 0 docs/agent-context/current/implementation-plan.md
 echo "Context files emptied."
@@ -34,6 +34,6 @@ echo "========================================================"
 echo "NEXT STEPS:"
 echo "1. Review the future work and current chat context."
 echo "2. Propose a plan for the next phase to the user."
-echo "3. Once agreed, update 'docs/agent-context/current/task-list.md' and 'docs/agent-context/current/implementation-plan.md'."
+echo "3. Once agreed, update 'docs/agent-context/brain/state/active_tasks.md' and 'docs/agent-context/current/implementation-plan.md'."
 echo "4. Prepare to begin the new phase in a new chat session."
 echo "========================================================"

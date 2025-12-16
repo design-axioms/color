@@ -18,7 +18,7 @@ These surfaces form the backdrop of your application.
 
 The infinite background. This is usually applied to the `<body>` tag.
 
-<Diagram class="surface-page docs-p-4 docs-rounded docs-border">
+<Diagram class="surface-page docs-p-4 docs-rounded bordered">
   This is the Page surface.
 </Diagram>
 
@@ -26,8 +26,8 @@ The infinite background. This is usually applied to the `<body>` tag.
 
 A slightly elevated area, often used for sidebars, navigation rails, or the main content area in a dashboard.
 
-<Diagram class="surface-page docs-p-4 docs-rounded docs-border">
-  <div class="surface-workspace docs-p-4 docs-rounded docs-border">
+<Diagram class="surface-page docs-p-4 docs-rounded bordered">
+  <div class="surface-workspace docs-p-4 docs-rounded bordered">
     This is the Workspace surface.
   </div>
 </Diagram>
@@ -40,7 +40,7 @@ These surfaces sit _on top_ of the canvas.
 
 The primary container for grouped content. It has a distinct background color that separates it from the canvas.
 
-<Diagram class="surface-page docs-p-4 docs-rounded docs-border">
+<Diagram class="surface-page docs-p-4 docs-rounded bordered">
   <div class="surface-card docs-p-4 docs-rounded">This is a Card.</div>
 </Diagram>
 
@@ -62,7 +62,7 @@ These surfaces demand attention. They often use **Inverted Polarity** (Dark on L
 
 High contrast. Used for tooltips, toasts, and primary call-to-actions.
 
-<Diagram class="surface-page docs-p-4 docs-rounded docs-border">
+<Diagram class="surface-page docs-p-4 docs-rounded bordered">
   <div class="surface-spotlight docs-p-4 docs-rounded">
     This is a Spotlight.
   </div>
@@ -72,7 +72,7 @@ High contrast. Used for tooltips, toasts, and primary call-to-actions.
 
 A softer version of the spotlight. Useful for badges or indicators that need to be distinct but not shouting.
 
-<Diagram class="surface-page docs-p-4 docs-rounded docs-border">
+<Diagram class="surface-page docs-p-4 docs-rounded bordered">
   <div class="surface-soft-spotlight docs-p-4 docs-rounded">
     This is a Soft Spotlight.
   </div>
@@ -93,8 +93,8 @@ Shadows provide depth and hierarchy. The system generates a semantic scale of sh
 
 Every surface exposes a standard set of CSS variables (tokens) that adapt to the surface's background.
 
-| Token Variable          | Description                                 | Usage                                   |
-| :---------------------- | :------------------------------------------ | :-------------------------------------- |
+| Token Variable              | Description                                 | Usage                                       |
+| :-------------------------- | :------------------------------------------ | :------------------------------------------ |
 | `--axm-surface-token`       | The background color of the surface.        | `background: var(--axm-surface-token)`      |
 | `--axm-text-high-token`     | High contrast text color.                   | `color: var(--axm-text-high-token)`         |
 | `--axm-text-subtle-token`   | Medium contrast text color.                 | `color: var(--axm-text-subtle-token)`       |

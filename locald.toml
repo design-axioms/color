@@ -5,3 +5,7 @@ domain = "color-system.localhost"
 [services.web]
 type = "exec"
 command = "pnpm docs:dev --port $PORT"
+
+[services.vercel-demo]
+type = "exec"
+command = "pnpm --filter vercel-demo dev --port $PORT"

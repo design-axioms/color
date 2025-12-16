@@ -71,12 +71,23 @@
   }
 
   .font-label {
+    position: relative;
     font-size: 0.8rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     margin-bottom: 1rem;
-    border-bottom: 1px solid var(--computed-border-dec-color);
     padding-bottom: 0.5rem;
+  }
+
+  .font-label::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.12;
   }
 
   .math-preview {

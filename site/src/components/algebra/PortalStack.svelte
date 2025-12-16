@@ -1,5 +1,5 @@
 <script lang="ts">
-  let layers = $state([{ id: 0, subtle: false }]);
+  const layers = $state([{ id: 0, subtle: false }]);
 
   function addLayer(): void {
     if (layers.length < 5) {
@@ -24,6 +24,7 @@
     <div class="controls">
       <button
         class="btn surface-action"
+        class:state-disabled={layers.length >= 5}
         onclick={addLayer}
         disabled={layers.length >= 5}
       >
@@ -31,6 +32,7 @@
       </button>
       <button
         class="btn surface-action"
+        class:state-disabled={layers.length <= 1}
         onclick={removeLayer}
         disabled={layers.length <= 1}
       >
@@ -57,6 +59,7 @@
           <button
             class="intent-toggle"
             class:active={layer.subtle}
+            class:surface-spotlight={layer.subtle}
             onclick={() => {
               toggleIntent(index);
             }}
@@ -104,12 +107,23 @@
   }
 
   .header {
+    position: relative;
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 2rem;
     padding-bottom: 1rem;
-    border-bottom: 1px solid var(--computed-border-dec-color);
+  }
+
+  .header::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: currentColor;
+    opacity: 0.12;
   }
 
   .controls {
@@ -125,20 +139,15 @@
     cursor: pointer;
     border: 1px solid transparent;
     transition: all 0.2s;
-    background-color: var(--computed-surface-action);
-    color: var(--computed-text-inverse);
   }
 
   .btn:hover:not(:disabled) {
     transform: translateY(-1px);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 
   .btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
-    background-color: var(--computed-surface-disabled);
-    color: var(--computed-text-disabled);
   }
 
   .stack-container {
@@ -152,9 +161,6 @@
     border-radius: 0.75rem;
     transition: all 0.3s ease;
     position: relative;
-    box-shadow:
-      0 4px 6px -1px rgba(0, 0, 0, 0.1),
-      0 2px 4px -1px rgba(0, 0, 0, 0.06);
   }
 
   .layer-header {
@@ -187,11 +193,9 @@
 
   .intent-toggle:hover {
     opacity: 1;
-    background-color: rgba(0, 0, 0, 0.05);
   }
 
   .intent-toggle.active {
-    background-color: var(--computed-surface-highlight);
     border-color: transparent;
     opacity: 1;
     font-weight: bold;
@@ -205,7 +209,7 @@
   .nested-wrapper {
     margin-top: 1.5rem;
     padding-left: 1.5rem;
-    border-left: 2px dashed var(--computed-border-dec-color);
+    border-left: 1px solid currentColor;
     position: relative;
   }
 
@@ -217,7 +221,8 @@
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background-color: var(--computed-border-dec-color);
+    background-color: currentColor;
+    opacity: 0.25;
     transform: translateY(-50%);
   }
 

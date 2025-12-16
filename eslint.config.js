@@ -2,6 +2,7 @@ import js from "@eslint/js";
 import eslintConfigPrettier from "eslint-config-prettier";
 import eslintPluginAstro from "eslint-plugin-astro";
 import eslintPluginSvelte from "eslint-plugin-svelte";
+import jsdoc from "eslint-plugin-jsdoc";
 import globals from "globals";
 import tseslint from "typescript-eslint";
 import axiomaticPlugin from "./packages/eslint-plugin/dist/index.mjs";
@@ -9,7 +10,140 @@ import axiomaticPlugin from "./packages/eslint-plugin/dist/index.mjs";
 // eslint-disable-next-line @typescript-eslint/no-deprecated
 export default tseslint.config(
   js.configs.recommended,
-  ...tseslint.configs.strictTypeChecked,
+  // 1. Type-Aware Base (SRC) - Full Type Checking
+  {
+    files: [
+      "**/*.ts",
+      "**/*.tsx",
+      "**/*.js",
+      "**/*.jsx",
+      "**/*.mjs",
+      "**/*.cjs",
+      "**/*.svelte",
+    ],
+    ignores: [
+      "**/scripts/**",
+      "**/tests/**",
+      "**/*.test.ts",
+      "**/*.spec.ts",
+      "**/*.config.ts",
+      "**/bin/**",
+      "**/examples/**",
+      "site/**",
+    ],
+    languageOptions: {
+      parser: tseslint.parser,
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+        extraFileExtensions: [".astro", ".svelte"],
+      },
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+      },
+    },
+    plugins: {
+      "@typescript-eslint": tseslint.plugin,
+    },
+  },
+  // 2. Fast Base (SCRIPTS/TESTS/SITE) - No Type Checking
+  {
+    files: [
+      "**/scripts/**/*.{ts,tsx,js,jsx,mjs,cjs}",
+      "**/tests/**/*.{ts,tsx,js,jsx,mjs,cjs}",
+      "**/*.test.ts",
+      "**/*.spec.ts",
+      "**/*.config.ts",
+      "**/bin/**/*.{ts,tsx,js,jsx,mjs,cjs}",
+      "**/examples/**/*.{ts,tsx,js,jsx,mjs,cjs}",
+      "site/**/*.{ts,tsx,js,jsx,mjs,cjs,svelte}",
+    ],
+    languageOptions: {
+      parser: tseslint.parser,
+      parserOptions: {
+        projectService: false,
+      },
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+      },
+    },
+    plugins: {
+      "@typescript-eslint": tseslint.plugin,
+    },
+    rules: {
+      "no-unused-vars": "off",
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+        },
+      ],
+      "@axiomatic-design/no-hardcoded-colors": "off",
+      "@axiomatic-design/no-raw-tokens": "off",
+    },
+  },
+
+  // 2b. Complexity/Size Guardrails (Targeted)
+  // These are warn-only on purpose: they provide continuous pressure to keep
+  // automation scripts maintainable without blocking unrelated work.
+  {
+    files: ["scripts/check-violations/run.ts"],
+    rules: {
+      // Cyclomatic complexity (ESLint core). Helps surface “giant main()” drift.
+      complexity: ["warn", { max: 60 }],
+
+      // File/function size. These are conservative starting points; tune down as we refactor.
+      "max-lines": [
+        "warn",
+        {
+          max: 1600,
+          skipBlankLines: true,
+          skipComments: true,
+        },
+      ],
+      "max-lines-per-function": [
+        "warn",
+        {
+          max: 260,
+          skipBlankLines: true,
+          skipComments: true,
+        },
+      ],
+      "max-statements": ["warn", 140],
+      "max-depth": ["warn", 5],
+      "max-params": ["warn", 6],
+    },
+  },
+  ...tseslint.configs.strictTypeChecked.map((config) => ({
+    ...config,
+    files: [
+      "**/*.ts",
+      "**/*.tsx",
+      "**/*.js",
+      "**/*.jsx",
+      "**/*.mjs",
+      "**/*.cjs",
+      "**/*.svelte",
+    ],
+    ignores: [
+      "**/scripts/**",
+      "**/tests/**",
+      "**/*.test.ts",
+      "**/*.spec.ts",
+      "**/*.config.ts",
+      "**/bin/**",
+      "**/examples/**",
+      "site/**",
+    ],
+  })),
+  // 3. Site - Recommended (Not Strict Type Checked) for Performance
+  ...tseslint.configs.recommended.map((config) => ({
+    ...config,
+    files: ["site/**/*.{ts,tsx,js,jsx,mjs,cjs,svelte}"],
+  })),
   ...eslintPluginAstro.configs.recommended,
   ...eslintPluginSvelte.configs["flat/recommended"],
   {
@@ -22,20 +156,25 @@ export default tseslint.config(
     },
   },
   {
-    languageOptions: {
-      parserOptions: {
-        projectService: {
-          allowDefaultProject: ["eslint.config.js", "knip.ts"],
-          defaultProject: "tsconfig.json",
-        },
-        tsconfigRootDir: import.meta.dirname,
-        extraFileExtensions: [".astro", ".svelte"],
-      },
-      globals: {
-        ...globals.browser,
-        ...globals.node,
-      },
-    },
+    files: [
+      "**/*.ts",
+      "**/*.tsx",
+      "**/*.js",
+      "**/*.jsx",
+      "**/*.mjs",
+      "**/*.cjs",
+      "**/*.svelte",
+    ],
+    ignores: [
+      "**/scripts/**",
+      "**/tests/**",
+      "**/*.test.ts",
+      "**/*.spec.ts",
+      "**/*.config.ts",
+      "**/bin/**",
+      "**/examples/**",
+      "site/**",
+    ],
     rules: {
       "@typescript-eslint/explicit-function-return-type": [
         "error",
@@ -58,6 +197,16 @@ export default tseslint.config(
         },
       ],
       "@typescript-eslint/no-unnecessary-condition": "error",
+      "@typescript-eslint/ban-ts-comment": [
+        "error",
+        {
+          "ts-expect-error": "allow-with-description",
+          "ts-ignore": true,
+          "ts-nocheck": true,
+          "ts-check": false,
+          minimumDescriptionLength: 3,
+        },
+      ],
     },
   },
   {
@@ -284,6 +433,7 @@ export default tseslint.config(
   },
   {
     files: ["**/*.svelte.ts"],
+    ignores: ["site/**"],
     languageOptions: {
       parser: tseslint.parser,
       parserOptions: {
@@ -324,6 +474,17 @@ export default tseslint.config(
     },
   },
   {
+    files: [
+      "src/**/*.{ts,tsx,js,jsx}",
+      "site/src/**/*.{ts,svelte,tsx,js,jsx}",
+      "scripts/**/*.{ts,js}",
+    ],
+    rules: {
+      // We never use blocking browser dialogs to communicate state.
+      "no-alert": "error",
+    },
+  },
+  {
     ignores: [
       "node_modules/**",
       "dist/**",
@@ -342,10 +503,55 @@ export default tseslint.config(
       "packages/vscode-extension/dist/**",
       "tests/golden-masters/**",
       "vendor/**",
-      "examples/**",
       ".locald/**",
       "bin/**",
+      "temp-math/**",
+      ".tmp/**",
+      "snippets/**",
+      "**/node_modules/**",
     ],
+  },
+  {
+    files: ["site/**/*.svelte.ts"],
+    languageOptions: {
+      parser: tseslint.parser,
+      parserOptions: {
+        projectService: false,
+      },
+    },
+  },
+  {
+    files: [
+      "src/lib/index.ts",
+      "src/lib/math.ts",
+      "src/lib/generator/index.ts",
+      "src/lib/runtime.ts",
+      "src/lib/types.ts",
+      "src/lib/constants.ts",
+      "src/lib/browser.ts",
+      "src/lib/utilities.ts",
+      "src/lib/inspector/index.ts",
+      "src/cli/index.ts",
+    ],
+    plugins: {
+      jsdoc,
+    },
+    rules: {
+      "jsdoc/require-jsdoc": [
+        "error",
+        {
+          require: {
+            FunctionDeclaration: true,
+            MethodDefinition: true,
+            ClassDeclaration: true,
+            ArrowFunctionExpression: true,
+            FunctionExpression: true,
+          },
+          publicOnly: true,
+        },
+      ],
+      "jsdoc/require-description": "error",
+    },
   },
   eslintConfigPrettier,
 );

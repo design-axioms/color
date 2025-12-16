@@ -1,13 +1,18 @@
 import { RuleTester } from "@typescript-eslint/rule-tester";
 import fs from "fs";
+import os from "os";
 import path from "path";
 import { afterAll, beforeAll, describe, it } from "vitest";
 import { noRawTokens, resetCache } from "../src/rules/no-raw-tokens";
 
-const MOCK_CSS_DIR = path.join(process.cwd(), "css");
+const TMP_DIR = fs.mkdtempSync(
+  path.join(os.tmpdir(), "axiomatic-eslint-plugin-no-raw-tokens-"),
+);
+
+const MOCK_CSS_DIR = path.join(TMP_DIR, "css");
 const MOCK_THEME_PATH = path.join(MOCK_CSS_DIR, "theme.css");
 const MOCK_UTILS_PATH = path.join(MOCK_CSS_DIR, "utilities.css");
-const MOCK_CONFIG_PATH = path.join(process.cwd(), "color-config.json");
+const MOCK_CONFIG_PATH = path.join(TMP_DIR, "color-config.json");
 
 const MOCK_THEME_CONTENT = `
 :root {
@@ -49,21 +54,11 @@ beforeAll(() => {
 });
 
 afterAll(() => {
-  if (fs.existsSync(MOCK_THEME_PATH)) fs.unlinkSync(MOCK_THEME_PATH);
-  if (fs.existsSync(MOCK_UTILS_PATH)) fs.unlinkSync(MOCK_UTILS_PATH);
-
   if (originalConfigContent) {
     fs.writeFileSync(MOCK_CONFIG_PATH, originalConfigContent);
-  } else if (fs.existsSync(MOCK_CONFIG_PATH)) {
-    fs.unlinkSync(MOCK_CONFIG_PATH);
   }
 
-  if (
-    fs.existsSync(MOCK_CSS_DIR) &&
-    fs.readdirSync(MOCK_CSS_DIR).length === 0
-  ) {
-    fs.rmdirSync(MOCK_CSS_DIR);
-  }
+  fs.rmSync(TMP_DIR, { recursive: true, force: true });
 });
 
 RuleTester.describe = describe;
@@ -75,6 +70,7 @@ const ruleTester = new RuleTester({
       ecmaFeatures: {
         jsx: true,
       },
+      tsconfigRootDir: TMP_DIR,
     },
   },
 });

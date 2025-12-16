@@ -2,7 +2,14 @@ pre-commit:
   parallel: false
   commands:
     sync-lockfile:
-      run: echo "Ensuring lockfile is up to date..." && CI=true pnpm install && git add pnpm-lock.yaml
+      run: |
+        echo "Ensuring lockfile is up to date..."
+        if git diff --cached --name-only | grep -E '(^|/)package.json$|pnpm-workspace\.yaml$|pnpm-lock\.yaml$' >/dev/null; then
+          CI=true pnpm install --lockfile-only --ignore-scripts --no-frozen-lockfile
+          git add pnpm-lock.yaml
+        else
+          echo "No package manifest changes staged; skipping lockfile sync."
+        fi
     format:
       glob: "*.{ts,js,json,md,yml,css,svelte,astro}"
       exclude: "dist/**/*"
@@ -15,7 +22,7 @@ pre-commit:
       glob: "*"
       run: pnpm lint:security {staged_files}
     tokens:
-      glob: "site/src/components/builder-v2/**/*"
+      glob: "site/src/components/builder/**/*"
       run: pnpm lint:tokens
     docs:
       glob: "*.{md,mdx}"
@@ -28,6 +35,15 @@ pre-commit:
 pre-push:
   parallel: false
   commands:
+    sync-lockfile:
+      run: |
+        echo "Verifying pnpm-lock.yaml is up to date..."
+        CI=true pnpm install --lockfile-only --ignore-scripts --no-frozen-lockfile
+        if ! git diff --quiet -- pnpm-lock.yaml; then
+          echo "pnpm-lock.yaml was updated by pnpm. Please commit the updated lockfile before pushing."
+          git --no-pager diff -- pnpm-lock.yaml | head -n 200
+          exit 1
+        fi
     typecheck:
       run: tsc --noEmit && pnpm --filter @axiomatic-design/vscode-extension typecheck
     site-check:

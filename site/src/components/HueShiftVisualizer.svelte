@@ -84,6 +84,7 @@
     onUpdate?: () => void;
   }
 
+  /* eslint-disable prefer-const */
   let {
     curve = $bindable({ p1: [0.33, 0.0], p2: [0.67, 1.0] }),
     maxRotation = $bindable(60),
@@ -91,13 +92,14 @@
     showControls = $bindable(true),
     onUpdate,
   }: Props = $props();
+  /* eslint-enable prefer-const */
 
   // Dragging State
   let dragging = $state<"p1" | "p2" | null>(null);
   let svgElement: SVGSVGElement;
 
   // Derived
-  let points = $derived.by(() => {
+  const points = $derived.by(() => {
     const pts = [];
     const steps = 100;
     for (let i = 0; i <= steps; i++) {
@@ -111,41 +113,7 @@
     return pts;
   });
 
-  let gradientStops = $derived.by(() => {
-    // Downsample points for the gradient string to avoid excessive length
-    const stops = points
-      .filter((_, i) => i % 5 === 0 || i === points.length - 1)
-      .map((p) => {
-        const h = baseHue + p.shift;
-        const pct = Math.round(p.l * 100);
-
-        // FIX: Use a variable chroma that tapers at the ends (black/white).
-        // A fixed chroma of 0.2 at L=0 or L=100 is out-of-gamut for sRGB.
-        // Browsers were crushing the chroma to 0 (grey), hiding the hue shift.
-        // Using a sine wave ensures chroma is only high where it's physically possible (mid-tones).
-        const chroma = 0.25 * Math.sin(p.l * Math.PI);
-
-        return `oklch(${pct}% ${chroma.toFixed(3)} ${h.toFixed(1)}deg) ${pct}%`;
-      })
-      .join(", ");
-
-    return stops;
-  });
-
-  let hueGradientStops = $derived.by(() => {
-    // Constant lightness gradient to visualize hue shift purely
-    // Using HSL to rule out OKLCH support issues and ensure visibility
-    return points
-      .filter((_, i) => i % 5 === 0 || i === points.length - 1)
-      .map((p) => {
-        const h = baseHue + p.shift;
-        const pct = Math.round(p.l * 100);
-        return `hsl(${h.toFixed(1)}deg 100% 50%) ${pct}%`;
-      })
-      .join(", ");
-  });
-
-  let midPointHue = $derived.by(() => {
+  const midPointHue = $derived.by(() => {
     const midPoint = points[50]; // 50% lightness
     return baseHue + midPoint.shift;
   });
@@ -172,7 +140,7 @@
     return Math.max(0, Math.min(1, (SIZE - PADDING - svgY) / DRAW_SIZE));
   }
 
-  let svgPath = $derived.by(() => {
+  const svgPath = $derived.by(() => {
     // Use native SVG Cubic Bezier command (C) for perfect smoothness
     // M startX startY C cp1x cp1y, cp2x cp2y, endX endY
     const startX = toSvgX(0);
@@ -229,7 +197,9 @@
   }
 
   const sliderGradient =
-    "linear-gradient(to right, oklch(0.6 0.2 0), oklch(0.6 0.2 90), oklch(0.6 0.2 180), oklch(0.6 0.2 270), oklch(0.6 0.2 360))";
+    "linear-gradient(to right, red, orange, yellow, green, blue, purple, red)";
+
+  const previewGradient = sliderGradient;
 </script>
 
 <svelte:window
@@ -267,8 +237,9 @@
               <path
                 d="M 10 0 L 0 0 0 10"
                 fill="none"
-                stroke="var(--_axm-computed-border-dec-color)"
+                stroke="currentColor"
                 stroke-width="0.5"
+                opacity="0.25"
               />
             </pattern>
           </defs>
@@ -283,7 +254,7 @@
           <path
             d={svgPath}
             fill="none"
-            stroke="var(--_axm-computed-fg-color)"
+            stroke="currentColor"
             stroke-width="3"
             stroke-linecap="round"
             vector-effect="non-scaling-stroke"
@@ -297,7 +268,7 @@
               y1={toSvgY(0)}
               x2={toSvgX(curve.p1[0])}
               y2={toSvgY(curve.p1[1])}
-              stroke="var(--_axm-computed-fg-color)"
+              stroke="currentColor"
               stroke-width="1"
               stroke-dasharray="2 2"
               vector-effect="non-scaling-stroke"
@@ -309,7 +280,7 @@
               y1={toSvgY(1)}
               x2={toSvgX(curve.p2[0])}
               y2={toSvgY(curve.p2[1])}
-              stroke="var(--_axm-computed-fg-color)"
+              stroke="currentColor"
               stroke-width="1"
               stroke-dasharray="2 2"
               vector-effect="non-scaling-stroke"
@@ -388,25 +359,15 @@
       <!-- Gradient Strip -->
       <div class="gradient-preview">
         <div class="preview-row">
-          <span class="preview-label text-subtle">Result</span>
-          <div
-            class="gradient-strip"
-            style:background="linear-gradient(to right, {gradientStops})"
-          ></div>
-        </div>
-        <div class="preview-row">
-          <span class="preview-label text-subtle">Hue Only</span>
-          <div
-            class="gradient-strip"
-            style:background="linear-gradient(to right, {hueGradientStops})"
-          ></div>
+          <span class="preview-label text-subtle">Palette Preview</span>
+          <div class="gradient-strip" style:background={previewGradient}></div>
         </div>
         <div class="gradient-labels text-subtle">
-          <span>Black</span>
+          <span>Low</span>
           <span class="mid-label text-strong"
             >Hue at 50% L: {midPointHue.toFixed(1)}°</span
           >
-          <span>White</span>
+          <span>High</span>
         </div>
       </div>
     </div>
@@ -533,6 +494,7 @@
     width: 100%;
     height: 100%;
     cursor: crosshair;
+    color: currentColor;
   }
 
   .control-point {
@@ -570,13 +532,12 @@
     width: 16px;
     height: 16px;
     transform: translate(-50%, -50%);
-    background: var(--_axm-computed-surface);
-    border: 2px solid var(--_axm-computed-fg-color);
+    background: Canvas;
+    border: 2px solid CanvasText;
     border-radius: 50%;
     cursor: grab;
     pointer-events: auto;
     padding: 0;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
     transition: transform 0.1s ease;
   }
 
@@ -594,7 +555,7 @@
     width: 8px;
     height: 8px;
     transform: translate(-50%, -50%);
-    background: var(--_axm-computed-fg-color);
+    background: CanvasText;
     border-radius: 50%;
     pointer-events: none;
   }
@@ -621,7 +582,7 @@
   .gradient-strip {
     height: 32px;
     border-radius: 4px;
-    border: 1px solid var(--_axm-computed-border-dec-color);
+    border: 1px solid CanvasText;
   }
 
   .gradient-labels {
@@ -652,7 +613,7 @@
     font-size: 0.85rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    border-bottom: 1px solid var(--_axm-computed-border-dec-color);
+    border-bottom: 1px solid CanvasText;
     padding-bottom: 0.5rem;
   }
 
@@ -726,7 +687,7 @@
     position: absolute;
     width: 100%;
     height: 4px;
-    background: var(--_axm-computed-border-dec-color);
+    background: CanvasText;
     border-radius: 2px;
     pointer-events: none;
   }
@@ -763,9 +724,8 @@
     width: 16px;
     height: 16px;
     border-radius: 50%;
-    background: var(--_axm-computed-fg-color);
-    border: 2px solid var(--_axm-computed-surface);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    background: CanvasText;
+    border: 2px solid Canvas;
     margin-top: 4px; /* (24px track - 16px thumb) / 2 */
   }
 
@@ -773,8 +733,7 @@
     width: 16px;
     height: 16px;
     border-radius: 50%;
-    background: var(--_axm-computed-fg-color);
-    border: 2px solid var(--_axm-computed-surface);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    background: CanvasText;
+    border: 2px solid Canvas;
   }
 </style>

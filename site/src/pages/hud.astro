@@ -1,0 +1,20 @@
+---
+import StarlightPage from "@astrojs/starlight/components/StarlightPage.astro";
+import DebugVisualizer from "../components/DebugVisualizer.svelte";
+---
+
+<StarlightPage frontmatter={{ title: "Axiomatic HUD", template: "splash" }}>
+  <div style="padding: 2rem;">
+    <h1>Axiomatic HUD Test</h1>
+    <p>The HUD should be floating on the screen. Drag it around!</p>
+    <p>Use the controls to tune the physics engine live.</p>
+
+    <div class="surface-card bordered" style="padding: 2rem; margin-top: 2rem;">
+      <h2 class="text-strong">Sample Content</h2>
+      <p class="text-subtle">This content reacts to the physics engine.</p>
+      <button class="surface-action">Action Button</button>
+    </div>
+  </div>
+
+  <DebugVisualizer client:only="svelte" />
+</StarlightPage>

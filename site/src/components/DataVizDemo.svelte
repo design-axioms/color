@@ -22,12 +22,27 @@
     };
   });
 
-  const chartColors = Array.from({ length: 10 }, (_, i) => i + 1);
   const barHeights = [60, 85, 40, 95, 55, 70, 30, 80, 45, 65];
+
+  const chartHues = [
+    "hue-blue",
+    "hue-indigo",
+    "hue-brand",
+    "hue-success",
+    "hue-warning",
+    "hue-danger",
+    "hue-highlight",
+    "hue-info",
+    "hue-gray",
+    "hue-slider",
+  ] as const;
 </script>
 
 <div class="docs-col" class:local-dark={localOverride}>
-  <div style="padding: 1rem; border: 1px solid red; margin-bottom: 1rem;">
+  <div
+    class="surface-workspace bordered"
+    style="padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem;"
+  >
     <strong>Debug Controls</strong>
     <div>Current --tau: {tauValue}</div>
     <button on:click={() => (localOverride = !localOverride)}>
@@ -37,7 +52,8 @@
       style="margin-top: 1rem; display: flex; gap: 1rem; align-items: center;"
     >
       <div
-        style="width: 50px; height: 50px; background: oklch(0.5 0.2 calc(180 + (180 * var(--tau)))); border: 1px solid black;"
+        class="surface-card bordered"
+        style="width: 50px; height: 50px;"
       ></div>
       <span>Direct Tau Box (Should animate with Local Toggle)</span>
     </div>
@@ -50,15 +66,16 @@
       <div
         style="display: grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 0.5rem;"
       >
-        {#each chartColors as i (i)}
+        {#each chartHues as hue (hue)}
           <div
             style="display: flex; flex-direction: column; gap: 0.25rem; align-items: center;"
           >
             <div
-              style="background-color: var(--axm-chart-{i}); width: 100%; aspect-ratio: 1/1; border-radius: 6px; box-shadow: var(--shadow-sm); border: 1px solid var(--axm-border-dec-token);"
+              class="bordered shadow-sm surface-action-soft {hue}"
+              style="width: 100%; aspect-ratio: 1/1; border-radius: 6px;"
             ></div>
             <span class="text-subtle font-mono" style="font-size: 0.7rem;">
-              {i}
+              {hue}
             </span>
           </div>
         {/each}
@@ -74,10 +91,9 @@
     >
       {#each barHeights as height, i (i)}
         <div
-          style="flex: 1; height: {height}%; background-color: var(--axm-chart-{(i %
-            10) +
-            1}); border-radius: 4px 4px 0 0; opacity: 0.9;"
-          title="--axm-chart-{(i % 10) + 1}"
+          class="surface-action {chartHues[i % chartHues.length]}"
+          style="flex: 1; height: {height}%; border-radius: 4px 4px 0 0; opacity: 0.9;"
+          title={chartHues[i % chartHues.length]}
         ></div>
       {/each}
     </div>
@@ -88,14 +104,21 @@
     <strong class="docs-card-header">Pie Chart Example</strong>
     <div style="display: flex; justify-content: center; padding: 1rem;">
       <div
-        style="width: 180px; height: 180px; border-radius: 50%; background: conic-gradient(
-            var(--axm-chart-1) 0% 20%,
-            var(--axm-chart-2) 20% 35%,
-            var(--axm-chart-3) 35% 55%,
-            var(--axm-chart-4) 55% 80%,
-            var(--axm-chart-5) 80% 100%
-          ); box-shadow: var(--shadow-md); border: 1px solid var(--axm-border-dec-token);"
-      ></div>
+        class="surface-workspace bordered"
+        style="padding: 0.75rem; border-radius: 0.75rem;"
+      >
+        <div
+          style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.5rem; width: 180px;"
+        >
+          {#each chartHues.slice(0, 5) as hue (hue)}
+            <div
+              class="surface-action-soft {hue} bordered"
+              style="height: 28px; border-radius: 999px;"
+              title={hue}
+            ></div>
+          {/each}
+        </div>
+      </div>
     </div>
   </div>
 </div>

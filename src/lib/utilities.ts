@@ -47,6 +47,12 @@ function generateTypeScale(config: TypeScaleConfig): Record<string, string> {
   return sizes;
 }
 
+/**
+ * Generates CSS utilities for presets (typography, borders, etc.).
+ * @param presets The presets configuration.
+ * @param options The global configuration options.
+ * @returns The generated CSS string.
+ */
 export function generatePresetUtilities(
   presets: PresetsConfig = {},
   options?: ConfigOptions,

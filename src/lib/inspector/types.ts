@@ -36,3 +36,14 @@ export interface ElementDebugInfo {
   context: DebugContext;
   resolvedTokens: ResolvedToken[];
 }
+
+export interface CSSRuleMatch {
+  selector: string;
+  value: string;
+  specificity: number;
+  stylesheet: string | null;
+  isImportant: boolean;
+  isLayered: boolean;
+  scopeProximity: number;
+  rule: CSSStyleRule | null;
+}

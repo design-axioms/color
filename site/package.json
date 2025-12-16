@@ -12,7 +12,7 @@
     "preview": "astro preview",
     "astro": "astro",
     "test": "vitest run",
-    "lint:colors": "if grep -rE \"#[0-9a-fA-F]{3,6}|rgb\\(|hsl\\(|oklch\\(\" src/components src/content/docs | grep -v \"theme.css\" | grep -v \"HueShiftVisualizer.svelte\" | grep -v \"oklch(from\" | grep -v \"#each\"; then echo \"Error: Hardcoded colors found\"; exit 1; else echo \"No hardcoded colors found\"; exit 0; fi"
+    "lint:colors": "node ../scripts/check-rfc010.ts"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.6",
@@ -36,9 +36,14 @@
     "@fontsource-variable/space-grotesk": "^5.2.10",
     "@sveltejs/vite-plugin-svelte": "^6.2.1",
     "@types/culori": "^4.0.1",
+    "@types/hast": "^3.0.4",
+    "hast-util-select": "^6.0.4",
+    "hastscript": "^9.0.1",
     "katex": "^0.16.25",
     "rehype-katex": "^7.0.1",
     "remark-math": "^6.0.0",
-    "svelte-check": "^4.3.4"
+    "svelte-check": "^4.3.4",
+    "unist-util-visit": "^5.0.0",
+    "unist-util-visit-parents": "^6.0.2"
   }
 }

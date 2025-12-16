@@ -20,7 +20,7 @@ To understand the solver, it helps to think about the controls you see in the Th
 In the Theme Studio, you set the **Anchors**. These are the boundaries of your color system.
 
 <div class="not-content">
-<div class="surface-workspace docs-p-4 docs-rounded docs-border">
+<div class="surface-workspace docs-p-4 docs-rounded bordered">
 <div class="docs-mb-4">
 <h4 class="text-strong docs-mb-2">Page Anchors</h4>
 <p class="docs-text-subtle-sm">
@@ -62,26 +62,26 @@ If the answer is "No" (and the anchor is adjustable), the solver **moves the sli
 In the Theme Studio, you add **Surfaces** to a list.
 
 <div class="not-content">
-<div class="surface-workspace docs-p-4 docs-rounded docs-border">
+<div class="surface-workspace docs-p-4 docs-rounded bordered">
 <h4 class="text-strong docs-mb-4">Surfaces</h4>
 
 <div class="docs-col">
 <!-- Surface Item 1 -->
-<div class="surface-card docs-p-2 docs-rounded docs-border docs-flex-center-gap">
+<div class="surface-card docs-p-2 docs-rounded bordered docs-flex-center-gap">
 <span class="text-strong docs-flex-1">Page</span>
 <code class="text-subtle">.surface-page</code>
 <span class="docs-badge-pass">Passes</span>
 </div>
 
 <!-- Surface Item 2 -->
-<div class="surface-card docs-p-2 docs-rounded docs-border docs-flex-center-gap">
+<div class="surface-card docs-p-2 docs-rounded bordered docs-flex-center-gap">
 <span class="text-strong docs-flex-1">Card</span>
 <code class="text-subtle">.surface-card</code>
 <span class="docs-badge-pass">Passes</span>
 </div>
 
 <!-- Surface Item 3 -->
-<div class="surface-card docs-p-2 docs-rounded docs-border docs-flex-center-gap">
+<div class="surface-card docs-p-2 docs-rounded bordered docs-flex-center-gap">
 <span class="text-strong docs-flex-1">Sidebar</span>
 <code class="text-subtle">.surface-sidebar</code>
 <span class="docs-badge-pass">Passes</span>
@@ -102,7 +102,7 @@ If we just divided the lightness values evenly (Linear Lightness), the steps wou
 <div class="docs-grid">
 
 <!-- Linear Lightness -->
-<div class="surface-workspace docs-p-4 docs-rounded docs-border">
+<div class="surface-workspace docs-p-4 docs-rounded bordered">
 <h4 class="text-strong docs-mb-4">Linear Lightness (Bad)</h4>
 <div class="docs-col-gap-0">
 <div class="docs-p-2 docs-step-95">Step 1 (95%)</div>
@@ -114,7 +114,7 @@ If we just divided the lightness values evenly (Linear Lightness), the steps wou
 </div>
 
 <!-- Linear Contrast -->
-<div class="surface-workspace docs-p-4 docs-rounded docs-border">
+<div class="surface-workspace docs-p-4 docs-rounded bordered">
 <h4 class="text-strong docs-mb-4">Linear Contrast (Good)</h4>
 <div class="docs-col-gap-0">
 <div class="surface-page docs-p-2">Page (Start)</div>
@@ -132,9 +132,9 @@ If we just divided the lightness values evenly (Linear Lightness), the steps wou
 Finally, the solver outputs the CSS tokens that the Theme Studio (and your app) uses.
 
 <div class="not-content">
-<div class="surface-workspace docs-p-4 docs-rounded docs-border">
+<div class="surface-workspace docs-p-4 docs-rounded bordered">
 <h4 class="text-strong docs-mb-4">Generated CSS</h4>
-<pre class="docs-code-block"><code>--lightness-surface-page: light-dark(0.98, 0.12);
+<pre class="docs-code-block surface-workspace bordered"><code>--lightness-surface-page: light-dark(0.98, 0.12);
 --lightness-surface-card: light-dark(0.95, 0.15);
 --lightness-surface-sidebar: light-dark(0.92, 0.18);</code></pre>
 </div>
