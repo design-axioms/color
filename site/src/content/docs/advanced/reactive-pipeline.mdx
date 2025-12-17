@@ -7,6 +7,8 @@ import Diagram from "../../../components/Diagram.svelte";
 
 # The Reactive Pipeline
 
+This page is for understanding how the system works. Most integrations should not depend on internal CSS variables; prefer the generated theme outputs and class tokens.
+
 Most color systems are **Static Maps**. You define a palette (`blue-500`), assign it to a variable (`--primary`), and use it.
 
 Axiomatic Color is different. It is a **Reactive Pipeline**.
@@ -35,6 +37,8 @@ $$
 
 In a traditional system, tokens are **Values**.
 
+{/* axm-docs:explanatory:start */}
+
 ```css
 :root {
   --text-primary: #111827;
@@ -47,6 +51,8 @@ In a traditional system, tokens are **Values**.
 }
 ```
 
+{/* axm-docs:explanatory:end */}
+
 This works for simple Light/Dark switching. But what happens when you put a card _inside_ a dark section in Light Mode? You have to manually override the tokens or use complex CSS cascades.
 
 ### The Reactive Model (Axiomatic)
@@ -54,6 +60,8 @@ This works for simple Light/Dark switching. But what happens when you put a card
 In Axiomatic, tokens are **Functions**.
 
 We don't just swap values; we swap the **calculation**.
+
+{/* axm-docs:explanatory:start */}
 
 ```css
 /* Simplified for explanation */
@@ -67,6 +75,8 @@ We don't just swap values; we swap the **calculation**.
 }
 ```
 
+{/* axm-docs:explanatory:end */}
+
 When you nest a surface, the `Context` changes. The `Intent` (Text, Background) remains the same, but because the input `Context` changed, the output `Color` automatically updates.
 
 ## How It Works: Late Binding
@@ -79,6 +89,8 @@ Instead of resolving colors at build time (Sass/PostCSS), we resolve them at **R
 
 We start with the raw ingredients. These are global and immutable.
 
+{/* axm-docs:explanatory:start */}
+
 ```css
 :root {
   --primitive-brand-500: oklch(0.6 0.2 250);
@@ -87,9 +99,13 @@ We start with the raw ingredients. These are global and immutable.
 }
 ```
 
+{/* axm-docs:explanatory:end */}
+
 ### 2. The Context (State)
 
 When you enter a surface, it sets local variables that describe the environment.
+
+{/* axm-docs:explanatory:start */}
 
 ```css
 .surface-sunken {
@@ -99,9 +115,13 @@ When you enter a surface, it sets local variables that describe the environment.
 }
 ```
 
+{/* axm-docs:explanatory:end */}
+
 ### 3. The Resolution (Function)
 
 Utility classes don't point to fixed colors. They point to **Logic**.
+
+{/* axm-docs:explanatory:start */}
 
 ```css
 .text-subtle {
@@ -113,6 +133,8 @@ Utility classes don't point to fixed colors. They point to **Logic**.
   color: oklch(var(--lightness) 0 0);
 }
 ```
+
+{/* axm-docs:explanatory:end */}
 
 ## Why This Matters
 

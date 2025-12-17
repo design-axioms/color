@@ -13,6 +13,10 @@ Import the generated file into your application's entry point.
 
 ```html
 <head>
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/@axiomatic-design/color@latest/engine.css"
+  />
   <link rel="stylesheet" href="/styles/theme.css" />
 </head>
 ```
@@ -21,8 +25,13 @@ Import the generated file into your application's entry point.
 
 ```javascript
 // main.js or index.tsx
+import "@axiomatic-design/color/engine.css";
 import "./styles/theme.css";
 ```
+
+### About `*.class-tokens.json`
+
+When you generate `theme.css`, the CLI also writes a class-token manifest alongside it (for example `theme.class-tokens.json`). This file is used for tooling and enforcement (e.g., lint rules and automated checks). Most applications don’t need to read it directly.
 
 ## 2. Set the Root Surface
 
@@ -35,6 +44,22 @@ The system requires a "Root Surface" to establish the initial context. Usually, 
 ```
 
 This sets the background color of the page and initializes the CSS variables for the "Page" context.
+
+## Adapter boundary (Bridge exports)
+
+Sometimes you need to integrate Axiomatic Color into a host system that already “owns” its own palette variables and chrome.
+
+In that situation, the contract is:
+
+For a concrete example mapping, see [Bridge API (Adapters)](/advanced/bridge-api).
+
+Continuity constraints (the “interesting” part):
+
+- Bridge exports must not become a second animation driver.
+- Chrome borders must not be coupled to text color (`currentColor`).
+- Painted properties in chrome should not introduce independent transitions that compete with the engine’s driver.
+
+For a concrete example mapping, see the advanced Bridge API note.
 
 ## 3. Using Surfaces
 
@@ -63,30 +88,19 @@ Buttons are interactive surfaces.
 
 ## 4. Handling Dark Mode
 
-The system supports two strategies for Dark Mode.
-
-### Strategy A: System Preference (Default)
-
-By default, the generated CSS uses the `light-dark()` function and media queries to automatically respect the user's OS preference (`prefers-color-scheme`).
-
-You don't need to do anything. If the user's OS is in Dark Mode, your app is in Dark Mode.
+Use `ThemeManager` as the single supported integration surface for dark mode. It handles system preference, changes over time, and (when needed) setting the correct browser-native theming behavior.
 
 > **Note on smooth transitions**: `light-dark()` selects endpoints based on context; smoothness comes from transitioning the computed colors that actually paint (and optionally from continuous state like `--tau`). If another framework sets mode-dependent `background-color`/`color` directly (or disables transitions during toggles), you can see “snaps” even though the Axiomatic engine is correct.
 
-### Strategy B: Manual Toggle
+### Manual Toggle
 
-If you want to offer a toggle button, you can force a specific mode by adding a class to the `<body>` (or any container).
+```ts
+import { ThemeManager } from "@axiomatic-design/color/browser";
 
-```html
-<!-- Force Dark Mode -->
-<body class="surface-page force-dark">
-  ...
-</body>
+const manager = new ThemeManager();
 
-<!-- Force Light Mode -->
-<body class="surface-page force-light">
-  ...
-</body>
+// Example: toggle between light and dark (add your own persistence)
+manager.setMode(manager.resolvedMode === "light" ? "dark" : "light");
 ```
 
 ## 5. Inverted Surfaces

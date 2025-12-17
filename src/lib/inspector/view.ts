@@ -30,6 +30,7 @@ export function renderAdvice(
   result: InspectionResult,
   element: HTMLElement,
   continuityViolation?: string,
+  interactionMode: "diagnose" | "experiment" = "diagnose",
 ): string {
   if (!result.hasMismatch && !continuityViolation) return "";
 
@@ -130,6 +131,18 @@ export function renderAdvice(
 
   const utilitiesStr = utilityClasses.join(",");
 
+  const actions = `
+      <div class="advice-actions" style="margin-top: 8px; display: flex; gap: 8px; flex-wrap: wrap;">
+        <button id="copy-recipe-text-btn" class="inspector-btn">Copy Recipe</button>
+        <button id="copy-recipe-json-btn" class="inspector-btn">Copy JSON</button>
+        ${
+          interactionMode === "experiment"
+            ? `<button id="apply-temp-btn" class="inspector-btn">Apply Temp</button>`
+            : ""
+        }
+      </div>
+  `;
+
   return `
     <div class="advice-box" id="advice-box" data-async="${isAsync}" data-surface="${surfaceName}" data-bg-utilities="${utilitiesStr}" data-property="${mismatchProperty}">
       <span class="advice-title">${title}</span>
@@ -137,11 +150,8 @@ export function renderAdvice(
       <br><br>
       <strong>Cause:</strong> <span id="advice-reason">${reason}</span>
       <br><br>
-      <strong>Fix:</strong> Remove the override or wrap this element in a new Surface context.
-      <div class="advice-actions" style="margin-top: 8px; display: flex; gap: 8px;">
-        <button id="copy-fix-btn" class="inspector-btn">Copy Fix</button>
-        <button id="apply-fix-btn" class="inspector-btn">Apply Fix (Temp)</button>
-      </div>
+      <strong>Remediation:</strong> Remove the override. If needed, wrap content in a Surface context.
+      ${actions}
     </div>
   `;
 }

@@ -20,6 +20,12 @@ The flow is **unidirectional**. You should treat your `color-config.json` as the
 To generate a DTCG-compatible JSON file, use the `export` command:
 
 ```bash
+pnpm exec axiomatic export --format dtcg --out tokens/
+```
+
+Best-effort alternative:
+
+```bash
 npx axiomatic export --format dtcg --out tokens/
 ```
 
@@ -34,6 +40,12 @@ This "Multi-File" structure is the standard for modern design token tools (like 
 ### Single File Export (Legacy)
 
 If you prefer a single JSON file, you can specify a file path instead of a directory:
+
+```bash
+pnpm exec axiomatic export --format dtcg --out tokens.json
+```
+
+Best-effort alternative:
 
 ```bash
 npx axiomatic export --format dtcg --out tokens.json

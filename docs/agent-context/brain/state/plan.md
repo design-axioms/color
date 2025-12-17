@@ -181,3 +181,16 @@
     - **Goal**: Close the remaining refactor edges (typed registry boundary) and finish any remaining tau-stable snap fixes with regression coverage.
   - **Phase 3: Rehearsal & Recording (The Artifact)**
     - **Goal**: Record the 2-minute video demo following the script in `.plan/vercel-demo.md`.
+
+## Epoch 45: User Model Contract Validation (Planned)
+
+- **Goal**: Validate that the public documentation never relies on internal mechanics unless we explicitly intend those internals to be part of the user programming model.
+- **Phases**:
+  - **Phase 1: Intentional Internals Review (Planned)**
+    - **Goal**: Decide whether each documented “internal” example is a deliberate teaching tool or evidence of a missing public abstraction.
+    - **Strategy**:
+      1. **Inventory**: Enumerate every `axm-docs:explanatory` span in docs and classify by purpose (diagnostic, conceptual, migration, deep-dive).
+      2. **Test Against Personas**: For each span, answer “Which persona needs this?” and “Does it become a dependency in the golden path?”.
+      3. **Decide**: Keep / replace with public contract / move to internal appendix.
+      4. **Remediate**: If it’s a gap, define the missing public surface (docs/API/tooling) rather than teaching the internal.
+      5. **Enforce**: Tighten or relax enforcement scope only after the above decisions are recorded.

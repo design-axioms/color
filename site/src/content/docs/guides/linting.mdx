@@ -47,10 +47,10 @@ Hardcoded colors break the system's ability to adapt to themes and modes. They a
 
 ```jsx
 // ❌ Invalid
-<div style={{ color: "#ff0000" }}>Error</div>
+<div style={{ color: "red" }}>Error</div>
 
 // ✅ Valid
-<div style={{ color: "var(--axm-text-high-token)" }}>Error</div>
+<div className="text-strong">Error</div>
 ```
 
 **Auto-Fix:**
@@ -75,12 +75,13 @@ const color = "var(--scale-gray-500)";
 const bg = "var(--surface-card)";
 
 // ✅ Valid
-const color = "var(--axm-text-high-token)";
-<div className="surface-card" />;
+<div className="surface-card text-strong" />;
 ```
 
 ## Config Awareness
 
-The plugin is "Config Aware". It automatically detects your `color-config.json` and generated CSS files (`css/theme.css`, `css/utilities.css`) to validate tokens and provide accurate suggestions.
+The plugin is "Config Aware". It automatically detects your `color-config.json` and generated theme CSS (commonly `css/theme.css` or `theme.css`) to validate tokens and provide accurate suggestions.
+
+If your project also has a separate utilities stylesheet, the plugin can use it to map tokens back to recommended classes, but it is not required.
 
 Ensure these files are present in your project root or build output for the linter to work correctly.

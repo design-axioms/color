@@ -44,11 +44,19 @@ By aligning our taxonomy with these platform primitives, we ensure that accessib
 
 How does this actually work in the browser?
 
+The details below are explanatory only. You should not need to use internal variables or engine mechanics directly to integrate Axiomatic Color.
+
+<!-- axm-docs:explanatory:start -->
+
 We use a technique called the **Reactive Pipeline**. Instead of hardcoding hex values into classes, we use CSS Custom Properties (`var(--...)`) and the Relative Color Syntax (`oklch(from ...)`).
+
+<!-- axm-docs:explanatory:end -->
 
 ### The Flow
 
 1.  **Input Variables**: You set high-level intent variables.
+
+    <!-- axm-docs:explanatory:start -->
 
     ```css
     .hue-brand {
@@ -56,12 +64,18 @@ We use a technique called the **Reactive Pipeline**. Instead of hardcoding hex v
     }
     ```
 
+    <!-- axm-docs:explanatory:end -->
+
 2.  **The Engine (`engine.css`)**: The engine listens to these variables and recalculates the colors in real-time.
+
+  <!-- axm-docs:explanatory:start -->
 
     ```css
     /* Simplified Engine Logic */
     --computed-surface: oklch(from var(--surface-token) l c var(--hue-brand));
     ```
+
+  <!-- axm-docs:explanatory:end -->
 
 3.  **The Output**: The browser renders the final color.
 

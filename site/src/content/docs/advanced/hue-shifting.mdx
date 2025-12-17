@@ -9,12 +9,16 @@ import HueShiftVisualizer from "../../../components/HueShiftVisualizer.svelte";
 
 ## Why Shift Hues?
 
+This page is explanatory. You should not need to implement hue shifting yourself to use the system.
+
 In the real world, objects rarely stay the same hue as they get lighter or darker.
 
 - **Natural Light**: Shadows are often cooler (bluer) due to ambient skylight, while direct highlights are warmer (yellower) from the sun.
 - **The Bezold–Brücke Effect**: As light intensity increases, our perception of hue shifts. Reds become yellower, and violets become bluer.
 
+{/* axm-docs:explanatory:start */}
 If you create a color palette by simply changing lightness (e.g., `oklch(0.5 0.2 260)` → `oklch(0.9 0.2 260)`), the result can feel "synthetic" or "flat". The shadows might look muddy, or the highlights might look washed out.
+{/* axm-docs:explanatory:end */}
 
 **Hue Shifting** mimics natural light physics by rotating the hue as lightness changes. This creates palettes that feel:
 

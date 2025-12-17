@@ -10,6 +10,12 @@ This guide shows you how to integrate the Axiomatic Color into a plain HTML proj
 First, install the CLI and generate your theme CSS.
 
 ```bash
+# Recommended
+pnpm add -D @axiomatic-design/color
+pnpm exec axiomatic init
+pnpm exec axiomatic build --out ./public/theme.css
+
+# Best-effort (if you prefer npm)
 npm install -D @axiomatic-design/color
 npx axiomatic init
 npx axiomatic build --out ./public/theme.css
@@ -23,6 +29,10 @@ Link the CSS in your HTML file:
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/@axiomatic-design/color@latest/engine.css"
+    />
     <link rel="stylesheet" href="/theme.css" />
     <title>My App</title>
   </head>
@@ -42,9 +52,8 @@ In HTML, you apply surfaces using the generated utility classes.
   <main style="padding: 2rem;">
     <!-- A card surface -->
     <div class="surface-card" style="padding: 2rem; border-radius: 8px;">
-      <!-- Use CSS variables for text colors -->
-      <h2 style="color: var(--axm-text-high-token)">Hello World</h2>
-      <p style="color: var(--axm-text-subtle-token)">
+      <h2 class="text-strong">Hello World</h2>
+      <p class="text-subtle">
         This card is automatically themed based on its context.
       </p>
     </div>
@@ -54,35 +63,27 @@ In HTML, you apply surfaces using the generated utility classes.
 
 ## 3. The Theme Toggle
 
-To handle Dark Mode, add a simple script to toggle the `data-theme` attribute.
+To handle Dark Mode, use the library’s `ThemeManager`.
 
 ```html
 <button id="theme-toggle">Toggle Theme</button>
 
-<script>
+<script type="module">
+  import { ThemeManager } from "https://unpkg.com/@axiomatic-design/color@latest/browser";
+
   const toggle = document.getElementById("theme-toggle");
+  const manager = new ThemeManager();
 
-  // 1. Initialize state
-  const systemPrefersDark = window.matchMedia(
-    "(prefers-color-scheme: dark)"
-  ).matches;
-  const savedTheme = localStorage.getItem("theme");
-  let currentTheme = savedTheme || (systemPrefersDark ? "dark" : "light");
-
-  document.documentElement.setAttribute("data-theme", currentTheme);
-  updateButtonText();
-
-  // 2. Handle click
-  toggle.addEventListener("click", () => {
-    currentTheme = currentTheme === "light" ? "dark" : "light";
-    document.documentElement.setAttribute("data-theme", currentTheme);
-    localStorage.setItem("theme", currentTheme);
-    updateButtonText();
-  });
-
-  function updateButtonText() {
-    toggle.textContent =
-      currentTheme === "light" ? "🌙 Dark Mode" : "☀️ Light Mode";
+  // Optional persistence: ThemeManager doesn't own localStorage.
+  const saved = localStorage.getItem("theme");
+  if (saved === "light" || saved === "dark" || saved === "system") {
+    manager.setMode(saved);
   }
+
+  toggle.addEventListener("click", () => {
+    const next = manager.resolvedMode === "light" ? "dark" : "light";
+    manager.setMode(next);
+    localStorage.setItem("theme", next);
+  });
 </script>
 ```

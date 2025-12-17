@@ -2,11 +2,34 @@
 title: Token Reference
 ---
 
-The system generates a set of CSS variables (tokens) that you can use in your application.
+This page distinguishes the **public token surfaces** you should build against from the **engine variables** that exist for implementation, diagnostics, and advanced interop.
 
-## Surface Tokens
+Most applications should prefer:
 
-These tokens are scoped to the surface class (e.g., `.surface-card`). They change value depending on the surface they are inside.
+- Semantic classes (e.g. `surface-card`, `text-subtle`, `hue-brand`)
+- Exported tokens (for example from `axiomatic export --format typescript`)
+
+If you directly depend on `--axm-*` CSS variables, treat them as an advanced escape hatch rather than the default integration surface.
+
+## Public surfaces
+
+### Semantic classes
+
+The primary “token surface” is the set of semantic classes generated and shipped by the system.
+
+- Surfaces: `surface-page`, `surface-card`, `surface-action`, …
+- Text: `text-strong`, `text-subtle`, …
+- Hue modifiers: `hue-brand`, `hue-danger`, …
+
+### Exported tokens (recommended for libraries)
+
+If you are building custom primitives or a component library, prefer consuming exported tokens (TypeScript/DTCG/Tailwind) rather than reading engine CSS variables.
+
+## Internals / interop (engine CSS variables)
+
+{/* axm-docs:explanatory:start */}
+
+These variables are scoped to the current surface context (e.g., inside `.surface-card`) and change as nesting/context changes. They are useful for diagnostics and advanced interop, but are not the preferred day-to-day surface.
 
 <div class="surface-card p-6 rounded-lg border border-border-dec mb-8">
 
@@ -24,6 +47,8 @@ These tokens are scoped to the surface class (e.g., `.surface-card`). They chang
 ### Usage
 
 Prefer using the utility classes (like `.text-strong`, `.surface-card`) instead of accessing these tokens directly. This ensures your UI remains consistent with the system's composition model.
+
+{/* axm-docs:explanatory:end */}
 
 ## Utility Classes
 
@@ -72,6 +97,8 @@ These tokens are defined on `:root` and are available everywhere.
 
 ### Elevation (Shadows)
 
+{/* axm-docs:explanatory:start */}
+
 <div class="surface-card p-6 rounded-lg border border-border-dec mb-8">
 
 | Token             | Description                                   |
@@ -83,7 +110,11 @@ These tokens are defined on `:root` and are available everywhere.
 
 </div>
 
+{/* axm-docs:explanatory:end */}
+
 ### Focus
+
+{/* axm-docs:explanatory:start */}
 
 <div class="surface-card p-6 rounded-lg border border-border-dec mb-8">
 
@@ -93,9 +124,13 @@ These tokens are defined on `:root` and are available everywhere.
 
 </div>
 
+{/* axm-docs:explanatory:end */}
+
 ### Data Visualization
 
 If you have configured a palette in `color-config.json`, these tokens will be available.
+
+{/* axm-docs:explanatory:start */}
 
 <div class="surface-card p-6 rounded-lg border border-border-dec mb-8">
 
@@ -108,9 +143,15 @@ If you have configured a palette in `color-config.json`, these tokens will be av
 
 </div>
 
+{/* axm-docs:explanatory:end */}
+
 ## Internal Tokens
 
 You may see these tokens in the generated CSS, but they are generally intended for internal use by the engine.
 
+{/* axm-docs:explanatory:start */}
+
 - `--axm-chroma-brand`: The base chroma value derived from your key colors.
 - `--axm-hue-brand`: The base hue value derived from your key colors.
+
+{/* axm-docs:explanatory:end */}

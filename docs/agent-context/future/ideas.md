@@ -19,3 +19,9 @@
 - **Simplify Token Surface**: We currently have special tokens like `highlight-surface-color` and `highlight-ring-color` that might be better modeled as standard surfaces with a specific hue (e.g., `.surface-highlight` or `.surface-selected` with `.hue-highlight`).
   - **Goal**: Reduce the number of "special" global tokens and rely more on the core surface + hue composition model.
   - **Benefit**: More consistent API, fewer special cases in the generator.
+
+## Documentation / User Programming Model
+
+- **Intentional Internals Audit**: Review every `axm-docs:explanatory` span and decide whether the internal detail is truly intentional (a pedagogical deep dive) or a symptom of a missing public abstraction.
+  - **Deliverable**: A decision log + remediation list: keep / replace with public contract / move to appendix.
+  - **Outcome**: Reduce reliance on internals in docs without losing valuable “how it works” teaching.

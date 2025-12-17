@@ -18,7 +18,7 @@ The Theme Studio is designed to work hand-in-hand with the CLI.
 1.  **Design**: Use the visual controls to adjust anchors, key colors, and surfaces.
 2.  **Export**: Click the "Export Config" button to get your JSON.
 3.  **Paste**: Copy the JSON into your local `color-config.json`.
-4.  **Build**: Run `npx axiomatic build` to generate your CSS.
+4.  **Build**: Run `pnpm exec axiomatic build` (or best-effort `npx axiomatic build`) to generate your CSS.
 
 ## Key Features
 

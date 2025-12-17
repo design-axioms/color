@@ -82,12 +82,15 @@ Apply the `.focus-ring` utility class to interactive elements. It applies styles
 <button class="surface-action focus-ring">Click Me</button>
 ```
 
-## Token Reference
+## Internals (token reference)
 
-Interactive elements use the standard surface tokens, plus specific tokens for states and focus.
+Interactive elements use internal surface tokens, plus specific tokens for states and focus. Prefer surface roles, state utilities, and class tokens unless you are building custom primitives.
 
-| Token Variable           | Description                     | Usage                                        |
-| :----------------------- | :------------------------------ | :------------------------------------------- |
+| Token Variable | Description | Usage |
+| :------------- | :---------- | :---- |
+
+{/* axm-docs:explanatory:start */}
 | `--axm-focus-ring-color` | The universal focus ring color. | `outline-color: var(--axm-focus-ring-color)` |
-| `--axm-surface-token`    | The background of the action.   | `background: var(--axm-surface-token)`       |
-| `--axm-text-high-token`  | The text color of the action.   | `color: var(--axm-text-high-token)`          |
+| `--axm-surface-token` | The background of the action. | `background: var(--axm-surface-token)` |
+| `--axm-text-high-token` | The text color of the action. | `color: var(--axm-text-high-token)` |
+{/* axm-docs:explanatory:end */}
