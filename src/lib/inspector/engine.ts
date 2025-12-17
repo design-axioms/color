@@ -97,13 +97,28 @@ export class AxiomaticInspectorEngine {
           // Determine which mismatch occurred for the report
           const surfaceMismatch =
             !!surfaceToken && !!bgToken && surfaceToken.value !== bgToken.value;
+          const fgToken = tokens.find((t) => t.intent === "Final Text Color");
+          const actualFgToken = tokens.find(
+            (t) => t.intent === "Actual Text Color",
+          );
+          const textMismatch =
+            !!fgToken &&
+            !!actualFgToken &&
+            fgToken.value !== actualFgToken.value;
 
-          const expected = surfaceMismatch
-            ? surfaceToken.value
-            : tokens.find((t) => t.intent === "Final Text Color")?.value;
-          const actual = surfaceMismatch
-            ? bgToken.value
-            : tokens.find((t) => t.intent === "Actual Text Color")?.value;
+          let expected: string | undefined;
+          let actual: string | undefined;
+
+          if (textMismatch) {
+            expected = fgToken.value;
+            actual = actualFgToken.value;
+          } else if (surfaceMismatch) {
+            expected = surfaceToken.value;
+            actual = bgToken.value;
+          } else {
+            expected = fgToken?.value;
+            actual = actualFgToken?.value;
+          }
 
           violations.push({
             element,

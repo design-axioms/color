@@ -47,10 +47,12 @@ export function renderAdvice(
   const hasTextMismatch =
     !!fgToken && !!actualFgToken && fgToken.value !== actualFgToken.value;
 
-  const mismatchProperty: "background-color" | "color" = hasSurfaceMismatch
-    ? "background-color"
-    : hasTextMismatch
-      ? "color"
+  // If both background and text are mismatched, prioritize text: it's usually
+  // the most actionable (and least likely to be a stacking/UA-default artifact).
+  const mismatchProperty: "background-color" | "color" = hasTextMismatch
+    ? "color"
+    : hasSurfaceMismatch
+      ? "background-color"
       : "background-color";
 
   const classList = Array.from(element.classList);

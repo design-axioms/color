@@ -125,7 +125,7 @@ test("disabling inspector mid-continuity audit stops theme flashing", async ({
   // Give the abort a moment to propagate/cleanup.
   await page.waitForTimeout(300);
 
-  const { flipsAfterDisable, tauPriority, tauValue, themeNow } =
+  const { flipsAfterDisable, tauPriority, tauValue, tauComputed, themeNow } =
     await page.evaluate((disableAt) => {
       const flips = ((globalThis as any).__AXM_THEME_FLIPS__ ?? []) as Array<{
         t: number;
@@ -137,6 +137,7 @@ test("disabling inspector mid-continuity audit stops theme flashing", async ({
         flipsAfterDisable: flips.filter((f) => f.t >= disableAt).length,
         tauPriority: root.style.getPropertyPriority("--tau"),
         tauValue: root.style.getPropertyValue("--tau"),
+        tauComputed: getComputedStyle(root).getPropertyValue("--tau"),
         themeNow: root.getAttribute("data-theme"),
       };
     }, disableStart);
@@ -145,6 +146,9 @@ test("disabling inspector mid-continuity audit stops theme flashing", async ({
   // Allow a single cleanup flip (restoring the original theme).
   expect(flipsAfterDisable).toBeLessThanOrEqual(1);
   expect(tauPriority).not.toBe("important");
-  expect(tauValue.trim()).toBe("1");
+  // The inspector may remove the inline tau override entirely; the computed
+  // value should settle back to the registered initial value.
+  expect(tauValue.trim()).toBe("");
+  expect(tauComputed.trim()).toBe("1");
   expect(themeNow).toBe("light");
 });
