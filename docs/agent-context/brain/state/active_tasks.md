@@ -1,16 +1,17 @@
-# Current Work (2025-12-17): Claim Ledger Triage — Epoch 2 (Theme Studio alignment)
+# Current Work (2025-12-17): Claim Ledger Triage — Epoch 2 shipped (Theme Studio alignment)
 
 ## Goal
 
-- Ship the Epoch 2 implementation as a PR from branch `epoch-2/theme-studio-alignment`.
+- Ship the Epoch 2 implementation and make handoff durable for continuing on another machine.
 
 ## Current Status
 
-- Epoch 2 implementation is complete.
-- Verification is green:
+- Epoch 2 implementation is complete and merged via PR #18.
+- Verification was green at merge time:
   - `pnpm -w check:site`
   - `pnpm -w test`
   - `pnpm -w test:playwright tests/studio.spec.ts`
+- Pre-push build is now hermetic (does not leave `css/theme.css` / `color-config.schema.json` dirty).
 
 ## Known Footguns / Invariants
 
@@ -19,12 +20,8 @@
 
 ## Immediate Next Steps
 
-- Open PR for `epoch-2/theme-studio-alignment`.
-- Optional “full pre-push gate” before pushing:
-  - `pnpm build`
-  - `pnpm check:exports`
-  - `pnpm lint:all`
-  - `pnpm test:playwright`
+- Continue the next queued work in this doc (Epoch 44, Phase 2.1) unless reprioritized.
+- If continuing on a new machine, follow `docs/agent-context/handoff.md`.
 
 ## Handoff Note
 

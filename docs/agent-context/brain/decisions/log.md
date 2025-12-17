@@ -10,6 +10,24 @@ This file tracks key architectural and design decisions made throughout the proj
 - **Decision**: What did we decide to do?
 - **Rationale**: Why did we choose this path? What alternatives were considered?
 
+### [2025-12-17] Theme intent has a single semantic writer (ThemeBridge)
+
+- **Context**: Studio and Starlight both need to reflect theme intent (system/light/dark) without staged multi-writer mutations that can cause perceptual desynchronization.
+- **Decision**: Treat ThemeManager as the single semantic theme authority. Introduce a site ThemeBridge that owns ThemeManager + persistence and keeps vendor signals (e.g. `data-theme`) in sync.
+- **Rationale**: Multi-writer theme state creates non-deterministic ordering windows and chrome continuity issues. A single semantic plane aligns with the integration contract and keeps behavior testable.
+
+### [2025-12-17] Studio config import/export is schema-first
+
+- **Context**: The Studio UI needs to export shareable configs and safely import them without silently accepting malformed or out-of-date shapes.
+- **Decision**: Export config JSON with a `$schema` pointer and validate imports against `color-config.schema.json` (AJV), surfacing actionable UI errors.
+- **Rationale**: Makes configs portable, editor-friendly, and robust against drift; validation failures are explicit and debuggable.
+
+### [2025-12-17] Pre-push build must be hermetic
+
+- **Context**: `pnpm build` regenerates tracked artifacts (notably `css/theme.css` and `color-config.schema.json`), which can leave developer working trees dirty after a pre-push hook.
+- **Decision**: Run the build via `scripts/hooks/hermetic-build.sh` (snapshot/restore these artifacts) so validation remains strict but side-effect free.
+- **Rationale**: Prevents “validation dirties my tree” friction while retaining the build as the source-of-truth verification step.
+
 ### [2025-12-16] Treat `css/theme.css` as a public export artifact
 
 - **Context**: `package.json` exports map `./theme.css` to `./css/theme.css`. Tooling, consumers, and verification steps (including `publint`) assume this file exists. Prior “cleanup” logic in tests risked deleting it.
