@@ -142,7 +142,7 @@ Finally, the solver outputs the CSS tokens that the Theme Studio (and your app) 
 
 ## The Pipeline
 
-When you run `npx axiomatic` (or change a setting in the Studio), this pipeline executes:
+When you run `axiomatic` (for example via `pnpm exec axiomatic`, or best-effort `npx axiomatic`), or change a setting in the Studio, this pipeline executes:
 
 1.  **Hydrate**: Read your `color-config.json`.
 2.  **Adjust Anchors**: Ensure the range supports High Contrast text.

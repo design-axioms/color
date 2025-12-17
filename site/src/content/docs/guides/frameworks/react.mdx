@@ -10,6 +10,13 @@ This guide shows you how to integrate the Axiomatic Color into a React applicati
 First, install the CLI and generate your theme CSS and TypeScript definitions.
 
 ```bash
+# Recommended
+pnpm add -D @axiomatic-design/color
+pnpm exec axiomatic init
+pnpm exec axiomatic build --out ./src/theme.css
+pnpm exec axiomatic export --format typescript --out ./src/theme.ts
+
+# Best-effort (if you prefer npm)
 npm install -D @axiomatic-design/color
 npx axiomatic init
 npx axiomatic build --out ./src/theme.css

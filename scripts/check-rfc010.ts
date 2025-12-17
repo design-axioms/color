@@ -48,8 +48,91 @@ const IGNORE_GLOBS = [
 
 const FILE_GLOBS = [
   "site/src/**/*.{css,astro,svelte,ts,tsx,js,jsx}",
+  "site/src/content/docs/**/*.{md,mdx}",
   "examples/**/src/**/*.{css,ts,tsx,js,jsx,html,astro,svelte}",
 ];
+
+const DOCS_EXPLANATORY_START_MARKERS = [
+  "<!-- axm-docs:explanatory:start -->",
+  "{/* axm-docs:explanatory:start */}",
+] as const;
+
+const DOCS_EXPLANATORY_END_MARKERS = [
+  "<!-- axm-docs:explanatory:end -->",
+  "{/* axm-docs:explanatory:end */}",
+] as const;
+
+type DocsScope =
+  | { kind: "none" }
+  | { kind: "strict" }
+  | { kind: "explanatory-allowed" };
+
+function docsScopeForRelPath(r: string): DocsScope {
+  if (!r.startsWith("site/src/content/docs/")) return { kind: "none" };
+  if (r.startsWith("site/src/content/docs/guides/")) return { kind: "strict" };
+  if (r === "site/src/content/docs/reference/javascript-api.md") {
+    return { kind: "strict" };
+  }
+  return { kind: "explanatory-allowed" };
+}
+
+type Span = { start: number; end: number };
+
+function findExplanatorySpans(content: string): {
+  spans: Span[];
+  hasAnyMarkers: boolean;
+  unbalanced: boolean;
+} {
+  const spans: Span[] = [];
+  let index = 0;
+  let hasAnyMarkers = false;
+  let unbalanced = false;
+
+  const findNextMarker = (
+    markers: readonly string[],
+    from: number,
+  ): { index: number; marker: string } | null => {
+    let bestIndex = -1;
+    let bestMarker = "";
+
+    for (const marker of markers) {
+      const i = content.indexOf(marker, from);
+      if (i === -1) continue;
+      if (bestIndex === -1 || i < bestIndex) {
+        bestIndex = i;
+        bestMarker = marker;
+      }
+    }
+
+    if (bestIndex === -1) return null;
+    return { index: bestIndex, marker: bestMarker };
+  };
+
+  while (index < content.length) {
+    const startHit = findNextMarker(DOCS_EXPLANATORY_START_MARKERS, index);
+    if (!startHit) break;
+    hasAnyMarkers = true;
+
+    const afterStart = startHit.index + startHit.marker.length;
+    const endHit = findNextMarker(DOCS_EXPLANATORY_END_MARKERS, afterStart);
+    if (!endHit) {
+      unbalanced = true;
+      break;
+    }
+
+    spans.push({ start: afterStart, end: endHit.index });
+    index = endHit.index + endHit.marker.length;
+  }
+
+  return { spans, hasAnyMarkers, unbalanced };
+}
+
+function isIndexInSpan(index: number, spans: Span[]): boolean {
+  for (const span of spans) {
+    if (index >= span.start && index < span.end) return true;
+  }
+  return false;
+}
 
 // RFC 010 boundary: Starlight theme variables are not a styling API for authored components.
 // They are only allowed in a single bridge stylesheet that targets Starlight-owned markup.
@@ -184,14 +267,58 @@ function collectViolations(filePath: string): Violation[] {
 
   const violations: Violation[] = [];
 
+  const r = rel(filePath);
+  const docsScope = docsScopeForRelPath(r);
+  const explanatory = findExplanatorySpans(content);
+
+  if (docsScope.kind === "strict" && explanatory.hasAnyMarkers) {
+    const first =
+      DOCS_EXPLANATORY_START_MARKERS.map((m) => content.indexOf(m)).filter(
+        (i) => i !== -1,
+      )[0] ?? -1;
+    const where = toLineColumn(content, Math.max(0, first));
+    violations.push({
+      file: r,
+      line: where.line,
+      column: where.column,
+      rule: "docs-explanatory-span-not-allowed",
+      match: "axm-docs:explanatory",
+    });
+  }
+
+  if (docsScope.kind === "explanatory-allowed" && explanatory.unbalanced) {
+    const first =
+      DOCS_EXPLANATORY_START_MARKERS.map((m) => content.indexOf(m)).filter(
+        (i) => i !== -1,
+      )[0] ?? -1;
+    const where = toLineColumn(content, Math.max(0, first));
+    violations.push({
+      file: r,
+      line: where.line,
+      column: where.column,
+      rule: "docs-explanatory-span-unbalanced",
+      match: "axm-docs:explanatory",
+    });
+  }
+
+  const ignoreMatchAtIndex = (index: number): boolean => {
+    return (
+      docsScope.kind === "explanatory-allowed" &&
+      isIndexInSpan(index, explanatory.spans)
+    );
+  };
+
   // RFC 010: `--sl-*` variables are permitted only at the Starlight boundary.
   // We scan raw text (not just CSS) because `--sl-` can appear in embedded styles.
-  const r = rel(filePath);
   if (content.includes("--sl-") && !ALLOWED_STARLIGHT_VARS_FILES.has(r)) {
     const re = /--sl-[a-z0-9-]+/gi;
     re.lastIndex = 0;
     let match: RegExpExecArray | null;
     while ((match = re.exec(content)) !== null) {
+      if (ignoreMatchAtIndex(match.index)) {
+        if (match.index === re.lastIndex) re.lastIndex++;
+        continue;
+      }
       const where = toLineColumn(content, match.index);
       violations.push({
         file: r,
@@ -212,6 +339,10 @@ function collectViolations(filePath: string): Violation[] {
     re.lastIndex = 0;
     let match: RegExpExecArray | null;
     while ((match = re.exec(content)) !== null) {
+      if (ignoreMatchAtIndex(match.index)) {
+        if (match.index === re.lastIndex) re.lastIndex++;
+        continue;
+      }
       const where = toLineColumn(content, match.index);
       violations.push({
         file: r,
@@ -231,6 +362,10 @@ function collectViolations(filePath: string): Violation[] {
     let match: RegExpExecArray | null;
 
     while ((match = re.exec(content)) !== null) {
+      if (ignoreMatchAtIndex(match.index)) {
+        if (match.index === re.lastIndex) re.lastIndex++;
+        continue;
+      }
       if (rule === "no-axm-vars") {
         const raw = match[0] ?? "";
         const isBridge = /^var\(--axm-bridge-[a-z0-9-]+\)$/i.test(raw);

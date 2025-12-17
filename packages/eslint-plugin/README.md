@@ -83,4 +83,6 @@ const color = "var(--axm-text-high-token)";
 
 ## Config Awareness
 
-The plugin automatically detects your `color-config.json` and generated CSS files (`css/theme.css`, `css/utilities.css`) to validate tokens and provide accurate suggestions. Ensure these files are present in your project root or build output.
+The plugin automatically detects your `color-config.json` and generated theme CSS (commonly `css/theme.css` or `theme.css`) to validate tokens and provide accurate suggestions.
+
+If your project also has a separate utilities stylesheet, the plugin can use it to map tokens back to recommended classes, but it is not required.

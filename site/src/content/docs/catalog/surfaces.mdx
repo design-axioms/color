@@ -18,20 +18,6 @@ These surfaces form the backdrop of your application.
 
 The infinite background. This is usually applied to the `<body>` tag.
 
-<Diagram class="surface-page docs-p-4 docs-rounded bordered">
-  This is the Page surface.
-</Diagram>
-
-### `surface-workspace`
-
-A slightly elevated area, often used for sidebars, navigation rails, or the main content area in a dashboard.
-
-<Diagram class="surface-page docs-p-4 docs-rounded bordered">
-  <div class="surface-workspace docs-p-4 docs-rounded bordered">
-    This is the Workspace surface.
-  </div>
-</Diagram>
-
 ## The Containers
 
 These surfaces sit _on top_ of the canvas.
@@ -89,17 +75,20 @@ Shadows provide depth and hierarchy. The system generates a semantic scale of sh
   <div class="surface-card shadow-xl bordered docs-shadow-box">shadow-xl</div>
 </Diagram>
 
-## Token Reference
+## Internals (token reference)
 
-Every surface exposes a standard set of CSS variables (tokens) that adapt to the surface's background.
+Every surface exposes internal CSS variables (tokens) that adapt to the surface's background. Prefer surface roles and class tokens unless you are building custom primitives.
 
-| Token Variable              | Description                                 | Usage                                       |
-| :-------------------------- | :------------------------------------------ | :------------------------------------------ |
-| `--axm-surface-token`       | The background color of the surface.        | `background: var(--axm-surface-token)`      |
-| `--axm-text-high-token`     | High contrast text color.                   | `color: var(--axm-text-high-token)`         |
-| `--axm-text-subtle-token`   | Medium contrast text color.                 | `color: var(--axm-text-subtle-token)`       |
-| `--axm-text-subtlest-token` | Low contrast text color.                    | `color: var(--axm-text-subtlest-token)`     |
-| `--axm-border-dec-token`    | Decorative border color (low contrast).     | `border-color: var(--axm-border-dec-token)` |
-| `--axm-border-int-token`    | Interactive border color (higher contrast). | `border-color: var(--axm-border-int-token)` |
+| Token Variable | Description | Usage |
+| :------------- | :---------- | :---- |
+
+{/* axm-docs:explanatory:start */}
+| `--axm-surface-token` | The background color of the surface. | `background: var(--axm-surface-token)` |
+| `--axm-text-high-token` | High contrast text color. | `color: var(--axm-text-high-token)` |
+| `--axm-text-subtle-token` | Medium contrast text color. | `color: var(--axm-text-subtle-token)` |
+| `--axm-text-subtlest-token` | Low contrast text color. | `color: var(--axm-text-subtlest-token)` |
+| `--axm-border-dec-token` | Decorative border color (low contrast). | `border-color: var(--axm-border-dec-token)` |
+| `--axm-border-int-token` | Interactive border color (higher contrast). | `border-color: var(--axm-border-int-token)` |
+{/* axm-docs:explanatory:end */}
 
 </DemoWrapper>

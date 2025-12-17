@@ -11,8 +11,10 @@ This guide will walk you through setting up the Axiomatic Color and building you
 
 Run the following commands in your project root:
 
+`pnpm` is recommended (this repo uses pnpm). `npm` generally works as a best-effort alternative.
+
 <Tabs>
-  <TabItem label="npm">
+  <TabItem label="npm (best-effort)">
 
     ```bash
     npm install -D @axiomatic-design/color
@@ -37,7 +39,7 @@ This creates a `color-config.json` file with default settings.
 Now, generate the CSS and TypeScript definitions.
 
 <Tabs>
-  <TabItem label="npm">
+  <TabItem label="npm (best-effort)">
 
     ```bash
     npx axiomatic build --out ./src/theme.css
@@ -62,9 +64,10 @@ Let's build a simple "Card" component to see the system in action.
 <Tabs>
   <TabItem label="React">
   
-  First, import the CSS in your app entry point:
+  First, import the engine and your generated theme in your app entry point:
   ```tsx
-  import './theme.css';
+  import "@axiomatic-design/color/engine.css";
+  import "./theme.css";
   ```
 
 Then, create a Card component:
@@ -87,10 +90,11 @@ export function Card() {
 
   <TabItem label="Svelte">
   
-  First, import the CSS in your root layout:
+  First, import the engine and your generated theme in your root layout:
   ```svelte
   <script>
-    import '../theme.css';
+    import "@axiomatic-design/color/engine.css";
+    import "../theme.css";
   </script>
   <slot />
   ```
@@ -112,11 +116,15 @@ Then, create a Card component:
 
   <TabItem label="HTML">
   
-  Link the CSS in your `<head>`:
+  Link the engine and your generated theme in your `<head>`:
   
   > **Note**: If you are using a bundler (like Vite, Webpack, or Astro), you should import the CSS file in your JavaScript/TypeScript entry point instead (e.g. `import './theme.css'`).
 
 ```html
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/@axiomatic-design/color@latest/engine.css"
+/>
 <link rel="stylesheet" href="./src/theme.css" />
 ```
 

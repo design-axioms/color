@@ -20,7 +20,7 @@ The library provides a `ThemeManager` class that handles the complexity of:
 - Detecting system color preferences.
 - Listening for changes (e.g., when the user changes their OS theme).
 - Syncing the `meta[name="theme-color"]` tag.
-- Updating the `data-theme` attribute on the root element.
+- Publishing semantic state (`data-axm-mode`, `data-axm-resolved-mode`) on the root element.
 
 ### The `ThemeManager` Class
 
@@ -87,7 +87,7 @@ import { tokens } from "./theme";
 
 // Usage in styles
 const style = {
-  color: tokens.context.text.high, // "var(--axm-text-high-token)"
+  color: tokens.context.text.high,
 };
 ```
 

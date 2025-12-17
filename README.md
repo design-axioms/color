@@ -2,6 +2,8 @@
 
 **An Axiomatic approach to color. Automated contrast, platform-native adaptation, and mathematically guaranteed accessibility.**
 
+Documentation (canonical): https://design-axioms.github.io/color/
+
 ## Features
 
 |                     |                                                                                                                        |
@@ -15,10 +17,12 @@
 
 ## Installation
 
+This repo uses `pnpm`. If you prefer `npm` (or another package manager), it will generally work as a best-effort alternative.
+
 ```bash
-npm install @axiomatic-design/color
-# or
 pnpm add @axiomatic-design/color
+# or
+npm install @axiomatic-design/color
 # or
 yarn add @axiomatic-design/color
 ```
@@ -50,6 +54,12 @@ Add a script to your `package.json` to generate your theme tokens.
 Run the solver:
 
 ```bash
+pnpm run theme
+```
+
+Best-effort alternative:
+
+```bash
 npm run theme
 ```
 
@@ -57,15 +67,18 @@ This generates a `theme.css` file (by default).
 
 ### 3. Import CSS
 
-Import the core engine, utilities, and your generated theme into your application.
+Import the engine plus your generated theme.
 
 ```css
 /* In your main CSS file */
 @import "@axiomatic-design/color/engine.css";
 @import "./theme.css"; /* Your generated theme */
+```
 
-/* Optional utilities */
-@import "@axiomatic-design/color/utilities.css";
+Optional: export class tokens for typed access (recommended for component frameworks).
+
+```bash
+pnpm exec axiomatic export --format typescript --out ./src/theme.ts
 ```
 
 ### 4. Use Semantic Classes
@@ -174,7 +187,7 @@ color-system/
 │       └── index.ts             # Main CLI entry point
 ├── css/
 │   ├── engine.css               # Core reactive pipeline
-│   ├── utilities.css            # Surface/text utility classes
-│   └── theme.css                # Generated tokens (do not edit)
+│   ├── theme.css                # Generated tokens + semantic classes
+│   └── index.css                # Convenience import (engine + theme)
 └── demo/                        # React demo application
 ```

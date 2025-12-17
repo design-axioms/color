@@ -8,13 +8,18 @@ The `axiomatic` CLI is the primary tool for generating your theme tokens.
 
 ```bash
 pnpm add -D @axiomatic-design/color
-# or
+
+# Best-effort (pnpm is recommended for this repo)
 npm install -D @axiomatic-design/color
 ```
 
 ## Usage
 
 ```bash
+# Recommended when installed as a dev dependency
+pnpm exec axiomatic [command] [options]
+
+# One-off / quick try
 npx axiomatic [command] [options]
 ```
 
@@ -47,6 +52,7 @@ npx axiomatic build [options]
 - `--config <path>`: Path to your JSON configuration file. (Default: `./color-config.json`)
 - `--out <path>`: Path where the generated CSS will be written. (Default: `./theme.css`)
 - `--watch`: Watch for changes in the config file and rebuild automatically.
+- `--copy-engine`: Copy `engine.css` next to the output CSS (useful for simple integrations).
 
 **Examples:**
 
@@ -59,7 +65,17 @@ npx axiomatic build --watch
 
 # Custom paths
 npx axiomatic build --config ./design/colors.json --out ./src/variables.css
+
+# Copy engine.css next to your output
+npx axiomatic build --copy-engine
 ```
+
+**Notes:**
+
+- `build` also emits a class-token manifest alongside your CSS output:
+  - If `--out` is `theme.css`, you’ll also get `theme.class-tokens.json`.
+  - Otherwise you’ll get `<out>.class-tokens.json`.
+- If you run `axiomatic` with no command, it runs `build`.
 
 ### `export`
 
@@ -105,6 +121,22 @@ npx axiomatic audit
 - **Contrast Compliance**: Verifies that all surfaces meet APCA contrast guidelines.
 - **Polarity Logic**: Ensures "Page" surfaces are light in Light Mode, and "Inverted" surfaces are dark.
 
+**Semantics:**
+
+`audit` is designed to be **advisory**: it reports schema and logic findings, but not every finding is treated as a hard failure.
+
+### `import`
+
+Imports a DTCG token file into an Axiomatic configuration.
+
+```bash
+npx axiomatic import <file> [--out <file>] [--dry-run]
+```
+
+**Notes:**
+
+- Intended as a migration tool: it produces a `color-config.json`-compatible output.
+
 ## Output
 
 The `build` command generates a CSS file containing:
@@ -113,10 +145,23 @@ The `build` command generates a CSS file containing:
 2.  **Surface Classes**: Classes for each surface defined in your config (e.g., `.surface-card`).
 3.  **High Contrast Media Query**: A `@media (prefers-contrast: more)` block with accessible overrides.
 
+It also generates a class-token manifest (`*.class-tokens.json`) which is used for enforcement and tooling.
+
 ### Integration
 
 Import the generated file in your main CSS entry point:
 
 ```css
+@import "@axiomatic-design/color/engine.css";
 @import "./theme.css";
 ```
+
+### Legacy shorthand
+
+For compatibility, the CLI supports the legacy shorthand form:
+
+```bash
+npx axiomatic <config> <out>
+```
+
+This is treated as `build --config <config> --out <out>`.

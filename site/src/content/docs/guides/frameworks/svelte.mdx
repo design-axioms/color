@@ -10,6 +10,13 @@ This guide shows you how to integrate the Axiomatic Color into a Svelte applicat
 First, install the CLI and generate your theme CSS and TypeScript definitions.
 
 ```bash
+# Recommended
+pnpm add -D @axiomatic-design/color
+pnpm exec axiomatic init
+pnpm exec axiomatic build --out ./src/theme.css
+pnpm exec axiomatic export --format typescript --out ./src/lib/theme.ts
+
+# Best-effort (if you prefer npm)
 npm install -D @axiomatic-design/color
 npx axiomatic init
 npx axiomatic build --out ./src/theme.css
@@ -20,7 +27,7 @@ Import the CSS in your root layout (e.g., `src/routes/+layout.svelte`):
 
 ```svelte
 <script>
-  import '../theme.css';
+  import "../theme.css";
 </script>
 
 <slot />
@@ -33,19 +40,19 @@ We can create a reusable `<Surface>` component.
 ```svelte
 <!-- src/lib/components/Surface.svelte -->
 <script lang="ts">
-  import { tokens } from '$lib/theme';
-  import type { HTMLAttributes } from 'svelte/elements';
+  import { tokens } from "$lib/theme";
+  import type { HTMLAttributes } from "svelte/elements";
 
   interface Props extends HTMLAttributes<HTMLElement> {
     variant: keyof typeof tokens.surface;
     as?: string;
-    children?: import('svelte').Snippet;
+    children?: import("svelte").Snippet;
   }
 
   let {
     variant,
-    as = 'div',
-    class: className = '',
+    as = "div",
+    class: className = "",
     children,
     ...rest
   }: Props = $props();
@@ -53,11 +60,7 @@ We can create a reusable `<Surface>` component.
   const surfaceClass = tokens.surface[variant];
 </script>
 
-<svelte:element
-  this={as}
-  class="{surfaceClass} {className}"
-  {...rest}
->
+<svelte:element this={as} class="{surfaceClass} {className}" {...rest}>
   {@render children?.()}
 </svelte:element>
 ```
@@ -107,9 +110,9 @@ export const theme = new ThemeService();
 ```svelte
 <!-- src/routes/+page.svelte -->
 <script lang="ts">
-  import Surface from '$lib/components/Surface.svelte';
-  import { theme } from '$lib/theme.svelte';
-  import { tokens } from '$lib/theme';
+  import Surface from "$lib/components/Surface.svelte";
+  import { theme } from "$lib/theme.svelte";
+  import { tokens } from "$lib/theme";
 </script>
 
 <Surface variant="page" style="min-height: 100vh; padding: 2rem;">
@@ -117,7 +120,7 @@ export const theme = new ThemeService();
     <h1 style="color: {tokens.context.text.high}">My App</h1>
 
     <button onclick={() => theme.toggle()}>
-      {theme.mode === 'light' ? '🌙' : '☀️'}
+      {theme.mode === "light" ? "🌙" : "☀️"}
     </button>
   </header>
 

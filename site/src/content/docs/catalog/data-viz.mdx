@@ -30,7 +30,13 @@ Instead of using a fixed set of hex codes, we use a **Harmonized Fixed Hues** st
 
 ## Usage
 
-The system generates CSS variables in the format `--axm-chart-N`:
+The system generates a categorical palette from your `color-config.json`. For most integrations, prefer consuming the exported tokens (e.g. from the TypeScript exporter) rather than reading engine variables directly.
+
+### Internals (CSS variables)
+
+The engine also exposes CSS variables in the format `--axm-chart-N` for advanced interop:
+
+{/* axm-docs:explanatory:start */}
 
 ```css
 .my-chart {
@@ -41,6 +47,8 @@ The system generates CSS variables in the format `--axm-chart-N`:
   background-color: var(--axm-chart-2);
 }
 ```
+
+{/* axm-docs:explanatory:end */}
 
 ### Configuration
 

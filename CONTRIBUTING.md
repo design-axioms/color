@@ -38,6 +38,29 @@ Our CI pipeline runs on GitHub Actions and performs the following checks:
 - **Node Version**: We target Node.js v24.
 - **Formatting**: We use Prettier. Run `pnpm format` to format code.
 
+## Documentation & examples
+
+The docs site is part of the user programming model contract.
+
+- `pnpm -w check:rfc010` scans docs content (`site/src/content/docs/**/*.{md,mdx}`) to prevent accidentally teaching forbidden “plumbing” (engine addressing, raw color literals, etc.).
+- Guides are expected to be copy/paste safe and strictly contract-aligned.
+
+### Explanatory spans (internals)
+
+If you need to mention internals for explanation (not integration), wrap the smallest possible region in an explicit explanatory span:
+
+- In `.md` files:
+  - `<!-- axm-docs:explanatory:start -->`
+  - `<!-- axm-docs:explanatory:end -->`
+- In `.mdx` files:
+  - `{/* axm-docs:explanatory:start */}`
+  - `{/* axm-docs:explanatory:end */}`
+
+Policy:
+
+- Explanatory spans are **not** a public API endorsement.
+- Keep them rare and scoped: if contract-level teaching is sufficient, prefer that.
+
 ## QA & Visual Audits
 
 We maintain a suite of visual audit tools to verify the design system across different contexts.

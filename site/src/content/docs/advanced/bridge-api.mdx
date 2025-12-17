@@ -1,0 +1,51 @@
+---
+title: Bridge API (Adapters)
+description: How to map a host palette into Axiomatic bridge exports without “addressing the engine”.
+---
+
+This page describes the adapter **bridge API**: a narrow seam intended for integrating Axiomatic Color into a host system that already owns its palette variables and chrome.
+
+Most consumers should *not* use bridge exports directly. Prefer semantic classes and exported tokens.
+
+## See also
+
+- [Integration](/guides/integration)
+
+## What the bridge exports are
+
+Bridge exports are a small set of CSS custom properties in the `--axm-bridge-*` family that adapters may read.
+
+They exist to avoid two bad outcomes:
+
+- depending on engine internals (`--axm-*` / `--_axm-*`), and
+- spreading host-specific overrides throughout authored components.
+
+## One-file rule
+
+All host-variable integration should live in a **single adapter stylesheet** (a “bridge file”). That file is the only place where host variables and bridge wiring belong.
+
+## Example mapping (conceptual)
+
+{/* axm-docs:explanatory:start */}
+
+```css
+/* Adapter stylesheet (single boundary file) */
+:root {
+  /* Map host palette variables into Axiomatic bridge exports */
+  --host-color-text: var(--axm-bridge-fg);
+  --host-color-border: var(--axm-bridge-border-int);
+  --host-color-hairline: var(--axm-bridge-border-dec);
+}
+```
+
+{/* axm-docs:explanatory:end */}
+
+## Continuity constraints (non-negotiable)
+
+The bridge exports must not become a second animation driver.
+
+- Do not transition `--axm-bridge-*`.
+- Do not transition `border-color` in chrome while borders are bridge-routed.
+- Do not use `border: … currentColor` for chrome borders; route borders through bridge exports (for example `--axm-bridge-border-int`).
+
+These rules prevent “popping” where some chrome regions update on different ticks than the engine-driven transition.

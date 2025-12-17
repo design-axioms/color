@@ -91,7 +91,7 @@ All notable changes to this project will be documented in this file.
 - **CLI**: New `color-system` CLI with `init` command for scaffolding.
 - **Build**: `tsup` build configuration for optimized distribution.
 - **Runtime**: `generateTheme` and `injectTheme` exports for runtime theming.
-- **CSS**: `engine.css`, `utilities.css`, and `theme.css` are now exported.
+- **CSS**: `engine.css` and `theme.css` are now exported.
 - **Docs**: Comprehensive README with installation and usage instructions.
 
 ### Changed

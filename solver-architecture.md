@@ -128,11 +128,13 @@ Finally, it writes the results to `css/generated-tokens.css`.
 
 ## 5. Integration with CSS
 
-The solver outputs _Lightness Tokens_ only.
+The solver’s job is to determine the _Lightness_ values that satisfy contrast targets.
 
-- **`generated-tokens.css`**: Contains the raw `oklch(L 0 0)` values.
-- **`utilities.css`**: Consumes these tokens.
-  - It mixes the **Solved Lightness** with **Brand Chroma/Hue**.
-  - Example: A `.surface-brand` class takes the `L` from the solver but injects the `C` and `H` from the brand palette.
+In practice, the CLI produces a single generated stylesheet (commonly `theme.css`) that contains:
 
-This separation of concerns (Solver = Lightness/Contrast, CSS = Hue/Chroma) is the architectural keystone of the system.
+- The solved lightness tokens (e.g. `oklch(L 0 0)`), plus the semantic token surface.
+- The semantic classes (e.g. `.surface-card`, `.text-strong`) that consume those tokens.
+
+Hue and chroma are applied in CSS using relative color syntax; the solver doesn’t “pick” hues, it solves for lightness and contrast.
+
+This separation of concerns (Solver = Lightness/Contrast, CSS = Hue/Chroma application) is the architectural keystone of the system.

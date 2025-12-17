@@ -14,6 +14,12 @@ pnpm add -D @axiomatic-design/color
 pnpm exec axiomatic init
 pnpm exec axiomatic build --out ./app/styles/theme.css
 pnpm exec axiomatic export --format typescript --out ./app/utils/theme.ts
+
+# Best-effort (if you prefer npm)
+npm install -D @axiomatic-design/color
+npx axiomatic init
+npx axiomatic build --out ./app/styles/theme.css
+npx axiomatic export --format typescript --out ./app/utils/theme.ts
 ```
 
 Import the CSS in your application's entry point (e.g., `app/app.ts` or `app/styles/app.css` if using CSS imports).
@@ -58,10 +64,7 @@ The library provides a `ThemeManager` class to handle the low-level details of t
 // app/services/theme.ts
 import Service from "@ember/service";
 import { tracked } from "@glimmer/tracking";
-import {
-  ThemeManager,
-  type ThemeMode,
-} from "@axiomatic-design/color/browser";
+import { ThemeManager, type ThemeMode } from "@axiomatic-design/color/browser";
 
 export default class ThemeService extends Service {
   @tracked mode: ThemeMode = "system";

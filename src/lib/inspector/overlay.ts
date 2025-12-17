@@ -87,9 +87,11 @@ export class AxiomaticDebugger extends BaseElement {
   private infoCard!: HTMLElement;
   private toastEl: HTMLElement | null = null;
   private toggleBtn!: HTMLButtonElement;
+  private modeToggleBtn!: HTMLButtonElement;
   private violationToggle!: HTMLButtonElement;
   private continuityToggle!: HTMLButtonElement;
   private resetBtn!: HTMLButtonElement;
+  private copyAppliedFixesBtn!: HTMLButtonElement;
   private themeToggleMain!: HTMLButtonElement;
   private elementConsoleBtn!: HTMLButtonElement;
   private elementInternalsBtn!: HTMLButtonElement;
@@ -103,15 +105,92 @@ export class AxiomaticDebugger extends BaseElement {
   private isViolationMode = false;
   private isContinuityMode = false;
   private showInternals = false;
+  private interactionMode: "diagnose" | "experiment" = "diagnose";
   private rafId: number | null = null;
   private modifiedElements = new Map<
     HTMLElement,
     { className: string; style: string }
   >();
+
+  private appliedFixes: Array<{
+    elementLabel: string;
+    mismatchProperty: "background-color" | "color";
+    expectedSurfaceClass: string;
+    removedClasses: string[];
+    removedInline: boolean;
+    sourceHint?: string;
+    timestampIso: string;
+  }> = [];
   private continuityViolations = new Map<HTMLElement, Violation>();
 
   private continuityAbort: AbortController | null = null;
   private toastTimeout: number | null = null;
+
+  private updateAppliedFixesButtonState(): void {
+    const hasAny = this.appliedFixes.length > 0;
+    this.copyAppliedFixesBtn.classList.toggle("active", hasAny);
+    this.copyAppliedFixesBtn.toggleAttribute("disabled", !hasAny);
+    const count = this.appliedFixes.length;
+    this.copyAppliedFixesBtn.title = hasAny
+      ? `Copy experiment log (${count}). Shift+Click to clear.`
+      : "No experiments yet.";
+  }
+
+  private recordAppliedFix(entry: {
+    element: HTMLElement;
+    mismatchProperty: "background-color" | "color";
+    expectedSurfaceClass: string;
+    removedClasses: string[];
+    removedInline: boolean;
+    sourceHint?: string;
+  }): void {
+    const elementLabel = safeElementLabel(entry.element);
+    const timestampIso = new Date().toISOString();
+    this.appliedFixes.push({
+      elementLabel,
+      mismatchProperty: entry.mismatchProperty,
+      expectedSurfaceClass: entry.expectedSurfaceClass,
+      removedClasses: entry.removedClasses,
+      removedInline: entry.removedInline,
+      sourceHint: entry.sourceHint,
+      timestampIso,
+    });
+
+    (globalThis as unknown as Record<string, unknown>)[
+      "__AXIOMATIC_INSPECTOR_APPLIED_FIXES__"
+    ] = this.appliedFixes;
+
+    this.updateAppliedFixesButtonState();
+  }
+
+  private formatAppliedFixesAsText(): string {
+    const header =
+      "Axiomatic Inspector — experiments (temporary DOM patches)\n" +
+      "These mutations are not a real fix. Use this log to apply equivalent changes in source.\n";
+
+    const blocks = this.appliedFixes.map((f, index) => {
+      const lines: string[] = [];
+      lines.push(`${index + 1}. ${f.elementLabel}`);
+      lines.push(`   - Expected surface: \`${f.expectedSurfaceClass}\``);
+      if (f.removedClasses.length > 0) {
+        lines.push(
+          `   - Remove classes: ${f.removedClasses
+            .map((c) => `\`${c}\``)
+            .join(", ")}`,
+        );
+      }
+      if (f.removedInline) {
+        lines.push(`   - Remove inline override: \`${f.mismatchProperty}\``);
+      }
+      if (f.sourceHint) {
+        lines.push(`   - Source hint: ${f.sourceHint}`);
+      }
+      lines.push(`   - Applied at: ${f.timestampIso}`);
+      return lines.join("\n");
+    });
+
+    return [header, ...blocks].join("\n\n").trim() + "\n";
+  }
 
   private showToast(
     message: string,
@@ -438,6 +517,32 @@ export class AxiomaticDebugger extends BaseElement {
     localStorage.setItem("axiomatic-inspector-state", JSON.stringify(state));
   }
 
+  private updateModeToggleUi(): void {
+    const isExperiment = this.interactionMode === "experiment";
+    this.modeToggleBtn.classList.toggle("active", isExperiment);
+    this.modeToggleBtn.title = isExperiment
+      ? "Mode: Experiment (temporary DOM patches enabled; resets on reload)"
+      : "Mode: Diagnose (read-only; copy recipes)";
+    this.modeToggleBtn.textContent = isExperiment ? "Ex" : "Dx";
+  }
+
+  private toggleInteractionMode(): void {
+    this.interactionMode =
+      this.interactionMode === "diagnose" ? "experiment" : "diagnose";
+    this.updateModeToggleUi();
+
+    this.showToast(
+      this.interactionMode === "experiment"
+        ? "Experiment mode enabled (temporary patches)."
+        : "Diagnose mode enabled (read-only).",
+      "info",
+    );
+
+    if (this.activeElement) {
+      this.inspect(this.activeElement);
+    }
+  }
+
   private loadState(): void {
     const saved = localStorage.getItem("axiomatic-inspector-state");
     if (saved) {
@@ -495,7 +600,8 @@ export class AxiomaticDebugger extends BaseElement {
       </div>
       <div id="controls" aria-label="Axiomatic Inspector Controls">
         <div id="controls-secondary" aria-label="Axiomatic Inspector Secondary Controls">
-          <button id="violation-toggle" aria-label="Toggle Violations" title="Show Axiom Violations (Shift+Click to Fix All)">
+          <button id="mode-toggle" aria-label="Toggle Mode" title="Mode: Diagnose (read-only; copy recipes)">Dx</button>
+          <button id="violation-toggle" aria-label="Toggle Violations" title="Show Axiom Violations (Shift+Click to Copy Recipes JSON)">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
           </button>
           <button id="continuity-toggle" aria-label="Check Continuity" title="Run Continuity Audit (Flashes Theme)">
@@ -503,6 +609,9 @@ export class AxiomaticDebugger extends BaseElement {
           </button>
           <button id="reset-btn" aria-label="Reset Element" title="Revert Changes (Shift+Click to Reset All)">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+          </button>
+          <button id="copy-applied-fixes-btn" aria-label="Copy Applied Fixes" title="No applied fixes yet." disabled>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
           </button>
           <button id="theme-toggle-main" aria-label="Toggle Theme" title="Toggle Light/Dark Mode">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"/><path d="M12 4v16a8 8 0 0 0 0-16z"/></svg>
@@ -530,6 +639,9 @@ export class AxiomaticDebugger extends BaseElement {
     this.toggleBtn = this.root.getElementById(
       "toggle-btn",
     ) as unknown as HTMLButtonElement;
+    this.modeToggleBtn = this.root.getElementById(
+      "mode-toggle",
+    ) as unknown as HTMLButtonElement;
     this.violationToggle = this.root.getElementById(
       "violation-toggle",
     ) as unknown as HTMLButtonElement;
@@ -538,6 +650,9 @@ export class AxiomaticDebugger extends BaseElement {
     ) as unknown as HTMLButtonElement;
     this.resetBtn = this.root.getElementById(
       "reset-btn",
+    ) as unknown as HTMLButtonElement;
+    this.copyAppliedFixesBtn = this.root.getElementById(
+      "copy-applied-fixes-btn",
     ) as unknown as HTMLButtonElement;
     this.themeToggleMain = this.root.getElementById(
       "theme-toggle-main",
@@ -548,6 +663,44 @@ export class AxiomaticDebugger extends BaseElement {
     this.elementInternalsBtn = this.root.getElementById(
       "element-internals-btn",
     ) as unknown as HTMLButtonElement;
+
+    this.modeToggleBtn.addEventListener("click", () => {
+      this.toggleInteractionMode();
+    });
+    this.updateModeToggleUi();
+
+    this.copyAppliedFixesBtn.addEventListener("click", (e) => {
+      const mouse = e as MouseEvent;
+      if (mouse.shiftKey) {
+        const count = this.appliedFixes.length;
+        this.appliedFixes = [];
+        (globalThis as unknown as Record<string, unknown>)[
+          "__AXIOMATIC_INSPECTOR_APPLIED_FIXES__"
+        ] = this.appliedFixes;
+        this.updateAppliedFixesButtonState();
+        this.showToast(`Cleared ${count} experiment(s).`, "info");
+        return;
+      }
+
+      if (this.appliedFixes.length === 0) {
+        this.showToast("No experiments to copy.", "info");
+        return;
+      }
+
+      const text = this.formatAppliedFixesAsText();
+      navigator.clipboard
+        .writeText(text)
+        .then(() => {
+          this.showToast(
+            `Copied ${this.appliedFixes.length} experiment(s).`,
+            "success",
+          );
+        })
+        .catch((err: unknown) => {
+          console.error(err);
+          this.showToast("Failed to copy experiments.", "error");
+        });
+    });
   }
 
   private animateTauTo(targetTau: 1 | -1): void {
@@ -973,6 +1126,7 @@ export class AxiomaticDebugger extends BaseElement {
       result,
       element,
       this.continuityViolations.get(element)?.reason,
+      this.interactionMode,
     );
     const tokensHtml = renderTokenList(
       tokens,
@@ -989,17 +1143,28 @@ export class AxiomaticDebugger extends BaseElement {
         updateAdviceWithAnalysis(element, adviceBox).catch(console.error);
       }
 
-      const copyFixBtn = adviceBox.querySelector("#copy-fix-btn");
-      if (copyFixBtn) {
-        copyFixBtn.addEventListener("click", () => {
-          this.handleCopyFix(adviceBox);
+      const copyRecipeTextBtn = adviceBox.querySelector(
+        "#copy-recipe-text-btn",
+      );
+      if (copyRecipeTextBtn) {
+        copyRecipeTextBtn.addEventListener("click", () => {
+          this.handleCopyRecipe(element, adviceBox, "text");
         });
       }
 
-      const applyFixBtn = adviceBox.querySelector("#apply-fix-btn");
-      if (applyFixBtn) {
-        applyFixBtn.addEventListener("click", () => {
-          this.handleApplyFix(element, adviceBox);
+      const copyRecipeJsonBtn = adviceBox.querySelector(
+        "#copy-recipe-json-btn",
+      );
+      if (copyRecipeJsonBtn) {
+        copyRecipeJsonBtn.addEventListener("click", () => {
+          this.handleCopyRecipe(element, adviceBox, "json");
+        });
+      }
+
+      const applyTempBtn = adviceBox.querySelector("#apply-temp-btn");
+      if (applyTempBtn) {
+        applyTempBtn.addEventListener("click", () => {
+          this.handleApplyTemp(element, adviceBox);
         });
       }
     }
@@ -1423,41 +1588,43 @@ export class AxiomaticDebugger extends BaseElement {
   }
 
   private fixAllViolations(): void {
+    // Deprecated: batch DOM mutation is intentionally avoided.
+    // Kept as a compatibility shim for the Shift+Click gesture.
+    this.generateRecipesForAllViolations("json");
+  }
+
+  private generateRecipesForAllViolations(format: "json" | "text"): void {
     const violations = this.engine.scanForViolations(document, this);
     if (violations.length === 0) {
-      this.showToast("No violations to fix.", "info");
+      this.showToast("No violations found.", "info");
       return;
     }
 
-    let fixedCount = 0;
-    violations.forEach((v) => {
-      const surface = v.surface || "surface-default";
+    const recipes = violations.map((v) =>
+      this.buildRecipeForElement(v.element),
+    );
 
-      if (!this.modifiedElements.has(v.element)) {
-        this.modifiedElements.set(v.element, {
-          className: v.element.className,
-          style: v.element.style.cssText,
-        });
-      }
+    (globalThis as unknown as Record<string, unknown>)[
+      "__AXIOMATIC_INSPECTOR_RECIPES__"
+    ] = recipes;
 
-      v.element.classList.add(surface);
-      if (v.element.style.backgroundColor) {
-        v.element.style.removeProperty("background-color");
-      }
+    const payload =
+      format === "json"
+        ? JSON.stringify(recipes, null, 2)
+        : recipes.map((r) => this.formatRecipeAsText(r)).join("\n\n");
 
-      v.element.style.setProperty(
-        "background-color",
-        "var(--_axm-computed-surface)",
-        "important",
-      );
-
-      fixedCount++;
-    });
-
-    console.log(`[Axiomatic] ⚡ Batch fixed ${fixedCount} elements.`);
-    this.scanForViolations().catch(console.error);
-    this.updateResetButtonState();
-    this.showToast(`Batch fixed ${fixedCount} element(s).`, "success");
+    navigator.clipboard
+      .writeText(payload)
+      .then(() => {
+        this.showToast(
+          `Copied ${recipes.length} recipe(s) (${format.toUpperCase()}).`,
+          "success",
+        );
+      })
+      .catch((err: unknown) => {
+        console.error(err);
+        this.showToast("Failed to copy recipes.", "error");
+      });
   }
 
   private resetAll(): void {
@@ -1480,53 +1647,248 @@ export class AxiomaticDebugger extends BaseElement {
     this.updateResetButtonState();
   }
 
-  private handleCopyFix(adviceBox: HTMLElement): void {
-    const surface = adviceBox.dataset.surface || "surface-default";
-    const ruleSelector = adviceBox.dataset.ruleSelector;
-    const ruleFile = adviceBox.dataset.ruleFile;
-    const isInline = adviceBox.dataset.isInline === "true";
-    const bgUtilities = adviceBox.dataset.bgUtilities
-      ? adviceBox.dataset.bgUtilities.split(",")
-      : [];
+  private buildRecipeForElement(element: HTMLElement): {
+    version: "1";
+    generatedAt: string;
+    target: { kind: "label"; label: string };
+    violation: {
+      property: "background-color" | "color";
+      expectedSurfaceClass: string;
+    };
+    edits: Array<
+      | { kind: "remove-inline-style"; property: string }
+      | { kind: "remove-class"; className: string }
+      | {
+          kind: "edit-css-rule";
+          file?: string;
+          selector: string;
+          removeDeclarations: string[];
+        }
+    >;
+    confidence: "high" | "medium" | "low";
+    notes: string[];
+  } {
+    const inspection = this.engine.inspect(element);
 
-    let text = "";
+    const surfaceToken = inspection.tokens.find(
+      (t) => t.intent === "Surface Color",
+    );
+    const bgToken = inspection.tokens.find(
+      (t) => t.intent === "Actual Background",
+    );
+    const fgToken = inspection.tokens.find(
+      (t) => t.intent === "Final Text Color",
+    );
+    const actualFgToken = inspection.tokens.find(
+      (t) => t.intent === "Actual Text Color",
+    );
 
-    if (isInline) {
-      text = `1. Remove inline \`style\` attribute (specifically background-color).\n2. Add class \`${surface}\` to the element.`;
-    } else if (ruleSelector && ruleFile) {
-      text = `1. In \`${ruleFile}\`, find the rule \`${ruleSelector}\`:\n   - Remove \`background-color\` property.\n2. Add class \`${surface}\` to the element.`;
-    } else if (bgUtilities.length > 0) {
-      const utils = bgUtilities.map((c) => `\`${c}\``).join(", ");
-      text = `1. Remove conflicting utility classes: ${utils}.\n2. Add class \`${surface}\` to the element.`;
-    } else {
-      // Fallback
-      text = `1. Remove any conflicting background styles.\n2. Add class \`${surface}\` to the element.`;
+    const hasSurfaceMismatch =
+      !!surfaceToken && !!bgToken && surfaceToken.value !== bgToken.value;
+    const hasTextMismatch =
+      !!fgToken && !!actualFgToken && fgToken.value !== actualFgToken.value;
+
+    const property: "background-color" | "color" = hasSurfaceMismatch
+      ? "background-color"
+      : hasTextMismatch
+        ? "color"
+        : "background-color";
+
+    const expectedSurfaceClass =
+      inspection.surfaceToken?.sourceValue || "surface-default";
+
+    const classList = Array.from(element.classList);
+    const utilities =
+      property === "background-color"
+        ? classList.filter((c) => c.startsWith("bg-"))
+        : classList.filter((c) => c.startsWith("text-"));
+
+    const winningRule = findWinningRule(element, property);
+    const isInline = winningRule?.selector === "element.style";
+    const ruleSelector = winningRule?.selector;
+    const ruleFile = winningRule?.stylesheet
+      ? winningRule.stylesheet.split("/").pop()
+      : undefined;
+
+    const edits: Array<
+      | { kind: "remove-inline-style"; property: string }
+      | { kind: "remove-class"; className: string }
+      | {
+          kind: "edit-css-rule";
+          file?: string;
+          selector: string;
+          removeDeclarations: string[];
+        }
+    > = [];
+
+    for (const className of utilities) {
+      edits.push({ kind: "remove-class", className });
     }
 
-    navigator.clipboard
-      .writeText(text)
-      .then(() => {
-        const btn = adviceBox.querySelector(
-          "#copy-fix-btn",
-        ) as HTMLButtonElement;
-        const originalText = btn.textContent;
-        btn.textContent = "Copied!";
-        setTimeout(() => {
-          btn.textContent = originalText;
-        }, 2000);
-      })
-      .catch(console.error);
+    if (isInline) {
+      edits.push({ kind: "remove-inline-style", property });
+    } else if (ruleSelector) {
+      edits.push({
+        kind: "edit-css-rule",
+        file: ruleFile,
+        selector: ruleSelector,
+        removeDeclarations: [property],
+      });
+    }
+
+    const confidence: "high" | "medium" | "low" =
+      edits.length > 0 ? "high" : "medium";
+
+    return {
+      version: "1",
+      generatedAt: new Date().toISOString(),
+      target: { kind: "label", label: safeElementLabel(element) },
+      violation: { property, expectedSurfaceClass },
+      edits,
+      confidence,
+      notes: [
+        "Prefer removing overrides at their source (CSS/markup).",
+        "If content needs a new context, wrap it in a Surface container.",
+      ],
+    };
   }
 
-  private handleApplyFix(element: HTMLElement, adviceBox: HTMLElement): void {
-    const surface = adviceBox.dataset.surface || "surface-default";
-    const ruleSelector = adviceBox.dataset.ruleSelector;
+  private buildRecipeFromAdviceBox(
+    element: HTMLElement,
+    adviceBox: HTMLElement,
+  ): ReturnType<AxiomaticDebugger["buildRecipeForElement"]> {
+    const expectedSurfaceClass = adviceBox.dataset.surface || "surface-default";
+    const property =
+      (adviceBox.dataset.property as
+        | "background-color"
+        | "color"
+        | undefined) || "background-color";
     const isInline = adviceBox.dataset.isInline === "true";
-    const bgUtilities = adviceBox.dataset.bgUtilities
-      ? adviceBox.dataset.bgUtilities.split(",")
+    const ruleSelector = adviceBox.dataset.ruleSelector;
+    const ruleFile = adviceBox.dataset.ruleFile;
+    const utilities = adviceBox.dataset.bgUtilities
+      ? adviceBox.dataset.bgUtilities
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean)
       : [];
 
-    // 0. Save State (if not already saved)
+    const edits: Array<
+      | { kind: "remove-inline-style"; property: string }
+      | { kind: "remove-class"; className: string }
+      | {
+          kind: "edit-css-rule";
+          file?: string;
+          selector: string;
+          removeDeclarations: string[];
+        }
+    > = [];
+
+    for (const className of utilities) {
+      edits.push({ kind: "remove-class", className });
+    }
+
+    if (isInline) {
+      edits.push({ kind: "remove-inline-style", property });
+    } else if (ruleSelector) {
+      edits.push({
+        kind: "edit-css-rule",
+        file: ruleFile,
+        selector: ruleSelector,
+        removeDeclarations: [property],
+      });
+    }
+
+    return {
+      version: "1",
+      generatedAt: new Date().toISOString(),
+      target: { kind: "label", label: safeElementLabel(element) },
+      violation: { property, expectedSurfaceClass },
+      edits,
+      confidence: edits.length > 0 ? "high" : "medium",
+      notes: [
+        "Prefer removing overrides at their source (CSS/markup).",
+        "If content needs a new context, wrap it in a Surface container.",
+      ],
+    };
+  }
+
+  private formatRecipeAsText(
+    recipe: ReturnType<AxiomaticDebugger["buildRecipeForElement"]>,
+  ): string {
+    const lines: string[] = [];
+    lines.push(`Axiomatic Inspector — remediation recipe v${recipe.version}`);
+    lines.push(`Target: ${recipe.target.label}`);
+    lines.push(`Property: ${recipe.violation.property}`);
+    lines.push(
+      `Expected surface: \`${recipe.violation.expectedSurfaceClass}\``,
+    );
+    lines.push("");
+
+    if (recipe.edits.length === 0) {
+      lines.push(
+        "Edits: (no deterministic edit detected — inspect the winning rule and remove the override)",
+      );
+    } else {
+      lines.push("Edits:");
+      recipe.edits.forEach((e, idx) => {
+        if (e.kind === "remove-inline-style") {
+          lines.push(`${idx + 1}. Remove inline style: \`${e.property}\``);
+        } else if (e.kind === "remove-class") {
+          lines.push(`${idx + 1}. Remove class: \`${e.className}\``);
+        } else {
+          const file = e.file ? ` in \`${e.file}\`` : "";
+          lines.push(
+            `${idx + 1}. Edit rule \`${e.selector}\`${file}: remove ${e.removeDeclarations
+              .map((d) => `\`${d}\``)
+              .join(", ")}`,
+          );
+        }
+      });
+    }
+
+    lines.push("");
+    lines.push(`Confidence: ${recipe.confidence}`);
+    for (const note of recipe.notes) lines.push(`- ${note}`);
+    return lines.join("\n").trim() + "\n";
+  }
+
+  private handleCopyRecipe(
+    element: HTMLElement,
+    adviceBox: HTMLElement,
+    format: "text" | "json",
+  ): void {
+    const recipe = this.buildRecipeFromAdviceBox(element, adviceBox);
+
+    (globalThis as unknown as Record<string, unknown>)[
+      "__AXIOMATIC_INSPECTOR_LAST_RECIPE__"
+    ] = recipe;
+
+    const payload =
+      format === "json"
+        ? JSON.stringify(recipe, null, 2)
+        : this.formatRecipeAsText(recipe);
+
+    navigator.clipboard
+      .writeText(payload)
+      .then(() => {
+        this.showToast(`Copied recipe (${format.toUpperCase()}).`, "success");
+      })
+      .catch((err: unknown) => {
+        console.error(err);
+        this.showToast("Failed to copy recipe.", "error");
+      });
+  }
+
+  private handleApplyTemp(element: HTMLElement, adviceBox: HTMLElement): void {
+    if (this.interactionMode !== "experiment") {
+      this.showToast("Enable Experiment mode to apply temp patches.", "info");
+      return;
+    }
+
+    const recipe = this.buildRecipeFromAdviceBox(element, adviceBox);
+    const property = recipe.violation.property;
+
     if (!this.modifiedElements.has(element)) {
       this.modifiedElements.set(element, {
         className: element.className,
@@ -1534,46 +1896,39 @@ export class AxiomaticDebugger extends BaseElement {
       });
     }
 
-    // 1. Add Surface Class
-    element.classList.add(surface);
-
-    // 2. Remove Utility Classes
-    if (bgUtilities.length > 0) {
-      element.classList.remove(...bgUtilities);
+    const removedClasses: string[] = [];
+    for (const edit of recipe.edits) {
+      if (edit.kind !== "remove-class") continue;
+      if (!element.classList.contains(edit.className)) continue;
+      element.classList.remove(edit.className);
+      removedClasses.push(edit.className);
     }
 
-    // 3. Remove Inline Style
-    if (isInline) {
-      element.style.removeProperty("background-color");
+    const hadInline = element.style.getPropertyValue(property).trim() !== "";
+    if (hadInline) {
+      element.style.removeProperty(property);
     }
 
-    // 4. Override CSS Rule if necessary
-    if (ruleSelector && !isInline && bgUtilities.length === 0) {
-      // Force the axiomatic surface variable to win
-      element.style.setProperty(
-        "background-color",
-        "var(--_axm-computed-surface)",
-        "important",
-      );
+    const sourceHintParts: string[] = [];
+    const ruleSelector = adviceBox.dataset.ruleSelector;
+    const ruleFile = adviceBox.dataset.ruleFile;
+    if (ruleSelector && ruleFile) {
+      sourceHintParts.push(`Edit ${ruleFile}: ${ruleSelector}`);
     }
 
-    // Log to console
-    const tag = element.tagName.toLowerCase();
-    const id = element.id ? `#${element.id}` : "";
-    console.group(`[Axiomatic] 🔧 Fixed <${tag}${id}>`);
-    console.log(`Added: .${surface}`);
-    if (bgUtilities.length)
-      console.log(`Removed Utilities: ${bgUtilities.join(", ")}`);
-    if (isInline) console.log(`Removed Inline Style: background-color`);
-    if (ruleSelector) console.log(`Overrode Rule: ${ruleSelector}`);
-    console.groupEnd();
+    this.recordAppliedFix({
+      element,
+      mismatchProperty: property,
+      expectedSurfaceClass: recipe.violation.expectedSurfaceClass,
+      removedClasses,
+      removedInline: hadInline,
+      sourceHint: sourceHintParts.length
+        ? sourceHintParts.join("; ")
+        : undefined,
+    });
 
-    // Feedback
-    const btn = adviceBox.querySelector("#apply-fix-btn") as HTMLButtonElement;
-    btn.textContent = "Applied!";
-    btn.disabled = true;
+    this.showToast("Applied temporary patch.", "success");
 
-    // Re-inspect to show the green state
     setTimeout(() => {
       this.inspect(element);
       this.updateResetButtonState();
