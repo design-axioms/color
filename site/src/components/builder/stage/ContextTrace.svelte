@@ -25,7 +25,7 @@
   const resolved = $derived.by(() => {
     if (!hoveredId || !configState.solved) return null;
     const bg = configState.solved.backgrounds.get(hoveredId);
-    return bg ? bg[themeState.mode] : null;
+    return bg ? bg[themeState.resolvedMode] : null;
   });
 </script>
 

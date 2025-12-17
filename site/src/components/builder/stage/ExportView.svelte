@@ -8,7 +8,9 @@
   } from "@axiomatic-design/color";
   import { configState } from "../../../lib/state/ConfigState.svelte.ts";
 
-  let format = $state<"css" | "dtcg" | "tailwind" | "typescript">("css");
+  let format = $state<"css" | "dtcg" | "tailwind" | "typescript" | "config">(
+    "css",
+  );
   let output = $state("");
 
   // Workaround for linter not picking up .svelte.ts types correctly
@@ -16,18 +18,23 @@
     solved: Theme | null;
     config: SolverConfig;
     css: string;
+    exportConfigJson: () => string;
+    loadConfigFromFile: (file: File) => Promise<void>;
   }
   const appState = configState as unknown as IConfigState;
 
   $effect(() => {
-    if (!appState.solved) return;
-
     try {
       switch (format) {
+        case "config":
+          output = appState.exportConfigJson();
+          break;
         case "css":
+          if (!appState.solved) return;
           output = appState.css;
           break;
         case "dtcg":
+          if (!appState.solved) return;
           output = JSON.stringify(
             toDTCG(appState.solved, appState.config),
             null,
@@ -35,9 +42,11 @@
           );
           break;
         case "tailwind":
+          if (!appState.solved) return;
           output = JSON.stringify(toTailwind(appState.solved), null, 2);
           break;
         case "typescript":
+          if (!appState.solved) return;
           output = toTypeScript(appState.solved);
           break;
       }
@@ -58,6 +67,9 @@
 
     let filename = "theme";
     switch (format) {
+      case "config":
+        filename = "color-config.json";
+        break;
       case "css":
         filename += ".css";
         break;
@@ -108,6 +120,14 @@
         Tailwind
       </button>
       <button
+        class:active={format === "config"}
+        class:surface-action={format === "config"}
+        class:text-inverse={format === "config"}
+        onclick={() => (format = "config")}
+      >
+        Config (JSON)
+      </button>
+      <button
         class:active={format === "typescript"}
         class:surface-action={format === "typescript"}
         class:text-inverse={format === "typescript"}
@@ -117,6 +137,22 @@
       </button>
     </div>
     <div class="actions">
+      {#if format === "config"}
+        <label class="action-btn surface-action text-inverse preset-bordered">
+          Import
+          <input
+            data-testid="studio-config-import"
+            type="file"
+            accept="application/json,.json"
+            onchange={(e) => {
+              const file = e.currentTarget.files?.[0];
+              if (file) void appState.loadConfigFromFile(file);
+              // Allow importing the same file repeatedly.
+              e.currentTarget.value = "";
+            }}
+          />
+        </label>
+      {/if}
       <button
         class="action-btn surface-action text-inverse preset-bordered"
         onclick={copyToClipboard}
@@ -131,8 +167,30 @@
       </button>
     </div>
   </div>
+
+  {#if format === "config" && (configState.notice || configState.error)}
+    <div class="messages">
+      {#if configState.error}
+        <div
+          class="message surface-status-error text-high"
+          data-testid="studio-config-error"
+        >
+          {configState.error}
+        </div>
+      {/if}
+      {#if configState.notice}
+        <div
+          class="message surface-status-success text-positive"
+          data-testid="studio-config-notice"
+        >
+          {configState.notice}
+        </div>
+      {/if}
+    </div>
+  {/if}
+
   <div class="editor">
-    <pre><code>{output}</code></pre>
+    <pre><code data-testid="studio-export-output">{output}</code></pre>
   </div>
 </div>
 
@@ -170,6 +228,33 @@
   .actions {
     display: flex;
     gap: 0.5rem;
+  }
+
+  label.action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+  }
+
+  label.action-btn input[type="file"] {
+    display: none;
+  }
+
+  .messages {
+    padding: 0.75rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .message {
+    white-space: pre-wrap;
+    font-size: 0.875rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    border: 1px solid currentColor;
+    opacity: 0.9;
   }
 
   button {

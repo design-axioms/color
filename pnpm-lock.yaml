@@ -237,6 +237,9 @@ importers:
       '@fontsource-variable/eb-garamond':
         specifier: ^5.2.7
         version: 5.2.7
+      ajv:
+        specifier: ^8.17.1
+        version: 8.17.1
       apca-w3:
         specifier: ^0.1.9
         version: 0.1.9
