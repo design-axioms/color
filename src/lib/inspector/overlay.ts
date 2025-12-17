@@ -402,10 +402,10 @@ export class AxiomaticDebugger extends BaseElement {
       const textMismatch =
         !!fgToken && !!actualFgToken && fgToken.value !== actualFgToken.value;
 
-      const property: "color" | "background-color" | "unknown" = surfaceMismatch
-        ? "background-color"
-        : textMismatch
-          ? "color"
+      const property: "color" | "background-color" | "unknown" = textMismatch
+        ? "color"
+        : surfaceMismatch
+          ? "background-color"
           : "unknown";
 
       const winningRule =
