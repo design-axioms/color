@@ -49,7 +49,7 @@ pre-push:
     site-check:
       run: pnpm --filter site astro check && pnpm --filter site exec svelte-check
     build:
-      run: pnpm build
+      run: bash scripts/hooks/hermetic-build.sh
     publint:
       run: pnpm check:exports
     lint-all:
