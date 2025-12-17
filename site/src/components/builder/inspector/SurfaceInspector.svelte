@@ -9,7 +9,7 @@
   const themeState = getContext<ThemeState>("theme");
 
   const surfaceId = $derived(builder.selectedSurfaceId);
-  const mode = $derived(themeState.mode);
+  const mode = $derived(themeState.resolvedMode);
   const solved = $derived(configState.solved);
 
   const surfaceConfig = $derived(

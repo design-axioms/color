@@ -1,11 +1,14 @@
 <script lang="ts">
   import { getContext } from "svelte";
+  import type { ThemeMode } from "@axiomatic-design/color/browser";
   import type { BuilderState } from "../../lib/state/BuilderState.svelte";
+  import type { ThemeState } from "../../lib/state/ThemeState.svelte";
   import ComponentView from "./stage/ComponentView.svelte";
   import ContextTrace from "./stage/ContextTrace.svelte";
   import ExportView from "./stage/ExportView.svelte";
 
   const builder = getContext<BuilderState>("builder");
+  const theme = getContext<ThemeState>("theme");
 </script>
 
 <div class="panel surface-page">
@@ -72,6 +75,20 @@
     </div>
 
     <div class="group right">
+      <div class="mode-select surface-card preset-bordered">
+        <select
+          aria-label="Theme Mode"
+          data-testid="studio-theme-mode"
+          value={theme.mode}
+          onchange={(e) => {
+            theme.setMode(e.currentTarget.value as ThemeMode);
+          }}
+        >
+          <option value="system">System</option>
+          <option value="light">Light</option>
+          <option value="dark">Dark</option>
+        </select>
+      </div>
       <button
         class:active={builder.isInspectorOpen}
         class:surface-action={builder.isInspectorOpen}
@@ -161,6 +178,31 @@
   .group {
     display: flex;
     gap: 0.25rem;
+    align-items: center;
+  }
+
+  .mode-select {
+    display: flex;
+    align-items: center;
+    padding: 2px 6px;
+    border-radius: 6px;
+    height: 32px;
+  }
+
+  .mode-select select {
+    border: none;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-size: 0.875rem;
+    height: 28px;
+    padding: 0 0.25rem;
+    cursor: pointer;
+  }
+
+  .mode-select select:focus {
+    outline: 1px solid currentColor;
+    outline-offset: 2px;
   }
 
   .view-toggle {

@@ -1,11 +1,12 @@
 import "@axiomatic-design/color/inspector";
-import { ThemeManager } from "@axiomatic-design/color/browser";
+import type { ThemeMode } from "@axiomatic-design/color/browser";
 import {
   applyDomWiring,
   observeDomWiring,
   type DomWiringObserverHandle,
   type DomWiringRule,
 } from "@axiomatic-design/color";
+import { initThemeBridge, setThemeMode } from "./theme-bridge";
 
 // IMPORTANT: Per RFC 013 / RFC 010 enforcement, this integration module MUST NOT reference
 // foreign palette variables or engine/bridge CSS variables.
@@ -53,46 +54,17 @@ const ensureDebugger = (): void => {
 };
 
 const initAxiomaticThemeManagerBridge = (): void => {
-  const root = document.documentElement;
-  const manager = new ThemeManager({ root });
+  initThemeBridge();
 
   const publishTheme = (raw: string | null): void => {
-    const mode = raw === "dark" || raw === "light" ? raw : "system";
+    const mode: ThemeMode = raw === "dark" || raw === "light" ? raw : "system";
 
     // Publish vendor-observable theme state + Axiomatic semantic state.
     // With `data-axm-motion="tau"`, the engine will not independently
     // transition bridge/computed outputs; `--tau` is the sole motion driver.
-    if (mode === "system") root.removeAttribute("data-theme");
-    else root.setAttribute("data-theme", mode);
-
-    manager.setMode(mode);
+    // ThemeBridge ensures ThemeManager is the single semantic writer.
+    setThemeMode(mode);
   };
-
-  // Initial sync from any preexisting Starlight state (no event to intercept).
-  {
-    const theme = root.getAttribute("data-theme");
-    manager.setMode(theme === "dark" || theme === "light" ? theme : "system");
-  }
-
-  // Starlight may set `data-theme` during boot without going through the picker.
-  // Keep Axiomatic semantic state consistent with the vendor-observable theme signal.
-  // This does NOT touch CSS variables; it only replays the mode into ThemeManager.
-  if (typeof MutationObserver !== "undefined") {
-    const observer = new MutationObserver((mutations) => {
-      for (const m of mutations) {
-        if (m.type !== "attributes" || m.attributeName !== "data-theme")
-          continue;
-        const theme = root.getAttribute("data-theme");
-        manager.setMode(
-          theme === "dark" || theme === "light" ? theme : "system",
-        );
-      }
-    });
-    observer.observe(root, {
-      attributes: true,
-      attributeFilter: ["data-theme"],
-    });
-  }
 
   // Take over the Starlight theme picker so there is a single theme writer.
   document.addEventListener(

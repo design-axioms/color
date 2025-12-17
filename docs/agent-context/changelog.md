@@ -1,5 +1,25 @@
 # Changelog
 
+## Claim Ledger Triage: Epoch 2 — Theme Studio alignment (2025-12-17)
+
+**Goal**: Align Studio + Starlight to a single theme authority (ThemeManager semantic plane) and make Studio config IO strict and shareable.
+
+**Completed Work**:
+
+- **Theme Bridge**: Introduced a ThemeManager-backed ThemeBridge so theme intent has a single writer; `data-theme` remains a synced vendor signal.
+- **Studio theme UX**: Added System/Light/Dark selector and moved Studio rendering to use resolved mode where appropriate.
+- **Strict config IO**: Studio can export `color-config.json` including `$schema` and can import config with schema validation (AJV) + UI notices.
+- **Hook ergonomics**: Pre-push build is hermetic via `scripts/hooks/hermetic-build.sh` to avoid leaving generated artifacts dirty; `gh auth` check is github.com-scoped.
+- **Coverage**: Added Playwright coverage for Studio mode switching and config import/export.
+
+**Verification**:
+
+- `pnpm -w test`
+- `pnpm -w check:site`
+- `pnpm -w test:playwright tests/studio.spec.ts`
+
+**PR**: https://github.com/design-axioms/color/pull/18
+
 ## Epoch 44: Phase 1 - Vercel Preset (The Foundation) (2025-12-13)
 
 **Goal**: Build a Vercel-like demo and harden Inspector infrastructure to support the upcoming "Hard Flip" demo.

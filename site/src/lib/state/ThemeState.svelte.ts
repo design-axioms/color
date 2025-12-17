@@ -1,57 +1,60 @@
+import type { ThemeMode } from "@axiomatic-design/color/browser";
+import {
+  getResolvedThemeMode,
+  getThemeMode,
+  initThemeBridge,
+  setThemeMode,
+  subscribeTheme,
+} from "../theme-bridge";
+
 export class ThemeState {
-  mode = $state<"light" | "dark">("light");
+  mode = $state<ThemeMode>("system");
+  resolvedMode = $state<"light" | "dark">("light");
+
+  private unsubscribe: (() => void) | null = null;
 
   constructor() {
-    // Initialize from DOM if available
-    if (typeof document !== "undefined") {
-      this.updateFromDom();
+    if (typeof document === "undefined") return;
 
-      // Observe changes (e.g. from Starlight's theme picker)
-      const observer = new MutationObserver((mutations) => {
-        for (const mutation of mutations) {
-          if (
-            mutation.type === "attributes" &&
-            mutation.attributeName === "data-theme"
-          ) {
-            this.updateFromDom();
-          }
-        }
-      });
+    initThemeBridge();
+    this.syncFromDom();
 
-      observer.observe(document.documentElement, {
-        attributes: true,
-        attributeFilter: ["data-theme"],
-      });
-    }
+    this.unsubscribe = subscribeTheme(() => {
+      this.syncFromDom();
+    });
   }
 
-  private updateFromDom(): void {
-    const theme = document.documentElement.getAttribute("data-theme");
-    if (theme === "dark") {
-      this.mode = "dark";
-    } else {
-      this.mode = "light";
-    }
+  private syncFromDom(): void {
+    this.mode = getThemeMode();
+    this.resolvedMode = getResolvedThemeMode();
   }
 
   get isDark(): boolean {
-    return this.mode === "dark";
+    return this.resolvedMode === "dark";
   }
 
   get isLight(): boolean {
-    return this.mode === "light";
+    return this.resolvedMode === "light";
   }
 
-  setMode(mode: "light" | "dark"): void {
-    if (typeof document !== "undefined") {
-      // We set the attribute, which triggers the observer, which updates our state.
-      // This ensures we stay in sync with Starlight if it also writes to this attribute.
-      document.documentElement.setAttribute("data-theme", mode);
-    }
+  setMode(mode: ThemeMode): void {
+    setThemeMode(mode);
   }
 
   toggle(): void {
-    this.setMode(this.mode === "light" ? "dark" : "light");
+    if (this.mode === "dark") {
+      this.setMode("light");
+    } else if (this.mode === "light") {
+      this.setMode("dark");
+    } else {
+      // From system, toggle to the opposite of the current resolved mode.
+      this.setMode(this.resolvedMode === "dark" ? "light" : "dark");
+    }
+  }
+
+  dispose(): void {
+    this.unsubscribe?.();
+    this.unsubscribe = null;
   }
 }
 

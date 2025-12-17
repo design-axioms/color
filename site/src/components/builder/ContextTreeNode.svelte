@@ -14,7 +14,7 @@
 
   let isExpanded = $state(true);
   const isSelected = $derived(builder.selectedSurfaceId === node.id);
-  const mode = $derived(themeState.mode);
+  const mode = $derived(themeState.resolvedMode);
   const solved = $derived(configState.solved);
 
   function toggleExpand(e: MouseEvent): void {

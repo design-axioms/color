@@ -6,6 +6,7 @@ import {
   solve,
   syncDarkToLight,
 } from "@axiomatic-design/color";
+import Ajv from "ajv";
 import type {
   AnchorValue,
   Mode,
@@ -15,10 +16,50 @@ import type {
   SurfaceGroup,
 } from "@axiomatic-design/color/types";
 
+import configSchema from "../../../../color-config.schema.json" with { type: "json" };
+
 const STORAGE_KEY = "axiomatic-config";
 const CUSTOM_STORAGE_KEY = "axiomatic-custom-config";
 const VIBE_ID_KEY = "axiomatic-vibe-id";
 const SYNC_DARK_KEY = "axiomatic-sync-dark";
+
+type AjvLike = {
+  compile(schema: unknown): ((data: unknown) => boolean) & {
+    errors?: Array<{ instancePath?: string; message?: string }> | null;
+  };
+};
+
+const CONFIG_SCHEMA_REF =
+  "node_modules/@axiomatic-design/color/color-config.schema.json";
+
+const ajv = new (Ajv as unknown as { new (options: unknown): AjvLike })({
+  allErrors: true,
+  strict: false,
+});
+
+const validateConfig = ajv.compile(configSchema);
+
+const stripSchemaKey = (raw: unknown): unknown => {
+  if (raw && typeof raw === "object") {
+    const record = raw as Record<string, unknown>;
+    if ("$schema" in record) {
+      const rest = { ...record } as Record<string, unknown>;
+      delete rest.$schema;
+      return rest;
+    }
+  }
+  return raw;
+};
+
+const formatSchemaErrors = (
+  errs: Array<{ instancePath?: string; message?: string }> | null | undefined,
+): string => {
+  if (!errs || errs.length === 0) return "";
+  return errs
+    .slice(0, 8)
+    .map((e) => `${e.instancePath || ""} ${e.message || ""}`.trim())
+    .join("\n");
+};
 
 export class ConfigState {
   config = $state<SolverConfig>(DEFAULT_CONFIG);
@@ -189,18 +230,44 @@ export class ConfigState {
   }
 
   async loadConfigFromFile(file: File): Promise<void> {
+    const text = await file.text();
+    this.loadConfigFromText(text, file.name);
+  }
+
+  exportConfigJson(): string {
+    const plain = JSON.parse(JSON.stringify(this.config)) as SolverConfig;
+    return JSON.stringify(
+      {
+        $schema: CONFIG_SCHEMA_REF,
+        ...plain,
+      },
+      null,
+      2,
+    );
+  }
+
+  loadConfigFromText(text: string, sourceName = "import"): void {
     try {
-      const text = await file.text();
-      const parsed = JSON.parse(text) as SolverConfig;
-      // TODO: Validate schema?
-      this.config = parsed;
+      const parsed = JSON.parse(text) as unknown;
+      const payload = stripSchemaKey(parsed);
+
+      const valid = validateConfig(payload);
+      if (!valid) {
+        const details = formatSchemaErrors(validateConfig.errors);
+        this.error = details
+          ? `Config does not match schema:\n${details}`
+          : "Config does not match schema.";
+        this.notice = null;
+        return;
+      }
+
+      this.config = payload as SolverConfig;
       this.vibeId = ""; // Treat as custom
-      this.notice = `Loaded configuration from ${file.name}.`;
+      this.notice = `Loaded configuration from ${sourceName}.`;
       this.error = null;
     } catch (e) {
-      console.error("Failed to load config file", e);
-      this.error =
-        "Failed to load configuration file. Please check the format.";
+      console.error("Failed to load config", e);
+      this.error = "Failed to load configuration. Ensure it is valid JSON.";
       this.notice = null;
     }
   }

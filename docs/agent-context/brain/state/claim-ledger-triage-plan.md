@@ -197,6 +197,12 @@ These are written in the required STOP-question format so we can resolve them la
 - **Verification gates**: unit tests (if present), Playwright coverage for Studio export/import + mode switch.
 - **Exit criteria**: Studio’s taught workflow is real and stable.
 
+- **Status**: Completed on branch `epoch-2/theme-studio-alignment`.
+- **Verification (green)**:
+  - `pnpm -w check:site`
+  - `pnpm -w test`
+  - `pnpm -w test:playwright tests/studio.spec.ts`
+
 ### Epoch 3 — Inspector overlay contract hardening
 
 - **Goal**: Keep the inspector powerful but clearly debug-only, with stable machine-readable outputs for automation.
