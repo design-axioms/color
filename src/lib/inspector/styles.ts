@@ -296,6 +296,35 @@ export const STYLES = `
     background: #222;
   }
 
+  #toast {
+    position: fixed;
+    top: 18px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-8px);
+    max-width: min(560px, calc(100vw - 32px));
+    padding: 8px 10px;
+    border-radius: 999px;
+    background: #1a1a1a;
+    border: 1px solid #333;
+    color: #fff;
+    font-size: 12px;
+    line-height: 1.2;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.35);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 140ms ease, transform 140ms ease;
+  }
+
+  #toast[data-open="true"] {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  #toast[data-kind="info"] { border-color: #00ccff; }
+  #toast[data-kind="success"] { border-color: #00ff9d; }
+  #toast[data-kind="warn"] { border-color: #ffcc00; }
+  #toast[data-kind="error"] { border-color: #ff4444; }
+
   #controls {
     position: fixed;
     bottom: 20px;
@@ -312,6 +341,121 @@ export const STYLES = `
     display: flex;
     gap: 10px;
     pointer-events: auto;
+  }
+
+  #mode-toggle {
+    position: relative;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #1a1a1a;
+    border: 1px solid #333;
+    color: #bbb;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    pointer-events: auto;
+    opacity: 0;
+    transform: translateY(20px) scale(0.8);
+    pointer-events: none;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+
+  #mode-toggle.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+  }
+
+  #mode-toggle:hover {
+    background: #333;
+    color: #fff;
+  }
+
+  #mode-toggle.active {
+    background: #00ccff;
+    color: #000;
+    border-color: #00ccff;
+  }
+
+  :host([data-interaction-mode="diagnose"]) #mode-toggle {
+    background: #0b1418;
+    border-color: #00ccff;
+    color: #00ccff;
+  }
+
+  :host([data-interaction-mode="diagnose"]) #mode-toggle:hover {
+    background: #10212a;
+    color: #fff;
+  }
+
+  :host([data-interaction-mode="experiment"]) #mode-toggle {
+    background: #0b1813;
+    border-color: #00ff9d;
+    color: #00ff9d;
+  }
+
+  :host([data-interaction-mode="experiment"]) #mode-toggle:hover {
+    background: #133326;
+    color: #fff;
+  }
+
+  :host([data-interaction-mode="experiment"]) #mode-toggle.active {
+    background: #00ff9d;
+    border-color: #00ff9d;
+    color: #000;
+  }
+
+  #copy-applied-fixes-btn {
+    position: relative;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #1a1a1a;
+    border: 1px solid #333;
+    color: #888;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    pointer-events: auto;
+    opacity: 0;
+    transform: translateY(20px) scale(0.8);
+    pointer-events: none;
+  }
+
+  #copy-applied-fixes-btn.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+  }
+
+  :host([data-interaction-mode="experiment"]) #copy-applied-fixes-btn.visible {
+    border-color: #00ff9d;
+    color: #00ff9d;
+  }
+
+  #copy-applied-fixes-btn:hover {
+    background: #333;
+    color: #fff;
+  }
+
+  #copy-applied-fixes-btn.active {
+    background: #00ff9d;
+    color: #000;
+    border-color: #00ff9d;
+  }
+
+  #copy-applied-fixes-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
   }
 
   #toggle-btn {

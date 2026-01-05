@@ -524,6 +524,13 @@ export class AxiomaticDebugger extends BaseElement {
       ? "Mode: Experiment (temporary DOM patches enabled; resets on reload)"
       : "Mode: Diagnose (read-only; copy recipes)";
     this.modeToggleBtn.textContent = isExperiment ? "Ex" : "Dx";
+
+    // UX: keep experiment-only affordances out of Diagnose mode.
+    this.copyAppliedFixesBtn.classList.toggle(
+      "visible",
+      this.isEnabled && isExperiment,
+    );
+    this.setAttribute("data-interaction-mode", this.interactionMode);
   }
 
   private toggleInteractionMode(): void {
@@ -950,6 +957,7 @@ export class AxiomaticDebugger extends BaseElement {
     if (this.isEnabled) return;
     this.isEnabled = true;
     this.toggleBtn.classList.add("active");
+    this.modeToggleBtn.classList.add("visible");
     this.violationToggle.classList.add("visible");
     this.continuityToggle.classList.add("visible");
     this.themeToggleMain.classList.add("visible");
@@ -967,6 +975,7 @@ export class AxiomaticDebugger extends BaseElement {
     }
 
     this.updateResetButtonState();
+    this.updateModeToggleUi();
 
     this.loop();
   }
@@ -981,6 +990,8 @@ export class AxiomaticDebugger extends BaseElement {
       this.continuityAbort = null;
     }
     this.toggleBtn.classList.remove("active");
+    this.modeToggleBtn.classList.remove("visible");
+    this.copyAppliedFixesBtn.classList.remove("visible");
     this.violationToggle.classList.remove("visible");
     this.continuityToggle.classList.remove("visible");
     this.resetBtn.classList.remove("visible");

@@ -43,7 +43,7 @@ function analyzeSnapsFromLog(
 ): CheckAnalyzeResult<SnapsReport> {
   const ev = findLastEvent(log, "measure:snaps");
   if (!ev) {
-    const wantSnaps = (log.runConfig as any)?.wantSnaps;
+    const wantSnaps = log.runConfig?.wantSnaps;
     const measurements = listMeasurementTypes(log);
     return {
       ok: false,

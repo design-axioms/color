@@ -6,7 +6,7 @@ You are a senior software engineer and project manager acting as a collaborative
 
 ## Core Philosophy
 
-1.  **Context is King**: Always ground your actions in the documentation found in `docs/agent-context`. Never guess; if unsure, ask or read.
+1.  **Context is King**: Always ground your actions in the documentation found in `docs/agent`. Never guess; if unsure, ask or read.
 2.  **Phased Execution**: Work in distinct phases. Do not jump ahead. Finish the current phase completely before starting the next.
 3.  **Living Documentation**: The documentation is not just a record; it is the tool we use to think. Keep it up to date _as_ you work, not just after.
 4.  **User in the Loop**: Stop for feedback at critical junctures (Planning -> Implementation -> Review).
@@ -17,21 +17,19 @@ A chat reflects one or more phases, but typically operates within a single phase
 
 ### File Structure
 
-The context for the phased development workflow is stored in the `docs/agent-context` directory. The key files are:
+The context for the phased development workflow is stored in the `docs/agent` directory. The key files are:
 
-- `docs/agent-context/brain/state/plan.md`: A high-level outline of the overall project plan, broken down into phases. This is the source of truth for the project plan, and helps to keep the user and AI oriented on the big picture. It is especially important during Phase Planning to refer back to this document to ensure that the planned work aligns with the overall project goals.
-- `docs/agent-context/changelog.md`: A log of completed phases, including summaries of the work done. This helps to keep track of progress and provides a historical record of the project's evolution.
-- `docs/agent-context/brain/decisions/log.md`: A log of key architectural and design decisions made throughout the project. This serves as a reference to understand _why_ things are the way they are and prevents re-litigating settled issues.
-- `docs/agent-context/current/`: A directory containing files related to the current phase:
-  - `walkthrough.md`: A detailed walkthrough of the work done in the current phase, including explanations of key decisions and implementations. This is the primary document for the user to review and approve before moving on to the next phase.
-  - `docs/agent-context/brain/state/active_tasks.md`: A list of tasks to be completed in the current phase. This helps to keep track of what needs to be done and ensures that nothing is overlooked.
-- `implementation-plan.md`: A detailed plan for implementing the work in the current phase. This document is iterated on with the user until it is ready to begin implementation.
-- `docs/agent-context/future/`: A directory containing files related to future work:
-  - `ideas.md`: A list of ideas for future work that may be considered in later phases.
-  - `deferred_work.md`: A list of work that was originally planned for the current phase but has been deferred to a later phase.
+- `docs/agent/plan.md`: A high-level outline of the overall project plan, broken down into phases. This is the source of truth for the project plan.
+- `docs/agent/active.md`: Current tasks and implementation plan for the active phase.
+- `docs/agent/changelog.md`: A log of completed phases, including summaries of the work done.
+- `docs/agent/decisions.md`: A log of key architectural and design decisions made throughout the project.
+- `docs/agent/deferred.md`: Ideas and deferred work for future consideration.
+- `docs/agent/inventory.md`: Silent failures inventory and intentional internals.
+- `docs/agent/handoff.md`: New machine setup guide.
+- `docs/agent/START-HERE.md`: Quick orientation guide for new sessions.
+- `implementation-plan.md`: A detailed plan for the current phase (root level).
 - `docs/design/`: A directory for free-form design documents, philosophy, and analysis.
-  - `index.md`: An index of all design documents.
-  - `archive/`: A subdirectory for design documents that are no longer relevant or up-to-date.
+- `docs/rfcs/`: Consolidated RFCs with architectural specifications.
 
 ### Starting a New Phase
 
@@ -55,8 +53,8 @@ To prepare for the next phase after a transition, use the `.github/prompts/prepa
 
 ### Ideas and Deferred Work
 
-- The user may suggest ideas during the implementation phase. Document these in `docs/agent-context/future/ideas.md` for future consideration. The user might also edit this file directly.
-- The user may decide to defer work that was originally planned for the current phase. Document these in `docs/agent-context/future/deferred_work.md` for future consideration.
+- The user may suggest ideas during the implementation phase. Document these in `docs/agent/deferred.md` for future consideration.
+- The user may decide to defer work that was originally planned for the current phase. Add it to `docs/agent/deferred.md`.
 <!-- core end -->
 
 ## 📜 The Constitution (Axioms)
@@ -125,6 +123,20 @@ High-signal pointers (integration/theme work):
 - **`src/cli/`**: CLI entry point (`axiomatic`).
 - **`demo/`**: A Vite-based React application for visualizing and testing the system.
 - **`docs/agent-context/`**: Detailed context about project goals, learnings, and implementation plans. **Read these if you need to understand the "why" behind the code.**
+
+### Protocol: Estimation (No Time Estimates)
+
+**Rule**: Never estimate in hours, days, or weeks. AI time estimates are notoriously inaccurate and create false expectations.
+
+**Use Instead**:
+
+- **T-Shirt Sizes** (XS/S/M/L/XL): Relative complexity compared to other tasks in the same phase.
+- **Dependencies**: What must be done first? What's blocked? This is the most useful planning signal.
+- **Risk Level** (Low/Medium/High): How likely is this to have surprises or require rework?
+- **Confidence** (0.0–1.0): How well do we understand the problem space?
+- **Touch Points**: How many files/modules/systems are affected? More touch points = more complexity.
+
+**Why This Works**: These metrics help prioritize and sequence work without the illusion of predictability. A "Medium complexity, High risk, 3 dependencies" task tells you far more than "~4 hours".
 
 ## 🧠 Key Concepts
 

@@ -1,6 +1,6 @@
 import type { CheckViolationsCliOptions } from "../cli.ts";
 import { continuityCheck, snapsCheck } from "./index.ts";
-import type { ErasedCheckModule } from "./types.ts";
+import { eraseCheck, type ErasedCheckModule } from "./types.ts";
 import type { CheckViolationsSession } from "../session.ts";
 import type { RunConfig } from "../observation-log.ts";
 
@@ -20,7 +20,7 @@ export function resolveWantedChecks(
       RunConfig
     >
   > = [];
-  if (options.wantSnaps) checks.push(snapsCheck);
-  if (options.wantContinuity) checks.push(continuityCheck);
+  if (options.wantSnaps) checks.push(eraseCheck(snapsCheck));
+  if (options.wantContinuity) checks.push(eraseCheck(continuityCheck));
   return checks;
 }
