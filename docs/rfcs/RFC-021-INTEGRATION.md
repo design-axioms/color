@@ -646,7 +646,7 @@ Each DOM attribute or CSS variable has exactly one authoritative writer:
 | CLI `--emit-ts` flag         | ❌     | Generates `theme.generated.ts`          |
 | `invertedSelectors` export   | ❌     | Array of inverted surface selectors     |
 | `defaultTau` export          | ❌     | Default theme polarity                  |
-| ThemeManager accepts option  | ❌     | `invertedSelectors` in constructor opts |
+| ThemeManager accepts option  | ✅     | `invertedSelectors` in constructor opts |
 | Legacy CSS variable fallback | ✅     | `--axm-inverted-surfaces` still works   |
 
 ### Bridge Exports
@@ -680,13 +680,13 @@ Each DOM attribute or CSS variable has exactly one authoritative writer:
 
 ### ThemeManager
 
-| Requirement                         | Status | Notes                                   |
-| :---------------------------------- | :----- | :-------------------------------------- |
-| ThemeManager is public API          | ✅     | Exported from `src/lib/index.ts`        |
-| AxiomaticTheme marked internal      | ❌     | Pending: add `@internal` JSDoc          |
-| ThemeManager delegates to AT        | ❌     | Pending: refactor `setMode()` to use AT |
-| `invertedSelectors` constructor opt | ❌     | Pending: accept from generated TS       |
-| Single writer documented            | ✅     | Documented in RFC-021                   |
+| Requirement                         | Status | Notes                                             |
+| :---------------------------------- | :----- | :------------------------------------------------ |
+| ThemeManager is public API          | ✅     | Exported from `src/lib/index.ts`                  |
+| AxiomaticTheme marked internal      | ✅     | `AxiomaticTheme` marked `@internal` in `theme.ts` |
+| ThemeManager delegates to AT        | ❌     | Pending: refactor `setMode()` to use AT           |
+| `invertedSelectors` constructor opt | ✅     | Accepted via `ThemeManagerOptions` / generated TS |
+| Single writer documented            | ✅     | Documented in RFC-021                             |
 
 ---
 

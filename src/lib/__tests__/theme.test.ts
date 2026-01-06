@@ -46,6 +46,9 @@ describe("AxiomaticTheme", () => {
 
 describe("ThemeManager invertedSelectors option", () => {
   beforeEach(() => {
+    // Reset AxiomaticTheme singleton to ensure test isolation
+    (AxiomaticTheme as any).instance = undefined;
+
     // Reset DOM
     document.documentElement.style.cssText = "";
     document.documentElement.className = "";
