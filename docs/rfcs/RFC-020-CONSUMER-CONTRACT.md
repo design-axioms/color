@@ -95,14 +95,38 @@ element.classList.toggle("hue-brand");
 
 Runtime integration must use documented APIs, never direct variable manipulation.
 
-**ThemeManager** (runtime theme control):
+**ThemeManager** (runtime theme control — the primary integration API):
 
 ```javascript
 import { ThemeManager } from "@axiomatic-design/color";
 
 const manager = new ThemeManager();
+manager.setMode("dark"); // or "light" or "system"
+
+// React to system preference changes
+// ThemeManager handles this automatically when mode is "system"
+```
+
+**Important**: `ThemeManager` is the **only** public API for theme switching. It manages:
+
+- Mode selection (`light`/`dark`/`system`)
+- System preference observation
+- Inverted surfaces (elements that should have opposite color-scheme)
+- Semantic state attributes (`data-axm-mode`, `data-axm-resolved-mode`)
+
+**AxiomaticTheme** (internal — do not use directly):
+
+`AxiomaticTheme` is an internal singleton used by the inspector and dev tools. It is exported for advanced tooling but marked `@internal`. Consumer applications should use `ThemeManager` instead.
+
+```javascript
+// ❌ FORBIDDEN in consumer code
+import { AxiomaticTheme } from "@axiomatic-design/color";
+AxiomaticTheme.get().toggle(); // Use ThemeManager.setMode() instead
+
+// ✅ ALLOWED - ThemeManager is the public API
+import { ThemeManager } from "@axiomatic-design/color";
+const manager = new ThemeManager();
 manager.setMode("dark");
-manager.setTau(0.3);
 ```
 
 **DOM Wiring** (applying tokens to vendor markup):
@@ -336,8 +360,10 @@ document.documentElement.style.setProperty("--tau", "0.5");
 ```javascript
 import { ThemeManager } from "@axiomatic-design/color";
 const manager = new ThemeManager();
-manager.setTau(0.5);
+manager.setMode("dark"); // tau is derived from mode internally
 ```
+
+**Note**: `--tau` is not directly settable via ThemeManager. Mode selection (`light`/`dark`/`system`) determines tau. For advanced use cases requiring continuous tau animation (e.g., dev tools), see the `@internal` AxiomaticTheme API.
 
 ### ✅ Allowed: Class Tokens + Documented APIs
 
@@ -419,12 +445,12 @@ For the system to be **alpha-ready**, the following must be true:
 
 ### Known Limitations (Documented for Alpha)
 
-| Limitation                                   | Documented? | Notes                      |
-| :------------------------------------------- | :---------- | :------------------------- |
-| Charts don't respect nested inversion        | ⚠️ TBD      | Dark cards on light pages  |
-| Container queries in inspector are "preview" | ⚠️ TBD      | May report false positives |
-| No DTCG export                               | ⚠️ TBD      | Coming in Epoch 47         |
-| ThemeManager/AxiomaticTheme confusion        | ❌          | Epoch 44 Phase 1           |
+| Limitation                                   | Documented? | Notes                                             |
+| :------------------------------------------- | :---------- | :------------------------------------------------ |
+| Charts don't respect nested inversion        | ⚠️ TBD      | Dark cards on light pages                         |
+| Container queries in inspector are "preview" | ⚠️ TBD      | May report false positives                        |
+| No DTCG export                               | ⚠️ TBD      | Coming in Epoch 47                                |
+| ThemeManager/AxiomaticTheme architecture     | ✅          | Documented in RFC-021; fix in progress (Epoch 44) |
 
 ### Definition of Alpha-Ready
 
