@@ -246,6 +246,16 @@ This document inventories silent failures throughout the codebase that should be
 
 ## P2: Nice to Have
 
+> **Note**: P2 items are lower priority and deferred for future work. P1-19 (Chroma Clipping) was promoted from P1 due to complexity.
+
+### P2-1. Chroma Clipping (Deferred from P1-19)
+
+**Location**: `src/lib/solver/*.ts`  
+**Current**: Chroma values outside gamut silently clipped by browser  
+**Desired**: Warning: "Chroma {value} clipped to {max} for {surface}"  
+**Complexity**: Medium - requires gamut-checking logic (could use culori's `inGamut`)  
+**Category**: Solver
+
 ### 27. Console.warn Without Context
 
 **Location**: Multiple files  
@@ -327,23 +337,37 @@ This document inventories silent failures throughout the codebase that should be
 
 ## Implementation Strategy
 
-### Phase 1: P0 Items (Alpha Blockers)
+### Phase 1: P0 Items (Alpha Blockers) ✅ COMPLETE
 
-- Focus on config validation and solver integrity
-- Add runtime assertions for critical paths
-- Implement parseFloat guards across codebase
+All 8 P0 items resolved:
 
-### Phase 2: P1 Items (Debuggability)
+- Math NaN guards (`MATH_NONFINITE`)
+- Missing backgrounds validation (`SOLVER_MISSING_BACKGROUNDS`)
+- Invalid vibe detection (`CONFIG_INVALID_VIBE`)
+- parseFloat guards (`INSPECTOR_INVALID_NUMBER`)
+- querySelector guards (`DOM_ELEMENT_NOT_FOUND`)
+- Color parsing validation (`COLOR_PARSE_FAILED`)
+- CSS variable validation (`THEME_INVALID_CSS_VAR`)
+- DTCG import validation (`DTCG_INVALID`)
 
-- Add structured warning system
-- Implement config schema validation with helpful messages
-- Add DOM readiness checks
+### Phase 2: P1 Items (Debuggability) ✅ COMPLETE
 
-### Phase 3: P2 Items (Polish)
+All P1 items addressed (18 total):
 
-- Migrate console.warn to structured logging
-- Add deprecation warnings
-- Implement dev mode diagnostics
+- **Implemented**: P1-10 through P1-17, P1-20, P1-22, P1-23, P1-25
+- **Skipped (already working)**: P1-9, P1-18, P1-21, P1-24, P1-26
+- **Deferred to P2**: P1-19 (chroma clipping)
+
+Error codes added: 21 total in `AxiomaticErrorCode` union
+
+### Phase 3: P2 Items (Polish) — FUTURE
+
+Deferred for future releases:
+
+- Structured logging system
+- Deprecation warnings
+- Dev mode diagnostics
+- Chroma gamut clipping warnings
 
 ---
 
