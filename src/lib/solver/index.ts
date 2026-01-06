@@ -72,6 +72,54 @@ export function solve(config: SolverConfig): Theme {
     }
   }
 
+  // P1-14: Warn about empty surface groups
+  for (const group of groups) {
+    if (group.surfaces.length === 0) {
+      console.warn(
+        `[Axiomatic] CONFIG_EMPTY_SURFACE_GROUP: Surface group "${group.name}" has no surfaces.`,
+      );
+    }
+  }
+
+  // P1-12: Validate anchor ordering
+  for (const polarity of ["page", "inverted"] as const) {
+    for (const mode of ["light", "dark"] as const) {
+      const modeAnchors = anchors[polarity][mode];
+      const startBg = modeAnchors.start.background;
+      const endBg = modeAnchors.end.background;
+
+      // For light mode: start should have higher L* (lighter) than end
+      // For dark mode: start should have lower L* (darker) than end
+      const isValid = mode === "light" ? startBg >= endBg : startBg <= endBg;
+
+      if (!isValid) {
+        throw new AxiomaticError(
+          "CONFIG_INVALID_ANCHOR_ORDER",
+          `Invalid anchor ordering for ${polarity}/${mode}: ` +
+            `start.background (${startBg.toFixed(2)}) should be ` +
+            `${mode === "light" ? ">=" : "<="} end.background (${endBg.toFixed(2)}).`,
+          { polarity, mode, startBg, endBg },
+        );
+      }
+    }
+  }
+
+  // P1-20: Validate contrast offsets
+  for (const surface of allSurfaces) {
+    if (surface.states) {
+      for (const state of surface.states) {
+        const offset = state.offset;
+        if (offset < -20 || offset > 20) {
+          throw new AxiomaticError(
+            "CONFIG_INVALID_CONTRAST_OFFSET",
+            `Contrast offset ${offset} for state "${state.name}" on surface "${surface.slug}" is out of valid range (-20 to 20).`,
+            { surface: surface.slug, state: state.name, offset },
+          );
+        }
+      }
+    }
+  }
+
   alignInvertedAnchors(anchors, anchors.keyColors);
 
   // Calculate global key color stats (for default hue/chroma)

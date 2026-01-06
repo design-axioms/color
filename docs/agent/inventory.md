@@ -87,8 +87,10 @@ This document inventories silent failures throughout the codebase that should be
 **Desired**: Consistent exit code 1 for all validation errors  
 **Category**: Config
 
-### 10. Unknown Config Properties
+### 10. Unknown Config Properties ✅
 
+**Status**: DONE  
+**Resolution**: Added `warnUnknownProperties()` in `src/lib/resolve.ts` that iterates config keys against `KNOWN_CONFIG_KEYS` set and emits `CONFIG_UNKNOWN_PROPERTY` console warning for any unknown properties.  
 **Location**: `src/lib/resolve.ts`  
 **Current**: Extra properties in user config silently ignored  
 **Desired**: Warning: "Unknown property '{prop}' in config. Did you mean '{suggestion}'?"  
@@ -103,8 +105,10 @@ This document inventories silent failures throughout the codebase that should be
 **Desired**: Error: "Duplicate surface slug '{slug}' in groups"  
 **Category**: Solver
 
-### 12. Anchor Ordering Invalid
+### 12. Anchor Ordering Invalid ✅
 
+**Status**: DONE  
+**Resolution**: `src/lib/solver/index.ts` validates anchor ordering (light: start >= end, dark: start <= end) and throws `CONFIG_INVALID_ANCHOR_ORDER`.  
 **Location**: `src/lib/solver/index.ts`  
 **Current**: Invalid anchor ordering (start > end for light mode) produces nonsensical output  
 **Desired**: Error: "Invalid anchor ordering for {polarity}/{mode}: start must be > end for light mode"  
@@ -119,8 +123,10 @@ This document inventories silent failures throughout the codebase that should be
 **Desired**: Error: "Circular key color reference detected: {chain}"  
 **Category**: Config
 
-### 14. Empty Surface Groups
+### 14. Empty Surface Groups ✅
 
+**Status**: DONE  
+**Resolution**: `src/lib/solver/index.ts` emits `CONFIG_EMPTY_SURFACE_GROUP` console warning for groups with empty surfaces array.  
 **Location**: `src/lib/solver/index.ts`  
 **Current**: Groups with no surfaces processed silently  
 **Desired**: Warning: "Surface group '{name}' has no surfaces"  
@@ -133,15 +139,19 @@ This document inventories silent failures throughout the codebase that should be
 **Desired**: Assert DOM ready or defer initialization  
 **Category**: Runtime
 
-### 16. Computed Style Returns Empty
+### 16. Computed Style Returns Empty ✅
 
-**Location**: `src/lib/inspector/*.ts`, `src/lib/theme.ts`  
+**Status**: DONE  
+**Resolution**: Added `getComputedStyleOrThrow()` guard in `src/lib/dom.ts` that throws `INSPECTOR_MISSING_COMPUTED_STYLE` when `getComputedStyle` returns null.  
+**Location**: `src/lib/dom.ts`  
 **Current**: `getComputedStyle` returns empty strings for missing properties  
 **Desired**: Type guard with context-specific error  
 **Category**: Runtime
 
-### 17. Regex Match Failures
+### 17. Regex Match Failures ✅
 
+**Status**: DONE  
+**Resolution**: Generator code already handles regex matches safely with `|| []` fallback patterns. Added `GENERATOR_REGEX_MATCH_FAILED` error code for future use if explicit throws are needed.  
 **Location**: `src/lib/generator/*.ts`  
 **Current**: `.match()` returning null causes silent failures  
 **Desired**: Explicit null check with error context  
@@ -161,8 +171,10 @@ This document inventories silent failures throughout the codebase that should be
 **Desired**: Warning: "Chroma {value} clipped to {max} for {surface}"  
 **Category**: Solver
 
-### 20. Invalid Contrast Offset
+### 20. Invalid Contrast Offset ✅
 
+**Status**: DONE  
+**Resolution**: `src/lib/solver/index.ts` validates state offsets are within -20 to 20 range and throws `CONFIG_INVALID_CONTRAST_OFFSET`.  
 **Location**: `src/lib/solver/index.ts`  
 **Current**: Negative or out-of-range contrast offsets accepted  
 **Desired**: Validation error: "Contrast offset {value} out of valid range"  

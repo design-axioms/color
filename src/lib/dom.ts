@@ -46,3 +46,23 @@ export function requireDocumentHead(context?: string): HTMLHeadElement {
 
   return requireElement(document.head, "head", context);
 }
+
+/**
+ * Gets a computed style property value, throwing if empty or missing.
+ */
+export function getComputedStyleOrThrow(
+  element: Element,
+  property: string,
+  context?: string,
+): string {
+  const value = getComputedStyle(element).getPropertyValue(property);
+  if (!value || value.trim() === "") {
+    const where = context ? ` in ${context}` : "";
+    throw new AxiomaticError(
+      "INSPECTOR_MISSING_COMPUTED_STYLE",
+      `Computed style '${property}' is empty${where}.`,
+      { property, element: element.tagName, context },
+    );
+  }
+  return value;
+}

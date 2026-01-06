@@ -54,4 +54,46 @@ describe("solver error surfaces", () => {
       /CONFIG_CIRCULAR_KEY_COLOR|Circular key color reference/,
     );
   });
+
+  it("throws on invalid anchor ordering - dark mode start > end (P1-12)", () => {
+    const config = structuredClone(DEFAULT_CONFIG);
+    // Dark mode: start should have lower L* than end
+    // But we're making start higher than end (invalid)
+    config.anchors.page.dark.start = { background: 0.6 };
+    config.anchors.page.dark.end = { adjustable: true, background: 0.3 };
+
+    expect(() => solve(config)).toThrowError(AxiomaticError);
+    expect(() => solve(config)).toThrow(/Invalid anchor ordering/);
+  });
+
+  it("throws on invalid anchor ordering - light mode end > start (P1-12)", () => {
+    const config = structuredClone(DEFAULT_CONFIG);
+    // Light mode: start should have higher L* than end
+    // But we're making end higher than start (invalid)
+    config.anchors.page.light.start = { background: 0.85 };
+    config.anchors.page.light.end = { adjustable: true, background: 0.95 };
+
+    expect(() => solve(config)).toThrowError(AxiomaticError);
+    expect(() => solve(config)).toThrow(/Invalid anchor ordering/);
+  });
+
+  it("throws on invalid state offset - too negative (P1-20)", () => {
+    const config = structuredClone(DEFAULT_CONFIG);
+    // Find a surface with states and set an invalid offset
+    const cardSurface = config.groups[1]!.surfaces[0]!;
+    cardSurface.states = [{ name: "hover", offset: -30 }];
+
+    expect(() => solve(config)).toThrowError(AxiomaticError);
+    expect(() => solve(config)).toThrow(/Contrast offset.*out of valid range/);
+  });
+
+  it("throws on invalid state offset - too positive (P1-20)", () => {
+    const config = structuredClone(DEFAULT_CONFIG);
+    // Find a surface with states and set an invalid offset
+    const cardSurface = config.groups[1]!.surfaces[0]!;
+    cardSurface.states = [{ name: "hover", offset: 30 }];
+
+    expect(() => solve(config)).toThrowError(AxiomaticError);
+    expect(() => solve(config)).toThrow(/Contrast offset.*out of valid range/);
+  });
 });

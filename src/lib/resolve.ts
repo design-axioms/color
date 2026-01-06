@@ -11,6 +11,30 @@ type DeepPartial<T> = {
   [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
 };
 
+/** Known top-level config keys */
+const KNOWN_CONFIG_KEYS = new Set<string>([
+  "vibe",
+  "anchors",
+  "groups",
+  "hueShift",
+  "palette",
+  "$schema",
+]);
+
+/**
+ * Warns about unknown top-level config properties.
+ */
+function warnUnknownProperties(userConfig: Record<string, unknown>): void {
+  for (const key of Object.keys(userConfig)) {
+    if (!KNOWN_CONFIG_KEYS.has(key)) {
+      console.warn(
+        `[Axiomatic] CONFIG_UNKNOWN_PROPERTY: Unknown property "${key}" in config. ` +
+          `Known properties: ${[...KNOWN_CONFIG_KEYS].filter((k) => k !== "$schema").join(", ")}.`,
+      );
+    }
+  }
+}
+
 function deepMerge<T extends Record<string, unknown>>(
   target: T,
   source: DeepPartial<T>,
@@ -35,6 +59,9 @@ function deepMerge<T extends Record<string, unknown>>(
 }
 
 export function resolveConfig(userConfig: Partial<SolverConfig>): SolverConfig {
+  // P1-10: Warn about unknown top-level properties
+  warnUnknownProperties(userConfig as Record<string, unknown>);
+
   // 1. Start with System Defaults
   let config = { ...DEFAULT_CONFIG };
 
