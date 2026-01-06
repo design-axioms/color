@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { AxiomaticError } from "../errors.ts";
 import { generateTokensCss } from "../generator/index.ts";
 import type { ColorSpec, Mode, SurfaceGroup, Theme } from "../types.ts";
 
@@ -169,5 +170,42 @@ describe("generateTokensCss", () => {
     expect(css).toContain("--axm-chart-3");
     expect(css).toContain("oklch(");
     expect(css).toMatchSnapshot();
+  });
+
+  it("throws when primitive colors are invalid", () => {
+    const groups: SurfaceGroup[] = [];
+    const backgrounds = new Map<string, Record<Mode, ColorSpec>>();
+    backgrounds.set("page", {
+      light: { l: 1, c: 0, h: 0 },
+      dark: { l: 0, c: 0, h: 0 },
+    });
+
+    const primitives = {
+      shadows: {
+        sm: { light: "not-a-color", dark: "oklch(1 0 0 / 0.15)" },
+        md: { light: "oklch(0 0 0 / 0.1)", dark: "oklch(1 0 0 / 0.15)" },
+        lg: { light: "oklch(0 0 0 / 0.1)", dark: "oklch(1 0 0 / 0.15)" },
+        xl: { light: "oklch(0 0 0 / 0.1)", dark: "oklch(1 0 0 / 0.15)" },
+      },
+      focus: {
+        ring: { light: "oklch(0.45 0.2 250)", dark: "oklch(0.75 0.2 250)" },
+      },
+      highlight: {
+        ring: { light: "oklch(0.45 0.2 300)", dark: "oklch(0.75 0.2 300)" },
+        surface: { light: "oklch(0.95 0.05 300)", dark: "oklch(0.2 0.05 300)" },
+      },
+    };
+
+    const theme = {
+      surfaces: [],
+      backgrounds,
+      charts: [],
+      primitives,
+    } as unknown as Theme;
+
+    expect(() => generateTokensCss(groups, theme)).toThrowError(AxiomaticError);
+    expect(() => generateTokensCss(groups, theme)).toThrow(
+      /COLOR_PARSE_FAILED|Invalid color value/,
+    );
   });
 });

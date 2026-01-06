@@ -1,4 +1,5 @@
 import { DEFAULT_CONFIG } from "./defaults.ts";
+import { AxiomaticError } from "./errors.ts";
 import type { SolverConfig } from "./types.ts";
 import { VIBES } from "./vibes.ts";
 
@@ -21,8 +22,10 @@ function deepMerge<T extends Record<string, unknown>>(
       const targetValue = target[key];
 
       if (isObject(sourceValue) && key in target && isObject(targetValue)) {
-        // @ts-expect-error - deepMerge types are hard
-        output[key as keyof T] = deepMerge(targetValue, sourceValue);
+        (output as Record<string, unknown>)[key] = deepMerge(
+          targetValue,
+          sourceValue as DeepPartial<Record<string, unknown>>,
+        );
       } else if (sourceValue !== undefined) {
         output[key as keyof T] = sourceValue as T[keyof T];
       }
@@ -39,10 +42,15 @@ export function resolveConfig(userConfig: Partial<SolverConfig>): SolverConfig {
   const vibeName = userConfig.vibe;
   if (vibeName) {
     const vibe = VIBES[vibeName];
-    if (vibe) {
-      // @ts-expect-error - deepMerge types are hard
-      config = deepMerge(config, vibe.config);
+    if (!vibe) {
+      throw new AxiomaticError(
+        "CONFIG_INVALID_VIBE",
+        `Unknown vibe: ${JSON.stringify(vibeName)}.`,
+        { vibe: vibeName, knownVibes: Object.keys(VIBES) },
+      );
     }
+
+    config = deepMerge(config, vibe.config);
   }
 
   // 3. Apply User Config

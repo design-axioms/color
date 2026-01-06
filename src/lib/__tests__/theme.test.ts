@@ -1,7 +1,7 @@
 /**
  * @vitest-environment jsdom
  */
-import { describe, it, expect, beforeEach } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import { AxiomaticTheme } from "../theme.js";
 
 describe("AxiomaticTheme", () => {
@@ -10,6 +10,10 @@ describe("AxiomaticTheme", () => {
     document.documentElement.style.cssText = "";
     document.documentElement.className = "";
     document.documentElement.removeAttribute("data-theme");
+
+    // Avoid test noise from missing CSS variables
+    document.documentElement.style.setProperty("--alpha-hue", "0");
+    document.documentElement.style.setProperty("--alpha-beta", "0.008");
     // Reset Singleton (hacky but needed for testing singleton)
     (AxiomaticTheme as any).instance = undefined;
   });

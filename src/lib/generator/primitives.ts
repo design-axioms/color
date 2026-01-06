@@ -1,4 +1,5 @@
 import { converter } from "culori";
+import { AxiomaticError } from "../errors.ts";
 import type { ConfigOptions, Theme } from "../types.ts";
 
 const toOklch = converter("oklch");
@@ -9,6 +10,22 @@ type OklchParts = {
   h: number;
   alpha: number;
 };
+
+function parseOklchCandidate(
+  value: unknown,
+): { l: number; c: number; h?: number; alpha?: number } | null {
+  if (!value || typeof value !== "object") return null;
+  const record = value as Record<string, unknown>;
+  const l = record.l;
+  const c = record.c;
+  const h = record.h;
+  const alpha = record.alpha;
+  if (typeof l !== "number" || !Number.isFinite(l)) return null;
+  if (typeof c !== "number" || !Number.isFinite(c)) return null;
+  if (h !== undefined && typeof h !== "number") return null;
+  if (alpha !== undefined && typeof alpha !== "number") return null;
+  return { l, c, h, alpha };
+}
 
 function normalizeHue(hue: number): number {
   const wrapped = hue % 360;
@@ -28,10 +45,8 @@ function parseOklchColor(
   color: string,
   toNumber: (n: number) => number,
 ): OklchParts | null {
-  const parsed = toOklch(color) as
-    | { l: number; c: number; h?: number; alpha?: number }
-    | undefined;
-  if (!parsed || typeof parsed.l !== "number" || typeof parsed.c !== "number") {
+  const parsed = parseOklchCandidate(toOklch(color));
+  if (!parsed) {
     return null;
   }
 
@@ -75,11 +90,17 @@ function interpolateOklch(
   lightColor: string,
   darkColor: string,
   toNumber: (n: number) => number,
+  context: string,
 ): string {
   const light = parseOklchColor(lightColor, toNumber);
   const dark = parseOklchColor(darkColor, toNumber);
   if (!light || !dark) {
-    return `light-dark(${lightColor}, ${darkColor})`;
+    const bad = !light ? lightColor : darkColor;
+    throw new AxiomaticError(
+      "COLOR_PARSE_FAILED",
+      `Invalid color value ${JSON.stringify(bad)} for ${context}.`,
+      { value: bad, context },
+    );
   }
 
   return `oklch(${interpolateComponent(light.l, dark.l, toNumber)} ${interpolateComponent(
@@ -128,6 +149,12 @@ export function generatePrimitives(
         );
         lines.push(`  ${pv(`hue-${name}`)}: var(${pv(`hue-${value}`)});`);
         lines.push(`  ${pv(`chroma-${name}`)}: var(${pv(`chroma-${value}`)});`);
+      } else {
+        throw new AxiomaticError(
+          "COLOR_PARSE_FAILED",
+          `Invalid color value ${JSON.stringify(value)} for keyColors.${name}.`,
+          { value, context: `keyColors.${name}` },
+        );
       }
     }
   }
@@ -146,7 +173,12 @@ export function generatePrimitives(
         const darkColor = darkColors[index];
         index++;
         if (!darkColor) return match;
-        return interpolateOklch(match, darkColor, toNumber);
+        return interpolateOklch(
+          match,
+          darkColor,
+          toNumber,
+          `primitives.shadows.${size}`,
+        );
       });
       lines.push(`  ${v(`shadow-${size}`)}: ${merged};`);
     } else {
@@ -155,6 +187,7 @@ export function generatePrimitives(
           token.light,
           token.dark,
           toNumber,
+          `primitives.shadows.${size}`,
         )};`,
       );
     }
@@ -167,6 +200,7 @@ export function generatePrimitives(
       focus.ring.light,
       focus.ring.dark,
       toNumber,
+      "primitives.focus.ring",
     )};`,
   );
 
@@ -177,6 +211,7 @@ export function generatePrimitives(
       highlight.ring.light,
       highlight.ring.dark,
       toNumber,
+      "primitives.highlight.ring",
     )};`,
   );
   lines.push(
@@ -184,6 +219,7 @@ export function generatePrimitives(
       highlight.surface.light,
       highlight.surface.dark,
       toNumber,
+      "primitives.highlight.surface",
     )};`,
   );
 

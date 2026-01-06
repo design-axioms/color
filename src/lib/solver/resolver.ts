@@ -1,4 +1,5 @@
 import { converter } from "culori";
+import { AxiomaticError } from "../errors.ts";
 import { avg, roundLightness, solveForegroundLightness } from "../math.ts";
 import type {
   ChartColor,
@@ -10,6 +11,57 @@ import type {
 
 const toOklch = converter("oklch");
 
+function isOklchLike(
+  value: unknown,
+): value is { l: number; c: number; h?: number } {
+  if (!value || typeof value !== "object") return false;
+  const record = value as Record<string, unknown>;
+  return (
+    typeof record.l === "number" &&
+    Number.isFinite(record.l) &&
+    typeof record.c === "number" &&
+    Number.isFinite(record.c) &&
+    (record.h === undefined || typeof record.h === "number")
+  );
+}
+
+/**
+ * Detects circular references in key color aliases.
+ * Throws if a cycle is found, e.g. brand → accent → brand.
+ */
+function detectKeyColorCycles(keyColors: Record<string, string>): void {
+  for (const startKey of Object.keys(keyColors)) {
+    const visited = new Set<string>();
+    const path: string[] = [];
+    let current: string | undefined = startKey;
+
+    while (current) {
+      if (visited.has(current)) {
+        // Found a cycle - build the chain from where the cycle starts
+        const cycleStart = path.indexOf(current);
+        const chain = [...path.slice(cycleStart), current];
+        throw new AxiomaticError(
+          "CONFIG_CIRCULAR_KEY_COLOR",
+          `Circular key color reference detected: ${chain.join(" → ")}.`,
+          { chain, startKey },
+        );
+      }
+
+      visited.add(current);
+      path.push(current);
+
+      const value: string | undefined = keyColors[current];
+      // If the value references another key, continue following
+      const nextKey: string | undefined = value ? keyColors[value] : undefined;
+      if (value && nextKey !== undefined) {
+        current = value;
+      } else {
+        break;
+      }
+    }
+  }
+}
+
 export function getKeyColorStats(keyColors?: Record<string, string>): {
   lightness?: number;
   chroma?: number;
@@ -19,17 +71,31 @@ export function getKeyColorStats(keyColors?: Record<string, string>): {
     return {};
   }
 
+  // P1-13: Detect circular key color references early
+  detectKeyColorCycles(keyColors);
+
   // If 'brand' exists, use it exclusively for global stats
   if (keyColors.brand) {
-    const entry = toOklch(keyColors.brand) as
-      | { l: number; c: number; h: number }
-      | undefined;
-    if (entry) {
+    const brandValue = keyColors.brand;
+    const entry = toOklch(brandValue);
+    if (isOklchLike(entry)) {
       return {
         lightness: roundLightness(entry.l),
         chroma: parseFloat(entry.c.toFixed(4)),
-        hue: isNaN(entry.h) ? undefined : parseFloat(entry.h.toFixed(4)),
+        hue:
+          typeof entry.h === "number" && !isNaN(entry.h)
+            ? parseFloat(entry.h.toFixed(4))
+            : undefined,
       };
+    }
+
+    // Allow brand alias (e.g. "brand": "accent"); fall back to aggregate stats.
+    if (!keyColors[brandValue]) {
+      throw new AxiomaticError(
+        "COLOR_PARSE_FAILED",
+        `Invalid color value ${JSON.stringify(brandValue)} for keyColors.brand.`,
+        { value: brandValue, context: "keyColors.brand" },
+      );
     }
   }
 
@@ -37,18 +103,28 @@ export function getKeyColorStats(keyColors?: Record<string, string>): {
   const chromas: number[] = [];
   const hues: number[] = [];
 
-  for (const value of Object.values(keyColors)) {
-    const entry = toOklch(value) as
-      | { l: number; c: number; h: number }
-      | undefined;
+  for (const [name, value] of Object.entries(keyColors)) {
+    const entry = toOklch(value);
 
-    if (entry) {
+    if (isOklchLike(entry)) {
       lightnesses.push(entry.l);
       chromas.push(entry.c);
-      if (!isNaN(entry.h)) {
+      if (typeof entry.h === "number" && !isNaN(entry.h)) {
         hues.push(entry.h);
       }
+      continue;
     }
+
+    // Allow aliases.
+    if (keyColors[value]) {
+      continue;
+    }
+
+    throw new AxiomaticError(
+      "COLOR_PARSE_FAILED",
+      `Invalid color value ${JSON.stringify(value)} for keyColors.${name}.`,
+      { value, context: `keyColors.${name}` },
+    );
   }
 
   if (lightnesses.length === 0) {

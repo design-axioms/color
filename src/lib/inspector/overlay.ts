@@ -1,9 +1,11 @@
-import { AxiomaticInspectorEngine, type Violation } from "./engine.ts";
-import { STYLES } from "./styles.ts";
-import { AxiomaticTheme } from "../theme.ts";
-import type { DebugContext, ResolvedToken } from "./types.ts";
-import { findWinningRule, formatSpecificity } from "./css-utils.ts";
 import { converter, formatCss } from "culori";
+import { requireElement } from "../dom.ts";
+import { AxiomaticTheme } from "../theme.ts";
+import { findWinningRule, formatSpecificity } from "./css-utils.ts";
+import { AxiomaticInspectorEngine, type Violation } from "./engine.ts";
+import { parseNumberOrThrow } from "./guards.ts";
+import { STYLES } from "./styles.ts";
+import type { DebugContext, ResolvedToken } from "./types.ts";
 import {
   renderAdvice,
   renderTokenList,
@@ -630,46 +632,85 @@ export class AxiomaticDebugger extends BaseElement {
       </div>
     `;
 
-    this.highlightLayer = this.root.getElementById(
-      "highlight-layer",
-    ) as unknown as HTMLElement;
-    this.violationLayer = this.root.getElementById(
-      "violation-layer",
-    ) as unknown as HTMLElement;
-    this.sourceLayer = this.root.getElementById(
-      "source-layer",
-    ) as unknown as HTMLElement;
-    this.infoCard = this.root.getElementById(
-      "info-card",
-    ) as unknown as HTMLElement;
-    this.toastEl = this.root.getElementById("toast");
-    this.toggleBtn = this.root.getElementById(
-      "toggle-btn",
-    ) as unknown as HTMLButtonElement;
-    this.modeToggleBtn = this.root.getElementById(
-      "mode-toggle",
-    ) as unknown as HTMLButtonElement;
-    this.violationToggle = this.root.getElementById(
-      "violation-toggle",
-    ) as unknown as HTMLButtonElement;
-    this.continuityToggle = this.root.getElementById(
-      "continuity-toggle",
-    ) as unknown as HTMLButtonElement;
-    this.resetBtn = this.root.getElementById(
-      "reset-btn",
-    ) as unknown as HTMLButtonElement;
-    this.copyAppliedFixesBtn = this.root.getElementById(
-      "copy-applied-fixes-btn",
-    ) as unknown as HTMLButtonElement;
-    this.themeToggleMain = this.root.getElementById(
-      "theme-toggle-main",
-    ) as unknown as HTMLButtonElement;
-    this.elementConsoleBtn = this.root.getElementById(
-      "element-console-btn",
-    ) as unknown as HTMLButtonElement;
-    this.elementInternalsBtn = this.root.getElementById(
-      "element-internals-btn",
-    ) as unknown as HTMLButtonElement;
+    const ctx = "AxiomaticInspectorOverlay.render";
+
+    this.highlightLayer = requireElement(
+      this.root.getElementById("highlight-layer"),
+      "#highlight-layer",
+      ctx,
+    );
+    this.violationLayer = requireElement(
+      this.root.getElementById("violation-layer"),
+      "#violation-layer",
+      ctx,
+    );
+    this.sourceLayer = requireElement(
+      this.root.getElementById("source-layer"),
+      "#source-layer",
+      ctx,
+    );
+    this.infoCard = requireElement(
+      this.root.getElementById("info-card"),
+      "#info-card",
+      ctx,
+    );
+    this.toastEl = requireElement(
+      this.root.getElementById("toast"),
+      "#toast",
+      ctx,
+    );
+
+    this.toggleBtn = requireElement(
+      this.root.getElementById("toggle-btn") as HTMLButtonElement | null,
+      "#toggle-btn",
+      ctx,
+    );
+    this.modeToggleBtn = requireElement(
+      this.root.getElementById("mode-toggle") as HTMLButtonElement | null,
+      "#mode-toggle",
+      ctx,
+    );
+    this.violationToggle = requireElement(
+      this.root.getElementById("violation-toggle") as HTMLButtonElement | null,
+      "#violation-toggle",
+      ctx,
+    );
+    this.continuityToggle = requireElement(
+      this.root.getElementById("continuity-toggle") as HTMLButtonElement | null,
+      "#continuity-toggle",
+      ctx,
+    );
+    this.resetBtn = requireElement(
+      this.root.getElementById("reset-btn") as HTMLButtonElement | null,
+      "#reset-btn",
+      ctx,
+    );
+    this.copyAppliedFixesBtn = requireElement(
+      this.root.getElementById(
+        "copy-applied-fixes-btn",
+      ) as HTMLButtonElement | null,
+      "#copy-applied-fixes-btn",
+      ctx,
+    );
+    this.themeToggleMain = requireElement(
+      this.root.getElementById("theme-toggle-main") as HTMLButtonElement | null,
+      "#theme-toggle-main",
+      ctx,
+    );
+    this.elementConsoleBtn = requireElement(
+      this.root.getElementById(
+        "element-console-btn",
+      ) as HTMLButtonElement | null,
+      "#element-console-btn",
+      ctx,
+    );
+    this.elementInternalsBtn = requireElement(
+      this.root.getElementById(
+        "element-internals-btn",
+      ) as HTMLButtonElement | null,
+      "#element-internals-btn",
+      ctx,
+    );
 
     this.modeToggleBtn.addEventListener("click", () => {
       this.toggleInteractionMode();
@@ -1116,12 +1157,21 @@ export class AxiomaticDebugger extends BaseElement {
   ): void {
     const { context, tokens, hasMismatch } = result;
 
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const surfaceBadge = this.root.getElementById("surface-badge")!;
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const polarityBadge = this.root.getElementById("polarity-badge")!;
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const tokenList = this.root.getElementById("token-list")!;
+    const surfaceBadge = requireElement(
+      this.root.getElementById("surface-badge"),
+      "#surface-badge",
+      "AxiomaticInspectorOverlay.inspect",
+    );
+    const polarityBadge = requireElement(
+      this.root.getElementById("polarity-badge"),
+      "#polarity-badge",
+      "AxiomaticInspectorOverlay.inspect",
+    );
+    const tokenList = requireElement(
+      this.root.getElementById("token-list"),
+      "#token-list",
+      "AxiomaticInspectorOverlay.inspect",
+    );
 
     surfaceBadge.textContent = context.surface || "Unknown";
     polarityBadge.textContent = context.polarity === "dark" ? "Dark" : "Light";
@@ -1434,8 +1484,11 @@ export class AxiomaticDebugger extends BaseElement {
       const raw = getComputedStyle(document.documentElement)
         .getPropertyValue("--tau")
         .trim();
-      const tau = Number.parseFloat(raw);
-      return Number.isFinite(tau) ? tau : null;
+      if (!raw) return null;
+      return parseNumberOrThrow(
+        raw,
+        "AxiomaticInspectorOverlay.waitForStableThemeState --tau",
+      );
     };
 
     const getExpectedMode = (): "light" | "dark" | null => {

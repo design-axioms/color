@@ -10,79 +10,70 @@
 
 This document inventories silent failures throughout the codebase that should become explicit errors or warnings to improve debuggability and reliability.
 
-| Priority | Count | Description                           |
-| :------- | :---- | :------------------------------------ |
-| **P0**   | 8     | Alpha blockers — mask critical errors |
-| **P1**   | 18    | Should fix — reduce debuggability     |
-| **P2**   | 11    | Nice to have — quality improvements   |
+| Priority | Count | Description                               |
+| :------- | :---- | :---------------------------------------- |
+| **P0**   | 8     | ✅ COMPLETE — All alpha blockers resolved |
+| **P1**   | 18    | Should fix — reduce debuggability         |
+| **P2**   | 11    | Nice to have — quality improvements       |
 
 ---
 
-## P0: Alpha Blockers
+## P0: Alpha Blockers ✅
 
-### 1. Math NaN Propagation
+### 1. Math NaN Propagation ✅
 
+**Status**: DONE  
+**Resolution**: `binarySearch()` in `src/lib/math.ts` throws `AxiomaticError` with code `MATH_NONFINITE` for non-finite evaluation results.  
 **Location**: `src/lib/math.ts`  
-**Current**: `APCAcontrast` can return non-finite values that propagate through calculations  
-**Desired**: Throw error: "APCA contrast calculation produced invalid result. Check input lightness values."  
 **Category**: Solver
 
-### 2. Solver Missing Backgrounds
+### 2. Solver Missing Backgrounds ✅
 
+**Status**: DONE  
+**Resolution**: `src/lib/solver/index.ts` validates backgrounds early and throws `SOLVER_MISSING_BACKGROUNDS` before calculations.  
 **Location**: `src/lib/solver/index.ts`  
-**Current**: Only validates at end of solve; missing backgrounds produce undefined values  
-**Desired**: Early validation: "Surface '{slug}' references undefined background. Check polarity configuration."  
 **Category**: Solver
 
-### 3. Invalid Vibe Name
+### 3. Invalid Vibe Name ✅
 
+**Status**: DONE  
+**Resolution**: `src/lib/resolve.ts` throws `CONFIG_INVALID_VIBE` for unknown vibe names, including list of valid vibes.  
 **Location**: `src/lib/resolve.ts`  
-**Current**: Unknown vibe names silently ignored (`VIBES[vibeName]` returns undefined)  
-**Desired**: Throw error: "Unknown vibe '{name}'. Valid vibes: academic, vibrant, corporate, default"  
 **Category**: Config
 
-### 4. parseFloat NaN (Multiple Locations)
+### 4. parseFloat NaN ✅
 
-**Locations**:
-
-- `src/lib/theme.ts` (line ~70)
-- `src/lib/solver/*.ts` (multiple)
-- `src/lib/inspector/*.ts` (multiple)
-
-**Current**: `parseFloat()` returns `NaN` for invalid strings, which propagates  
-**Desired**: Type guard with error: "Expected numeric value, got '{value}'"  
+**Status**: DONE  
+**Resolution**: Added `parseNumberOrThrow` guard in `src/lib/inspector/guards.ts` (throws `INSPECTOR_INVALID_NUMBER`); `src/lib/theme.ts` validates numeric CSS vars.  
+**Locations**: `src/lib/inspector/guards.ts`, `src/lib/theme.ts`  
 **Category**: Runtime
 
-### 5. querySelector Returns Null
+### 5. querySelector Returns Null ✅
 
-**Locations**:
-
-- `src/lib/browser.ts` (ThemeManager initialization)
-- `src/lib/inspector/*.ts` (element lookup)
-
-**Current**: Missing elements fail silently or cause TypeScript to lie about types  
-**Desired**: Runtime assertion: "Required element '{selector}' not found"  
+**Status**: DONE  
+**Resolution**: Added `requireElement`, `querySelectorOrThrow`, `requireDocumentHead`, `requireDocumentBody` in `src/lib/dom.ts` (throws `DOM_ELEMENT_NOT_FOUND`); used in inspector, browser.ts, runtime.ts.  
+**Location**: `src/lib/dom.ts`  
 **Category**: Runtime
 
-### 6. Color Parsing Failures
+### 6. Color Parsing Failures ✅
 
-**Location**: `src/lib/color.ts`, `src/lib/solver/*.ts`  
-**Current**: Invalid colors fall back to transparent or get ignored  
-**Desired**: Throw error: "Invalid color value '{value}' for {context}"  
+**Status**: DONE  
+**Resolution**: Solver (`planner.ts`, `resolver.ts`) and generator (`primitives.ts`) throw `COLOR_PARSE_FAILED` instead of silently ignoring invalid colors.  
+**Locations**: `src/lib/solver/planner.ts`, `src/lib/solver/resolver.ts`, `src/lib/generator/primitives.ts`  
 **Category**: Solver
 
-### 7. Missing CSS Variables
+### 7. Missing CSS Variables ✅
 
-**Location**: `src/lib/theme.ts`, `src/lib/browser.ts`  
-**Current**: Variables like `--alpha-hue` default to `0` when missing  
-**Desired**: Dev mode warning: "CSS variable '{name}' not found. Is Axiomatic CSS loaded?"  
+**Status**: DONE  
+**Resolution**: `src/lib/theme.ts` uses warn-once for missing CSS variables in dev mode; throws `THEME_INVALID_CSS_VAR` for invalid numeric values.  
+**Location**: `src/lib/theme.ts`  
 **Category**: Runtime
 
-### 8. DTCG Import Validation
+### 8. DTCG Import Validation ✅
 
-**Location**: `src/lib/exporters/dtcg.ts`  
-**Current**: No validation that imported tokens are valid or complete  
-**Desired**: Schema validation with specific error messages  
+**Status**: DONE  
+**Resolution**: `src/lib/importers/dtcg.ts` validates structure and rejects arrays; `src/lib/exporters/dtcg.ts` throws `DTCG_INVALID` for non-numeric lightness values.  
+**Locations**: `src/lib/importers/dtcg.ts`, `src/lib/exporters/dtcg.ts`  
 **Category**: Config
 
 ---
@@ -103,8 +94,10 @@ This document inventories silent failures throughout the codebase that should be
 **Desired**: Warning: "Unknown property '{prop}' in config. Did you mean '{suggestion}'?"  
 **Category**: Config
 
-### 11. Surface Slug Collision
+### 11. Surface Slug Collision ✅
 
+**Status**: DONE  
+**Resolution**: `src/lib/solver/index.ts` validates for duplicate surface slugs at solve time and throws `CONFIG_DUPLICATE_SURFACE_SLUG`.  
 **Location**: `src/lib/solver/index.ts`  
 **Current**: Duplicate slugs may overwrite each other silently  
 **Desired**: Error: "Duplicate surface slug '{slug}' in groups"  
@@ -117,9 +110,11 @@ This document inventories silent failures throughout the codebase that should be
 **Desired**: Error: "Invalid anchor ordering for {polarity}/{mode}: start must be > end for light mode"  
 **Category**: Config
 
-### 13. Key Color Circular Reference
+### 13. Key Color Circular Reference ✅
 
-**Location**: `src/lib/resolve.ts`  
+**Status**: DONE  
+**Resolution**: `src/lib/solver/resolver.ts` has `detectKeyColorCycles()` that detects alias cycles and throws `CONFIG_CIRCULAR_KEY_COLOR`.  
+**Location**: `src/lib/solver/resolver.ts`  
 **Current**: Alias chains (`a → b → a`) cause infinite loop or undefined  
 **Desired**: Error: "Circular key color reference detected: {chain}"  
 **Category**: Config
@@ -180,8 +175,10 @@ This document inventories silent failures throughout the codebase that should be
 **Desired**: Dev mode warning: "Meta theme-color tag not found"  
 **Category**: Runtime
 
-### 22. State Definition Without Parent
+### 22. State Definition Without Parent ✅
 
+**Status**: DONE  
+**Resolution**: `src/lib/solver/index.ts` validates that state definitions reference valid parent surfaces and throws `CONFIG_INVALID_STATE_PARENT`.  
 **Location**: `src/lib/solver/index.ts`  
 **Current**: State definitions reference non-existent parent surface  
 **Desired**: Error: "State '{state}' references undefined parent surface '{parent}'"  

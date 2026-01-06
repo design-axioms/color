@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { AxiomaticError } from "../../errors.ts";
 import type { ColorSpec, Mode, SurfaceConfig, Theme } from "../../types.ts";
 import { toDTCG } from "../dtcg.ts";
 
@@ -131,5 +132,61 @@ describe("DTCG Exporter", () => {
     expect(colorGroup).toHaveProperty("focus");
     const focusGroup = colorGroup["focus"] as any;
     expect(focusGroup["ring"]).toHaveProperty("$type", "color");
+  });
+
+  it("throws when surface foreground lightness is not a finite number", () => {
+    const surfaces: SurfaceConfig[] = [
+      {
+        slug: "card",
+        label: "Card",
+        polarity: "page",
+        computed: {
+          light: {
+            background: 0.9,
+            "fg-high": "nope" as any,
+          },
+          dark: {
+            background: 0.1,
+            "fg-high": 0.9,
+          },
+        } as any,
+      },
+    ];
+
+    const backgrounds = new Map<string, Record<Mode, ColorSpec>>();
+    backgrounds.set("card", {
+      light: { l: 0.9, c: 0.01, h: 100 },
+      dark: { l: 0.1, c: 0.01, h: 100 },
+    });
+
+    const theme: Theme = {
+      surfaces,
+      backgrounds,
+      charts: [],
+      primitives: {
+        shadows: {
+          sm: { light: "", dark: "" },
+          md: { light: "", dark: "" },
+          lg: { light: "", dark: "" },
+          xl: { light: "", dark: "" },
+        },
+        focus: { ring: { light: "", dark: "" } },
+        highlight: {
+          ring: { light: "", dark: "" },
+          surface: { light: "", dark: "" },
+        },
+      },
+    };
+
+    const config: any = {
+      anchors: {
+        keyColors: {
+          brand: "#0000FF",
+        },
+      },
+    };
+
+    expect(() => toDTCG(theme, config)).toThrowError(AxiomaticError);
+    expect(() => toDTCG(theme, config)).toThrow(/DTCG_INVALID|lightness/i);
   });
 });

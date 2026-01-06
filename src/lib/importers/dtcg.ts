@@ -1,4 +1,5 @@
 import { converter } from "culori";
+import { AxiomaticError } from "../errors.ts";
 import type {
   PolarityAnchors,
   SolverConfig,
@@ -27,6 +28,14 @@ export class DTCGImporter {
 
   parse(json: string): SolverConfig {
     const raw = JSON.parse(json) as unknown;
+
+    if (typeof raw !== "object" || raw === null || Array.isArray(raw)) {
+      throw new AxiomaticError(
+        "DTCG_INVALID",
+        "DTCG import expects a JSON object at the root.",
+      );
+    }
+
     this.tokens = this.flatten(raw);
 
     const keyColors = this.extractKeyColors();
@@ -122,6 +131,14 @@ export class DTCGImporter {
         // Let's try to find a "middle" value if it looks like a scale
         const bestMatch = this.pickBestColor(matches);
         if (bestMatch) {
+          const parsed = toOklch(bestMatch.value);
+          if (!parsed) {
+            throw new AxiomaticError(
+              "DTCG_INVALID",
+              `Key color ${semantic} was not parseable as a color.`,
+              { path: bestMatch.path.join("."), value: bestMatch.value },
+            );
+          }
           keyColors[semantic] = bestMatch.value;
         }
       }
@@ -195,13 +212,28 @@ export class DTCGImporter {
     // Find min/max lightness
     let minL = 1;
     let maxL = 0;
+    let parsedCount = 0;
+    let firstInvalid: FlattenedToken | null = null;
 
     for (const t of neutralTokens) {
       const color = toOklch(t.value);
       if (color) {
+        parsedCount++;
         if (color.l < minL) minL = color.l;
         if (color.l > maxL) maxL = color.l;
+      } else if (!firstInvalid) {
+        firstInvalid = t;
       }
+    }
+
+    if (parsedCount === 0) {
+      throw new AxiomaticError(
+        "DTCG_INVALID",
+        "Found neutral-scale tokens but none were parseable as colors.",
+        firstInvalid
+          ? { path: firstInvalid.path.join("."), value: firstInvalid.value }
+          : undefined,
+      );
     }
 
     // Sanity check: If range is too small, ignore

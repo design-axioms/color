@@ -1,4 +1,5 @@
 import { converter } from "culori";
+import { AxiomaticError } from "../errors.ts";
 import {
   avg,
   backgroundBounds,
@@ -20,6 +21,12 @@ import type {
 
 const toOklch = converter("oklch");
 
+function isOklchLike(value: unknown): value is { l: number } {
+  if (!value || typeof value !== "object") return false;
+  const record = value as Record<string, unknown>;
+  return typeof record.l === "number" && Number.isFinite(record.l);
+}
+
 function computeKeyColorLightness(
   keyColors?: Record<string, string>,
 ): number | undefined {
@@ -29,12 +36,24 @@ function computeKeyColorLightness(
 
   const lightnesses: number[] = [];
 
-  for (const value of Object.values(keyColors)) {
-    const entry = toOklch(value) as { l: number } | undefined;
+  for (const [name, value] of Object.entries(keyColors)) {
+    const entry = toOklch(value);
 
-    if (entry) {
+    if (isOklchLike(entry)) {
       lightnesses.push(entry.l);
+      continue;
     }
+
+    // Allow aliases; they may resolve elsewhere.
+    if (keyColors[value]) {
+      continue;
+    }
+
+    throw new AxiomaticError(
+      "COLOR_PARSE_FAILED",
+      `Invalid color value ${JSON.stringify(value)} for keyColors.${name}.`,
+      { value, context: `keyColors.${name}` },
+    );
   }
 
   if (lightnesses.length === 0) {

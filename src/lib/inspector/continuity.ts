@@ -1,6 +1,8 @@
+import { converter } from "culori";
+import { requireDocumentBody, requireDocumentHead } from "../dom.ts";
 import { findWinningRule, formatSpecificity } from "./css-utils.ts";
 import type { AxiomaticInspectorEngine, Violation } from "./engine.ts";
-import { converter } from "culori";
+import { parseNumberOrThrow } from "./guards.ts";
 
 const toRgb = converter("rgb");
 
@@ -70,12 +72,13 @@ export class ContinuityChecker {
         animation: none !important;
       }
     `;
-    document.head.appendChild(style);
+    requireDocumentHead("ContinuityChecker.check").appendChild(style);
 
     const root = document.documentElement;
     let originalTheme: string | null = null;
 
-    const allElements = Array.from(document.body.querySelectorAll("*"));
+    const body = requireDocumentBody("ContinuityChecker.check");
+    const allElements = Array.from(body.querySelectorAll("*"));
     const motionOverrides: Array<{
       el: HTMLElement | SVGElement;
       transition: string;
@@ -137,8 +140,9 @@ export class ContinuityChecker {
 
         // Best-effort enforcement: if some late-running code overwrote the style attr,
         // re-apply once more before taking measurements.
-        const parsedTau = parseFloat(
+        const parsedTau = parseNumberOrThrow(
           getComputedStyle(root).getPropertyValue("--tau").trim(),
+          "ContinuityChecker.check --tau",
         );
         if (!(Math.abs(parsedTau - tau) < 1e-6)) {
           root.style.setProperty("--tau", String(tau), "important");
