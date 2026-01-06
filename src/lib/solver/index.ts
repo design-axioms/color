@@ -52,26 +52,6 @@ export function solve(config: SolverConfig): Theme {
     }
   }
 
-  // P1-22: Validate state definitions reference valid parent surfaces
-  const validSlugs = new Set(seenSlugs.keys());
-  for (const surface of allSurfaces) {
-    if (surface.states) {
-      for (const state of surface.states) {
-        if (!validSlugs.has(surface.slug)) {
-          throw new AxiomaticError(
-            "CONFIG_INVALID_STATE_PARENT",
-            `State "${state.name}" references non-existent parent surface "${surface.slug}".`,
-            {
-              state: state.name,
-              parent: surface.slug,
-              validSurfaces: Array.from(validSlugs),
-            },
-          );
-        }
-      }
-    }
-  }
-
   // P1-14: Warn about empty surface groups
   for (const group of groups) {
     if (group.surfaces.length === 0) {

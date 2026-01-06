@@ -1,3 +1,5 @@
+import { AxiomaticError } from "./errors.ts";
+
 export type ThemeListener = (state: ThemeState) => void;
 
 export interface ThemeState {
@@ -38,8 +40,10 @@ function readCssVarNumber(
 
   const parsed = Number.parseFloat(raw);
   if (!Number.isFinite(parsed)) {
-    throw new Error(
+    throw new AxiomaticError(
+      "THEME_INVALID_CSS_VAR",
       `AxiomaticTheme: invalid numeric CSS variable ${name}=${JSON.stringify(raw)}.`,
+      { name, raw },
     );
   }
 
@@ -96,8 +100,10 @@ export class AxiomaticTheme {
     let tau = rawTau === null ? NaN : Number.parseFloat(rawTau);
 
     if (rawTau !== null && !Number.isFinite(tau)) {
-      throw new Error(
+      throw new AxiomaticError(
+        "THEME_INVALID_CSS_VAR",
         `AxiomaticTheme: invalid numeric CSS variable --tau=${JSON.stringify(rawTau)}.`,
+        { name: "--tau", raw: rawTau },
       );
     }
 

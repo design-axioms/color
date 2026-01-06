@@ -22,8 +22,10 @@ function parseOklchCandidate(
   const alpha = record.alpha;
   if (typeof l !== "number" || !Number.isFinite(l)) return null;
   if (typeof c !== "number" || !Number.isFinite(c)) return null;
-  if (h !== undefined && typeof h !== "number") return null;
-  if (alpha !== undefined && typeof alpha !== "number") return null;
+  if (h !== undefined && (typeof h !== "number" || Number.isNaN(h)))
+    return null;
+  if (alpha !== undefined && (typeof alpha !== "number" || Number.isNaN(alpha)))
+    return null;
   return { l, c, h, alpha };
 }
 
