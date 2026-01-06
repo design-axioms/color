@@ -43,7 +43,7 @@ export function querySelectorOrThrow(
   return requireElement(root.querySelector(selector), selector, context);
 }
 
-export function requireDocumentBody(context?: string): HTMLBodyElement {
+export function requireDocumentBody(context?: string): HTMLElement {
   if (typeof document === "undefined") {
     throw new AxiomaticError(
       "DOM_ELEMENT_NOT_FOUND",
@@ -55,7 +55,7 @@ export function requireDocumentBody(context?: string): HTMLBodyElement {
   return requireElement(document.body, "body", context);
 }
 
-export function requireDocumentHead(context?: string): HTMLHeadElement {
+export function requireDocumentHead(context?: string): HTMLElement {
   if (typeof document === "undefined") {
     throw new AxiomaticError(
       "DOM_ELEMENT_NOT_FOUND",
