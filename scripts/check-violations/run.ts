@@ -1,4 +1,5 @@
 import fs from "node:fs";
+import net from "node:net";
 import path from "node:path";
 import { parseCheckViolationsArgs } from "./cli.ts";
 import type { CheckViolationsCliOptions } from "./cli.ts";
@@ -82,11 +83,56 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return !!value && typeof value === "object";
 }
 
-function resolveUrl(url: string | undefined): string {
+async function canConnect(
+  host: string,
+  port: number,
+  timeoutMs: number,
+): Promise<boolean> {
+  return await new Promise((resolve) => {
+    const socket = net.connect({ host, port });
+
+    const done = (ok: boolean): void => {
+      socket.removeAllListeners();
+      socket.destroy();
+      resolve(ok);
+    };
+
+    socket.setTimeout(timeoutMs);
+    socket.once("connect", () => done(true));
+    socket.once("timeout", () => done(false));
+    socket.once("error", () => done(false));
+  });
+}
+
+async function resolveUrl(url: string | undefined): Promise<string> {
   let resolvedUrl = url || "https://color-system.localhost/";
   if (resolvedUrl.startsWith("/")) {
     resolvedUrl = `https://color-system.localhost${resolvedUrl}`;
   }
+
+  try {
+    const parsed = new URL(resolvedUrl);
+    if (
+      parsed.protocol === "https:" &&
+      parsed.hostname.endsWith(".localhost")
+    ) {
+      const port = parsed.port ? Number(parsed.port) : 443;
+      const ok = Number.isFinite(port)
+        ? await canConnect(parsed.hostname, port, 750)
+        : true;
+      if (!ok) {
+        parsed.protocol = "http:";
+        parsed.port = "";
+        console.log(
+          `Note: ${resolvedUrl} is not reachable (port ${port}). Falling back to ${parsed.toString()}`,
+        );
+        return parsed.toString();
+      }
+    }
+  } catch {
+    // If URL parsing fails, keep the original value and let Playwright report it.
+  }
+
   return resolvedUrl;
 }
 
@@ -738,27 +784,22 @@ export async function runCheckViolations(argv: string[]): Promise<void> {
   if (options.fromLogPath) {
     const raw = fs.readFileSync(options.fromLogPath, "utf8");
     const parsed = JSON.parse(raw) as unknown;
-    if (!isRecord(parsed) || !Array.isArray((parsed as any).events)) {
+    if (!isRecord(parsed) || !Array.isArray(parsed["events"])) {
       console.error("Invalid ObservationLog JSON.");
       process.exitCode = 1;
       return;
     }
 
     const log = parsed as ObservationLog;
-    if (!isRecord((log as any).runConfig)) {
+    if (!isRecord(log.runConfig)) {
       console.error("ObservationLog is missing runConfig.");
       process.exitCode = 1;
       return;
     }
 
     for (const check of wantedChecks) {
-      const runConfig = (log as any).runConfig as RunConfig;
-      const analyzeOptions = check.analyzeOptions({
-        cliOptions: options,
-        runConfig,
-      });
-      const result = check.analyze(log, analyzeOptions);
-      check.print(result);
+      const runConfig = log.runConfig;
+      const result = check.executeAnalysis(log, options, runConfig);
       if (!result.ok) {
         process.exitCode = 1;
         return;
@@ -767,7 +808,7 @@ export async function runCheckViolations(argv: string[]): Promise<void> {
     return;
   }
 
-  const resolvedUrl = resolveUrl(options.url);
+  const resolvedUrl = await resolveUrl(options.url);
   const resolvedObservationLogPath = resolveObservationLogPath(options);
   const runConfig = createRunConfig(options, resolvedUrl);
   const logRecorder = new ObservationLogRecorder(runConfig);
@@ -822,18 +863,9 @@ export async function runCheckViolations(argv: string[]): Promise<void> {
   await waitForStarlightSurfaceClasses(page);
 
   for (const check of wantedChecks) {
-    const scenarioOptions = check.scenarioOptions({
-      cliOptions: options,
-      runConfig,
-    });
-    await check.scenario({ session }, scenarioOptions);
+    await check.executeScenario({ session }, options, runConfig);
 
-    const analyzeOptions = check.analyzeOptions({
-      cliOptions: options,
-      runConfig,
-    });
-    const result = check.analyze(logRecorder.log, analyzeOptions);
-    check.print(result);
+    const result = check.executeAnalysis(logRecorder.log, options, runConfig);
     if (!result.ok) {
       flushObservationLog();
       await session.close();

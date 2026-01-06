@@ -58,22 +58,25 @@ export type CheckModule<
    * Print a human-readable report for the analysis result.
    * This should be the only place that prints check-specific output.
    */
-  print(result: CheckAnalyzeResult<Report>): void;
+  readonly print: (result: CheckAnalyzeResult<Report>) => void;
 
   /**
    * Runs browser-side measurement and records into the session's ObservationLog.
    * This should not do analysis; analysis should be replayable from the log.
    */
-  scenario(
+  readonly scenario: (
     ctx: CheckScenarioContext<Session>,
     options: ScenarioOptions,
-  ): Promise<void>;
+  ) => Promise<void>;
 
   /**
    * Pure Node analysis over a saved ObservationLog.
    * Should print the same output format as live runs so CI diffs are meaningful.
    */
-  analyze(log: unknown, options: AnalyzeOptions): CheckAnalyzeResult<Report>;
+  readonly analyze: (
+    log: unknown,
+    options: AnalyzeOptions,
+  ) => CheckAnalyzeResult<Report>;
 };
 
 /**
@@ -82,11 +85,50 @@ export type CheckModule<
  * Check implementations remain strongly typed; the stable runner consumes
  * checks through this erased shape to avoid `any` at the orchestration layer.
  */
-export type ErasedCheckModule<Session, CliOptions, RunConfig> = CheckModule<
+export type ErasedCheckModule<Session, CliOptions, RunConfig> = {
+  readonly name: string;
+
+  readonly executeScenario: (
+    ctx: CheckScenarioContext<Session>,
+    cliOptions: CliOptions,
+    runConfig: RunConfig,
+  ) => Promise<void>;
+
+  readonly executeAnalysis: (
+    log: unknown,
+    cliOptions: CliOptions,
+    runConfig: RunConfig,
+  ) => { ok: boolean };
+};
+
+export function eraseCheck<
   Session,
-  unknown,
+  ScenarioOptions,
   CliOptions,
   RunConfig,
-  unknown,
-  unknown
->;
+  AnalyzeOptions,
+  Report,
+>(
+  check: CheckModule<
+    Session,
+    ScenarioOptions,
+    CliOptions,
+    RunConfig,
+    AnalyzeOptions,
+    Report
+  >,
+): ErasedCheckModule<Session, CliOptions, RunConfig> {
+  return {
+    name: check.name,
+    executeScenario: async (ctx, cliOptions, runConfig) => {
+      const opts = check.scenarioOptions({ cliOptions, runConfig });
+      await check.scenario(ctx, opts);
+    },
+    executeAnalysis: (log, cliOptions, runConfig) => {
+      const opts = check.analyzeOptions({ cliOptions, runConfig });
+      const result = check.analyze(log, opts);
+      check.print(result);
+      return { ok: result.ok };
+    },
+  };
+}
