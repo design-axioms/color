@@ -1,4 +1,5 @@
 import { converter, oklch } from "culori";
+import { AxiomaticError } from "../errors.ts";
 import {
   backgroundBounds,
   calculateHueShift,
@@ -30,6 +31,74 @@ export function solve(config: SolverConfig): Theme {
   const anchors = config.anchors;
   const groups = config.groups;
   const allSurfaces = groups.flatMap((g) => g.surfaces);
+
+  // P1-11: Validate no duplicate surface slugs
+  const seenSlugs = new Map<string, string>();
+  for (const group of groups) {
+    for (const surface of group.surfaces) {
+      const existing = seenSlugs.get(surface.slug);
+      if (existing) {
+        throw new AxiomaticError(
+          "CONFIG_DUPLICATE_SURFACE_SLUG",
+          `Duplicate surface slug "${surface.slug}" found in groups "${existing}" and "${group.name}".`,
+          {
+            slug: surface.slug,
+            firstGroup: existing,
+            secondGroup: group.name,
+          },
+        );
+      }
+      seenSlugs.set(surface.slug, group.name);
+    }
+  }
+
+  // P1-14: Warn about empty surface groups
+  for (const group of groups) {
+    if (group.surfaces.length === 0) {
+      console.warn(
+        `[Axiomatic] CONFIG_EMPTY_SURFACE_GROUP: Surface group "${group.name}" has no surfaces.`,
+      );
+    }
+  }
+
+  // P1-12: Validate anchor ordering
+  for (const polarity of ["page", "inverted"] as const) {
+    for (const mode of ["light", "dark"] as const) {
+      const modeAnchors = anchors[polarity][mode];
+      const startBg = modeAnchors.start.background;
+      const endBg = modeAnchors.end.background;
+
+      // For light mode: start should have higher L* (lighter) than end
+      // For dark mode: start should have lower L* (darker) than end
+      const isValid = mode === "light" ? startBg >= endBg : startBg <= endBg;
+
+      if (!isValid) {
+        throw new AxiomaticError(
+          "CONFIG_INVALID_ANCHOR_ORDER",
+          `Invalid anchor ordering for ${polarity}/${mode}: ` +
+            `start.background (${startBg.toFixed(2)}) should be ` +
+            `${mode === "light" ? ">=" : "<="} end.background (${endBg.toFixed(2)}).`,
+          { polarity, mode, startBg, endBg },
+        );
+      }
+    }
+  }
+
+  // P1-20: Validate contrast offsets
+  for (const surface of allSurfaces) {
+    if (surface.states) {
+      for (const state of surface.states) {
+        const offset = state.offset;
+        if (offset < -20 || offset > 20) {
+          throw new AxiomaticError(
+            "CONFIG_INVALID_CONTRAST_OFFSET",
+            `Contrast offset ${offset} for state "${state.name}" on surface "${surface.slug}" is out of valid range (-20 to 20).`,
+            { surface: surface.slug, state: state.name, offset },
+          );
+        }
+      }
+    }
+  }
 
   alignInvertedAnchors(anchors, anchors.keyColors);
 
@@ -120,53 +189,76 @@ export function solve(config: SolverConfig): Theme {
           const hex = surface.override[mode];
           const parsed = oklch(hex) || toOklch(hex);
 
-          if (parsed) {
-            const overrideL = parsed.l;
-            const overrideC = parsed.c;
-            const overrideH = isNaN(parsed.h ?? NaN) ? 0 : (parsed.h ?? 0);
+          if (!parsed) {
+            throw new AxiomaticError(
+              "COLOR_PARSE_FAILED",
+              `Could not parse surface override for ${surface.slug} (${mode}).`,
+              { surface: surface.slug, mode, value: hex },
+            );
+          }
 
-            if (surface.slug === slug) {
-              // Base Surface: Apply override directly
-              entry[mode] = { l: overrideL, c: overrideC, h: overrideH };
+          const overrideL = parsed.l;
+          const overrideC = parsed.c;
+          const overrideH = isNaN(parsed.h ?? NaN) ? 0 : (parsed.h ?? 0);
 
-              // Store contrast for states
-              const contrast = contrastForBackground(
-                { polarity, mode },
-                overrideL,
+          if (
+            !Number.isFinite(overrideL) ||
+            !Number.isFinite(overrideC) ||
+            !Number.isFinite(overrideH)
+          ) {
+            throw new AxiomaticError(
+              "COLOR_PARSE_FAILED",
+              `Surface override produced a non-finite OKLCH value for ${surface.slug} (${mode}).`,
+              {
+                surface: surface.slug,
+                mode,
+                value: hex,
+                parsed: { l: overrideL, c: overrideC, h: overrideH },
+              },
+            );
+          }
+
+          if (surface.slug === slug) {
+            // Base Surface: Apply override directly
+            entry[mode] = { l: overrideL, c: overrideC, h: overrideH };
+
+            // Store contrast for states
+            const contrast = contrastForBackground(
+              { polarity, mode },
+              overrideL,
+            );
+            overriddenContrasts.set(slug, contrast);
+          } else {
+            // State Surface (e.g. action-hover)
+            // Check if base was overridden
+            const baseContrast = overriddenContrasts.get(surface.slug);
+
+            if (baseContrast !== undefined) {
+              // Find state config
+              const stateConfig = surface.states?.find(
+                (s) => `${surface.slug}-${s.name}` === slug,
               );
-              overriddenContrasts.set(slug, contrast);
-            } else {
-              // State Surface (e.g. action-hover)
-              // Check if base was overridden
-              const baseContrast = overriddenContrasts.get(surface.slug);
 
-              if (baseContrast !== undefined) {
-                // Find state config
-                const stateConfig = surface.states?.find(
-                  (s) => `${surface.slug}-${s.name}` === slug,
+              if (stateConfig) {
+                const targetContrast = baseContrast + stateConfig.offset;
+                const [minBg, maxBg] = backgroundBounds(
+                  anchors[polarity][mode].start.background,
+                  anchors[polarity][mode].end.background,
                 );
 
-                if (stateConfig) {
-                  const targetContrast = baseContrast + stateConfig.offset;
-                  const [minBg, maxBg] = backgroundBounds(
-                    anchors[polarity][mode].start.background,
-                    anchors[polarity][mode].end.background,
-                  );
+                const newLightness = solveBackgroundForContrast(
+                  { polarity, mode },
+                  targetContrast,
+                  minBg,
+                  maxBg,
+                );
 
-                  const newLightness = solveBackgroundForContrast(
-                    { polarity, mode },
-                    targetContrast,
-                    minBg,
-                    maxBg,
-                  );
-
-                  // Use override H/C but new Lightness
-                  entry[mode] = {
-                    l: newLightness,
-                    c: overrideC,
-                    h: overrideH,
-                  };
-                }
+                // Use override H/C but new Lightness
+                entry[mode] = {
+                  l: newLightness,
+                  c: overrideC,
+                  h: overrideH,
+                };
               }
             }
           }
@@ -182,7 +274,11 @@ export function solve(config: SolverConfig): Theme {
     const debug = debugInfo.get(surface.slug);
 
     if (!background) {
-      throw new Error(`Missing solved backgrounds for ${surface.slug}.`);
+      throw new AxiomaticError(
+        "SOLVER_MISSING_BACKGROUNDS",
+        `Missing solved backgrounds for ${surface.slug}.`,
+        { surface: surface.slug, known: Array.from(backgrounds.keys()) },
+      );
     }
 
     const computed: Record<Mode, ModeSpec> = {

@@ -1,7 +1,19 @@
 import { converter } from "culori";
+import { AxiomaticError } from "../errors.ts";
 import type { ColorSpec, Mode, SolverConfig, Theme } from "../types.ts";
 
 const toOklch = converter("oklch");
+
+function requireFiniteNumber(
+  value: unknown,
+  message: string,
+  details: Record<string, unknown>,
+): number {
+  if (typeof value !== "number" || !Number.isFinite(value)) {
+    throw new AxiomaticError("DTCG_INVALID", message, details);
+  }
+  return value;
+}
 
 interface DTCGToken {
   $type:
@@ -46,13 +58,18 @@ function generatePrimitives(config: SolverConfig): DTCGFile {
 
   // Key Colors
   for (const [name, value] of Object.entries(config.anchors.keyColors)) {
-    let val = value;
     const oklch = toOklch(value);
-    if (oklch) {
-      val = `oklch(${oklch.l.toFixed(4)} ${oklch.c.toFixed(4)} ${
-        oklch.h?.toFixed(4) ?? 0
-      })`;
+    if (!oklch) {
+      throw new AxiomaticError(
+        "DTCG_INVALID",
+        `Key color ${name} is not parseable as OKLCH.`,
+        { name, value },
+      );
     }
+
+    const val = `oklch(${oklch.l.toFixed(4)} ${oklch.c.toFixed(4)} ${
+      oklch.h?.toFixed(4) ?? 0
+    })`;
 
     colorGroup[name] = {
       $type: "color",
@@ -100,9 +117,20 @@ function generateMode(theme: Theme, mode: Mode): DTCGFile {
         // Clean up key name: "fg-high" -> "high"
         const cleanKey = key.replace("fg-", "");
 
+        const lightnessNumber = requireFiniteNumber(
+          lightness,
+          `DTCG export expected numeric lightness for ${surface.slug}.${mode}.${key}.`,
+          {
+            surface: surface.slug,
+            mode,
+            key,
+            value: lightness,
+          },
+        );
+
         fgTokens[cleanKey] = {
           $type: "color",
-          $value: formatFg(lightness as number),
+          $value: formatFg(lightnessNumber),
         };
       }
 

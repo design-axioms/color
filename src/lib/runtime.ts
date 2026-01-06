@@ -1,3 +1,4 @@
+import { requireDocumentHead } from "./dom.ts";
 import { generateTokensCss } from "./generator/index.ts";
 import { solve } from "./solver/index.ts";
 import type { SolverConfig } from "./types.ts";
@@ -48,7 +49,7 @@ export function injectTheme(
     if (target) {
       target.appendChild(style);
     } else {
-      document.head.appendChild(style);
+      requireDocumentHead("injectTheme").appendChild(style);
     }
   }
 

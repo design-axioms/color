@@ -1,9 +1,53 @@
+import { AxiomaticError } from "./errors.ts";
+
 export type ThemeListener = (state: ThemeState) => void;
 
 export interface ThemeState {
   hue: number;
   chroma: number;
   tau: number; // 1 (Light) or -1 (Dark)
+}
+
+const warnedThemeKeys = new Set<string>();
+
+function warnThemeOnce(key: string, message: string): void {
+  if (warnedThemeKeys.has(key)) return;
+  warnedThemeKeys.add(key);
+
+  console.warn(message);
+}
+
+function readCssVar(style: CSSStyleDeclaration, name: string): string | null {
+  const raw = style.getPropertyValue(name);
+  const trimmed = raw.trim();
+  return trimmed.length === 0 ? null : trimmed;
+}
+
+function readCssVarNumber(
+  style: CSSStyleDeclaration,
+  name: string,
+  fallback: number,
+): number {
+  const raw = readCssVar(style, name);
+
+  if (raw === null) {
+    warnThemeOnce(
+      name,
+      `AxiomaticTheme: missing CSS variable ${name}; using fallback ${fallback}.`,
+    );
+    return fallback;
+  }
+
+  const parsed = Number.parseFloat(raw);
+  if (!Number.isFinite(parsed)) {
+    throw new AxiomaticError(
+      "THEME_INVALID_CSS_VAR",
+      `AxiomaticTheme: invalid numeric CSS variable ${name}=${JSON.stringify(raw)}.`,
+      { name, raw },
+    );
+  }
+
+  return parsed;
 }
 
 export class AxiomaticTheme {
@@ -48,11 +92,20 @@ export class AxiomaticTheme {
       return { hue: 0, chroma: 0.008, tau: 1 };
     }
     const style = getComputedStyle(document.documentElement);
-    const hue = parseFloat(style.getPropertyValue("--alpha-hue")) || 0;
-    const chroma = parseFloat(style.getPropertyValue("--alpha-beta")) || 0.008;
+    const hue = readCssVarNumber(style, "--alpha-hue", 0);
+    const chroma = readCssVarNumber(style, "--alpha-beta", 0.008);
 
     // Check --tau first, then fallback to data-theme
-    let tau = parseFloat(style.getPropertyValue("--tau"));
+    const rawTau = readCssVar(style, "--tau");
+    let tau = rawTau === null ? NaN : Number.parseFloat(rawTau);
+
+    if (rawTau !== null && !Number.isFinite(tau)) {
+      throw new AxiomaticError(
+        "THEME_INVALID_CSS_VAR",
+        `AxiomaticTheme: invalid numeric CSS variable --tau=${JSON.stringify(rawTau)}.`,
+        { name: "--tau", raw: rawTau },
+      );
+    }
 
     const dataTheme = document.documentElement.getAttribute("data-theme");
     if (dataTheme) {

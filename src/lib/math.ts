@@ -1,5 +1,6 @@
 import { APCAcontrast, sRGBtoY } from "apca-w3";
 import { converter } from "culori";
+import { AxiomaticError } from "./errors.ts";
 import type { Context, ModeSpec } from "./types.ts";
 
 const toRgb = converter("rgb");
@@ -139,6 +140,15 @@ export function binarySearch(
 
   const valAtMin = evaluate(min);
   const valAtMax = evaluate(max);
+
+  if (!Number.isFinite(valAtMin) || !Number.isFinite(valAtMax)) {
+    throw new AxiomaticError(
+      "MATH_NONFINITE",
+      "binarySearch evaluate() returned a non-finite value for a bound.",
+      { min, max, valAtMin, valAtMax, target },
+    );
+  }
+
   const slope = Math.sign(valAtMax - valAtMin) || 1;
 
   const minVal = Math.min(valAtMin, valAtMax);
@@ -150,6 +160,15 @@ export function binarySearch(
   for (let i = 0; i < maxIterations; i++) {
     const mid = (low + high) / 2;
     const val = evaluate(mid);
+
+    if (!Number.isFinite(val)) {
+      throw new AxiomaticError(
+        "MATH_NONFINITE",
+        "binarySearch evaluate() returned a non-finite value.",
+        { min, max, low, high, mid, val, target, iteration: i },
+      );
+    }
+
     const delta = val - target;
 
     if (Math.abs(delta) <= epsilon) {

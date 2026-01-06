@@ -67,7 +67,7 @@ describe("Math Utilities", () => {
       const target = 75;
       const clamped = clampContrast(
         { polarity: "page", mode: "light" },
-        target
+        target,
       );
       expect(clamped).toBeCloseTo(target, 0);
     });
@@ -103,6 +103,12 @@ describe("Math Utilities", () => {
       const result = binarySearch(0, 1, (x) => 1 - x, 0.3);
       expect(result).toBeCloseTo(0.7, 2);
     });
+
+    it("throws when evaluate returns a non-finite number", () => {
+      expect(() => binarySearch(0, 1, () => Number.NaN, 0.5)).toThrow(
+        /non-finite/i,
+      );
+    });
   });
 
   describe("contrastForPair", () => {
@@ -135,7 +141,7 @@ describe("Math Utilities", () => {
         { polarity: "page", mode: "light" },
         90,
         0.8,
-        1
+        1,
       );
       expect(result).toBeGreaterThan(0.8);
       expect(result).toBeLessThanOrEqual(1);
@@ -146,7 +152,7 @@ describe("Math Utilities", () => {
         { polarity: "page", mode: "dark" },
         90,
         0,
-        0.3
+        0.3,
       );
       expect(result).toBeGreaterThanOrEqual(0);
       expect(result).toBeLessThanOrEqual(0.3); // Can equal bound
@@ -157,7 +163,7 @@ describe("Math Utilities", () => {
         { polarity: "page", mode: "light" },
         75,
         0.5,
-        0.7
+        0.7,
       );
       expect(result).toBeGreaterThanOrEqual(0.5);
       expect(result).toBeLessThanOrEqual(0.7);

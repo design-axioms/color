@@ -4,18 +4,27 @@
  *
  * Call this function whenever the theme changes (e.g. after switching modes).
  */
+import { requireDocumentBody, requireDocumentHead } from "./dom.ts";
+
+/**
+ * Sets the theme-color meta tag to the body's current background color.
+ */
 export function updateThemeColor(): void {
   if (typeof document === "undefined") return;
 
+  const head = requireDocumentHead("updateThemeColor");
+  const body = requireDocumentBody("updateThemeColor");
+
   let meta = document.querySelector('meta[name="theme-color"]');
   if (!meta) {
+    // P1-21: Auto-create meta theme-color tag if missing
     meta = document.createElement("meta");
     meta.setAttribute("name", "theme-color");
-    document.head.appendChild(meta);
+    head.appendChild(meta);
   }
 
   // Force a style recomputation to ensure we get the latest color
-  const color = getComputedStyle(document.body).backgroundColor;
+  const color = getComputedStyle(body).backgroundColor;
   if (color) {
     meta.setAttribute("content", color);
   }
@@ -29,15 +38,18 @@ export function updateThemeColor(): void {
 export function updateFavicon(getSvg: (color: string) => string): void {
   if (typeof document === "undefined") return;
 
+  const head = requireDocumentHead("updateFavicon");
+  const body = requireDocumentBody("updateFavicon");
+
   let link = document.querySelector('link[rel="icon"]');
   if (!link) {
     link = document.createElement("link");
     link.setAttribute("rel", "icon");
-    document.head.appendChild(link);
+    head.appendChild(link);
   }
 
   // We'll use the body's computed color (foreground) as the "brand" color for now
-  const color = getComputedStyle(document.body).color;
+  const color = getComputedStyle(body).color;
 
   if (color) {
     const svg = getSvg(color);
@@ -195,7 +207,9 @@ export class ThemeManager {
       }
     });
 
-    this.observer.observe(document.body, {
+    const body = requireDocumentBody("ThemeManager.setupObserver");
+
+    this.observer.observe(body, {
       childList: true,
       subtree: true,
       attributes: true,
