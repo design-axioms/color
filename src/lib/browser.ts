@@ -17,6 +17,7 @@ export function updateThemeColor(): void {
 
   let meta = document.querySelector('meta[name="theme-color"]');
   if (!meta) {
+    // P1-21: Auto-create meta theme-color tag if missing
     meta = document.createElement("meta");
     meta.setAttribute("name", "theme-color");
     head.appendChild(meta);

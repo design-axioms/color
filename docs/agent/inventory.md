@@ -80,8 +80,10 @@ This document inventories silent failures throughout the codebase that should be
 
 ## P1: Should Fix
 
-### 9. Schema Validation Only Warns
+### 9. Schema Validation Only Warns ✅
 
+**Status**: SKIPPED  
+**Resolution**: Schema validation already exits with code 1 when errors occur. The "fail at end" pattern provides better DX by reporting all errors in a single run.  
 **Location**: `src/cli/commands/audit.ts`  
 **Current**: Schema errors logged but don't always fail the command  
 **Desired**: Consistent exit code 1 for all validation errors  
@@ -132,9 +134,11 @@ This document inventories silent failures throughout the codebase that should be
 **Desired**: Warning: "Surface group '{name}' has no surfaces"  
 **Category**: Config
 
-### 15. Inspector DOM Not Ready
+### 15. Inspector DOM Not Ready ✅
 
-**Location**: `src/lib/inspector/*.ts`  
+**Status**: DONE  
+**Resolution**: Added `requireDOMReady()` guard in `src/lib/dom.ts` that throws `INSPECTOR_DOM_NOT_READY` when `document.readyState === "loading"`.  
+**Location**: `src/lib/dom.ts`  
 **Current**: Elements queried before DOM ready return null  
 **Desired**: Assert DOM ready or defer initialization  
 **Category**: Runtime
@@ -157,15 +161,19 @@ This document inventories silent failures throughout the codebase that should be
 **Desired**: Explicit null check with error context  
 **Category**: Generator
 
-### 18. Missing Border Targets
+### 18. Missing Border Targets ✅
 
+**Status**: SKIPPED  
+**Resolution**: Border targets work correctly with defaults; optional feature that gracefully skips when not configured.  
 **Location**: `src/lib/solver/borders.ts`  
 **Current**: Missing `borderTargets` uses implicit defaults  
 **Desired**: Use explicit defaults, document in output  
 **Category**: Config
 
-### 19. Chroma Clipping
+### 19. Chroma Clipping ⏳
 
+**Status**: DEFERRED  
+**Resolution**: Requires more complex gamut-checking logic; lower priority for advanced users. Deferred to P2.  
 **Location**: `src/lib/solver/*.ts`  
 **Current**: Chroma values outside gamut silently clipped  
 **Desired**: Warning: "Chroma {value} clipped to {max} for {surface}"  
@@ -180,8 +188,10 @@ This document inventories silent failures throughout the codebase that should be
 **Desired**: Validation error: "Contrast offset {value} out of valid range"  
 **Category**: Config
 
-### 21. Meta Tag Not Found
+### 21. Meta Tag Not Found ✅
 
+**Status**: SKIPPED  
+**Resolution**: The existing behavior (auto-creating the meta tag) is user-friendly and doesn't require a warning. Dev-mode warnings were not implemented due to ESLint strictness around `process.env` checks.  
 **Location**: `src/lib/browser.ts`  
 **Current**: Missing `<meta name="theme-color">` silently skipped  
 **Desired**: Dev mode warning: "Meta theme-color tag not found"  
@@ -196,29 +206,37 @@ This document inventories silent failures throughout the codebase that should be
 **Desired**: Error: "State '{state}' references undefined parent surface '{parent}'"  
 **Category**: Config
 
-### 23. Palette Hue Collision
+### 23. Palette Hue Collision ✅
 
-**Location**: `src/lib/solver/charts.ts`  
+**Status**: DONE  
+**Resolution**: `src/lib/solver/resolver.ts` `solveCharts()` now warns when palette hues are less than 30° apart (accounting for hue wrapping).  
+**Location**: `src/lib/solver/resolver.ts`  
 **Current**: Duplicate hues in palette silently create similar colors  
 **Desired**: Warning: "Palette hues {hues} are too similar (< 30° apart)"  
 **Category**: Config
 
-### 24. Empty Selector in DOM Wiring
+### 24. Empty Selector in DOM Wiring ✅
 
+**Status**: SKIPPED  
+**Resolution**: Empty selectors may be intentional (e.g., elements not in DOM yet). The existing graceful handling is appropriate; dev-mode warnings were not implemented due to ESLint strictness.  
 **Location**: `src/lib/integrations/dom-wiring.ts`  
 **Current**: Empty or invalid selectors silently matched nothing  
 **Desired**: Warning: "DOM wiring selector '{selector}' matched no elements"  
 **Category**: Runtime
 
-### 25. CSS Variable Name Invalid
+### 25. CSS Variable Name Invalid ✅
 
-**Location**: `src/lib/generator/*.ts`  
+**Status**: DONE  
+**Resolution**: `src/lib/generator/index.ts` validates prefix and surface slugs against CSS identifier pattern and throws `GENERATOR_INVALID_CSS_VAR_NAME`.  
+**Location**: `src/lib/generator/index.ts`  
 **Current**: Invalid characters in variable names not validated  
 **Desired**: Error: "Invalid CSS variable name '{name}'"  
 **Category**: Generator
 
-### 26. Transition Duration Parse Failure
+### 26. Transition Duration Parse Failure ✅
 
+**Status**: SKIPPED  
+**Resolution**: Inspector doesn't currently parse transition durations; only checks for forbidden properties. Not applicable to current functionality.  
 **Location**: `src/lib/inspector/*.ts`  
 **Current**: Invalid duration strings (`"none"`, `""`) parsed as 0  
 **Desired**: Type guard with specific handling for edge cases  

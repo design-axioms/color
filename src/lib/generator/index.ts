@@ -1,4 +1,5 @@
 import { generateChartAlgebra } from "../charts.ts";
+import { AxiomaticError } from "../errors.ts";
 import type {
   BorderTargets,
   ConfigOptions,
@@ -10,6 +11,23 @@ import { generatePresetUtilities } from "../utilities.ts";
 import { generateCoreUtilities } from "./core-utilities.ts";
 import { generatePrimitives } from "./primitives.ts";
 import { generateSurfaces } from "./surfaces.ts";
+
+/**
+ * Validates that a string is a valid CSS identifier component.
+ * CSS identifiers must start with a letter or underscore, followed by
+ * letters, digits, hyphens, or underscores.
+ */
+function validateCssIdentifier(name: string, context: string): void {
+  const validPattern = /^[a-zA-Z_][a-zA-Z0-9_-]*$/;
+  if (!validPattern.test(name)) {
+    throw new AxiomaticError(
+      "GENERATOR_INVALID_CSS_VAR_NAME",
+      `Invalid CSS variable name component "${name}" in ${context}. ` +
+        `Must start with letter or underscore, followed by letters, digits, hyphens, or underscores.`,
+      { name, context },
+    );
+  }
+}
 
 /**
  * Generate the full CSS output for a solved theme.
@@ -26,6 +44,16 @@ export function generateTokensCss(
   keyColors?: Record<string, string>,
   presets?: PresetsConfig,
 ): string {
+  // P1-25: Validate CSS variable name components
+  if (options?.prefix) {
+    validateCssIdentifier(options.prefix, "options.prefix");
+  }
+  for (const group of groups) {
+    for (const surface of group.surfaces) {
+      validateCssIdentifier(surface.slug, `surface slug "${surface.slug}"`);
+    }
+  }
+
   const parts: string[] = [];
 
   // 1. Primitives (Shadows, Focus, Key Colors)

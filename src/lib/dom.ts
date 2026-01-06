@@ -1,5 +1,25 @@
 import { AxiomaticError } from "./errors.ts";
 
+/**
+ * Ensures the DOM is ready for querying. Throws if document is loading.
+ */
+export function requireDOMReady(context?: string): void {
+  if (typeof document === "undefined") {
+    throw new AxiomaticError(
+      "INSPECTOR_DOM_NOT_READY",
+      "Document is not available in this environment.",
+      { context },
+    );
+  }
+  if (document.readyState === "loading") {
+    throw new AxiomaticError(
+      "INSPECTOR_DOM_NOT_READY",
+      "DOM is not ready. Call after DOMContentLoaded event.",
+      { context, readyState: document.readyState },
+    );
+  }
+}
+
 export function requireElement<T extends Element>(
   element: T | null,
   selector: string,

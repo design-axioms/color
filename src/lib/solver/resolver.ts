@@ -154,6 +154,25 @@ export function solveCharts(
     return [];
   }
 
+  // P1-23: Warn about palette hue collisions
+  const hues = palette.hues;
+  for (let i = 0; i < hues.length; i++) {
+    for (let j = i + 1; j < hues.length; j++) {
+      const hueI = hues[i];
+      const hueJ = hues[j];
+      if (hueI === undefined || hueJ === undefined) continue;
+      const diff = Math.abs(hueI - hueJ);
+      const minDiff = Math.min(diff, 360 - diff); // Account for hue wrapping
+      if (minDiff < 30) {
+        console.warn(
+          `[Axiomatic] Palette hues ${hueI}° and ${hueJ}° are ` +
+            `only ${minDiff.toFixed(0)}° apart (< 30°). ` +
+            `Consider spacing hues further for better distinction.`,
+        );
+      }
+    }
+  }
+
   const targetChroma = palette.targetChroma ?? 0.12;
   const targetContrast = palette.targetContrast ?? 60;
 

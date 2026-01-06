@@ -15,7 +15,9 @@ export type AxiomaticErrorCode =
   | "DOM_ELEMENT_NOT_FOUND"
   | "INSPECTOR_INVALID_NUMBER"
   | "INSPECTOR_MISSING_COMPUTED_STYLE"
-  | "GENERATOR_REGEX_MATCH_FAILED";
+  | "INSPECTOR_DOM_NOT_READY"
+  | "GENERATOR_REGEX_MATCH_FAILED"
+  | "GENERATOR_INVALID_CSS_VAR_NAME";
 
 export class AxiomaticError extends Error {
   readonly code: AxiomaticErrorCode;
