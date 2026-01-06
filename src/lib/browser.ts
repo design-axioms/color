@@ -5,6 +5,7 @@
  * Call this function whenever the theme changes (e.g. after switching modes).
  */
 import { requireDocumentBody, requireDocumentHead } from "./dom.ts";
+import { AxiomaticTheme } from "./theme.ts";
 
 /**
  * Sets the theme-color meta tag to the body's current background color.
@@ -88,6 +89,14 @@ export interface ThemeManagerOptions {
   invertedSelectors?: readonly string[];
 }
 
+const warnedDeprecations = new Set<string>();
+
+function warnDeprecationOnce(key: string, message: string): void {
+  if (warnedDeprecations.has(key)) return;
+  warnedDeprecations.add(key);
+  console.warn(`[ThemeManager] Deprecation: ${message}`);
+}
+
 /**
  * Manages the theme (light/dark/system) for the application.
  * Handles system preference changes, manual overrides, and inverted surfaces.
@@ -115,6 +124,22 @@ export class ThemeManager {
       this.darkClass = options.darkClass;
       this.faviconGenerator = options.faviconGenerator;
       this._providedInvertedSelectors = options.invertedSelectors;
+
+      // Deprecation warnings for lightClass/darkClass
+      if (options.lightClass) {
+        warnDeprecationOnce(
+          "lightClass",
+          "lightClass is deprecated. AxiomaticTheme now manages class/style changes. " +
+            "This option will be removed in a future version.",
+        );
+      }
+      if (options.darkClass) {
+        warnDeprecationOnce(
+          "darkClass",
+          "darkClass is deprecated. AxiomaticTheme now manages class/style changes. " +
+            "This option will be removed in a future version.",
+        );
+      }
 
       this.mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
       this.mediaQuery.addEventListener("change", this.handleSystemChange);
@@ -291,7 +316,11 @@ export class ThemeManager {
 
   private handleSystemChange = (): void => {
     if (this._mode === "system") {
+      // System preference changed, delegate to AxiomaticTheme
+      const tau = this.resolvedMode === "light" ? 1 : -1;
+      AxiomaticTheme.get().set({ tau });
       this.syncSemanticState();
+      this.updateInvertedSurfaces();
       this.sync();
     }
   };
@@ -299,25 +328,22 @@ export class ThemeManager {
   private apply(): void {
     if (!this.root) return;
 
-    // Remove existing classes/styles
-    if (this.lightClass) this.root.classList.remove(this.lightClass);
-    if (this.darkClass) this.root.classList.remove(this.darkClass);
-    this.root.style.removeProperty("color-scheme");
+    // Delegate CSS variable writes to AxiomaticTheme
+    // tau = 1 for light, -1 for dark
+    const tau = this.resolvedMode === "light" ? 1 : -1;
+    AxiomaticTheme.get().set({ tau });
 
-    if (this._mode === "system") {
-      // Do nothing, let browser default take over
-    } else if (this._mode === "light") {
-      if (this.lightClass) {
+    // Handle deprecated lightClass/darkClass for backwards compatibility
+    if (this.lightClass || this.darkClass) {
+      // Remove existing classes
+      if (this.lightClass) this.root.classList.remove(this.lightClass);
+      if (this.darkClass) this.root.classList.remove(this.darkClass);
+
+      // Apply the appropriate class based on resolved mode
+      if (this.resolvedMode === "light" && this.lightClass) {
         this.root.classList.add(this.lightClass);
-      } else {
-        this.root.style.setProperty("color-scheme", "light");
-      }
-    } else {
-      // dark
-      if (this.darkClass) {
+      } else if (this.resolvedMode === "dark" && this.darkClass) {
         this.root.classList.add(this.darkClass);
-      } else {
-        this.root.style.setProperty("color-scheme", "dark");
       }
     }
 

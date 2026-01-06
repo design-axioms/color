@@ -5,12 +5,37 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { AxiomaticTheme } from "../theme.js";
 import { ThemeManager } from "../browser.js";
 
+// Mock matchMedia for jsdom (which doesn't implement it)
+function setupMatchMediaMock(prefersDark = false) {
+  const listeners: Array<(e: { matches: boolean }) => void> = [];
+  const mockMediaQueryList = {
+    matches: prefersDark,
+    addEventListener: vi.fn((event: string, cb: () => void) => {
+      if (event === "change") listeners.push(cb);
+    }),
+    removeEventListener: vi.fn(),
+    // Utility to simulate system preference change in tests
+    _simulateChange(matches: boolean) {
+      mockMediaQueryList.matches = matches;
+      listeners.forEach((l) => l({ matches }));
+    },
+  };
+  Object.defineProperty(window, "matchMedia", {
+    writable: true,
+    value: vi.fn(() => mockMediaQueryList),
+  });
+  return mockMediaQueryList;
+}
+
 describe("AxiomaticTheme", () => {
   beforeEach(() => {
     // Reset DOM
     document.documentElement.style.cssText = "";
     document.documentElement.className = "";
     document.documentElement.removeAttribute("data-theme");
+    document.documentElement.removeAttribute("data-axm-mode");
+    document.documentElement.removeAttribute("data-axm-resolved-mode");
+    document.documentElement.removeAttribute("data-axm-ready");
 
     // Avoid test noise from missing CSS variables
     document.documentElement.style.setProperty("--alpha-hue", "0");
@@ -127,6 +152,120 @@ describe("ThemeManager invertedSelectors option", () => {
 
     // Should use CSS variable fallback
     expect(invertedEl.style.getPropertyValue("color-scheme")).toBe("dark");
+
+    manager.dispose();
+  });
+});
+
+describe("ThemeManager → AxiomaticTheme delegation", () => {
+  beforeEach(() => {
+    // Setup matchMedia mock before tests
+    setupMatchMediaMock(false);
+
+    // Reset DOM
+    document.documentElement.style.cssText = "";
+    document.documentElement.className = "";
+    document.documentElement.removeAttribute("data-theme");
+    document.documentElement.removeAttribute("data-axm-mode");
+    document.documentElement.removeAttribute("data-axm-resolved-mode");
+    document.documentElement.removeAttribute("data-axm-ready");
+
+    // Avoid test noise from missing CSS variables
+    document.documentElement.style.setProperty("--alpha-hue", "0");
+    document.documentElement.style.setProperty("--alpha-beta", "0.008");
+    // Reset Singleton (hacky but needed for testing singleton)
+    (AxiomaticTheme as any).instance = undefined;
+  });
+
+  it("should delegate to AxiomaticTheme when setting light mode", () => {
+    const manager = new ThemeManager();
+    manager.setMode("light");
+
+    // AxiomaticTheme should have set --tau to 1
+    expect(document.documentElement.style.getPropertyValue("--tau")).toBe("1");
+    // AxiomaticTheme should have set color-scheme
+    expect(document.documentElement.style.colorScheme).toBe("light");
+    // AxiomaticTheme should have removed .dark class
+    expect(document.documentElement.classList.contains("dark")).toBe(false);
+    // AxiomaticTheme should have set data-theme
+    expect(document.documentElement.getAttribute("data-theme")).toBe("light");
+
+    manager.dispose();
+  });
+
+  it("should delegate to AxiomaticTheme when setting dark mode", () => {
+    const manager = new ThemeManager();
+    manager.setMode("dark");
+
+    // AxiomaticTheme should have set --tau to -1
+    expect(document.documentElement.style.getPropertyValue("--tau")).toBe("-1");
+    // AxiomaticTheme should have set color-scheme
+    expect(document.documentElement.style.colorScheme).toBe("dark");
+    // AxiomaticTheme should have added .dark class
+    expect(document.documentElement.classList.contains("dark")).toBe(true);
+    // AxiomaticTheme should have set data-theme
+    expect(document.documentElement.getAttribute("data-theme")).toBe("dark");
+
+    manager.dispose();
+  });
+
+  it("should set semantic state attributes", () => {
+    const manager = new ThemeManager();
+    manager.setMode("dark");
+
+    expect(document.documentElement.getAttribute("data-axm-mode")).toBe("dark");
+    expect(
+      document.documentElement.getAttribute("data-axm-resolved-mode"),
+    ).toBe("dark");
+
+    manager.dispose();
+  });
+
+  it("should still apply deprecated lightClass/darkClass for backwards compat", () => {
+    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+
+    const manager = new ThemeManager({
+      lightClass: "theme-light",
+      darkClass: "theme-dark",
+    });
+
+    // Should have logged deprecation warnings
+    expect(warnSpy).toHaveBeenCalledWith(
+      expect.stringContaining("lightClass is deprecated"),
+    );
+    expect(warnSpy).toHaveBeenCalledWith(
+      expect.stringContaining("darkClass is deprecated"),
+    );
+
+    manager.setMode("dark");
+    expect(document.documentElement.classList.contains("theme-dark")).toBe(
+      true,
+    );
+    expect(document.documentElement.classList.contains("theme-light")).toBe(
+      false,
+    );
+
+    manager.setMode("light");
+    expect(document.documentElement.classList.contains("theme-light")).toBe(
+      true,
+    );
+    expect(document.documentElement.classList.contains("theme-dark")).toBe(
+      false,
+    );
+
+    manager.dispose();
+    warnSpy.mockRestore();
+  });
+
+  it("should keep AxiomaticTheme and ThemeManager in sync", () => {
+    const manager = new ThemeManager();
+    const theme = AxiomaticTheme.get();
+
+    manager.setMode("dark");
+    expect(theme.getState().tau).toBe(-1);
+
+    manager.setMode("light");
+    expect(theme.getState().tau).toBe(1);
 
     manager.dispose();
   });
