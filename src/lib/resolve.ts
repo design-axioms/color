@@ -1,15 +1,11 @@
 import { DEFAULT_CONFIG } from "./defaults.ts";
 import { AxiomaticError } from "./errors.ts";
-import type { SolverConfig } from "./types.ts";
+import type { DeepPartial, SolverConfig } from "./types.ts";
 import { VIBES } from "./vibes.ts";
 
 function isObject(item: unknown): item is Record<string, unknown> {
   return item !== null && typeof item === "object" && !Array.isArray(item);
 }
-
-type DeepPartial<T> = {
-  [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
-};
 
 /** Known top-level config keys */
 const KNOWN_CONFIG_KEYS = new Set<string>([
