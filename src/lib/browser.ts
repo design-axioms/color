@@ -130,14 +130,14 @@ export class ThemeManager {
         warnDeprecationOnce(
           "lightClass",
           "lightClass is deprecated. AxiomaticTheme now manages class/style changes. " +
-            "This option will be removed in a future version.",
+            "This option will be removed in a future version",
         );
       }
       if (options.darkClass) {
         warnDeprecationOnce(
           "darkClass",
           "darkClass is deprecated. AxiomaticTheme now manages class/style changes. " +
-            "This option will be removed in a future version.",
+            "This option will be removed in a future version",
         );
       }
 
