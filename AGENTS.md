@@ -73,6 +73,36 @@ High-signal pointers (integration/theme work):
 
 ## Tooling & Conventions
 
+### Release Labels (`release-plan`)
+
+This repository uses [release-plan](https://github.com/embroider-build/release-plan) with `github-changelog` for automated releases. **Every PR must have exactly one release label** to drive changelog generation.
+
+**Available Labels:**
+
+| Label           | Version Impact  | Changelog Section  |
+| --------------- | --------------- | ------------------ |
+| `breaking`      | Major           | 💥 Breaking Change |
+| `enhancement`   | Minor           | 🚀 Enhancement     |
+| `bug`           | Patch           | 🐛 Bug Fix         |
+| `documentation` | Patch (or none) | 📝 Documentation   |
+| `internal`      | None            | 🏠 Internal        |
+
+**When to Use Each:**
+
+- **`enhancement`**: New features, capabilities, or significant improvements visible to users.
+- **`bug`**: Fixes to existing functionality that was not working as intended.
+- **`breaking`**: Changes that require users to modify their code or configuration.
+- **`documentation`**: Doc-only changes (README, site content, JSDoc).
+- **`internal`**: Refactoring, CI changes, dev tooling, tests—anything that doesn't affect the published package.
+
+**Why It Matters:** The label you choose determines:
+
+1. Whether a release is triggered and what version bump occurs.
+2. Which section of the CHANGELOG the PR appears in.
+3. How users understand the nature of changes when upgrading.
+
+**Format Note:** Labels are simple lowercase strings (e.g., `enhancement`), not emoji-prefixed. The emojis appear only in the generated changelog sections.
+
 ### Package Management (`pnpm`)
 
 - **Always use `pnpm`**. Never use `npm` or `yarn`.

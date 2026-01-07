@@ -1,8 +1,9 @@
 /**
  * @vitest-environment jsdom
  */
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { AxiomaticTheme } from "../theme.js";
+import { ThemeManager } from "../browser.js";
 
 describe("AxiomaticTheme", () => {
   beforeEach(() => {
@@ -40,5 +41,93 @@ describe("AxiomaticTheme", () => {
 
     // Now it should detect it!
     expect(theme.getState().tau).toBe(-1);
+  });
+});
+
+describe("ThemeManager invertedSelectors option", () => {
+  beforeEach(() => {
+    // Reset AxiomaticTheme singleton to ensure test isolation
+    (AxiomaticTheme as any).instance = undefined;
+
+    // Reset DOM
+    document.documentElement.style.cssText = "";
+    document.documentElement.className = "";
+    document.body.innerHTML = "";
+
+    // Mock requestAnimationFrame to execute immediately for testing
+    vi.spyOn(window, "requestAnimationFrame").mockImplementation((cb) => {
+      cb(0);
+      return 0;
+    });
+
+    // Mock matchMedia for ThemeManager
+    Object.defineProperty(window, "matchMedia", {
+      writable: true,
+      value: vi.fn().mockImplementation((query: string) => ({
+        matches: false,
+        media: query,
+        onchange: null,
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+      })),
+    });
+  });
+
+  it("should use provided invertedSelectors directly", () => {
+    // Create test elements
+    const invertedEl = document.createElement("div");
+    invertedEl.className = "inverted-surface";
+    document.body.appendChild(invertedEl);
+
+    // Provide selectors directly - should not read CSS variable
+    const manager = new ThemeManager({
+      invertedSelectors: [".inverted-surface"],
+    });
+
+    // The inverted element should have opposite color-scheme
+    expect(invertedEl.style.getPropertyValue("color-scheme")).toBe("dark");
+
+    manager.dispose();
+  });
+
+  it("should accept readonly array (as const) for invertedSelectors", () => {
+    const invertedEl = document.createElement("div");
+    invertedEl.className = "card-inverted";
+    document.body.appendChild(invertedEl);
+
+    // Use `as const` tuple - should work with readonly string[]
+    const selectors = [".card-inverted", ".header-inverted"] as const;
+    const manager = new ThemeManager({
+      invertedSelectors: selectors,
+    });
+
+    expect(invertedEl.style.getPropertyValue("color-scheme")).toBe("dark");
+
+    manager.dispose();
+  });
+
+  it("should handle empty invertedSelectors array (falls back to CSS variable)", () => {
+    // Set up CSS variable fallback
+    document.documentElement.style.setProperty(
+      "--axm-inverted-surfaces",
+      ".css-inverted",
+    );
+
+    const invertedEl = document.createElement("div");
+    invertedEl.className = "css-inverted";
+    document.body.appendChild(invertedEl);
+
+    // Empty array should fall back to CSS variable
+    const manager = new ThemeManager({
+      invertedSelectors: [],
+    });
+
+    // Should use CSS variable fallback
+    expect(invertedEl.style.getPropertyValue("color-scheme")).toBe("dark");
+
+    manager.dispose();
   });
 });

@@ -50,6 +50,12 @@ function readCssVarNumber(
   return parsed;
 }
 
+/**
+ * Singleton class for reading and writing theme state from CSS variables.
+ *
+ * @internal This class is an internal implementation detail and should not be
+ * used directly by consumers. Use {@link ThemeManager} for runtime theme control.
+ */
 export class AxiomaticTheme {
   private static instance?: AxiomaticTheme;
   private listeners: Set<ThemeListener> = new Set();

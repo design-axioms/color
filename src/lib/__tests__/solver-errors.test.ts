@@ -3,16 +3,27 @@ import { DEFAULT_CONFIG } from "../defaults.ts";
 import { AxiomaticError } from "../errors.ts";
 import { solve } from "../solver/index.ts";
 
+/**
+ * Clone DEFAULT_CONFIG for testing. The returned object is mutable.
+ * We return `any` because structuredClone preserves readonly modifiers,
+ * but the cloned object is actually mutable at runtime. The tests need
+ * to mutate the config to trigger various error conditions.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function cloneConfig(): any {
+  return structuredClone(DEFAULT_CONFIG);
+}
+
 describe("solver error surfaces", () => {
   it("throws on unparseable surface override", () => {
-    const config = structuredClone(DEFAULT_CONFIG);
+    const config = cloneConfig();
     config.groups[0]!.surfaces[0]!.override = { light: "not-a-color" };
 
     expect(() => solve(config)).toThrow(/Could not parse surface override/);
   });
 
   it("throws on invalid keyColors values", () => {
-    const config = structuredClone(DEFAULT_CONFIG);
+    const config = cloneConfig();
     config.anchors.keyColors.brand = "not-a-color";
 
     expect(() => solve(config)).toThrowError(AxiomaticError);
@@ -22,7 +33,7 @@ describe("solver error surfaces", () => {
   });
 
   it("throws on duplicate surface slugs (P1-11)", () => {
-    const config = structuredClone(DEFAULT_CONFIG);
+    const config = cloneConfig();
     // Add a duplicate slug in a different group
     config.groups.push({
       name: "duplicates",
@@ -42,7 +53,7 @@ describe("solver error surfaces", () => {
   });
 
   it("throws on circular key color references (P1-13)", () => {
-    const config = structuredClone(DEFAULT_CONFIG);
+    const config = cloneConfig();
     // Create a circular alias: brand → accent → brand
     config.anchors.keyColors = {
       brand: "accent",
@@ -56,7 +67,7 @@ describe("solver error surfaces", () => {
   });
 
   it("throws on invalid anchor ordering - dark mode start > end (P1-12)", () => {
-    const config = structuredClone(DEFAULT_CONFIG);
+    const config = cloneConfig();
     // Dark mode: start should have lower L* than end
     // But we're making start higher than end (invalid)
     config.anchors.page.dark.start = { background: 0.6 };
@@ -67,7 +78,7 @@ describe("solver error surfaces", () => {
   });
 
   it("throws on invalid anchor ordering - light mode end > start (P1-12)", () => {
-    const config = structuredClone(DEFAULT_CONFIG);
+    const config = cloneConfig();
     // Light mode: start should have higher L* than end
     // But we're making end higher than start (invalid)
     config.anchors.page.light.start = { background: 0.85 };
@@ -78,7 +89,7 @@ describe("solver error surfaces", () => {
   });
 
   it("throws on invalid state offset - too negative (P1-20)", () => {
-    const config = structuredClone(DEFAULT_CONFIG);
+    const config = cloneConfig();
     // Find a surface with states and set an invalid offset
     const cardSurface = config.groups[1]!.surfaces[0]!;
     cardSurface.states = [{ name: "hover", offset: -30 }];
@@ -88,7 +99,7 @@ describe("solver error surfaces", () => {
   });
 
   it("throws on invalid state offset - too positive (P1-20)", () => {
-    const config = structuredClone(DEFAULT_CONFIG);
+    const config = cloneConfig();
     // Find a surface with states and set an invalid offset
     const cardSurface = config.groups[1]!.surfaces[0]!;
     cardSurface.states = [{ name: "hover", offset: 30 }];

@@ -13,11 +13,13 @@ pre-commit:
     format:
       glob: "*.{ts,js,json,md,yml,css,svelte,astro}"
       exclude: "dist/**/*"
-      run: pnpm format {staged_files} && git add {staged_files}
+      run: pnpm format {staged_files}
+      stage_fixed: true
     lint:
       glob: "*.{ts,js,svelte,astro}"
       exclude: "dist/**/*"
-      run: pnpm eslint --fix {staged_files} && git add {staged_files}
+      run: pnpm eslint --fix {staged_files}
+      stage_fixed: true
     security:
       glob: "*"
       run: pnpm lint:security {staged_files}
@@ -47,7 +49,7 @@ pre-push:
           exit 1
         fi
     typecheck:
-      run: tsc --noEmit && pnpm --filter @axiomatic-design/vscode-extension typecheck
+      run: pnpm exec tsc --noEmit && pnpm --filter @axiomatic-design/vscode-extension typecheck
     site-check:
       run: pnpm --filter site astro check && pnpm --filter site exec svelte-check
     build:

@@ -80,6 +80,12 @@ export interface ThemeManagerOptions {
    * If provided, the favicon will be updated automatically.
    */
   faviconGenerator?: (color: string) => string;
+  /**
+   * Selectors for surfaces with inverted polarity. Import from generated file.
+   * If provided, these selectors are used directly. If not provided, falls back
+   * to reading `--axm-inverted-surfaces` from CSS for backwards compatibility.
+   */
+  invertedSelectors?: readonly string[];
 }
 
 /**
@@ -91,6 +97,7 @@ export class ThemeManager {
   private lightClass?: string;
   private darkClass?: string;
   private faviconGenerator?: (color: string) => string;
+  private _providedInvertedSelectors?: readonly string[];
   private _mode: ThemeMode = "system";
   private mediaQuery: MediaQueryList | null = null;
   private invertedSelectors: string[] = [];
@@ -107,6 +114,7 @@ export class ThemeManager {
       this.lightClass = options.lightClass;
       this.darkClass = options.darkClass;
       this.faviconGenerator = options.faviconGenerator;
+      this._providedInvertedSelectors = options.invertedSelectors;
 
       this.mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
       this.mediaQuery.addEventListener("change", this.handleSystemChange);
@@ -146,6 +154,18 @@ export class ThemeManager {
   private initInvertedSurfaces(): void {
     if (!this.root) return;
 
+    // Prefer provided selectors over CSS variable for build-time optimization
+    if (
+      this._providedInvertedSelectors &&
+      this._providedInvertedSelectors.length > 0
+    ) {
+      this.invertedSelectors = [...this._providedInvertedSelectors];
+      this.setupObserver();
+      this.updateInvertedSurfaces();
+      return;
+    }
+
+    // Fall back to reading from CSS variable for backwards compatibility
     const style = getComputedStyle(this.root);
     const invertedList = style
       .getPropertyValue("--axm-inverted-surfaces")
