@@ -1,4 +1,5 @@
 import { ThemeManager, type ThemeMode } from "@axiomatic-design/color/browser";
+import { invertedSelectors } from "../styles/theme.generated";
 
 const STORAGE_KEY = "theme";
 
@@ -63,7 +64,7 @@ const ensureThemeManager = (): ThemeManager | null => {
   if (manager) return manager;
   const root = getRoot();
   if (!root) return null;
-  manager = new ThemeManager({ root });
+  manager = new ThemeManager({ root, invertedSelectors });
   return manager;
 };
 

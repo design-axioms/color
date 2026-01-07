@@ -82,11 +82,16 @@ export interface ThemeManagerOptions {
    */
   faviconGenerator?: (color: string) => string;
   /**
-   * Selectors for surfaces with inverted polarity. Import from generated file.
-   * If provided, these selectors are used directly. If not provided, falls back
-   * to reading `--axm-inverted-surfaces` from CSS for backwards compatibility.
+   * Selectors for surfaces with inverted polarity.
+   * Import from generated theme file:
+   * ```ts
+   * import { invertedSelectors } from './theme.generated';
+   * new ThemeManager({ invertedSelectors });
+   * ```
+   *
+   * Generate with: `axiomatic build --emit-ts`
    */
-  invertedSelectors?: readonly string[];
+  invertedSelectors: readonly string[];
 }
 
 const warnedDeprecations = new Set<string>();
@@ -106,10 +111,9 @@ export class ThemeManager {
   private lightClass?: string;
   private darkClass?: string;
   private faviconGenerator?: (color: string) => string;
-  private _providedInvertedSelectors?: readonly string[];
   private _mode: ThemeMode = "system";
   private mediaQuery: MediaQueryList | null = null;
-  private invertedSelectors: string[] = [];
+  private invertedSelectors: readonly string[];
   private observer: MutationObserver | null = null;
   private hasMarkedReady = false;
 
@@ -117,13 +121,15 @@ export class ThemeManager {
    * Creates a new ThemeManager instance.
    * @param options Configuration options for the manager.
    */
-  constructor(options: ThemeManagerOptions = {}) {
+  constructor(options: ThemeManagerOptions) {
+    // Store inverted selectors (required)
+    this.invertedSelectors = options.invertedSelectors;
+
     if (typeof document !== "undefined") {
       this.root = options.root ?? document.documentElement;
       this.lightClass = options.lightClass;
       this.darkClass = options.darkClass;
       this.faviconGenerator = options.faviconGenerator;
-      this._providedInvertedSelectors = options.invertedSelectors;
 
       // Deprecation warnings for lightClass/darkClass
       if (options.lightClass) {
@@ -144,11 +150,8 @@ export class ThemeManager {
       this.mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
       this.mediaQuery.addEventListener("change", this.handleSystemChange);
 
-      // Initialize inverted surfaces logic
-      // We use requestAnimationFrame to give CSS a chance to load if it's close
-      requestAnimationFrame(() => {
-        this.initInvertedSurfaces();
-      });
+      // Initialize inverted surfaces
+      this.initInvertedSurfaces();
     } else {
       // Fallback for SSR/testing
       this.root = null;
@@ -178,37 +181,10 @@ export class ThemeManager {
 
   private initInvertedSurfaces(): void {
     if (!this.root) return;
+    if (this.invertedSelectors.length === 0) return;
 
-    // Prefer provided selectors over CSS variable for build-time optimization
-    if (
-      this._providedInvertedSelectors &&
-      this._providedInvertedSelectors.length > 0
-    ) {
-      this.invertedSelectors = [...this._providedInvertedSelectors];
-      this.setupObserver();
-      this.updateInvertedSurfaces();
-      return;
-    }
-
-    // Fall back to reading from CSS variable for backwards compatibility
-    const style = getComputedStyle(this.root);
-    const invertedList = style
-      .getPropertyValue("--axm-inverted-surfaces")
-      .trim();
-
-    if (invertedList) {
-      // Remove quotes if they exist
-      const cleanList = invertedList.replace(/^['"]|['"]$/g, "");
-      this.invertedSelectors = cleanList
-        .split(",")
-        .map((s) => s.trim())
-        .filter(Boolean);
-
-      if (this.invertedSelectors.length > 0) {
-        this.setupObserver();
-        this.updateInvertedSurfaces();
-      }
-    }
+    this.setupObserver();
+    this.updateInvertedSurfaces();
   }
 
   private setupObserver(): void {
