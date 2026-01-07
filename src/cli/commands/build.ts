@@ -8,7 +8,7 @@ import {
 } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { generateMetadata } from "../../lib/exporters/metadata.ts";
+import { toTypeScriptMetadata } from "../../lib/exporters/metadata.ts";
 import { generateTokensCss } from "../../lib/generator/index.ts";
 import { resolveConfig, solve } from "../../lib/index.ts";
 import type { SolverConfig } from "../../lib/types.ts";
@@ -193,9 +193,18 @@ export function buildCommand(args: string[], cwd: string): void {
       const tsOutPath = absOutPath.endsWith(".css")
         ? absOutPath.replace(/\.css$/u, ".generated.ts")
         : `${absOutPath}.generated.ts`;
-      const metadata = generateMetadata(theme);
-      writeFileSync(tsOutPath, metadata);
-      console.log("Writing TypeScript metadata to:", tsOutPath);
+      const metadata = toTypeScriptMetadata(theme, { source: configPath });
+      mkdirSync(dirname(tsOutPath), { recursive: true });
+      try {
+        writeFileSync(tsOutPath, metadata);
+        console.log("Writing TypeScript metadata to:", tsOutPath);
+      } catch (error) {
+        console.error(
+          `Failed to write TypeScript metadata to ${tsOutPath}:`,
+          error instanceof Error ? error.message : error,
+        );
+        throw error;
+      }
     }
 
     console.log("Done!");
