@@ -3,15 +3,12 @@ import { DEFAULT_CONFIG } from "../defaults.ts";
 import { AxiomaticError } from "../errors.ts";
 import { solve } from "../solver/index.ts";
 
-/**
- * Clone DEFAULT_CONFIG for testing. The returned object is mutable.
- * We return `any` because structuredClone preserves readonly modifiers,
- * but the cloned object is actually mutable at runtime. The tests need
- * to mutate the config to trigger various error conditions.
- */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function cloneConfig(): any {
-  return structuredClone(DEFAULT_CONFIG);
+type Mutable<T> = T extends object
+  ? { -readonly [K in keyof T]: Mutable<T[K]> }
+  : T;
+
+function cloneConfig(): Mutable<typeof DEFAULT_CONFIG> {
+  return structuredClone(DEFAULT_CONFIG) as Mutable<typeof DEFAULT_CONFIG>;
 }
 
 describe("solver error surfaces", () => {
