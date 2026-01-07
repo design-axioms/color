@@ -27,6 +27,7 @@ Flags:
   --config <path>   Path to config file (default: color-config.json)
   --out <path>      Path to output file (default: theme.css)
   --watch           Watch for changes
+  --emit-ts         Emit TypeScript metadata file alongside CSS
 `);
   process.exit(0);
 }
@@ -81,6 +82,8 @@ if (command === "init") {
   const newArgs: string[] = [];
   if (config) newArgs.push("--config", config);
   if (out) newArgs.push("--out", out);
+  // Pass through any remaining flags (e.g., --emit-ts, --watch)
+  newArgs.push(...args.slice(2));
 
   buildCommand(newArgs, CWD);
 } else {

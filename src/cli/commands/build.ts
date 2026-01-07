@@ -8,6 +8,7 @@ import {
 } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { toTypeScriptMetadata } from "../../lib/exporters/metadata.ts";
 import { generateTokensCss } from "../../lib/generator/index.ts";
 import { resolveConfig, solve } from "../../lib/index.ts";
 import type { SolverConfig } from "../../lib/types.ts";
@@ -63,6 +64,7 @@ export function buildCommand(args: string[], cwd: string): void {
   let outPath = "theme.css";
   let isWatch = false;
   let copyEngine = false;
+  let emitTs = false;
 
   for (let i = 0; i < args.length; i++) {
     const nextArg = args[i + 1];
@@ -76,6 +78,8 @@ export function buildCommand(args: string[], cwd: string): void {
       isWatch = true;
     } else if (args[i] === "--copy-engine") {
       copyEngine = true;
+    } else if (args[i] === "--emit-ts") {
+      emitTs = true;
     }
   }
 
@@ -182,6 +186,24 @@ export function buildCommand(args: string[], cwd: string): void {
         copyFileSync(enginePath, engineOutPath);
       } else {
         console.warn("Warning: Could not find engine.css to copy.");
+      }
+    }
+
+    if (emitTs) {
+      const tsOutPath = absOutPath.endsWith(".css")
+        ? absOutPath.replace(/\.css$/u, ".generated.ts")
+        : `${absOutPath}.generated.ts`;
+      const metadata = toTypeScriptMetadata(theme, { source: configPath });
+      mkdirSync(dirname(tsOutPath), { recursive: true });
+      try {
+        writeFileSync(tsOutPath, metadata);
+        console.log("Writing TypeScript metadata to:", tsOutPath);
+      } catch (error) {
+        console.error(
+          `Failed to write TypeScript metadata to ${tsOutPath}:`,
+          error instanceof Error ? error.message : error,
+        );
+        throw error;
       }
     }
 
