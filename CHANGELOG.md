@@ -2,29 +2,33 @@
 
 ## Release (2026-01-06)
 
-* @axiomatic-design/color 0.3.0 (minor)
-* @axiomatic-design/eslint-plugin 0.3.0 (minor)
-* @axiomatic-design/vscode-extension 0.2.0 (minor)
+- @axiomatic-design/color 0.3.0 (minor)
+- @axiomatic-design/eslint-plugin 0.3.0 (minor)
+- @axiomatic-design/vscode-extension 0.2.0 (minor)
 
 #### :rocket: Enhancement
-* `@axiomatic-design/color`
-  * [#21](https://github.com/design-axioms/color/pull/21) feat: Complete P0+P1 error remediation (21 error codes) ([@wycats](https://github.com/wycats))
-  * [#18](https://github.com/design-axioms/color/pull/18) Epoch 2: Theme Studio alignment (single theme plane + strict config IO) ([@wycats](https://github.com/wycats))
-* `@axiomatic-design/color`, `@axiomatic-design/eslint-plugin`
-  * [#17](https://github.com/design-axioms/color/pull/17) User programming model audit + docs enforcement + inspector remediation ([@wycats](https://github.com/wycats))
-* `@axiomatic-design/color`, `@axiomatic-design/eslint-plugin`, `@axiomatic-design/vscode-extension`
-  * [#15](https://github.com/design-axioms/color/pull/15) Website polish + generator export fix ([@wycats](https://github.com/wycats))
+
+- `@axiomatic-design/color`
+  - [#21](https://github.com/design-axioms/color/pull/21) feat: Complete P0+P1 error remediation (21 error codes) ([@wycats](https://github.com/wycats))
+  - [#18](https://github.com/design-axioms/color/pull/18) Epoch 2: Theme Studio alignment (single theme plane + strict config IO) ([@wycats](https://github.com/wycats))
+- `@axiomatic-design/color`, `@axiomatic-design/eslint-plugin`
+  - [#17](https://github.com/design-axioms/color/pull/17) User programming model audit + docs enforcement + inspector remediation ([@wycats](https://github.com/wycats))
+- `@axiomatic-design/color`, `@axiomatic-design/eslint-plugin`, `@axiomatic-design/vscode-extension`
+  - [#15](https://github.com/design-axioms/color/pull/15) Website polish + generator export fix ([@wycats](https://github.com/wycats))
 
 #### :bug: Bug Fix
-* `@axiomatic-design/color`
-  * [#22](https://github.com/design-axioms/color/pull/22) fix: use proper DeepPartial type from types.ts ([@wycats](https://github.com/wycats))
-  * [#19](https://github.com/design-axioms/color/pull/19) Fix inspector mismatch prioritization ([@wycats](https://github.com/wycats))
+
+- `@axiomatic-design/color`
+  - [#22](https://github.com/design-axioms/color/pull/22) fix: use proper DeepPartial type from types.ts ([@wycats](https://github.com/wycats))
+  - [#19](https://github.com/design-axioms/color/pull/19) Fix inspector mismatch prioritization ([@wycats](https://github.com/wycats))
 
 #### :house: Internal
-* `@axiomatic-design/color`
-  * [#20](https://github.com/design-axioms/color/pull/20) chore: consolidate RFCs and flatten docs/agent structure ([@wycats](https://github.com/wycats))
+
+- `@axiomatic-design/color`
+  - [#20](https://github.com/design-axioms/color/pull/20) chore: consolidate RFCs and flatten docs/agent structure ([@wycats](https://github.com/wycats))
 
 #### Committers: 1
+
 - Yehuda Katz ([@wycats](https://github.com/wycats))
 
 ## Release (2025-12-10)
