@@ -684,7 +684,7 @@ Each DOM attribute or CSS variable has exactly one authoritative writer:
 | :---------------------------------- | :----- | :------------------------------------------------ |
 | ThemeManager is public API          | ✅     | Exported from `src/lib/index.ts`                  |
 | AxiomaticTheme marked internal      | ✅     | `AxiomaticTheme` marked `@internal` in `theme.ts` |
-| ThemeManager delegates to AT        | ❌     | Pending: refactor `setMode()` to use AT           |
+| ThemeManager delegates to AT        | ✅     | Delegates CSS writes via `.set({ tau })`          |
 | `invertedSelectors` constructor opt | ✅     | Accepted via `ThemeManagerOptions` / generated TS |
 | Single writer documented            | ✅     | Documented in RFC-021                             |
 
