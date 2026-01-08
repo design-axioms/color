@@ -86,22 +86,63 @@ Buttons are interactive surfaces.
 <button class="surface-action">Secondary Action</button>
 ```
 
-## 4. Handling Dark Mode
+## 4. Setting Up ThemeManager
 
-Use `ThemeManager` as the single supported integration surface for dark mode. It handles system preference, changes over time, and (when needed) setting the correct browser-native theming behavior.
+**ThemeManager is required** for most applications. If you need dark mode, theme switching, or inverted surfaces (like cards that flip polarity), this is the answer—and it's simpler than what you were probably doing before.
 
-> **Note on smooth transitions**: `light-dark()` selects endpoints based on context; smoothness comes from transitioning the computed colors that actually paint (and optionally from continuous state like `--tau`). If another framework sets mode-dependent `background-color`/`color` directly (or disables transitions during toggles), you can see “snaps” even though the Axiomatic engine is correct.
+### What ThemeManager Does For You
 
-### Manual Toggle
+- **System preference detection** — Automatically syncs with `prefers-color-scheme`
+- **Inverted surfaces** — Coordinates cards, spotlights, and other surfaces that flip between light/dark
+- **Browser integration** — Updates `<meta name="theme-color">` and `color-scheme`
+- **Native controls** — Ensures scrollbars, inputs, and checkboxes match the theme
+
+You would have to implement all of this yourself. ThemeManager does it in 3 lines of code.
+
+### Basic Setup
 
 ```ts
 import { ThemeManager } from "@axiomatic-design/color/browser";
+import { invertedSelectors } from "./theme.generated";
 
-const manager = new ThemeManager();
-
-// Example: toggle between light and dark (add your own persistence)
-manager.setMode(manager.resolvedMode === "light" ? "dark" : "light");
+const themeManager = new ThemeManager({ invertedSelectors });
 ```
+
+**That's it.** Your app now has light/dark mode based on system preference.
+
+### Building a Theme Toggle
+
+```ts
+import { ThemeManager } from "@axiomatic-design/color/browser";
+import { invertedSelectors } from "./theme.generated";
+
+const themeManager = new ThemeManager({ invertedSelectors });
+
+// Toggle button
+document.getElementById("theme-toggle")?.addEventListener("click", () => {
+  const newMode = themeManager.resolvedMode === "light" ? "dark" : "light";
+  themeManager.setMode(newMode);
+  localStorage.setItem("theme-mode", newMode);
+});
+
+// Restore on load
+const savedMode = localStorage.getItem("theme-mode");
+if (savedMode === "light" || savedMode === "dark") {
+  themeManager.setMode(savedMode);
+}
+```
+
+### About `invertedSelectors`
+
+The `invertedSelectors` array tells ThemeManager which surfaces flip polarity. Generate it by running:
+
+```bash
+axiomatic build --emit-ts
+```
+
+This creates `theme.generated.ts` with the selectors for your configured inverted surfaces. **Do not skip the `--emit-ts` flag**—without it, inverted surfaces won't work correctly.
+
+> **Smooth transitions**: `light-dark()` selects endpoints based on context; smoothness comes from transitioning the computed colors. If another framework sets mode-dependent `background-color`/`color` directly (or disables transitions during toggles), you may see "snaps" even though the Axiomatic engine is correct.
 
 ## 5. Inverted Surfaces
 

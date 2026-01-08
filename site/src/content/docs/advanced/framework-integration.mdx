@@ -1,0 +1,193 @@
+---
+title: Framework Integration
+description: How to integrate Axiomatic Color into an existing framework or design system.
+---
+
+This guide is for framework authors and design system engineers who need to integrate Axiomatic Color into an existing theme system with its own CSS variables.
+
+If you're building an app, see the [Integration Guide](/guides/integration) instead.
+
+## The Problem: Two Theme Systems
+
+You have an existing framework (e.g., Starlight, Chakra UI, Material UI) with its own color variables (`--framework-*`). You want to use Axiomatic's color engine, but your framework "owns" the DOM and injects its own styles.
+
+**Approaches that don't work:**
+
+- ❌ Rewrite the framework to use Axiomatic classes (too invasive)
+- ❌ Override framework styles with `!important` (unmaintainable)
+- ❌ Manually sync two separate theme systems (error-prone)
+
+**The solution:**
+
+- ✅ Create a **bridge adapter** that maps Axiomatic bridge exports to your framework's variables
+
+## The Adapter Pattern
+
+An adapter is a **single CSS file** that sits between Axiomatic and your framework. It maps Axiomatic's bridge exports (`--axm-bridge-*`) to your framework's color variables.
+
+### Rules (Non-Negotiable)
+
+1. **Single file only** — All framework integration CSS lives in ONE adapter file
+2. **Bridge exports only** — Never reference engine internals (`--_axm-*` or `--axm-*`)
+3. **No transitions** — Never transition bridge exports or your mapped variables
+4. **No currentColor for chrome borders** — Use bridge border exports instead
+
+These rules prevent "popping" where parts of your UI animate on different timing than the Axiomatic engine.
+
+## Bridge Exports Reference
+
+Axiomatic provides these stable, public CSS variables for adapters:
+
+| Variable                   | Purpose            | Notes                           |
+| -------------------------- | ------------------ | ------------------------------- |
+| `--axm-bridge-surface`     | Background color   | Context-sensitive               |
+| `--axm-bridge-fg`          | Generic text       | High contrast                   |
+| `--axm-bridge-fg-high`     | High-emphasis text | Very high contrast              |
+| `--axm-bridge-fg-body`     | Body text          | Standard reading contrast       |
+| `--axm-bridge-fg-subtle`   | De-emphasized text | Lower contrast for secondary    |
+| `--axm-bridge-border-int`  | Interactive border | Buttons, inputs, focus rings    |
+| `--axm-bridge-border-dec`  | Decorative border  | Cards, dividers, hairlines      |
+
+See [Bridge API (Adapters)](/advanced/bridge-api) for full reference.
+
+## Example: Mapping Framework Variables
+
+```css
+/* src/styles/framework-adapter.css — THE ONLY FILE with framework mappings */
+:root {
+  /* Map framework backgrounds to bridge surface */
+  --framework-bg-page: var(--axm-bridge-surface);
+  --framework-bg-card: var(--axm-bridge-surface);
+
+  /* Map text to bridge foreground */
+  --framework-text-primary: var(--axm-bridge-fg-high);
+  --framework-text-body: var(--axm-bridge-fg-body);
+  --framework-text-secondary: var(--axm-bridge-fg-subtle);
+
+  /* Map borders to bridge border exports */
+  --framework-border-interactive: var(--axm-bridge-border-int);
+  --framework-border-decorative: var(--axm-bridge-border-dec);
+}
+```
+
+Now when Axiomatic's theme changes (light → dark), the bridge exports update, your framework variables update, and your components re-paint—all in one smooth transition.
+
+## Runtime Wiring
+
+Sometimes you need to apply Axiomatic classes to framework-owned DOM elements. Use `applyDomWiring` for declarative, idempotent wiring:
+
+```typescript
+import { applyDomWiring } from "@axiomatic-design/color";
+
+const wiring = [
+  {
+    selector: ".framework-page-container",
+    addClasses: ["surface-page"],
+  },
+  {
+    selector: ".framework-card",
+    addClasses: ["surface-card"],
+  },
+];
+
+// Apply once on page load
+applyDomWiring(wiring);
+```
+
+**Rules for runtime wiring:**
+
+- ✅ Apply classes and attributes
+- ✅ Wrap elements in containers
+- ❌ Do NOT read or write CSS variables in JS
+
+## Contract Enforcement (Optional)
+
+For frameworks with complex chrome (headers, sidebars), you can create a **contract adapter** to detect violations at test time.
+
+### 1. Define your contract
+
+```typescript
+// contract-spec.ts
+export const MY_FRAMEWORK_CONTRACT = {
+  chromeSelectorHints: [".framework-header", ".framework-sidebar"],
+  allowedBorderVarNames: [
+    "--axm-bridge-border-int",
+    "--axm-bridge-border-dec",
+  ],
+  forbiddenTransitionSubstrings: [
+    { substring: "border-color", reason: "Causes popping" },
+  ],
+};
+```
+
+### 2. Create the adapter
+
+```typescript
+// contract-adapter.ts
+import type { FrameworkContractAdapter } from "@axiomatic-design/color";
+import { scanChromeContract } from "./scanner";
+import { MY_FRAMEWORK_CONTRACT } from "./contract-spec";
+
+export function createFrameworkContractAdapter(): FrameworkContractAdapter {
+  return {
+    name: "MyFramework",
+    scan(options) {
+      return scanChromeContract({
+        spec: MY_FRAMEWORK_CONTRACT,
+        ignoreContainer: options?.ignoreContainer,
+      });
+    },
+  };
+}
+```
+
+### 3. Use in tests
+
+```typescript
+import { test, expect } from "@playwright/test";
+import { InspectorEngine } from "@axiomatic-design/color/inspector";
+import { createFrameworkContractAdapter } from "./contract-adapter";
+
+test("framework chrome respects continuity contract", async ({ page }) => {
+  await page.goto("/");
+
+  const result = await page.evaluate(() => {
+    const engine = InspectorEngine.get();
+    const adapter = createFrameworkContractAdapter();
+    return engine.scanForFrameworkContractViolations(adapter);
+  });
+
+  expect(result.violations).toHaveLength(0);
+});
+```
+
+## Real-World Example: Starlight
+
+The Axiomatic documentation site uses Starlight (an Astro-based docs framework) and integrates via this pattern. Key files:
+
+- **Adapter bridge**: Maps `--sl-*` variables to `--axm-bridge-*`
+- **Contract adapter**: `src/lib/integrations/starlight/contract-adapter.ts`
+- **Contract tests**: `tests/starlight-chrome-border.contract.spec.ts`
+
+## Troubleshooting
+
+### Colors don't update smoothly
+
+1. Are you mapping to bridge exports in **one file only**?
+2. Are you transitioning `border-color` or any `--framework-*` variables?
+3. Are you using `currentColor` for chrome borders?
+
+### Inverted surfaces don't work
+
+1. Are you using `ThemeManager` with `invertedSelectors`?
+2. Is `surface-spotlight` applied to the element (via `applyDomWiring`)?
+3. Does your adapter map backgrounds to `--axm-bridge-surface`?
+
+### Native controls look wrong
+
+ThemeManager sets `color-scheme` on inverted surfaces. If you override `color-scheme` in your framework CSS, remove it—let Axiomatic handle it.
+
+## See Also
+
+- [Bridge API Reference](/advanced/bridge-api)
+- [Integration Guide](/guides/integration)
