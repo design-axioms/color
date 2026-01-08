@@ -134,34 +134,60 @@
   - **Consolidated RFCs**: 9 coherent RFCs in `docs/rfcs/` (RFC-CONSUMER-CONTRACT, RFC-INTEGRATION, RFC-AUDITING, RFC-INSPECTOR, RFC-CHARTS, RFC-TOKENS, RFC-TUFTE-LAYOUT, RFC-TOOLING, RFC-CONFIGURATION)
   - **Silent Failures Inventory**: 37 failures cataloged in `docs/agent-context/current/silent-failures-inventory.md` (8 P0, 18 P1, 11 P2)
 - **Phases**:
-  - **Phase 1: ThemeManager Unification**
+  - **Phase 1: ThemeManager Unification (Completed)**
     - **Goal**: Resolve the ThemeManager/AxiomaticTheme confusion. Establish a single, clear theme authority.
     - **Tasks**:
-      - Audit `ThemeManager` (browser.ts) vs `AxiomaticTheme` (theme.ts) - clarify or merge
-      - Fix the race condition in `initInvertedSurfaces` (single RAF is unreliable)
-      - Ensure single semantic writer for theme state
-      - Document the "replace your theme picker handler" pattern
-  - **Phase 2: Starlight Extraction**
+      - ✅ Audit `ThemeManager` (browser.ts) vs `AxiomaticTheme` (theme.ts) - clarify or merge
+      - ✅ Fix the race condition in `initInvertedSurfaces` (single RAF is unreliable)
+      - ✅ Ensure single semantic writer for theme state
+      - ✅ Document the "replace your theme picker handler" pattern
+    - **PRs**: #23, #24, #25, #26, #28, #29
+  - **Phase 2: Starlight Extraction (Completed)**
     - **Goal**: Move Starlight-specific code out of core inspector into an adapter pattern.
     - **Tasks**:
-      - Extract `starlight-chrome-contract.ts` from core inspector
-      - Remove `scanForStarlightChromeContractViolations` from engine.ts
-      - Create adapter pattern for framework-specific contract checks
-      - Update tests to use adapter pattern
-  - **Phase 3: Layer Separation**
-    - **Goal**: Restructure exports so consumers understand what layer they're in.
+      - ✅ Extract `starlight-chrome-contract.ts` from core inspector
+      - ✅ Create adapter pattern for framework-specific contract checks (`FrameworkContractAdapter`)
+      - ✅ Update tests to use adapter pattern
+    - **PR**: #32
+
+### Epoch 44.5: Alpha Polish (Active — Pivot)
+
+- **Goal**: Address documentation gaps identified in fresh-eyes review. Focus on "Pragmatic Integrator" persona.
+- **Rationale**: Subagent review identified P0 gaps: ThemeManager emphasis, framework integration docs, working examples. Pivoting before Phase 3/4 to ship user-facing value.
+- **Phases**:
+  - **Phase A: Quick Wins (Active)**
+    - **Goal**: High-impact, low-effort documentation improvements.
     - **Tasks**:
-      - Audit current exports in `src/lib/index.ts`
-      - Define clear layers: Pure System / Integration / Dev Tools
-      - Consider separate entry points or clear documentation
-      - Remove integration code (dom-wiring) from main export barrel
-  - **Phase 4: Silent Failures → Explicit Errors**
-    - **Goal**: Replace silent failures with helpful error messages.
+      - ✅ Update integration guide with prominent ThemeManager section
+      - ✅ Create `advanced/framework-integration.mdx` for framework authors
+      - [ ] Update planning documents
+  - **Phase B: Working Example**
+    - **Goal**: Document `examples/vercel-demo` as a reference implementation.
     - **Tasks**:
-      - Missing backgrounds → throw with helpful message (not default to black)
-      - Invalid config → validation errors (not `@ts-expect-error`)
-      - Solver errors → actionable suggestions
-      - Add input validation to math functions (dev-mode warnings)
+      - Add README with "How It Works" walkthrough
+      - Cross-link from integration guide
+  - **Phase C: Troubleshooting**
+    - **Goal**: Common issues and solutions.
+    - **Tasks**:
+      - Create troubleshooting section in docs
+      - Error code reference (when explicit errors ship)
+
+### Epoch 44 (Continued): Phase 3 & 4 (Deferred)
+
+- **Phase 3: Layer Separation (Deferred)**
+  - **Goal**: Restructure exports so consumers understand what layer they're in.
+  - **Tasks**:
+    - Audit current exports in `src/lib/index.ts`
+    - Define clear layers: Pure System / Integration / Dev Tools
+    - Consider separate entry points or clear documentation
+    - Remove integration code (dom-wiring) from main export barrel
+- **Phase 4: Silent Failures → Explicit Errors (Deferred)**
+  - **Goal**: Replace silent failures with helpful error messages.
+  - **Tasks**:
+    - Missing backgrounds → throw with helpful message (not default to black)
+    - Invalid config → validation errors (not `@ts-expect-error`)
+    - Solver errors → actionable suggestions
+    - Add input validation to math functions (dev-mode warnings)
 
 ## Epoch 45: Alpha Readiness (Planned)
 

@@ -1,4 +1,4 @@
-# Current Work: Epoch 44, Phase 2 — Starlight Extraction
+# Current Work: Epoch 44, Phase 2 — Starlight Extraction ✅ COMPLETE
 
 **Updated:** 2026-01-08
 
@@ -20,46 +20,54 @@
 - Race condition eliminated: data available at ES module import time
 - RFC-021 and JavaScript API docs updated
 
-## Current Phase: Starlight Extraction
+## Current Phase: Starlight Extraction — ✅ COMPLETE
 
 **Goal:** Extract Starlight-specific code from core inspector. Create adapter pattern for framework-specific checks.
 
-### Tasks
+**PRs:**
 
-- [ ] **Extract `starlight-chrome-contract.ts` from core inspector**
-  - Move Starlight-specific checks to integration layer
-  - Define clear boundary between core inspector and framework adapters
+- #32: FrameworkContractAdapter pattern and Starlight implementation
 
-- [ ] **Create adapter pattern**
-  - Define `FrameworkAdapter` interface for framework-specific checks
-  - Implement `StarlightAdapter` as first adapter
+**Outcome:**
 
-- [ ] **Update site integration**
-  - Migrate site to use adapter pattern
-  - Verify all existing tests still pass
-
-### Success Criteria
-
-- [ ] Core inspector has no Starlight-specific code
-- [ ] Adapter pattern documented in RFC or design doc
-- [ ] Site integration uses the new adapter
-- [ ] All tests green
+- Core inspector has no Starlight-specific code
+- `FrameworkContractAdapter` interface in `inspector/types.ts`
+- `StarlightContractAdapter` in `integrations/starlight/contract-adapter.ts`
+- Generic `scanForFrameworkContractViolations()` method in engine
+- Convenience wrapper `scanForStarlightChromeContractViolations()` preserved
 
 ---
 
-## Upcoming Phases
+## Next Phase: Epoch 45 - Alpha Polish
 
-### Phase 2: Starlight Extraction
+Based on fresh-eyes review, we're pivoting from the original Phase 3/4 work to focus on documentation gaps that affect the "Pragmatic Integrator" persona.
 
-- Extract `starlight-chrome-contract.ts` from core inspector
-- Create adapter pattern for framework-specific checks
+### Phase A: Quick Wins (Current)
 
-### Phase 3: Layer Separation
+- [x] Update integration guide with prominent ThemeManager section
+- [x] Create `advanced/framework-integration.mdx` for framework authors
+- [ ] Update plan.md to reflect pivot
+
+### Phase B: Working Example
+
+- Document `examples/vercel-demo` as a reference implementation
+- Add "How It Works" walkthrough
+
+### Phase C: Troubleshooting
+
+- Common issues and solutions
+- Error code reference (when explicit errors ship in Phase 4)
+
+---
+
+## Upcoming Phases (Epoch 44 Continuation)
+
+### Phase 3: Layer Separation (Deferred)
 
 - Restructure exports: Pure System / Integration / Dev Tools
 - Clear "what layer am I in?" for consumers
 
-### Phase 4: Silent Failures → Explicit Errors
+### Phase 4: Silent Failures → Explicit Errors (Deferred)
 
 - Missing backgrounds → throw with helpful message
 - Invalid config → validation errors
