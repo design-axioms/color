@@ -1,18 +1,18 @@
 {
   "solution": {
     "@axiomatic-design/color": {
-      "impact": "minor",
-      "oldVersion": "0.2.0",
-      "newVersion": "0.3.0",
+      "impact": "major",
+      "oldVersion": "0.3.0",
+      "newVersion": "1.0.0",
       "tagName": "latest",
       "constraints": [
         {
-          "impact": "minor",
-          "reason": "Appears in changelog section :rocket: Enhancement"
+          "impact": "major",
+          "reason": "Appears in changelog section :boom: Breaking Change"
         },
         {
-          "impact": "patch",
-          "reason": "Appears in changelog section :bug: Bug Fix"
+          "impact": "minor",
+          "reason": "Appears in changelog section :rocket: Enhancement"
         },
         {
           "impact": "patch",
@@ -22,31 +22,11 @@
       "pkgJSONPath": "./package.json"
     },
     "@axiomatic-design/eslint-plugin": {
-      "impact": "minor",
-      "oldVersion": "0.2.0",
-      "newVersion": "0.3.0",
-      "tagName": "latest",
-      "constraints": [
-        {
-          "impact": "minor",
-          "reason": "Appears in changelog section :rocket: Enhancement"
-        }
-      ],
-      "pkgJSONPath": "./packages/eslint-plugin/package.json"
+      "oldVersion": "0.3.0"
     },
     "@axiomatic-design/vscode-extension": {
-      "impact": "minor",
-      "oldVersion": "0.1.0",
-      "newVersion": "0.2.0",
-      "tagName": "latest",
-      "constraints": [
-        {
-          "impact": "minor",
-          "reason": "Appears in changelog section :rocket: Enhancement"
-        }
-      ],
-      "pkgJSONPath": "./packages/vscode-extension/package.json"
+      "oldVersion": "0.2.0"
     }
   },
-  "description": "## Release (2026-01-06)\n\n* @axiomatic-design/color 0.3.0 (minor)\n* @axiomatic-design/eslint-plugin 0.3.0 (minor)\n* @axiomatic-design/vscode-extension 0.2.0 (minor)\n\n#### :rocket: Enhancement\n* `@axiomatic-design/color`\n  * [#21](https://github.com/design-axioms/color/pull/21) feat: Complete P0+P1 error remediation (21 error codes) ([@wycats](https://github.com/wycats))\n  * [#18](https://github.com/design-axioms/color/pull/18) Epoch 2: Theme Studio alignment (single theme plane + strict config IO) ([@wycats](https://github.com/wycats))\n* `@axiomatic-design/color`, `@axiomatic-design/eslint-plugin`\n  * [#17](https://github.com/design-axioms/color/pull/17) User programming model audit + docs enforcement + inspector remediation ([@wycats](https://github.com/wycats))\n* `@axiomatic-design/color`, `@axiomatic-design/eslint-plugin`, `@axiomatic-design/vscode-extension`\n  * [#15](https://github.com/design-axioms/color/pull/15) Website polish + generator export fix ([@wycats](https://github.com/wycats))\n\n#### :bug: Bug Fix\n* `@axiomatic-design/color`\n  * [#22](https://github.com/design-axioms/color/pull/22) fix: use proper DeepPartial type from types.ts ([@wycats](https://github.com/wycats))\n  * [#19](https://github.com/design-axioms/color/pull/19) Fix inspector mismatch prioritization ([@wycats](https://github.com/wycats))\n\n#### :house: Internal\n* `@axiomatic-design/color`\n  * [#20](https://github.com/design-axioms/color/pull/20) chore: consolidate RFCs and flatten docs/agent structure ([@wycats](https://github.com/wycats))\n\n#### Committers: 1\n- Yehuda Katz ([@wycats](https://github.com/wycats))\n"
+  "description": "## Release (2026-01-08)\n\n* @axiomatic-design/color 1.0.0 (major)\n\n#### :boom: Breaking Change\n* `@axiomatic-design/color`\n  * [#29](https://github.com/design-axioms/color/pull/29) refactor: make invertedSelectors required, remove CSS fallback ([@wycats](https://github.com/wycats))\n\n#### :rocket: Enhancement\n* `@axiomatic-design/color`\n  * [#25](https://github.com/design-axioms/color/pull/25) feat: add --emit-ts flag to generate TypeScript metadata ([@wycats](https://github.com/wycats))\n  * [#24](https://github.com/design-axioms/color/pull/24) feat: add invertedSelectors option and mark AxiomaticTheme internal ([@wycats](https://github.com/wycats))\n\n#### :house: Internal\n* `@axiomatic-design/color`\n  * [#28](https://github.com/design-axioms/color/pull/28) chore: add site/ to prettierignore and format CHANGELOG ([@wycats](https://github.com/wycats))\n  * [#26](https://github.com/design-axioms/color/pull/26) refactor: delegate ThemeManager CSS writes to AxiomaticTheme ([@wycats](https://github.com/wycats))\n* Other\n  * [#23](https://github.com/design-axioms/color/pull/23) docs: consolidate ThemeManager architecture in RFCs ([@wycats](https://github.com/wycats))\n\n#### Committers: 1\n- Yehuda Katz ([@wycats](https://github.com/wycats))\n"
 }
