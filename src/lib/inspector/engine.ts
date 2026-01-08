@@ -1,18 +1,18 @@
 import { ContinuityChecker } from "./continuity.ts";
 import { resolveTokens } from "./resolver.ts";
-import type { DebugContext, ResolvedToken } from "./types.ts";
+import type {
+  DebugContext,
+  FrameworkContractAdapter,
+  FrameworkContractResult,
+  FrameworkContractScanOptions,
+  ResolvedToken,
+  Violation,
+} from "./types.ts";
 import { findContextRoot } from "./walker.ts";
-import { scanStarlightChromeContractViolations } from "./starlight-chrome-contract.ts";
+import { starlightContractAdapter } from "../integrations/starlight/contract-adapter.ts";
 
-export interface Violation {
-  element: HTMLElement;
-  tagName: string;
-  id: string;
-  classes: string;
-  reason: string;
-  surface?: string;
-  actual?: string;
-}
+// Re-export Violation from types for backward compatibility
+export type { Violation } from "./types.ts";
 
 export interface InspectionResult {
   context: DebugContext;
@@ -137,17 +137,38 @@ export class AxiomaticInspectorEngine {
   }
 
   /**
+   * Scan for violations of a framework's integration contract.
+   *
+   * This is a generic method that accepts any framework adapter. For Starlight,
+   * use `scanForStarlightChromeContractViolations()` as a convenience wrapper.
+   *
+   * @param adapter - The framework contract adapter to use
+   * @param options - Scan configuration options
+   * @returns Full result including violations and scan metrics
+   */
+  public scanForFrameworkContractViolations(
+    adapter: FrameworkContractAdapter,
+    options?: FrameworkContractScanOptions,
+  ): FrameworkContractResult {
+    return adapter.scan(options);
+  }
+
+  /**
    * Starlight-specific continuity contract check.
    *
    * This is intentionally rule-focused (CSSOM scan) rather than DOM-wide.
    * It is designed to complement (not replace) the generic Axiomatic mismatch scan.
+   *
+   * This is a convenience wrapper around `scanForFrameworkContractViolations()`
+   * with the Starlight adapter.
    */
   public scanForStarlightChromeContractViolations(options?: {
     ignoreContainer?: HTMLElement;
   }): Violation[] {
-    return scanStarlightChromeContractViolations({
-      ignoreContainer: options?.ignoreContainer,
-    }).violations;
+    return this.scanForFrameworkContractViolations(
+      starlightContractAdapter,
+      options,
+    ).violations;
   }
 
   public async checkContinuity(

@@ -2,7 +2,7 @@ import {
   STARLIGHT_CHROME_CONTRACT,
   type StarlightChromeContractSpec,
 } from "../integrations/starlight/chrome-contract-spec.ts";
-import type { Violation } from "./engine.ts";
+import type { Violation } from "./types.ts";
 
 type CssomViolation = {
   sheet: string;
