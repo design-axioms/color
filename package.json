@@ -30,8 +30,8 @@
     "color-config.schema.json"
   ],
   "scripts": {
-    "solve": "node src/cli/index.ts color-config.json css/theme.css",
-    "solve:dist": "node dist/cli/index.js color-config.json css/theme.css",
+    "solve": "node src/cli/index.ts color-config.json css/theme.css --emit-ts",
+    "solve:dist": "node dist/cli/index.js color-config.json css/theme.css --emit-ts",
     "audit:theme": "node src/cli/index.ts audit",
     "build": "tsup && pnpm solve:dist && pnpm schema && pnpm build:css",
     "build:css": "node scripts/build-css.ts",

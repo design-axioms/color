@@ -82,12 +82,12 @@ describe("ThemeManager", () => {
   });
 
   it("should initialize with system mode by default", () => {
-    const manager = new ThemeManager();
+    const manager = new ThemeManager({ invertedSelectors: [] });
     expect(manager.mode).toBe("system");
   });
 
   it("should set mode to light", () => {
-    const manager = new ThemeManager();
+    const manager = new ThemeManager({ invertedSelectors: [] });
     manager.setMode("light");
     expect(manager.mode).toBe("light");
     // AxiomaticTheme sets --tau
@@ -110,7 +110,7 @@ describe("ThemeManager", () => {
   });
 
   it("should set mode to dark", () => {
-    const manager = new ThemeManager();
+    const manager = new ThemeManager({ invertedSelectors: [] });
     manager.setMode("dark");
     expect(manager.mode).toBe("dark");
     // AxiomaticTheme sets --tau
@@ -131,6 +131,7 @@ describe("ThemeManager", () => {
 
   it("should use custom classes if provided", () => {
     const manager = new ThemeManager({
+      invertedSelectors: [],
       lightClass: "light-theme",
       darkClass: "dark-theme",
     });
@@ -151,7 +152,7 @@ describe("ThemeManager", () => {
   });
 
   it("should resolve system mode correctly", () => {
-    const manager = new ThemeManager();
+    const manager = new ThemeManager({ invertedSelectors: [] });
 
     // Mock system dark mode
     mockMediaQueryList.matches = true;

@@ -19,7 +19,7 @@ const config: KnipConfig = {
     site: {
       entry: ["astro.config.ts", "src/content.config.ts"],
       project: ["src/**/*.{ts,tsx,astro,svelte,mdx}"],
-      ignore: ["dist/**", ".astro/**"],
+      ignore: ["dist/**", ".astro/**", "**/*.generated.ts"],
       ignoreDependencies: [
         "svelte-check",
         "sharp", // Used by Astro image optimization

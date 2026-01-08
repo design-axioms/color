@@ -134,24 +134,14 @@ describe("ThemeManager invertedSelectors option", () => {
     manager.dispose();
   });
 
-  it("should handle empty invertedSelectors array (falls back to CSS variable)", () => {
-    // Set up CSS variable fallback
-    document.documentElement.style.setProperty(
-      "--axm-inverted-surfaces",
-      ".css-inverted",
-    );
-
-    const invertedEl = document.createElement("div");
-    invertedEl.className = "css-inverted";
-    document.body.appendChild(invertedEl);
-
-    // Empty array should fall back to CSS variable
+  it("should handle empty invertedSelectors array gracefully", () => {
+    // Empty array is valid - no inverted surfaces to manage
     const manager = new ThemeManager({
       invertedSelectors: [],
     });
 
-    // Should use CSS variable fallback
-    expect(invertedEl.style.getPropertyValue("color-scheme")).toBe("dark");
+    // Should not throw, just no-op
+    expect(manager).toBeDefined();
 
     manager.dispose();
   });
@@ -178,7 +168,7 @@ describe("ThemeManager → AxiomaticTheme delegation", () => {
   });
 
   it("should delegate to AxiomaticTheme when setting light mode", () => {
-    const manager = new ThemeManager();
+    const manager = new ThemeManager({ invertedSelectors: [] });
     manager.setMode("light");
 
     // AxiomaticTheme should have set --tau to 1
@@ -194,7 +184,7 @@ describe("ThemeManager → AxiomaticTheme delegation", () => {
   });
 
   it("should delegate to AxiomaticTheme when setting dark mode", () => {
-    const manager = new ThemeManager();
+    const manager = new ThemeManager({ invertedSelectors: [] });
     manager.setMode("dark");
 
     // AxiomaticTheme should have set --tau to -1
@@ -210,7 +200,7 @@ describe("ThemeManager → AxiomaticTheme delegation", () => {
   });
 
   it("should set semantic state attributes", () => {
-    const manager = new ThemeManager();
+    const manager = new ThemeManager({ invertedSelectors: [] });
     manager.setMode("dark");
 
     expect(document.documentElement.getAttribute("data-axm-mode")).toBe("dark");
@@ -225,6 +215,7 @@ describe("ThemeManager → AxiomaticTheme delegation", () => {
     const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
 
     const manager = new ThemeManager({
+      invertedSelectors: [],
       lightClass: "theme-light",
       darkClass: "theme-dark",
     });
@@ -258,7 +249,7 @@ describe("ThemeManager → AxiomaticTheme delegation", () => {
   });
 
   it("should keep AxiomaticTheme and ThemeManager in sync", () => {
-    const manager = new ThemeManager();
+    const manager = new ThemeManager({ invertedSelectors: [] });
     const theme = AxiomaticTheme.get();
 
     manager.setMode("dark");

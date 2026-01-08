@@ -7,6 +7,7 @@
  * -----------------------------------------------------------------------------
  */
 
+
 :root {
   /* Key Colors */
   --axm-key-brand-color: oklch(0.6056 0.2189 292.7172);
@@ -40,53 +41,15 @@
   --_axm-hue-indigo: var(--_axm-hue-info);
   --_axm-chroma-indigo: var(--_axm-chroma-info);
   /* Elevation */
-  --axm-shadow-sm: 0 1px 2px 0
-    oklch(
-      calc(0.5 + (-0.5 * var(--tau, 1))) 0 0 /
-        calc(0.1 + (-0.05 * var(--tau, 1)))
-    );
-  --axm-shadow-md:
-    0 4px 6px -1px
-      oklch(
-        calc(0.5 + (-0.5 * var(--tau, 1))) 0 0 /
-          calc(0.125 + (-0.025 * var(--tau, 1)))
-      ),
-    0 2px 4px -1px
-      oklch(
-        calc(0.5 + (-0.5 * var(--tau, 1))) 0 0 /
-          calc(0.08 + (-0.02 * var(--tau, 1)))
-      );
-  --axm-shadow-lg:
-    0 10px 15px -3px
-      oklch(
-        calc(0.5 + (-0.5 * var(--tau, 1))) 0 0 /
-          calc(0.125 + (-0.025 * var(--tau, 1)))
-      ),
-    0 4px 6px -2px
-      oklch(
-        calc(0.5 + (-0.5 * var(--tau, 1))) 0 0 /
-          calc(0.075 + (-0.025 * var(--tau, 1)))
-      );
-  --axm-shadow-xl:
-    0 20px 25px -5px
-      oklch(
-        calc(0.5 + (-0.5 * var(--tau, 1))) 0 0 /
-          calc(0.125 + (-0.025 * var(--tau, 1)))
-      ),
-    0 10px 10px -5px
-      oklch(
-        calc(0.5 + (-0.5 * var(--tau, 1))) 0 0 /
-          calc(0.07 + (-0.03 * var(--tau, 1)))
-      );
+  --axm-shadow-sm: 0 1px 2px 0 oklch(calc(0.5 + (-0.5 * var(--tau, 1))) 0 0 / calc(0.1 + (-0.05 * var(--tau, 1))));
+  --axm-shadow-md: 0 4px 6px -1px oklch(calc(0.5 + (-0.5 * var(--tau, 1))) 0 0 / calc(0.125 + (-0.025 * var(--tau, 1)))), 0 2px 4px -1px oklch(calc(0.5 + (-0.5 * var(--tau, 1))) 0 0 / calc(0.08 + (-0.02 * var(--tau, 1))));
+  --axm-shadow-lg: 0 10px 15px -3px oklch(calc(0.5 + (-0.5 * var(--tau, 1))) 0 0 / calc(0.125 + (-0.025 * var(--tau, 1)))), 0 4px 6px -2px oklch(calc(0.5 + (-0.5 * var(--tau, 1))) 0 0 / calc(0.075 + (-0.025 * var(--tau, 1))));
+  --axm-shadow-xl: 0 20px 25px -5px oklch(calc(0.5 + (-0.5 * var(--tau, 1))) 0 0 / calc(0.125 + (-0.025 * var(--tau, 1)))), 0 10px 10px -5px oklch(calc(0.5 + (-0.5 * var(--tau, 1))) 0 0 / calc(0.07 + (-0.03 * var(--tau, 1))));
   /* Focus */
-  --axm-focus-ring-color: oklch(
-    calc(0.6 + (-0.15 * var(--tau, 1))) 0.2 292.7172 / 1
-  );
+  --axm-focus-ring-color: oklch(calc(0.6 + (-0.15 * var(--tau, 1))) 0.2 292.7172 / 1);
   /* Highlight */
   --axm-highlight-ring-color: oklch(0.6 0.25 322.1499 / 1);
-  --axm-highlight-surface-color: oklch(
-    calc(0.605 + (0.355 * var(--tau, 1))) 0.05 322.1499 / 1
-  );
+  --axm-highlight-surface-color: oklch(calc(0.605 + (0.355 * var(--tau, 1))) 0.05 322.1499 / 1);
 }
 
 * {
@@ -95,71 +58,71 @@
   --axm-chart-1-c: 0.14;
   --axm-chart-1: oklch(
     calc(0.7036 - (0.0552 * var(--tau)))
-      calc(var(--axm-chart-1-c) + (var(--alpha-beta) * 0.5))
-      var(--axm-chart-1-h)
+    calc(var(--axm-chart-1-c) + (var(--alpha-beta) * 0.5))
+    var(--axm-chart-1-h)
   );
   --axm-chart-2-h: 190;
   --axm-chart-2-c: 0.14;
   --axm-chart-2: oklch(
     calc(0.7036 - (0.0552 * var(--tau)))
-      calc(var(--axm-chart-2-c) + (var(--alpha-beta) * 0.5))
-      var(--axm-chart-2-h)
+    calc(var(--axm-chart-2-c) + (var(--alpha-beta) * 0.5))
+    var(--axm-chart-2-h)
   );
   --axm-chart-3-h: 45;
   --axm-chart-3-c: 0.14;
   --axm-chart-3: oklch(
     calc(0.7036 - (0.0552 * var(--tau)))
-      calc(var(--axm-chart-3-c) + (var(--alpha-beta) * 0.5))
-      var(--axm-chart-3-h)
+    calc(var(--axm-chart-3-c) + (var(--alpha-beta) * 0.5))
+    var(--axm-chart-3-h)
   );
   --axm-chart-4-h: 250;
   --axm-chart-4-c: 0.14;
   --axm-chart-4: oklch(
     calc(0.7036 - (0.0552 * var(--tau)))
-      calc(var(--axm-chart-4-c) + (var(--alpha-beta) * 0.5))
-      var(--axm-chart-4-h)
+    calc(var(--axm-chart-4-c) + (var(--alpha-beta) * 0.5))
+    var(--axm-chart-4-h)
   );
   --axm-chart-5-h: 85;
   --axm-chart-5-c: 0.14;
   --axm-chart-5: oklch(
     calc(0.7036 - (0.0552 * var(--tau)))
-      calc(var(--axm-chart-5-c) + (var(--alpha-beta) * 0.5))
-      var(--axm-chart-5-h)
+    calc(var(--axm-chart-5-c) + (var(--alpha-beta) * 0.5))
+    var(--axm-chart-5-h)
   );
   --axm-chart-6-h: 280;
   --axm-chart-6-c: 0.14;
   --axm-chart-6: oklch(
     calc(0.7036 - (0.0552 * var(--tau)))
-      calc(var(--axm-chart-6-c) + (var(--alpha-beta) * 0.5))
-      var(--axm-chart-6-h)
+    calc(var(--axm-chart-6-c) + (var(--alpha-beta) * 0.5))
+    var(--axm-chart-6-h)
   );
   --axm-chart-7-h: 125;
   --axm-chart-7-c: 0.14;
   --axm-chart-7: oklch(
     calc(0.7036 - (0.0552 * var(--tau)))
-      calc(var(--axm-chart-7-c) + (var(--alpha-beta) * 0.5))
-      var(--axm-chart-7-h)
+    calc(var(--axm-chart-7-c) + (var(--alpha-beta) * 0.5))
+    var(--axm-chart-7-h)
   );
   --axm-chart-8-h: 320;
   --axm-chart-8-c: 0.14;
   --axm-chart-8: oklch(
     calc(0.7036 - (0.0552 * var(--tau)))
-      calc(var(--axm-chart-8-c) + (var(--alpha-beta) * 0.5))
-      var(--axm-chart-8-h)
+    calc(var(--axm-chart-8-c) + (var(--alpha-beta) * 0.5))
+    var(--axm-chart-8-h)
   );
   --axm-chart-9-h: 150;
   --axm-chart-9-c: 0.14;
   --axm-chart-9: oklch(
     calc(0.7036 - (0.0552 * var(--tau)))
-      calc(var(--axm-chart-9-c) + (var(--alpha-beta) * 0.5))
-      var(--axm-chart-9-h)
+    calc(var(--axm-chart-9-c) + (var(--alpha-beta) * 0.5))
+    var(--axm-chart-9-h)
   );
   --axm-chart-10-h: 360;
   --axm-chart-10-c: 0.14;
   --axm-chart-10: oklch(
     calc(0.7036 - (0.0552 * var(--tau)))
-      calc(var(--axm-chart-10-c) + (var(--alpha-beta) * 0.5))
-      var(--axm-chart-10-h)
+    calc(var(--axm-chart-10-c) + (var(--alpha-beta) * 0.5))
+    var(--axm-chart-10-h)
   );
 }
 
@@ -167,8 +130,7 @@
   --_axm-inverted-surfaces: ".surface-action, .surface-spotlight";
 }
 
-.surface-page,
-body {
+.surface-page, body {
   --_axm-local-light-h: 297.7172;
   --_axm-local-light-c: 0;
   --_axm-local-light-l: 1;
@@ -180,36 +142,63 @@ body {
   --alpha-beta: calc(0 + (0 - 0) * var(--_axm-mode-mix));
   --alpha-structure: 1px solid CanvasText;
   --axm-surface-token: oklch(
-    calc(1 + (0.1 - 1) * var(--_axm-mode-mix)) var(--alpha-beta)
-      var(--alpha-hue)
+    calc(1 + (0.1 - 1) * var(--_axm-mode-mix))
+    var(--alpha-beta)
+    var(--alpha-hue)
   );
-  --axm-text-high-token: oklch(calc(0 + (1 - 0) * var(--_axm-mode-mix)) 0 0);
+  --axm-text-high-token: oklch(
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
+  );
   --axm-text-body-token: oklch(
-    calc(0.3619 + (0.9416 - 0.3619) * var(--_axm-mode-mix)) 0 0
+    calc(0.3619 + (0.9416 - 0.3619) * var(--_axm-mode-mix))
+    0
+    0
   );
   --axm-text-subtle-token: oklch(
-    calc(0.4586 + (0.893 - 0.4586) * var(--_axm-mode-mix)) 0 0
+    calc(0.4586 + (0.893 - 0.4586) * var(--_axm-mode-mix))
+    0
+    0
   );
   --axm-text-subtlest-token: oklch(
-    calc(0.54 + (0.8406 - 0.54) * var(--_axm-mode-mix)) 0 0
+    calc(0.54 + (0.8406 - 0.54) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-text-high-hc-token: oklch(calc(0 + (1 - 0) * var(--_axm-mode-mix)) 0 0);
+  --axm-text-high-hc-token: oklch(
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
+  );
   --axm-text-body-hc-token: oklch(
-    calc(0.1935 + (0.9866 - 0.1935) * var(--_axm-mode-mix)) 0 0
+    calc(0.1935 + (0.9866 - 0.1935) * var(--_axm-mode-mix))
+    0
+    0
   );
   --axm-text-subtle-hc-token: oklch(
-    calc(0.3619 + (0.9416 - 0.3619) * var(--_axm-mode-mix)) 0 0
+    calc(0.3619 + (0.9416 - 0.3619) * var(--_axm-mode-mix))
+    0
+    0
   );
   --axm-text-subtlest-hc-token: oklch(
-    calc(0.411 + (0.9174 - 0.411) * var(--_axm-mode-mix)) 0 0
+    calc(0.411 + (0.9174 - 0.411) * var(--_axm-mode-mix))
+    0
+    0
   );
   --axm-border-dec-token: oklch(
-    calc(0.1935 + (0.9866 - 0.1935) * var(--_axm-mode-mix)) 0 0 /
-      calc(0.0799 + (0.3254 - 0.0799) * var(--_axm-mode-mix))
+    calc(0.1935 + (0.9866 - 0.1935) * var(--_axm-mode-mix))
+    0
+    0
+    /
+    calc(0.0799 + (0.3254 - 0.0799) * var(--_axm-mode-mix))
   );
   --axm-border-int-token: oklch(
-    calc(0.1935 + (0.9866 - 0.1935) * var(--_axm-mode-mix)) 0 0 /
-      calc(0.2093 + (0.5235 - 0.2093) * var(--_axm-mode-mix))
+    calc(0.1935 + (0.9866 - 0.1935) * var(--_axm-mode-mix))
+    0
+    0
+    /
+    calc(0.2093 + (0.5235 - 0.2093) * var(--_axm-mode-mix))
   );
 }
 
@@ -225,36 +214,63 @@ body {
   --alpha-beta: calc(0 + (0 - 0) * var(--_axm-mode-mix));
   --alpha-structure: 1px solid CanvasText;
   --axm-surface-token: oklch(
-    calc(0.9926 + (0.1935 - 0.9926) * var(--_axm-mode-mix)) var(--alpha-beta)
-      var(--alpha-hue)
+    calc(0.9926 + (0.1935 - 0.9926) * var(--_axm-mode-mix))
+    var(--alpha-beta)
+    var(--alpha-hue)
   );
-  --axm-text-high-token: oklch(calc(0 + (1 - 0) * var(--_axm-mode-mix)) 0 0);
+  --axm-text-high-token: oklch(
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
+  );
   --axm-text-body-token: oklch(
-    calc(0.3504 + (0.9446 - 0.3504) * var(--_axm-mode-mix)) 0 0
+    calc(0.3504 + (0.9446 - 0.3504) * var(--_axm-mode-mix))
+    0
+    0
   );
   --axm-text-subtle-token: oklch(
-    calc(0.4477 + (0.896 - 0.4477) * var(--_axm-mode-mix)) 0 0
+    calc(0.4477 + (0.896 - 0.4477) * var(--_axm-mode-mix))
+    0
+    0
   );
   --axm-text-subtlest-token: oklch(
-    calc(0.5295 + (0.8468 - 0.5295) * var(--_axm-mode-mix)) 0 0
+    calc(0.5295 + (0.8468 - 0.5295) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-text-high-hc-token: oklch(calc(0 + (1 - 0) * var(--_axm-mode-mix)) 0 0);
+  --axm-text-high-hc-token: oklch(
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
+  );
   --axm-text-body-hc-token: oklch(
-    calc(0 + (0.9896 - 0) * var(--_axm-mode-mix)) 0 0
+    calc(0 + (0.9896 - 0) * var(--_axm-mode-mix))
+    0
+    0
   );
   --axm-text-subtle-hc-token: oklch(
-    calc(0.3504 + (0.9446 - 0.3504) * var(--_axm-mode-mix)) 0 0
+    calc(0.3504 + (0.9446 - 0.3504) * var(--_axm-mode-mix))
+    0
+    0
   );
   --axm-text-subtlest-hc-token: oklch(
-    calc(0.3998 + (0.9204 - 0.3998) * var(--_axm-mode-mix)) 0 0
+    calc(0.3998 + (0.9204 - 0.3998) * var(--_axm-mode-mix))
+    0
+    0
   );
   --axm-border-dec-token: oklch(
-    calc(0 + (0.9896 - 0) * var(--_axm-mode-mix)) 0 0 /
-      calc(0.0636 + (0.2544 - 0.0636) * var(--_axm-mode-mix))
+    calc(0 + (0.9896 - 0) * var(--_axm-mode-mix))
+    0
+    0
+    /
+    calc(0.0636 + (0.2544 - 0.0636) * var(--_axm-mode-mix))
   );
   --axm-border-int-token: oklch(
-    calc(0 + (0.9896 - 0) * var(--_axm-mode-mix)) 0 0 /
-      calc(0.1719 + (0.4742 - 0.1719) * var(--_axm-mode-mix))
+    calc(0 + (0.9896 - 0) * var(--_axm-mode-mix))
+    0
+    0
+    /
+    calc(0.1719 + (0.4742 - 0.1719) * var(--_axm-mode-mix))
   );
 }
 
@@ -270,34 +286,63 @@ body {
   --alpha-beta: calc(0 + (0 - 0) * var(--_axm-mode-mix));
   --alpha-structure: 1px solid CanvasText;
   --axm-surface-token: oklch(
-    calc(0.9687 + (0.2911 - 0.9687) * var(--_axm-mode-mix)) var(--alpha-beta)
-      var(--alpha-hue)
+    calc(0.9687 + (0.2911 - 0.9687) * var(--_axm-mode-mix))
+    var(--alpha-beta)
+    var(--alpha-hue)
   );
-  --axm-text-high-token: oklch(calc(0 + (1 - 0) * var(--_axm-mode-mix)) 0 0);
+  --axm-text-high-token: oklch(
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
+  );
   --axm-text-body-token: oklch(
-    calc(0.2871 + (0.9596 - 0.2871) * var(--_axm-mode-mix)) 0 0
+    calc(0.2871 + (0.9596 - 0.2871) * var(--_axm-mode-mix))
+    0
+    0
   );
   --axm-text-subtle-token: oklch(
-    calc(0.4035 + (0.9113 - 0.4035) * var(--_axm-mode-mix)) 0 0
+    calc(0.4035 + (0.9113 - 0.4035) * var(--_axm-mode-mix))
+    0
+    0
   );
   --axm-text-subtlest-token: oklch(
-    calc(0.4908 + (0.8622 - 0.4908) * var(--_axm-mode-mix)) 0 0
+    calc(0.4908 + (0.8622 - 0.4908) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-text-high-hc-token: oklch(calc(0 + (1 - 0) * var(--_axm-mode-mix)) 0 0);
-  --axm-text-body-hc-token: oklch(calc(0 + (1 - 0) * var(--_axm-mode-mix)) 0 0);
+  --axm-text-high-hc-token: oklch(
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
+  );
+  --axm-text-body-hc-token: oklch(
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
+  );
   --axm-text-subtle-hc-token: oklch(
-    calc(0.2871 + (0.9596 - 0.2871) * var(--_axm-mode-mix)) 0 0
+    calc(0.2871 + (0.9596 - 0.2871) * var(--_axm-mode-mix))
+    0
+    0
   );
   --axm-text-subtlest-hc-token: oklch(
-    calc(0.3504 + (0.9355 - 0.3504) * var(--_axm-mode-mix)) 0 0
+    calc(0.3504 + (0.9355 - 0.3504) * var(--_axm-mode-mix))
+    0
+    0
   );
   --axm-border-dec-token: oklch(
-    calc(0 + (1 - 0) * var(--_axm-mode-mix)) 0 0 /
-      calc(0.0656 + (0.1952 - 0.0656) * var(--_axm-mode-mix))
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
+    /
+    calc(0.0656 + (0.1952 - 0.0656) * var(--_axm-mode-mix))
   );
   --axm-border-int-token: oklch(
-    calc(0 + (1 - 0) * var(--_axm-mode-mix)) 0 0 /
-      calc(0.1775 + (0.4284 - 0.1775) * var(--_axm-mode-mix))
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
+    /
+    calc(0.1775 + (0.4284 - 0.1775) * var(--_axm-mode-mix))
   );
 }
 .surface-card:hover {
@@ -311,8 +356,9 @@ body {
   --alpha-hue: calc(297.7169 + (292.7918 - 297.7169) * var(--_axm-mode-mix));
   --alpha-beta: calc(0 + (0 - 0) * var(--_axm-mode-mix));
   --axm-surface-token: oklch(
-    calc(0.9926 + (0.1 - 0.9926) * var(--_axm-mode-mix)) var(--alpha-beta)
-      var(--alpha-hue)
+    calc(0.9926 + (0.1 - 0.9926) * var(--_axm-mode-mix))
+    var(--alpha-beta)
+    var(--alpha-hue)
   );
 }
 .surface-card:active {
@@ -326,8 +372,9 @@ body {
   --alpha-hue: calc(297.7172 + (292.7918 - 297.7172) * var(--_axm-mode-mix));
   --alpha-beta: calc(0 + (0 - 0) * var(--_axm-mode-mix));
   --axm-surface-token: oklch(
-    calc(1 + (0.1 - 1) * var(--_axm-mode-mix)) var(--alpha-beta)
-      var(--alpha-hue)
+    calc(1 + (0.1 - 1) * var(--_axm-mode-mix))
+    var(--alpha-beta)
+    var(--alpha-hue)
   );
 }
 
@@ -343,34 +390,63 @@ body {
   --alpha-beta: calc(0 + (0 - 0) * var(--_axm-mode-mix));
   --alpha-structure: 1px solid CanvasText;
   --axm-surface-token: oklch(
-    calc(0.9596 + (0.3072 - 0.9596) * var(--_axm-mode-mix)) var(--alpha-beta)
-      var(--alpha-hue)
+    calc(0.9596 + (0.3072 - 0.9596) * var(--_axm-mode-mix))
+    var(--alpha-beta)
+    var(--alpha-hue)
   );
-  --axm-text-high-token: oklch(calc(0 + (1 - 0) * var(--_axm-mode-mix)) 0 0);
+  --axm-text-high-token: oklch(
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
+  );
   --axm-text-body-token: oklch(
-    calc(0.2414 + (0.9657 - 0.2414) * var(--_axm-mode-mix)) 0 0
+    calc(0.2414 + (0.9657 - 0.2414) * var(--_axm-mode-mix))
+    0
+    0
   );
   --axm-text-subtle-token: oklch(
-    calc(0.381 + (0.9174 - 0.381) * var(--_axm-mode-mix)) 0 0
+    calc(0.381 + (0.9174 - 0.381) * var(--_axm-mode-mix))
+    0
+    0
   );
   --axm-text-subtlest-token: oklch(
-    calc(0.473 + (0.8684 - 0.473) * var(--_axm-mode-mix)) 0 0
+    calc(0.473 + (0.8684 - 0.473) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-text-high-hc-token: oklch(calc(0 + (1 - 0) * var(--_axm-mode-mix)) 0 0);
-  --axm-text-body-hc-token: oklch(calc(0 + (1 - 0) * var(--_axm-mode-mix)) 0 0);
+  --axm-text-high-hc-token: oklch(
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
+  );
+  --axm-text-body-hc-token: oklch(
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
+  );
   --axm-text-subtle-hc-token: oklch(
-    calc(0.2414 + (0.9657 - 0.2414) * var(--_axm-mode-mix)) 0 0
+    calc(0.2414 + (0.9657 - 0.2414) * var(--_axm-mode-mix))
+    0
+    0
   );
   --axm-text-subtlest-hc-token: oklch(
-    calc(0.327 + (0.9416 - 0.327) * var(--_axm-mode-mix)) 0 0
+    calc(0.327 + (0.9416 - 0.327) * var(--_axm-mode-mix))
+    0
+    0
   );
   --axm-border-dec-token: oklch(
-    calc(0 + (1 - 0) * var(--_axm-mode-mix)) 0 0 /
-      calc(0.0694 + (0.1923 - 0.0694) * var(--_axm-mode-mix))
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
+    /
+    calc(0.0694 + (0.1923 - 0.0694) * var(--_axm-mode-mix))
   );
   --axm-border-int-token: oklch(
-    calc(0 + (1 - 0) * var(--_axm-mode-mix)) 0 0 /
-      calc(0.1828 + (0.4249 - 0.1828) * var(--_axm-mode-mix))
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
+    /
+    calc(0.1828 + (0.4249 - 0.1828) * var(--_axm-mode-mix))
   );
 }
 
@@ -386,30 +462,63 @@ body {
   --alpha-beta: calc(0.2145 + (0.2145 - 0.2145) * var(--_axm-mode-mix));
   --alpha-structure: 1px solid CanvasText;
   --axm-surface-token: oklch(
-    calc(0.5731 + (0.5731 - 0.5731) * var(--_axm-mode-mix)) var(--alpha-beta)
-      var(--alpha-hue)
+    calc(0.5731 + (0.5731 - 0.5731) * var(--_axm-mode-mix))
+    var(--alpha-beta)
+    var(--alpha-hue)
   );
-  --axm-text-high-token: oklch(calc(1 + (1 - 1) * var(--_axm-mode-mix)) 0 0);
-  --axm-text-body-token: oklch(calc(1 + (1 - 1) * var(--_axm-mode-mix)) 0 0);
-  --axm-text-subtle-token: oklch(calc(1 + (1 - 1) * var(--_axm-mode-mix)) 0 0);
+  --axm-text-high-token: oklch(
+    calc(1 + (1 - 1) * var(--_axm-mode-mix))
+    0
+    0
+  );
+  --axm-text-body-token: oklch(
+    calc(1 + (1 - 1) * var(--_axm-mode-mix))
+    0
+    0
+  );
+  --axm-text-subtle-token: oklch(
+    calc(1 + (1 - 1) * var(--_axm-mode-mix))
+    0
+    0
+  );
   --axm-text-subtlest-token: oklch(
-    calc(0.9955 + (0.9955 - 0.9955) * var(--_axm-mode-mix)) 0 0
+    calc(0.9955 + (0.9955 - 0.9955) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-text-high-hc-token: oklch(calc(1 + (1 - 1) * var(--_axm-mode-mix)) 0 0);
-  --axm-text-body-hc-token: oklch(calc(1 + (1 - 1) * var(--_axm-mode-mix)) 0 0);
+  --axm-text-high-hc-token: oklch(
+    calc(1 + (1 - 1) * var(--_axm-mode-mix))
+    0
+    0
+  );
+  --axm-text-body-hc-token: oklch(
+    calc(1 + (1 - 1) * var(--_axm-mode-mix))
+    0
+    0
+  );
   --axm-text-subtle-hc-token: oklch(
-    calc(1 + (1 - 1) * var(--_axm-mode-mix)) 0 0
+    calc(1 + (1 - 1) * var(--_axm-mode-mix))
+    0
+    0
   );
   --axm-text-subtlest-hc-token: oklch(
-    calc(1 + (1 - 1) * var(--_axm-mode-mix)) 0 0
+    calc(1 + (1 - 1) * var(--_axm-mode-mix))
+    0
+    0
   );
   --axm-border-dec-token: oklch(
-    calc(1 + (1 - 1) * var(--_axm-mode-mix)) 0 0 /
-      calc(0.1764 + (0.1764 - 0.1764) * var(--_axm-mode-mix))
+    calc(1 + (1 - 1) * var(--_axm-mode-mix))
+    0
+    0
+    /
+    calc(0.1764 + (0.1764 - 0.1764) * var(--_axm-mode-mix))
   );
   --axm-border-int-token: oklch(
-    calc(1 + (1 - 1) * var(--_axm-mode-mix)) 0 0 /
-      calc(0.4574 + (0.4574 - 0.4574) * var(--_axm-mode-mix))
+    calc(1 + (1 - 1) * var(--_axm-mode-mix))
+    0
+    0
+    /
+    calc(0.4574 + (0.4574 - 0.4574) * var(--_axm-mode-mix))
   );
 }
 .surface-action:hover {
@@ -423,8 +532,9 @@ body {
   --alpha-hue: calc(258.2467 + (258.2467 - 258.2467) * var(--_axm-mode-mix));
   --alpha-beta: calc(0.2145 + (0.2145 - 0.2145) * var(--_axm-mode-mix));
   --axm-surface-token: oklch(
-    calc(0.533 + (0.6083 - 0.533) * var(--_axm-mode-mix)) var(--alpha-beta)
-      var(--alpha-hue)
+    calc(0.533 + (0.6083 - 0.533) * var(--_axm-mode-mix))
+    var(--alpha-beta)
+    var(--alpha-hue)
   );
 }
 .surface-action:active {
@@ -438,8 +548,9 @@ body {
   --alpha-hue: calc(258.2467 + (258.2467 - 258.2467) * var(--_axm-mode-mix));
   --alpha-beta: calc(0.2145 + (0.2145 - 0.2145) * var(--_axm-mode-mix));
   --axm-surface-token: oklch(
-    calc(0.5085 + (0.6284 - 0.5085) * var(--_axm-mode-mix)) var(--alpha-beta)
-      var(--alpha-hue)
+    calc(0.5085 + (0.6284 - 0.5085) * var(--_axm-mode-mix))
+    var(--alpha-beta)
+    var(--alpha-hue)
   );
 }
 
@@ -455,34 +566,63 @@ body {
   --alpha-beta: calc(0 + (0 - 0) * var(--_axm-mode-mix));
   --alpha-structure: 1px solid CanvasText;
   --axm-surface-token: oklch(
-    calc(0.9355 + (0.3543 - 0.9355) * var(--_axm-mode-mix)) var(--alpha-beta)
-      var(--alpha-hue)
+    calc(0.9355 + (0.3543 - 0.9355) * var(--_axm-mode-mix))
+    var(--alpha-beta)
+    var(--alpha-hue)
   );
-  --axm-text-high-token: oklch(calc(0 + (1 - 0) * var(--_axm-mode-mix)) 0 0);
+  --axm-text-high-token: oklch(
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
+  );
   --axm-text-body-token: oklch(
-    calc(0 + (0.9806 - 0) * var(--_axm-mode-mix)) 0 0
+    calc(0 + (0.9806 - 0) * var(--_axm-mode-mix))
+    0
+    0
   );
   --axm-text-subtle-token: oklch(
-    calc(0.327 + (0.9325 - 0.327) * var(--_axm-mode-mix)) 0 0
+    calc(0.327 + (0.9325 - 0.327) * var(--_axm-mode-mix))
+    0
+    0
   );
   --axm-text-subtlest-token: oklch(
-    calc(0.4294 + (0.8838 - 0.4294) * var(--_axm-mode-mix)) 0 0
+    calc(0.4294 + (0.8838 - 0.4294) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-text-high-hc-token: oklch(calc(0 + (1 - 0) * var(--_axm-mode-mix)) 0 0);
-  --axm-text-body-hc-token: oklch(calc(0 + (1 - 0) * var(--_axm-mode-mix)) 0 0);
+  --axm-text-high-hc-token: oklch(
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
+  );
+  --axm-text-body-hc-token: oklch(
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
+  );
   --axm-text-subtle-hc-token: oklch(
-    calc(0 + (0.9806 - 0) * var(--_axm-mode-mix)) 0 0
+    calc(0 + (0.9806 - 0) * var(--_axm-mode-mix))
+    0
+    0
   );
   --axm-text-subtlest-hc-token: oklch(
-    calc(0.2499 + (0.9566 - 0.2499) * var(--_axm-mode-mix)) 0 0
+    calc(0.2499 + (0.9566 - 0.2499) * var(--_axm-mode-mix))
+    0
+    0
   );
   --axm-border-dec-token: oklch(
-    calc(0 + (1 - 0) * var(--_axm-mode-mix)) 0 0 /
-      calc(0.0717 + (0.1838 - 0.0717) * var(--_axm-mode-mix))
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
+    /
+    calc(0.0717 + (0.1838 - 0.0717) * var(--_axm-mode-mix))
   );
   --axm-border-int-token: oklch(
-    calc(0 + (1 - 0) * var(--_axm-mode-mix)) 0 0 /
-      calc(0.1923 + (0.4194 - 0.1923) * var(--_axm-mode-mix))
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
+    /
+    calc(0.1923 + (0.4194 - 0.1923) * var(--_axm-mode-mix))
   );
 }
 .surface-action-soft:hover {
@@ -496,8 +636,9 @@ body {
   --alpha-hue: calc(297.7062 + (293.3709 - 297.7062) * var(--_axm-mode-mix));
   --alpha-beta: calc(0 + (0 - 0) * var(--_axm-mode-mix));
   --axm-surface-token: oklch(
-    calc(0.9596 + (0.2748 - 0.9596) * var(--_axm-mode-mix)) var(--alpha-beta)
-      var(--alpha-hue)
+    calc(0.9596 + (0.2748 - 0.9596) * var(--_axm-mode-mix))
+    var(--alpha-beta)
+    var(--alpha-hue)
   );
 }
 .surface-action-soft:active {
@@ -511,8 +652,9 @@ body {
   --alpha-hue: calc(297.7126 + (292.9194 - 297.7126) * var(--_axm-mode-mix));
   --alpha-beta: calc(0 + (0 - 0) * var(--_axm-mode-mix));
   --axm-surface-token: oklch(
-    calc(0.9746 + (0.1614 - 0.9746) * var(--_axm-mode-mix)) var(--alpha-beta)
-      var(--alpha-hue)
+    calc(0.9746 + (0.1614 - 0.9746) * var(--_axm-mode-mix))
+    var(--alpha-beta)
+    var(--alpha-hue)
   );
 }
 
@@ -528,30 +670,63 @@ body {
   --alpha-beta: calc(0.2189 + (0.2189 - 0.2189) * var(--_axm-mode-mix));
   --alpha-structure: 1px solid CanvasText;
   --axm-surface-token: oklch(
-    calc(0.6056 + (0.6056 - 0.6056) * var(--_axm-mode-mix)) var(--alpha-beta)
-      var(--alpha-hue)
+    calc(0.6056 + (0.6056 - 0.6056) * var(--_axm-mode-mix))
+    var(--alpha-beta)
+    var(--alpha-hue)
   );
-  --axm-text-high-token: oklch(calc(1 + (1 - 1) * var(--_axm-mode-mix)) 0 0);
-  --axm-text-body-token: oklch(calc(1 + (1 - 1) * var(--_axm-mode-mix)) 0 0);
-  --axm-text-subtle-token: oklch(calc(1 + (1 - 1) * var(--_axm-mode-mix)) 0 0);
+  --axm-text-high-token: oklch(
+    calc(1 + (1 - 1) * var(--_axm-mode-mix))
+    0
+    0
+  );
+  --axm-text-body-token: oklch(
+    calc(1 + (1 - 1) * var(--_axm-mode-mix))
+    0
+    0
+  );
+  --axm-text-subtle-token: oklch(
+    calc(1 + (1 - 1) * var(--_axm-mode-mix))
+    0
+    0
+  );
   --axm-text-subtlest-token: oklch(
-    calc(1 + (1 - 1) * var(--_axm-mode-mix)) 0 0
+    calc(1 + (1 - 1) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-text-high-hc-token: oklch(calc(1 + (1 - 1) * var(--_axm-mode-mix)) 0 0);
-  --axm-text-body-hc-token: oklch(calc(1 + (1 - 1) * var(--_axm-mode-mix)) 0 0);
+  --axm-text-high-hc-token: oklch(
+    calc(1 + (1 - 1) * var(--_axm-mode-mix))
+    0
+    0
+  );
+  --axm-text-body-hc-token: oklch(
+    calc(1 + (1 - 1) * var(--_axm-mode-mix))
+    0
+    0
+  );
   --axm-text-subtle-hc-token: oklch(
-    calc(1 + (1 - 1) * var(--_axm-mode-mix)) 0 0
+    calc(1 + (1 - 1) * var(--_axm-mode-mix))
+    0
+    0
   );
   --axm-text-subtlest-hc-token: oklch(
-    calc(1 + (1 - 1) * var(--_axm-mode-mix)) 0 0
+    calc(1 + (1 - 1) * var(--_axm-mode-mix))
+    0
+    0
   );
   --axm-border-dec-token: oklch(
-    calc(1 + (1 - 1) * var(--_axm-mode-mix)) 0 0 /
-      calc(0.1836 + (0.1836 - 0.1836) * var(--_axm-mode-mix))
+    calc(1 + (1 - 1) * var(--_axm-mode-mix))
+    0
+    0
+    /
+    calc(0.1836 + (0.1836 - 0.1836) * var(--_axm-mode-mix))
   );
   --axm-border-int-token: oklch(
-    calc(1 + (1 - 1) * var(--_axm-mode-mix)) 0 0 /
-      calc(0.4847 + (0.4847 - 0.4847) * var(--_axm-mode-mix))
+    calc(1 + (1 - 1) * var(--_axm-mode-mix))
+    0
+    0
+    /
+    calc(0.4847 + (0.4847 - 0.4847) * var(--_axm-mode-mix))
   );
 }
 
@@ -567,34 +742,63 @@ body {
   --alpha-beta: calc(0.15 + (0.15 - 0.15) * var(--_axm-mode-mix));
   --alpha-structure: 1px solid CanvasText;
   --axm-surface-token: oklch(
-    calc(0.9 + (0.4 - 0.9) * var(--_axm-mode-mix)) var(--alpha-beta)
-      var(--alpha-hue)
+    calc(0.9 + (0.4 - 0.9) * var(--_axm-mode-mix))
+    var(--alpha-beta)
+    var(--alpha-hue)
   );
-  --axm-text-high-token: oklch(calc(0 + (1 - 0) * var(--_axm-mode-mix)) 0 0);
+  --axm-text-high-token: oklch(
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
+  );
   --axm-text-body-token: oklch(
-    calc(0 + (0.9985 - 0) * var(--_axm-mode-mix)) 0 0
+    calc(0 + (0.9985 - 0) * var(--_axm-mode-mix))
+    0
+    0
   );
   --axm-text-subtle-token: oklch(
-    calc(0.2156 + (0.9536 - 0.2156) * var(--_axm-mode-mix)) 0 0
+    calc(0.2156 + (0.9536 - 0.2156) * var(--_axm-mode-mix))
+    0
+    0
   );
   --axm-text-subtlest-token: oklch(
-    calc(0.3696 + (0.9052 - 0.3696) * var(--_axm-mode-mix)) 0 0
+    calc(0.3696 + (0.9052 - 0.3696) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-text-high-hc-token: oklch(calc(0 + (1 - 0) * var(--_axm-mode-mix)) 0 0);
-  --axm-text-body-hc-token: oklch(calc(0 + (1 - 0) * var(--_axm-mode-mix)) 0 0);
+  --axm-text-high-hc-token: oklch(
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
+  );
+  --axm-text-body-hc-token: oklch(
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
+  );
   --axm-text-subtle-hc-token: oklch(
-    calc(0 + (0.9985 - 0) * var(--_axm-mode-mix)) 0 0
+    calc(0 + (0.9985 - 0) * var(--_axm-mode-mix))
+    0
+    0
   );
   --axm-text-subtlest-hc-token: oklch(
-    calc(0 + (0.9746 - 0) * var(--_axm-mode-mix)) 0 0
+    calc(0 + (0.9746 - 0) * var(--_axm-mode-mix))
+    0
+    0
   );
   --axm-border-dec-token: oklch(
-    calc(0 + (1 - 0) * var(--_axm-mode-mix)) 0 0 /
-      calc(0.0729 + (0.175 - 0.0729) * var(--_axm-mode-mix))
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
+    /
+    calc(0.0729 + (0.175 - 0.0729) * var(--_axm-mode-mix))
   );
   --axm-border-int-token: oklch(
-    calc(0 + (1 - 0) * var(--_axm-mode-mix)) 0 0 /
-      calc(0.2032 + (0.4195 - 0.2032) * var(--_axm-mode-mix))
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
+    /
+    calc(0.2032 + (0.4195 - 0.2032) * var(--_axm-mode-mix))
   );
 }
 
@@ -610,34 +814,63 @@ body {
   --alpha-beta: calc(0.15 + (0.15 - 0.15) * var(--_axm-mode-mix));
   --alpha-structure: 1px solid CanvasText;
   --axm-surface-token: oklch(
-    calc(0.9 + (0.4 - 0.9) * var(--_axm-mode-mix)) var(--alpha-beta)
-      var(--alpha-hue)
+    calc(0.9 + (0.4 - 0.9) * var(--_axm-mode-mix))
+    var(--alpha-beta)
+    var(--alpha-hue)
   );
-  --axm-text-high-token: oklch(calc(0 + (1 - 0) * var(--_axm-mode-mix)) 0 0);
+  --axm-text-high-token: oklch(
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
+  );
   --axm-text-body-token: oklch(
-    calc(0 + (0.9985 - 0) * var(--_axm-mode-mix)) 0 0
+    calc(0 + (0.9985 - 0) * var(--_axm-mode-mix))
+    0
+    0
   );
   --axm-text-subtle-token: oklch(
-    calc(0.2156 + (0.9536 - 0.2156) * var(--_axm-mode-mix)) 0 0
+    calc(0.2156 + (0.9536 - 0.2156) * var(--_axm-mode-mix))
+    0
+    0
   );
   --axm-text-subtlest-token: oklch(
-    calc(0.3696 + (0.9052 - 0.3696) * var(--_axm-mode-mix)) 0 0
+    calc(0.3696 + (0.9052 - 0.3696) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-text-high-hc-token: oklch(calc(0 + (1 - 0) * var(--_axm-mode-mix)) 0 0);
-  --axm-text-body-hc-token: oklch(calc(0 + (1 - 0) * var(--_axm-mode-mix)) 0 0);
+  --axm-text-high-hc-token: oklch(
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
+  );
+  --axm-text-body-hc-token: oklch(
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
+  );
   --axm-text-subtle-hc-token: oklch(
-    calc(0 + (0.9985 - 0) * var(--_axm-mode-mix)) 0 0
+    calc(0 + (0.9985 - 0) * var(--_axm-mode-mix))
+    0
+    0
   );
   --axm-text-subtlest-hc-token: oklch(
-    calc(0 + (0.9746 - 0) * var(--_axm-mode-mix)) 0 0
+    calc(0 + (0.9746 - 0) * var(--_axm-mode-mix))
+    0
+    0
   );
   --axm-border-dec-token: oklch(
-    calc(0 + (1 - 0) * var(--_axm-mode-mix)) 0 0 /
-      calc(0.0729 + (0.175 - 0.0729) * var(--_axm-mode-mix))
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
+    /
+    calc(0.0729 + (0.175 - 0.0729) * var(--_axm-mode-mix))
   );
   --axm-border-int-token: oklch(
-    calc(0 + (1 - 0) * var(--_axm-mode-mix)) 0 0 /
-      calc(0.2032 + (0.4195 - 0.2032) * var(--_axm-mode-mix))
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
+    /
+    calc(0.2032 + (0.4195 - 0.2032) * var(--_axm-mode-mix))
   );
 }
 
@@ -653,34 +886,63 @@ body {
   --alpha-beta: calc(0.2 + (0.2 - 0.2) * var(--_axm-mode-mix));
   --alpha-structure: 1px solid CanvasText;
   --axm-surface-token: oklch(
-    calc(0.9 + (0.4 - 0.9) * var(--_axm-mode-mix)) var(--alpha-beta)
-      var(--alpha-hue)
+    calc(0.9 + (0.4 - 0.9) * var(--_axm-mode-mix))
+    var(--alpha-beta)
+    var(--alpha-hue)
   );
-  --axm-text-high-token: oklch(calc(0 + (1 - 0) * var(--_axm-mode-mix)) 0 0);
+  --axm-text-high-token: oklch(
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
+  );
   --axm-text-body-token: oklch(
-    calc(0 + (0.9985 - 0) * var(--_axm-mode-mix)) 0 0
+    calc(0 + (0.9985 - 0) * var(--_axm-mode-mix))
+    0
+    0
   );
   --axm-text-subtle-token: oklch(
-    calc(0.2156 + (0.9536 - 0.2156) * var(--_axm-mode-mix)) 0 0
+    calc(0.2156 + (0.9536 - 0.2156) * var(--_axm-mode-mix))
+    0
+    0
   );
   --axm-text-subtlest-token: oklch(
-    calc(0.3696 + (0.9052 - 0.3696) * var(--_axm-mode-mix)) 0 0
+    calc(0.3696 + (0.9052 - 0.3696) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-text-high-hc-token: oklch(calc(0 + (1 - 0) * var(--_axm-mode-mix)) 0 0);
-  --axm-text-body-hc-token: oklch(calc(0 + (1 - 0) * var(--_axm-mode-mix)) 0 0);
+  --axm-text-high-hc-token: oklch(
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
+  );
+  --axm-text-body-hc-token: oklch(
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
+  );
   --axm-text-subtle-hc-token: oklch(
-    calc(0 + (0.9985 - 0) * var(--_axm-mode-mix)) 0 0
+    calc(0 + (0.9985 - 0) * var(--_axm-mode-mix))
+    0
+    0
   );
   --axm-text-subtlest-hc-token: oklch(
-    calc(0 + (0.9746 - 0) * var(--_axm-mode-mix)) 0 0
+    calc(0 + (0.9746 - 0) * var(--_axm-mode-mix))
+    0
+    0
   );
   --axm-border-dec-token: oklch(
-    calc(0 + (1 - 0) * var(--_axm-mode-mix)) 0 0 /
-      calc(0.0729 + (0.175 - 0.0729) * var(--_axm-mode-mix))
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
+    /
+    calc(0.0729 + (0.175 - 0.0729) * var(--_axm-mode-mix))
   );
   --axm-border-int-token: oklch(
-    calc(0 + (1 - 0) * var(--_axm-mode-mix)) 0 0 /
-      calc(0.2032 + (0.4195 - 0.2032) * var(--_axm-mode-mix))
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
+    /
+    calc(0.2032 + (0.4195 - 0.2032) * var(--_axm-mode-mix))
   );
 }
 
@@ -745,25 +1007,12 @@ body {
 }
 
 /* Core Utilities (Reactive Pipeline) */
-.text-high {
-  --_axm-text-lightness-source: var(--axm-text-high-token);
-}
-.text-strong {
-  --_axm-text-lightness-source: var(--axm-text-high-token);
-  font-weight: 600;
-}
-.text-body {
-  --_axm-text-lightness-source: var(--axm-text-body-token);
-}
-.text-subtle {
-  --_axm-text-lightness-source: var(--axm-text-subtle-token);
-}
-.text-subtlest {
-  --_axm-text-lightness-source: var(--axm-text-subtlest-token);
-}
-.text-content {
-  --_axm-text-lightness-source: var(--axm-text-body-token);
-}
+.text-high { --_axm-text-lightness-source: var(--axm-text-high-token); }
+.text-strong { --_axm-text-lightness-source: var(--axm-text-high-token); font-weight: 600; }
+.text-body { --_axm-text-lightness-source: var(--axm-text-body-token); }
+.text-subtle { --_axm-text-lightness-source: var(--axm-text-subtle-token); }
+.text-subtlest { --_axm-text-lightness-source: var(--axm-text-subtlest-token); }
+.text-content { --_axm-text-lightness-source: var(--axm-text-body-token); }
 .text-brand {
   --alpha-hue: var(--_axm-hue-brand);
   --alpha-beta: var(--_axm-chroma-brand);
@@ -784,47 +1033,24 @@ body {
   --alpha-beta: var(--_axm-chroma-brand);
 }
 
-.bg-surface {
-  background-color: var(--_axm-computed-surface);
-}
-.bg-strong {
-  background-color: var(--_axm-computed-fg-color);
-}
-.text-inverse {
-  color: var(--_axm-computed-surface);
-}
+.bg-surface { background-color: var(--_axm-computed-surface); }
+.bg-strong { background-color: var(--_axm-computed-fg-color); }
+.text-inverse { color: var(--_axm-computed-surface); }
 
-.hue-slider {
-}
+.hue-slider {}
 
 @media (prefers-contrast: more) {
-  .text-high {
-    --_axm-text-lightness-source: var(--axm-text-high-hc-token);
-  }
-  .text-strong {
-    --_axm-text-lightness-source: var(--axm-text-high-hc-token);
-  }
-  .text-body {
-    --_axm-text-lightness-source: var(--axm-text-body-hc-token);
-  }
-  .text-subtle {
-    --_axm-text-lightness-source: var(--axm-text-subtle-hc-token);
-  }
-  .text-subtlest {
-    --_axm-text-lightness-source: var(--axm-text-subtlest-hc-token);
-  }
-  .text-content {
-    --_axm-text-lightness-source: var(--axm-text-body-hc-token);
-  }
+  .text-high { --_axm-text-lightness-source: var(--axm-text-high-hc-token); }
+  .text-strong { --_axm-text-lightness-source: var(--axm-text-high-hc-token); }
+  .text-body { --_axm-text-lightness-source: var(--axm-text-body-hc-token); }
+  .text-subtle { --_axm-text-lightness-source: var(--axm-text-subtle-hc-token); }
+  .text-subtlest { --_axm-text-lightness-source: var(--axm-text-subtlest-hc-token); }
+  .text-content { --_axm-text-lightness-source: var(--axm-text-body-hc-token); }
 }
 
 :root {
-  --axm-preset-font-mono:
-    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
-    "Courier New", monospace;
-  --axm-preset-font-sans:
-    ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-    Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  --axm-preset-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  --axm-preset-font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
   --axm-preset-weight-medium: 500;
   --axm-preset-weight-bold: 600;
   --axm-preset-text-xs: 0.75rem;
@@ -838,40 +1064,15 @@ body {
 }
 
 /* Preset Utilities (Typography & Layout) */
-.font-mono {
-  font-family: var(--axm-preset-font-mono);
-}
-.font-sans {
-  font-family: var(--axm-preset-font-sans);
-}
-.font-medium {
-  font-weight: var(--axm-preset-weight-medium);
-}
-.font-bold {
-  font-weight: var(--axm-preset-weight-bold);
-}
-.text-xs {
-  font-size: var(--axm-preset-text-xs);
-}
-.text-sm {
-  font-size: var(--axm-preset-text-sm);
-}
-.text-base {
-  font-size: var(--axm-preset-text-base);
-}
-.text-lg {
-  font-size: var(--axm-preset-text-lg);
-}
-.text-xl {
-  font-size: var(--axm-preset-text-xl);
-}
-.text-2xl {
-  font-size: var(--axm-preset-text-2xl);
-}
-.preset-bordered {
-  border: var(--axm-preset-border-width) var(--axm-preset-border-style)
-    var(--axm-border-dec-token);
-}
-.bordered {
-  border: 1px solid var(--axm-border-dec-token);
-}
+.font-mono { font-family: var(--axm-preset-font-mono); }
+.font-sans { font-family: var(--axm-preset-font-sans); }
+.font-medium { font-weight: var(--axm-preset-weight-medium); }
+.font-bold { font-weight: var(--axm-preset-weight-bold); }
+.text-xs { font-size: var(--axm-preset-text-xs); }
+.text-sm { font-size: var(--axm-preset-text-sm); }
+.text-base { font-size: var(--axm-preset-text-base); }
+.text-lg { font-size: var(--axm-preset-text-lg); }
+.text-xl { font-size: var(--axm-preset-text-xl); }
+.text-2xl { font-size: var(--axm-preset-text-2xl); }
+.preset-bordered { border: var(--axm-preset-border-width) var(--axm-preset-border-style) var(--axm-border-dec-token); }
+.bordered { border: 1px solid var(--axm-border-dec-token); }

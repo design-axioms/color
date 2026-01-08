@@ -610,7 +610,7 @@ The theme system uses a layered architecture with clear ownership boundaries:
 
 ```typescript
 class ThemeManager {
-  constructor(options?: ThemeManagerOptions);
+  constructor(options: ThemeManagerOptions);
   get mode(): ThemeMode;
   get resolvedMode(): "light" | "dark";
   setMode(mode: ThemeMode): void;
@@ -641,13 +641,12 @@ Each DOM attribute or CSS variable has exactly one authoritative writer:
 
 ### Generated Metadata
 
-| Requirement                  | Status | Notes                                   |
-| :--------------------------- | :----- | :-------------------------------------- |
-| CLI `--emit-ts` flag         | ✅     | Generates `theme.generated.ts`          |
-| `invertedSelectors` export   | ✅     | Array of inverted surface selectors     |
-| `defaultTau` export          | ✅     | Default theme polarity                  |
-| ThemeManager accepts option  | ✅     | `invertedSelectors` in constructor opts |
-| Legacy CSS variable fallback | ✅     | `--axm-inverted-surfaces` still works   |
+| Requirement                  | Status | Notes                                |
+| :--------------------------- | :----- | :----------------------------------- |
+| CLI `--emit-ts` flag         | ✅     | Generates `theme.generated.ts`       |
+| `invertedSelectors` export   | ✅     | Array of inverted surface selectors  |
+| `defaultTau` export          | ✅     | Default theme polarity               |
+| ThemeManager requires option | ✅     | `invertedSelectors` required in opts |
 
 ### Bridge Exports
 
