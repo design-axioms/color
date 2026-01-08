@@ -1,5 +1,40 @@
 # Changelog
 
+## Epoch 44: Phase 1 - ThemeManager Unification (2026-01-08)
+
+**Goal**: Resolve ThemeManager/AxiomaticTheme confusion. Establish single theme authority. Eliminate race conditions.
+
+**Completed Work**:
+
+- **ThemeManager Delegation**: ThemeManager now delegates all read operations (mode, vibrancy, hue) to AxiomaticTheme singleton.
+- **Inverted Selectors Option**: Added `invertedSelectors` option to ThemeManager, eliminating CSS variable parsing at runtime.
+- **CLI `--emit-ts` Flag**: Generate TypeScript metadata file with `invertedSelectors` and `defaultTau` exports.
+- **Race Condition Fix**: Made `invertedSelectors` required; data now available at ES module import time (before code runs).
+- **Documentation**: Updated RFC-021-INTEGRATION and JavaScript API reference.
+
+**Architecture Established**:
+
+- ThemeManager: Browser-side coordination (mode switching, system preference, inverted surfaces)
+- AxiomaticTheme: Singleton observer for computed CSS state (reads --axm-\* variables)
+- Generated metadata: Build-time export of theme configuration for import-time availability
+
+**PRs**:
+
+- #23: ThemeManager delegation to AxiomaticTheme
+- #24: ThemeManager inverted selectors option
+- #25: CLI `--emit-ts` flag
+- #26: Deep partial type fix
+- #28: Prettierignore for site
+- #29: Make `invertedSelectors` required (BREAKING - v1.0.0)
+
+**Verification**:
+
+- `pnpm test` (130 tests passing)
+- All pre-commit hooks green
+- CI passing on all PRs
+
+---
+
 ## Claim Ledger Triage: Epoch 2 — Theme Studio alignment (2025-12-17)
 
 **Goal**: Align Studio + Starlight to a single theme authority (ThemeManager semantic plane) and make Studio config IO strict and shareable.
