@@ -1,5 +1,28 @@
 # Changelog
 
+## Release (2026-01-08)
+
+* @axiomatic-design/color 1.0.0 (major)
+
+#### :boom: Breaking Change
+* `@axiomatic-design/color`
+  * [#29](https://github.com/design-axioms/color/pull/29) refactor: make invertedSelectors required, remove CSS fallback ([@wycats](https://github.com/wycats))
+
+#### :rocket: Enhancement
+* `@axiomatic-design/color`
+  * [#25](https://github.com/design-axioms/color/pull/25) feat: add --emit-ts flag to generate TypeScript metadata ([@wycats](https://github.com/wycats))
+  * [#24](https://github.com/design-axioms/color/pull/24) feat: add invertedSelectors option and mark AxiomaticTheme internal ([@wycats](https://github.com/wycats))
+
+#### :house: Internal
+* `@axiomatic-design/color`
+  * [#28](https://github.com/design-axioms/color/pull/28) chore: add site/ to prettierignore and format CHANGELOG ([@wycats](https://github.com/wycats))
+  * [#26](https://github.com/design-axioms/color/pull/26) refactor: delegate ThemeManager CSS writes to AxiomaticTheme ([@wycats](https://github.com/wycats))
+* Other
+  * [#23](https://github.com/design-axioms/color/pull/23) docs: consolidate ThemeManager architecture in RFCs ([@wycats](https://github.com/wycats))
+
+#### Committers: 1
+- Yehuda Katz ([@wycats](https://github.com/wycats))
+
 ## Release (2026-01-06)
 
 - @axiomatic-design/color 0.3.0 (minor)
