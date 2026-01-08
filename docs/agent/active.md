@@ -1,54 +1,49 @@
-# Current Work: Epoch 44, Phase 1 — ThemeManager Unification
+# Current Work: Epoch 44, Phase 2 — Starlight Extraction
 
-**Updated:** 2026-01-05
+**Updated:** 2026-01-08
 
-## Context
+## Previous Phase: ThemeManager Unification — ✅ COMPLETE
 
-After a comprehensive project review (see `docs/research/status/`), we've pivoted from the "Perfect Demo" goal to "Architecture Clarity" as the foundation for alpha release.
+**PRs:**
 
-Key findings:
+- #23: ThemeManager delegation to AxiomaticTheme
+- #24: ThemeManager inverted selectors option
+- #25: CLI `--emit-ts` flag
+- #26: Deep partial type fix
+- #28: Prettierignore for site
+- #29: Make `invertedSelectors` required (BREAKING)
 
-- ThemeManager/AxiomaticTheme confusion causes race conditions
-- Starlight-specific code is embedded in core inspector
-- Phase 2.1 tasks would be easier AFTER architecture improvements
-- See `docs/research/status/architecture-dependency-analysis.md`
+**Outcome:**
 
-## Current Phase: ThemeManager Unification
+- ThemeManager now delegates to AxiomaticTheme for all reads
+- `invertedSelectors` is a required option, imported from generated TypeScript
+- Race condition eliminated: data available at ES module import time
+- RFC-021 and JavaScript API docs updated
 
-**Goal:** Resolve the ThemeManager/AxiomaticTheme confusion. Establish a single, clear theme authority.
+## Current Phase: Starlight Extraction
+
+**Goal:** Extract Starlight-specific code from core inspector. Create adapter pattern for framework-specific checks.
 
 ### Tasks
 
-- [ ] **Audit the two theme classes**
-  - `ThemeManager` in `src/lib/browser.ts` - manages mode, observes system, handles inverted surfaces
-  - `AxiomaticTheme` in `src/lib/theme.ts` - singleton observer, reads computed styles, notifies listeners
-  - Document: What does each do? Where do they overlap? Where do they conflict?
+- [ ] **Extract `starlight-chrome-contract.ts` from core inspector**
+  - Move Starlight-specific checks to integration layer
+  - Define clear boundary between core inspector and framework adapters
 
-- [ ] **Clarify or merge**
-  - Decision: Merge into single class OR clearly separate responsibilities
-  - If merging: Which class survives? What interface?
-  - If separating: Document clear ownership boundaries
+- [ ] **Create adapter pattern**
+  - Define `FrameworkAdapter` interface for framework-specific checks
+  - Implement `StarlightAdapter` as first adapter
 
-- [ ] **Fix the race condition**
-  - Current: Single `requestAnimationFrame` in `initInvertedSurfaces`
-  - Problem: Unreliable—CSS may not be loaded
-  - Fix: Retry with backoff, or explicit "CSS ready" signal
-
-- [ ] **Single semantic writer**
-  - Ensure only one class writes to `data-theme`, `data-axm-mode`, `--tau`
-  - Document the "single writer" principle
-
-- [ ] **Document the pattern**
-  - Write "Replace Your Theme Picker Handler" guide
-  - Explain: Keep your UI, replace the handler
-  - Provide copy-pasteable integration code
+- [ ] **Update site integration**
+  - Migrate site to use adapter pattern
+  - Verify all existing tests still pass
 
 ### Success Criteria
 
-- [ ] Single clear answer to "how do I integrate theme switching?"
-- [ ] No race conditions in inverted surface detection
-- [ ] Inspector and theme-bridge use the same theme authority
-- [ ] Pattern is documented and copy-pasteable
+- [ ] Core inspector has no Starlight-specific code
+- [ ] Adapter pattern documented in RFC or design doc
+- [ ] Site integration uses the new adapter
+- [ ] All tests green
 
 ---
 
