@@ -47,3 +47,63 @@ export interface CSSRuleMatch {
   scopeProximity: number;
   rule: CSSStyleRule | null;
 }
+
+/**
+ * A violation detected by the inspector.
+ */
+export interface Violation {
+  element: HTMLElement;
+  tagName: string;
+  id: string;
+  classes: string;
+  reason: string;
+  surface?: string;
+  actual?: string;
+}
+
+/**
+ * Result of a framework contract scan.
+ */
+export interface FrameworkContractResult {
+  violations: Violation[];
+  metrics: {
+    scannedSheets: number;
+    scannedRules: number;
+    shadowRoots: number;
+  };
+}
+
+/**
+ * Options for framework contract scanning.
+ */
+export interface FrameworkContractScanOptions {
+  /** Container element to ignore during scanning */
+  ignoreContainer?: HTMLElement;
+}
+
+/**
+ * Adapter interface for framework-specific contract validation.
+ *
+ * Framework adapters implement CSSOM-based scanning to detect violations
+ * of the framework's integration contract with Axiomatic. This enables
+ * the inspector engine to remain framework-agnostic while supporting
+ * framework-specific rules.
+ *
+ * @example
+ * ```ts
+ * const adapter = createStarlightContractAdapter();
+ * const result = engine.scanForFrameworkContractViolations(adapter);
+ * ```
+ */
+export interface FrameworkContractAdapter {
+  /** Human-readable name of the framework (e.g., "Starlight") */
+  readonly name: string;
+
+  /**
+   * Scan for violations of the framework's integration contract.
+   *
+   * @param options - Scan configuration options
+   * @returns Violations found and scan metrics
+   */
+  scan(options?: FrameworkContractScanOptions): FrameworkContractResult;
+}
