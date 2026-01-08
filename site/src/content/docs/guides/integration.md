@@ -5,6 +5,8 @@ description: How to integrate the generated CSS into your application.
 
 Once you have generated your `theme.css` file, integrating it is straightforward. The system produces standard CSS, so it works with any framework (React, Vue, Svelte, etc.) or vanilla HTML.
 
+> **Working Example**: See the [Vercel Demo](https://github.com/design-axioms/color/tree/main/examples/vercel-demo) for a complete Vite + React integration with runtime solver, theme toggle, and dynamic brand color picker.
+
 ## 1. Load the CSS
 
 Import the generated file into your application's entry point.

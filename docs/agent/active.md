@@ -42,16 +42,19 @@
 
 Based on fresh-eyes review, we're pivoting from the original Phase 3/4 work to focus on documentation gaps that affect the "Pragmatic Integrator" persona.
 
-### Phase A: Quick Wins (Current)
+### Phase A: Quick Wins — ✅ COMPLETE
 
 - [x] Update integration guide with prominent ThemeManager section
 - [x] Create `advanced/framework-integration.mdx` for framework authors
-- [ ] Update plan.md to reflect pivot
+- [x] Update plan.md to reflect pivot
+- **PR**: #33
 
-### Phase B: Working Example
+### Phase B: Working Example (Current)
 
-- Document `examples/vercel-demo` as a reference implementation
-- Add "How It Works" walkthrough
+- [x] Document `examples/vercel-demo` as a reference implementation (README.md)
+- [x] Add "How It Works" walkthrough
+- [ ] Cross-link from integration guide
+- [ ] Subagent premortem review
 
 ### Phase C: Troubleshooting
 
