@@ -7,6 +7,10 @@ This guide is for framework authors and design system engineers who need to inte
 
 If you're building an app, see the [Integration Guide](/guides/integration) instead.
 
+:::tip[Reference Implementation]
+For a complete working example, see the [Vercel Demo integration](https://github.com/design-axioms/color/tree/main/examples/vercel-demo) which demonstrates adapter patterns, runtime wiring, and contract enforcement.
+:::
+
 ## The Problem: Two Theme Systems
 
 You have an existing framework (e.g., Starlight, Chakra UI, Material UI) with its own color variables (`--framework-*`). You want to use Axiomatic's color engine, but your framework "owns" the DOM and injects its own styles.
@@ -52,6 +56,8 @@ See [Bridge API (Adapters)](/advanced/bridge-api) for full reference.
 
 ## Example: Mapping Framework Variables
 
+{/* axm-docs:explanatory:start */}
+
 ```css
 /* src/styles/framework-adapter.css — THE ONLY FILE with framework mappings */
 :root {
@@ -69,6 +75,8 @@ See [Bridge API (Adapters)](/advanced/bridge-api) for full reference.
   --framework-border-decorative: var(--axm-bridge-border-dec);
 }
 ```
+
+{/* axm-docs:explanatory:end */}
 
 Now when Axiomatic's theme changes (light → dark), the bridge exports update, your framework variables update, and your components re-paint—all in one smooth transition.
 

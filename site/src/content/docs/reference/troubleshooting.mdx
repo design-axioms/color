@@ -1,0 +1,317 @@
+---
+title: Troubleshooting
+description: Common issues and solutions for Axiomatic Color integration.
+---
+
+This guide covers common issues encountered during alpha testing. Many sections are **skeletal**—they'll expand based on your feedback as we approach beta.
+
+:::note
+If you encounter an issue not covered here, please [file a GitHub issue](https://github.com/design-axioms/color/issues) with reproduction steps and your `color-config.json`.
+:::
+
+---
+
+## Theme Not Switching
+
+### Symptom
+Clicking the theme toggle doesn't change colors, or changes happen inconsistently.
+
+### Causes & Solutions
+
+#### ThemeManager Not Initialized
+
+The `AxiomaticTheme` singleton must be initialized before the DOM is rendered. If you're seeing console errors like `Cannot read property 'subscribe' of undefined`:
+
+```tsx
+// ❌ Bad: ThemeManager imported but never initialized
+import { AxiomaticTheme } from "@axiomatic-design/color";
+
+// ✅ Good: Initialize on app startup
+import { AxiomaticTheme } from "@axiomatic-design/color";
+const themeManager = AxiomaticTheme.get(); // Initializes singleton
+```
+
+See the [React Integration](/guides/frameworks/react) guide for framework-specific patterns.
+
+#### Missing `data-axm-resolved-mode` Attribute
+
+The engine requires `<html data-axm-resolved-mode="light">` (or `"dark"`) to apply the correct polarity anchors. If this attribute is missing or out of sync:
+
+1. Check that your ThemeManager integration is updating the DOM:
+   ```ts
+   themeManager.subscribe((state) => {
+     document.documentElement.dataset.axmResolvedMode = state.mode;
+   });
+   ```
+
+2. Verify SSR hydration isn't removing the attribute (common in Next.js/SvelteKit).
+
+**Workaround**: For static sites, manually set the attribute on page load:
+```html
+<script>
+  document.documentElement.dataset.axmResolvedMode = 
+    localStorage.getItem("axm-theme-mode") || "light";
+</script>
+```
+
+#### Conflicting CSS Transitions
+
+If colors "flicker" or transition unpredictably, another stylesheet may be overriding `transition-property`. Check DevTools for rules targeting `*` or `:root` that modify transitions.
+
+**Debug**: Temporarily add this to your entry CSS:
+```css
+:root {
+  transition: none !important;
+}
+```
+
+If this fixes the flicker, you have a specificity conflict. See [Integration Conflicts](#integration-conflicts) below.
+
+---
+
+## Colors Look Wrong
+
+### Symptom
+Text is too light, backgrounds are unexpected, or colors don't match your brand.
+
+### Causes & Solutions
+
+#### Missing Surface Class (No Context)
+
+**Most common issue**: If you see default grays instead of your brand colors, you likely forgot to wrap content in a surface class.
+
+```html
+<!-- ❌ No surface = no context = default fallbacks -->
+<div class="text-high">Hello</div>
+
+<!-- ✅ Surface establishes context -->
+<div class="surface-page">
+  <div class="text-high">Hello</div>
+</div>
+```
+
+The engine cannot compute colors without knowing which surface you're on. See [Thinking in Surfaces](/concepts/thinking-in-surfaces) for the mental model.
+
+#### Alpha/Beta Chroma Settings
+
+If brand colors look "washed out" or "too vibrant", check your `color-config.json`:
+
+{/* axm-docs:explanatory:start */}
+
+```json
+{
+  "anchors": {
+    "keyColors": {
+      "brand": "oklch(60% 0.15 260)" // ← Chroma too low?
+    }
+  }
+}
+```
+
+{/* axm-docs:explanatory:end */}
+
+- **Chroma too low** (&lt;0.10): Colors will appear grayish, especially in light mode.
+- **Chroma too high** (&gt;0.25): Colors may clip in dark mode or fail gamut checks.
+
+**Recommended range**: 0.12–0.20 for most hues. See the [Theme Studio](/studio/) for interactive tuning.
+
+#### Browser Doesn't Support OKLCH
+
+Axiomatic requires **OKLCH color space support**. This is available in:
+
+- Chrome/Edge 111+
+- Safari 16.4+
+- Firefox 113+
+
+If you see gray boxes or `transparent` colors in DevTools, check your browser version. Older browsers will silently fail to parse OKLCH color values.
+
+**Workaround**: None for alpha. We're evaluating polyfills for beta, but this adds ~30KB and CPU overhead. File an issue if this is blocking you.
+
+---
+
+## Build Errors
+
+### Common pnpm/npm Issues
+
+#### `Cannot find module '@axiomatic-design/color'`
+
+You're using `npm` or `yarn` in a workspace that requires `pnpm`. Install pnpm globally:
+
+```bash
+npm install -g pnpm
+pnpm install
+```
+
+Mixing package managers causes lockfile conflicts and phantom dependency issues.
+
+#### `ERR_PNPM_PEER_DEP_ISSUES`
+
+Peer dependency warnings are **expected** in alpha. As long as the install completes, you can safely ignore them. We'll resolve these before beta.
+
+### Node Version Requirements
+
+Axiomatic requires **Node 24+** for native TypeScript execution. If you see:
+
+```
+SyntaxError: Unexpected token 'export'
+```
+
+Check your Node version:
+```bash
+node --version  # Should be v24.x.x
+```
+
+**Workaround for older Node**: Not supported in alpha. Upgrade via [nvm](https://github.com/nvm-sh/nvm) or [fnm](https://github.com/Schniz/fnm).
+
+### Missing Dependencies
+
+If you encounter `Cannot find module 'chroma-js'` or similar:
+
+1. Run `pnpm install` from the **workspace root** (not a subdirectory).
+2. Check that `node_modules/@axiomatic-design/color` exists.
+3. If using a monorepo, verify `pnpm-workspace.yaml` includes the correct packages.
+
+More patterns will be added based on alpha feedback.
+
+---
+
+## Contrast Violations in Inspector
+
+### Understanding the Diagnosis
+
+The Inspector flags contrast violations using **APCA** (not WCAG 2.x ratios). A violation means the solver **couldn't meet the target contrast** for that surface/text combination.
+
+Open the Inspector (keyboard shortcut: `Alt+Shift+I` or click the floating icon) to see:
+
+- **Red outline**: Element with a violation
+- **Provenance panel**: Shows which CSS variables contributed to the computed color
+- **Diagnosis**: Explains why the solver failed (e.g., "Chroma too high, gamut clipped")
+
+### How to Fix
+
+#### Option 1: Adjust Class Tokens (Recommended)
+
+If `.text-high` on `.surface-card` violates contrast, try a higher-contrast token:
+
+```html
+<!-- Before -->
+<div class="surface-card">
+  <p class="text-high">This might fail</p>
+</div>
+
+<!-- After: Use body (mid-contrast) or subtle (low-contrast) -->
+<div class="surface-card">
+  <p class="text-body">This should pass</p>
+</div>
+```
+
+The token hierarchy is: `text-high` (strongest) > `text-body` > `text-subtle` (weakest).
+
+#### Option 2: Adjust Solver Config
+
+If violations are systemic (e.g., _all_ text on `.surface-inverted` fails), your config may need tuning:
+
+```json
+{
+  "contrastTargets": {
+    "body": 75,
+    "high": 90
+  }
+}
+```
+
+Re-run the CLI solver after config changes.
+
+#### Option 3: Override Manually (Last Resort)
+
+If the solver cannot meet your requirements (e.g., you need a specific brand color that inherently has low contrast), you can override:
+
+{/* axm-docs:explanatory:start */}
+
+```css
+.my-special-case {
+  --axm-text-high-token: oklch(20% 0.05 260);
+}
+```
+
+{/* axm-docs:explanatory:end */}
+
+But this **disables the physics engine** for that element. Use sparingly.
+
+### False Positives (Container Queries)
+
+**Known issue**: The Inspector currently misreports violations inside `@container` query blocks. See [Alpha Limitations](/alpha-limitations) for details.
+
+**Workaround**: Manually verify contrast using browser DevTools or the [APCA calculator](https://www.myndex.com/APCA/).
+
+This will be fixed in beta.
+
+---
+
+## Integration Conflicts
+
+### Framework Overriding Axiomatic Variables
+
+If a UI framework (e.g., Chakra UI, Material UI) sets its own `--primary` or `--background` variables, you may see conflicts.
+
+#### Diagnosis
+
+1. Open DevTools → Elements → Inspect the problematic element
+2. Check the **Computed** tab for Axiomatic variables like `--axm-bridge-fg-high`
+3. If they're missing or overridden, another stylesheet is winning the specificity battle
+
+#### Solution A: Namespace Your Styles
+
+Wrap your Axiomatic surfaces in a container class:
+
+```html
+<div class="app-axiomatic">
+  <div class="surface-page">
+    <!-- Axiomatic styles apply here -->
+  </div>
+</div>
+```
+
+#### Solution B: Load Order
+
+Ensure `engine.css` loads **after** framework styles in your build pipeline. Axiomatic's base specificity is low by design (to allow easy overrides), but it assumes it's the last loaded theme system.
+
+More patterns will be added based on alpha feedback.
+
+### CSS Specificity Battles
+
+If Tailwind or another utility framework is overriding Axiomatic classes:
+
+{/* axm-docs:explanatory:start */}
+
+```html
+<!-- Tailwind wins -->
+<div class="surface-page bg-white text-black">
+```
+
+{/* axm-docs:explanatory:end */}
+
+**Workaround**: Don't mix Axiomatic class tokens with framework utility classes. Choose one system per component.
+
+### Multiple Theme Systems
+
+Running two theme systems simultaneously (e.g., Axiomatic + Tailwind's dark mode) will cause undefined behavior. Axiomatic assumes it **owns** `background-color`, `color`, and `border-color` for elements using its class tokens.
+
+**Migration strategy**: Incrementally adopt Axiomatic per-component. Don't try to theme the entire app at once.
+
+More patterns will be added based on alpha feedback.
+
+---
+
+## Still Stuck?
+
+If this guide doesn't cover your issue:
+
+1. **Check existing issues**: [GitHub Issues](https://github.com/design-axioms/color/issues)
+2. **File a new issue** with:
+   - Your `color-config.json`
+   - Minimal reproduction code (CodeSandbox, StackBlitz, or repo link)
+   - Browser version and OS
+3. **Join discussions**: See [Contributing](https://github.com/design-axioms/color/blob/main/CONTRIBUTING.md) for community links
+
+Your feedback during alpha is invaluable. We're especially interested in **integration challenges** with specific frameworks or build tools.

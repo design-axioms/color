@@ -101,7 +101,10 @@ export class AxiomaticTheme {
     const hue = readCssVarNumber(style, "--alpha-hue", 0);
     const chroma = readCssVarNumber(style, "--alpha-beta", 0.008);
 
-    // Check --tau first, then fallback to data-theme
+    // Read --tau from CSS. This is the single source of truth for theme state.
+    // NOTE: The old code here had a heuristic that read data-theme as a fallback,
+    // violating the single-writer model. Now, only ThemeManager (via AxiomaticTheme.set())
+    // writes data-theme, so we don't need to read it back.
     const rawTau = readCssVar(style, "--tau");
     let tau = rawTau === null ? NaN : Number.parseFloat(rawTau);
 
@@ -113,20 +116,9 @@ export class AxiomaticTheme {
       );
     }
 
-    const dataTheme = document.documentElement.getAttribute("data-theme");
-    if (dataTheme) {
-      const attrTau = dataTheme === "dark" ? -1 : 1;
-      // Heuristic: If computed tau is binary (locked) but disagrees with the attribute,
-      // trust the attribute. This allows external switchers (Starlight) to break
-      // through Tuner overrides, while preserving non-binary overrides (e.g. Tau=0).
-      if ((tau === 1 || tau === -1) && tau !== attrTau) {
-        tau = attrTau;
-      }
-      if (isNaN(tau)) {
-        tau = attrTau;
-      }
-    } else if (isNaN(tau)) {
-      tau = 1; // Default
+    // Default to light mode if --tau is not set
+    if (isNaN(tau)) {
+      tau = 1;
     }
 
     return { hue, chroma, tau };

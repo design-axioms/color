@@ -1,0 +1,132 @@
+---
+title: Why Axiomatic?
+description: Dark mode shouldn't be this hard. Axiomatic makes it automatic.
+---
+
+## The Problem
+
+Building a modern UI color system is harder than it should be:
+
+- **Dark mode is a full rewrite**: You maintain two separate palettes, and they drift out of sync.
+- **Accessibility is manual**: You're constantly checking contrast ratios and adjusting by hand.
+- **Colors are context-blind**: A "gray" text needs different values on a white card vs. a dark tooltip, so you end up with `gray-50`, `gray-100`, `gray-200`... and you still guess wrong.
+
+## The Solution
+
+**Axiomatic Color automates the hard parts.**
+
+You define semantic intent (this is a "card", this is "strong text"), and the system handles:
+
+- **Automatic dark mode**: One palette, two appearances. The system inverts surfaces and recalculates contrast for you.
+- **Guaranteed accessibility**: Text contrast is mathematically guaranteed using APCA (the future WCAG 3.0 standard).
+- **Context-aware colors**: Components adapt to their environment automatically.
+
+## Before vs. After
+
+### Manual CSS (Traditional Approach)
+
+{/* axm-docs:explanatory:start */}
+
+```css
+/* You maintain two versions of everything */
+.card {
+  background: #ffffff;
+  color: #1a1a1a;
+  border: 1px solid #e5e5e5;
+}
+
+.card-title {
+  color: #0a0a0a;
+}
+
+.card-subtitle {
+  color: #737373;
+}
+
+/* Dark mode: rewrite everything and hope contrast is okay */
+@media (prefers-color-scheme: dark) {
+  .card {
+    background: #1a1a1a;
+    color: #fafafa;
+    border: 1px solid #404040;
+  }
+
+  .card-title {
+    color: #ffffff;
+  }
+
+  .card-subtitle {
+    color: #a3a3a3; /* Guessing this has enough contrast */
+  }
+}
+```
+
+{/* axm-docs:explanatory:end */}
+
+### With Axiomatic
+
+```css
+/* One version. Dark mode just works. */
+.card {
+  @apply surface-card;
+  padding: 2rem;
+  border-radius: 8px;
+}
+
+.card-title {
+  @apply text-strong;
+}
+
+.card-subtitle {
+  @apply text-subtle;
+}
+```
+
+The system handles light/dark switching, contrast calculation, and context adaptation automatically.
+
+## Key Benefits
+
+### 🌓 Dark Mode Just Works
+
+Toggle between light and dark mode without maintaining two separate stylesheets. The system automatically inverts surfaces and recalculates all contrast ratios.
+
+### ✅ Accessibility by Default
+
+Text contrast is mathematically guaranteed. If your background changes, your text automatically adjusts to maintain the required contrast level. No more manual WCAG checks.
+
+### 🎨 Semantic, Not Arbitrary
+
+Instead of `color-gray-600`, you use `text-subtle`. The actual color value adapts to the context (page, card, tooltip) while maintaining the same semantic weight.
+
+### 🚀 Modern CSS
+
+Built on cutting-edge web standards: OKLCH color space, Relative Color Syntax, and CSS Custom Properties. No JavaScript runtime needed.
+
+## Ready to Try It?
+
+**[Quick Start →](/guides/quick-start)** - Go from zero to a themed UI in 5 minutes.
+
+**[Try the Studio →](/studio/)** - Customize your theme visually before installing anything.
+
+## When Should You Use Axiomatic?
+
+**Great for:**
+
+- Modern web apps that need dark mode support
+- Design systems that value accessibility
+- Teams that want to move fast without sacrificing quality
+- Projects using cutting-edge CSS features
+
+**Not ideal for:**
+
+- Legacy browsers (requires OKLCH and Relative Color Syntax)
+- Marketing sites that need pixel-perfect brand matching (Axiomatic prioritizes accessibility over exact color reproduction)
+- Projects that can't use alpha-stage tools ([see limitations](/alpha-limitations))
+
+## Want to Understand the Theory?
+
+The "how" is fascinating, but you don't need it to get started:
+
+- **[Thinking in Surfaces](/concepts/thinking-in-surfaces)** - The mental model behind the system
+- **[The Physics of Light](/concepts/physics-of-light)** - Why we use OKLCH and perceptual uniformity
+- **[Accessibility First](/concepts/accessibility-first)** - How APCA works under the hood

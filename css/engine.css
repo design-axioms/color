@@ -66,49 +66,7 @@
   initial-value: 0;
 }
 
-/* --- 2b. BRIDGE EXPORTS (Integration Adapters) --- */
-
-@property --axm-bridge-surface {
-  syntax: "<color>";
-  inherits: true;
-  initial-value: transparent;
-}
-
-@property --axm-bridge-fg {
-  syntax: "<color>";
-  inherits: true;
-  initial-value: transparent;
-}
-
-@property --axm-bridge-fg-high {
-  syntax: "<color>";
-  inherits: true;
-  initial-value: transparent;
-}
-
-@property --axm-bridge-fg-body {
-  syntax: "<color>";
-  inherits: true;
-  initial-value: transparent;
-}
-
-@property --axm-bridge-fg-subtle {
-  syntax: "<color>";
-  inherits: true;
-  initial-value: transparent;
-}
-
-@property --axm-bridge-border-dec {
-  syntax: "<color>";
-  inherits: true;
-  initial-value: transparent;
-}
-
-@property --axm-bridge-border-int {
-  syntax: "<color>";
-  inherits: true;
-  initial-value: transparent;
-}
+/* Bridge @property declarations are in ./bridge.css (imported above) */
 
 /* --- 3. ROOT CONFIGURATION --- */
 
@@ -205,9 +163,6 @@
   /* Text inherits 50% of the ambient vibrancy */
   --_axm-computed-fg-C: calc(var(--alpha-beta) * 0.5);
 
-  /* Adapter-safe duplicate (avoid aliasing private computed vars in exports). */
-  --_axm-bridge-fg-C: calc(var(--alpha-beta) * 0.5);
-
   /* 3. Reify Color with HK Buffer */
   /* L_target = L_source + (0.05 * Beta) */
   --_axm-computed-fg-color: oklch(
@@ -217,30 +172,7 @@
   );
 
   /* Bridge exports (public, adapter-safe) */
-  /*
-     NOTE: Do not alias computed colors via `var(--_axm-...)` here.
-     Chromium can fail to invalidate dependent custom properties consistently.
-     Compute directly from the same inputs so adapters see stable values.
-  */
-  --axm-bridge-fg: oklch(
-    from var(--_axm-text-lightness-source)
-      calc(l + (0.05 * var(--_axm-bridge-fg-C))) var(--_axm-bridge-fg-C)
-      var(--alpha-hue)
-  );
-
-  /* Semantic bridge exports (text-role variants) */
-  --axm-bridge-fg-high: oklch(
-    from var(--axm-text-high-token) calc(l + (0.05 * var(--_axm-bridge-fg-C)))
-      var(--_axm-bridge-fg-C) var(--alpha-hue)
-  );
-  --axm-bridge-fg-body: oklch(
-    from var(--axm-text-body-token) calc(l + (0.05 * var(--_axm-bridge-fg-C)))
-      var(--_axm-bridge-fg-C) var(--alpha-hue)
-  );
-  --axm-bridge-fg-subtle: oklch(
-    from var(--axm-text-subtle-token) calc(l + (0.05 * var(--_axm-bridge-fg-C)))
-      var(--_axm-bridge-fg-C) var(--alpha-hue)
-  );
+  /* Moved to ./bridge.css */
 
   color: var(--_axm-computed-fg-color);
 
@@ -254,16 +186,6 @@
 
   /* Interactive */
   --_axm-computed-border-int-color: oklch(
-    from var(--axm-border-int-token) l var(--_axm-computed-fg-C)
-      var(--alpha-hue) / alpha
-  );
-
-  /* Bridge exports (public, adapter-safe) */
-  --axm-bridge-border-dec: oklch(
-    from var(--axm-border-dec-token) l var(--_axm-computed-fg-C)
-      var(--alpha-hue) / alpha
-  );
-  --axm-bridge-border-int: oklch(
     from var(--axm-border-int-token) l var(--_axm-computed-fg-C)
       var(--alpha-hue) / alpha
   );
@@ -302,17 +224,6 @@
   );
 
   --_axm-computed-surface: oklch(
-    var(--_axm-surface-L)
-      min(
-        var(--alpha-beta),
-        var(--alpha-beta) * (1 - abs(2 * var(--_axm-surface-L) - 1)) *
-          var(--tau) * var(--tau)
-      )
-      var(--alpha-hue)
-  );
-
-  /* Bridge exports (public, adapter-safe) */
-  --axm-bridge-surface: oklch(
     var(--_axm-surface-L)
       min(
         var(--alpha-beta),

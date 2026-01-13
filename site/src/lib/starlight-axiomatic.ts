@@ -1,12 +1,11 @@
-import "@axiomatic-design/color/inspector";
-import type { ThemeMode } from "@axiomatic-design/color/browser";
 import {
-  applyDomWiring,
-  observeDomWiring,
-  type DomWiringObserverHandle,
-  type DomWiringRule,
+    applyDomWiring,
+    observeDomWiring,
+    type DomWiringObserverHandle,
+    type DomWiringRule,
 } from "@axiomatic-design/color";
-import { initThemeBridge, setThemeMode } from "./theme-bridge";
+import "@axiomatic-design/color/inspector";
+import { initThemeBridge } from "./theme-bridge";
 
 // IMPORTANT: Per RFC 013 / RFC 010 enforcement, this integration module MUST NOT reference
 // foreign palette variables or engine/bridge CSS variables.
@@ -55,33 +54,6 @@ const ensureDebugger = (): void => {
 
 const initAxiomaticThemeManagerBridge = (): void => {
   initThemeBridge();
-
-  const publishTheme = (raw: string | null): void => {
-    const mode: ThemeMode = raw === "dark" || raw === "light" ? raw : "system";
-
-    // Publish vendor-observable theme state + Axiomatic semantic state.
-    // With `data-axm-motion="tau"`, the engine will not independently
-    // transition bridge/computed outputs; `--tau` is the sole motion driver.
-    // ThemeBridge ensures ThemeManager is the single semantic writer.
-    setThemeMode(mode);
-  };
-
-  // Take over the Starlight theme picker so there is a single theme writer.
-  document.addEventListener(
-    "change",
-    (e) => {
-      const target = e.target;
-      if (!(target instanceof HTMLSelectElement)) return;
-      if (!target.closest("starlight-theme-select")) return;
-
-      // Prevent Starlight from doing a competing theme commit.
-      e.preventDefault();
-      e.stopImmediatePropagation();
-
-      publishTheme(target.value);
-    },
-    { capture: true },
-  );
 };
 
 export const initStarlightAxiomatic = (): void => {

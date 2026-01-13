@@ -1,6 +1,33 @@
+/*
+ * RFC-029: Starlight CSS Integration Strategy
+ * ============================================
+ * 
+ * This file implements the Axiomatic-Starlight adapter bridge following RFC-029.
+ * The goal is to minimize `!important` usage while maintaining theme continuity.
+ *
+ * ARCHITECTURE
+ * ------------
+ * 1. **CSS Lock Pattern** (Variable Mappings): Uses `!important` on high-specificity
+ *    selectors to prevent Starlight's late-loaded constructed stylesheets from
+ *    reasserting `--sl-color-*` variables after our mappings load.
+ *
+ * 2. **Continuity Invariant**: Forces `color-scheme: light dark` to prevent
+ *    discrete theme snaps during `--tau` transitions.
+ *
+ * 3. **Higher Specificity**: Most element/component overrides use increased
+ *    selector specificity (e.g., `:root body .selector`) instead of `!important`.
+ *
+ * 4. **Route, Don't Remove**: Colors route through `var(--sl-color-*)` variables
+ *    (which map to `--axm-bridge-*`), preserving Starlight's semantic structure.
+ *
+ * See: docs/rfcs/RFC-029-STARLIGHT-CSS-STRATEGY.md
+ */
+
 @layer starlight, overrides;
 
-/* Starlight Overrides */
+/* ============================================================================
+   FONT DECLARATIONS
+   ============================================================================ */
 
 @font-face {
   font-family: "Latin Modern Math";
@@ -118,10 +145,12 @@
     margin-top: 0;
   }
 
-  .sl-markdown-content code:not(:where(.not-content *)) {
-    background-color: transparent !important;
-    border: 1px solid currentColor;
-    padding: 0.1em 0.3em;
+  /* Inline code: transparent background with subtle border for distinction.
+     Uses only bridge tokens to maintain zero-violation invariant. */
+  :root body .sl-markdown-content code:not(:where(.not-content *)) {
+    background-color: transparent;
+    border: 1px solid var(--axm-bridge-border-dec);
+    padding: 0.125rem 0.375rem;
     border-radius: 0.25em;
   }
 
@@ -157,18 +186,19 @@
    * to inherit text/surface from the Axiomatic system.
    */
 
-  .sl-anchor-icon {
-    color: inherit !important;
+  /* Higher specificity prevents Starlight override */
+  :root body .sl-anchor-icon {
+    color: inherit;
   }
 
-  /* Starlight buttons/cards: avoid Starlight-owned surfaces/colors. */
-  .sl-link-button {
-    color: inherit !important;
-    background-color: transparent !important;
+  /* Starlight buttons/cards: higher specificity prevents Starlight override */
+  :root body .sl-link-button {
+    color: inherit;
+    background-color: transparent;
   }
 
-  .card {
-    background-color: transparent !important;
+  :root body .card {
+    background-color: transparent;
   }
 
   body {
@@ -306,8 +336,9 @@ site-search button {
   color: inherit;
 }
 
-site-search button kbd {
-  background-color: transparent !important;
+/* Higher specificity prevents Starlight override */
+:root body site-search button kbd {
+  background-color: transparent;
   border: none;
   box-shadow: none;
   color: inherit;
@@ -320,22 +351,21 @@ a[aria-current="page"] {
 }
 
 /* 4. Code Blocks -> Surface Workspace */
-.astro-code,
-.expressive-code .frame {
-  /* Force override of Shiki's inline styles */
-  background-color: transparent !important;
+/* Higher specificity prevents Starlight/Shiki override */
+:root body .astro-code,
+:root body .expressive-code .frame {
+  background-color: transparent;
   border: 1px solid currentColor;
   border-radius: 0.5rem;
 }
 
-.astro-code pre,
-.expressive-code pre {
-  background-color: transparent !important;
+:root body .astro-code pre,
+:root body .expressive-code pre {
+  background-color: transparent;
 }
 
-.expressive-code .copy button {
-  background-color: transparent !important;
-  /* If it has a border or other styles, keep them, but background should match surface */
+:root body .expressive-code .copy button {
+  background-color: transparent;
 }
 
 /* 5. Hero Section Safeguard */
@@ -362,9 +392,9 @@ a[aria-current="page"] {
 }
 
 /* 7. Sidebar Active State -> Surface Action Soft */
-/* 8. Headings -> Text High Token */
-.sl-markdown-content :is(h1, h2, h3, h4, h5, h6):not(:where(.not-content *)) {
-  color: inherit !important;
+/* 8. Headings -> Text High Token - Higher specificity prevents Starlight override */
+:root body .sl-markdown-content :is(h1, h2, h3, h4, h5, h6):not(:where(.not-content *)) {
+  color: inherit;
 }
 
 /* 9. Hero/Large Text -> Text High Token */
@@ -387,19 +417,19 @@ a[aria-current="page"] {
  */
 
 /* Higher specificity than Starlight's constructed `.header { ... !important }`. */
-.page > .header {
-  background: none !important;
-  background-color: inherit !important;
+:root body .page > .header {
+  background: none;
+  background-color: inherit;
 }
 
-.site-title,
-.site-title * {
-  color: inherit !important;
+:root body .site-title,
+:root body .site-title * {
+  color: inherit;
 }
 
-starlight-theme-select,
-starlight-theme-select * {
-  color: inherit !important;
+:root body starlight-theme-select,
+:root body starlight-theme-select * {
+  color: inherit;
 }
 
 /*
@@ -409,13 +439,13 @@ starlight-theme-select * {
  * to light palette defaults in some browsers, producing white-on-white in
  * dark mode.
  */
-starlight-theme-select select {
-  background-color: inherit !important;
-  border: 1px solid var(--axm-bridge-border-int) !important;
+:root body starlight-theme-select select {
+  background-color: inherit;
+  border: 1px solid var(--axm-bridge-border-int);
 }
 
-starlight-theme-select option {
-  background-color: inherit !important;
+:root body starlight-theme-select option {
+  background-color: inherit;
 }
 
 html[data-theme="light"] starlight-theme-select {
@@ -432,8 +462,8 @@ html[data-theme="dark"] starlight-theme-select {
 }
 
 /* Starlight page title heading (rendered outside `.sl-markdown-content`). */
-.content-panel > .sl-container > h1 {
-  color: var(--axm-bridge-fg-high) !important;
+:root body .content-panel > .sl-container > h1 {
+  color: var(--axm-bridge-fg-high);
 }
 
 .hero .tagline {
@@ -450,8 +480,8 @@ html[data-theme="dark"] starlight-theme-select {
   opacity: 0.85;
 }
 
-.sl-markdown-content a {
-  color: inherit !important;
+:root body .sl-markdown-content a {
+  color: inherit;
 }
 
 /* Starlight chrome links (skip link + social icons) */
@@ -487,138 +517,202 @@ html[data-theme] {
 /* --- Starlight Palette Mapping (Bridge File) ---
    Important: assign foreign palette variables on *near* ancestors (body/page/sidebar)
    so late `:root` reassertions from constructed styles can't win via source order.
+   
+   RFC-029 + Option B.1: All mappings are pure wiring from bridge exports.
+   No color synthesis in the adapter layer.
 */
 :root body,
 :root .page.sl-flex,
 :root .page.sl-flex > .header,
 :root #starlight__sidebar.axm-starlight-sidebar-host,
 :root #starlight__sidebar.axm-starlight-sidebar-host > .axm-starlight-sidebar {
-  /* Map Starlight's palette into Axiomatic bridge exports.
-      Avoid using the CSS keyword `inherit` here: if Starlight uses
-      `background-color: var(--sl-color-white)`, `inherit` can cause chrome to
-      inherit the *body* background, bypassing per-surface computation.
-    */
+  /* Map Starlight's palette into Axiomatic bridge exports. */
   --sl-color-text: var(--axm-bridge-fg) !important;
-  /*
-   * Starlight semantics:
-   * - `--sl-color-white` is the high-contrast “ink” endpoint.
-   * - `--sl-color-black` is the “paper/surface” endpoint.
-   */
   --sl-color-white: var(--axm-bridge-fg-high) !important;
   --sl-color-black: var(--axm-bridge-surface) !important;
 
-  /* Starlight grays: align to semantics (gray-2 is core text). */
+  /* Starlight grays: preserve the 6-step hierarchy with intermediate values. */
   --sl-color-gray-1: var(--axm-bridge-fg-high) !important;
   --sl-color-gray-2: var(--axm-bridge-fg) !important;
   --sl-color-gray-3: var(--axm-bridge-fg-subtle) !important;
 
-  /* Chrome borders/dividers. */
-  --sl-color-gray-4: var(--axm-bridge-border-int) !important;
+  /* Gray-4: Subtlest text level (lightest in the fg stack) */
+  --sl-color-gray-4: var(--axm-bridge-fg-subtlest) !important;
+  
+  /* Gray-5: Decorative border */
   --sl-color-gray-5: var(--axm-bridge-border-dec) !important;
+  
+  /* Gray-6: Surface (no separate elevation export yet; roadmap B.2) */
+  --sl-color-gray-6: var(--axm-bridge-surface) !important;
 
   /* Hairlines/separators. */
-  --sl-color-gray-6: var(--axm-bridge-surface) !important;
   --sl-color-hairline: var(--axm-bridge-border-dec) !important;
-  /* Starlight uses this alias for certain chrome hairlines (e.g. sidebar tree guides). */
   --sl-color-hairline-light: var(--axm-bridge-border-dec) !important;
 
-  /* Role colors: map to bridge exports so they inherit per surface/hue context. */
-  --sl-color-text-accent: var(--axm-bridge-fg) !important;
-  --sl-color-text-invert: var(--axm-bridge-fg) !important;
-  --sl-color-bg-accent: var(--axm-bridge-surface) !important;
+  /* --- ACCENT COLORS ---
+   * Primary interactive color for links, focus rings, active states.
+   * Wired to brand accent bridge exports (Option B.2).
+   */
+  --sl-color-accent-low: var(--axm-bridge-accent-surface) !important;
+  --sl-color-accent: var(--axm-bridge-accent) !important;
+  --sl-color-accent-high: var(--axm-bridge-accent-fg) !important;
+  --sl-color-text-accent: var(--axm-bridge-accent-fg) !important;
+  --sl-color-bg-accent: var(--axm-bridge-accent-surface) !important;
 
-  /* Backgrounds. */
+  /* --- SEMANTIC COLORS (for asides/callouts) ---
+   * Wired to semantic bridge exports. Engine computes these from
+   * theme-defined hues/chromas, ensuring continuity during --tau transitions.
+   */
+
+  /* Blue (note/info) */
+  --sl-color-blue-low: var(--axm-bridge-info-surface) !important;
+  --sl-color-blue: var(--axm-bridge-info) !important;
+  --sl-color-blue-high: var(--axm-bridge-info-fg) !important;
+
+  /* Green (tip/success) */
+  --sl-color-green-low: var(--axm-bridge-success-surface) !important;
+  --sl-color-green: var(--axm-bridge-success) !important;
+  --sl-color-green-high: var(--axm-bridge-success-fg) !important;
+
+  /* Orange (caution/warning) */
+  --sl-color-orange-low: var(--axm-bridge-warning-surface) !important;
+  --sl-color-orange: var(--axm-bridge-warning) !important;
+  --sl-color-orange-high: var(--axm-bridge-warning-fg) !important;
+
+  /* Red (danger) */
+  --sl-color-red-low: var(--axm-bridge-danger-surface) !important;
+  --sl-color-red: var(--axm-bridge-danger) !important;
+  --sl-color-red-high: var(--axm-bridge-danger-fg) !important;
+
+  /* Purple: Map to info (closest semantic match in current bridge) */
+  --sl-color-purple-low: var(--axm-bridge-info-surface) !important;
+  --sl-color-purple: var(--axm-bridge-info) !important;
+  --sl-color-purple-high: var(--axm-bridge-info-fg) !important;
+
+  /* Text invert: for text on accent backgrounds (uses bridge export) */
+  --sl-color-text-invert: var(--axm-bridge-surface) !important;
+
+  /* --- BACKGROUND VARIATIONS --- */
   --sl-color-bg: var(--axm-bridge-surface) !important;
-  --sl-color-bg-nav: var(--axm-bridge-surface) !important;
+  
+  /* Nav/sidebar: subtle elevation using gray-6 */
+  --sl-color-bg-nav: var(--sl-color-gray-6) !important;
+  
+  /* Inline code: transparent background with border for visual distinction.
+     Preserves token vocabulary integrity. */
+  --sl-color-bg-inline-code: transparent !important;
 }
 
-/* Intentionally no `--tau` transition forcing here. */
+/* Intentionally no --tau transition forcing here. */
 
 /* --- Starlight Chrome Continuity Contract ---
-   Starlight may apply mode-dependent backgrounds and/or temporarily disable
-   transitions via late constructed stylesheets. For Axiomatic continuity, the
-   chrome must not paint its own discrete background; it must either inherit
-   the page surface or paint via Axiomatic surface classes.
-
-   These rules are intentionally UNLAYERED and high-specificity so they can
-   outrank Starlight's constructed rules.
-*/
+ *
+ * CONTEXT: Load-Order and Constructed Stylesheets
+ * ------------------------------------------------
+ * Starlight injects constructed stylesheets *after* author CSS loads. These
+ * late-injected rules frequently apply `var(--sl-color-*)` with `!important`,
+ * which can override our Axiomatic bridge mappings and cause discrete theme
+ * snaps during `--tau` transitions.
+ *
+ * WHY `!important` IS REQUIRED
+ * ----------------------------
+ * We use `!important` in this section to ensure our routing rules win over
+ * Starlight's constructed stylesheet declarations. Without it, Starlight's
+ * late `!important` rules would paint discrete backgrounds/colors that bypass
+ * the Axiomatic continuity engine.
+ *
+ * THE "ROUTE, DON'T REMOVE" PRINCIPLE
+ * ------------------------------------
+ * Instead of using `background: none !important` (which deletes intended
+ * styling), we ROUTE colors through Starlight's own variables:
+ *   - `var(--sl-color-bg)` → `--axm-bridge-surface` (mapped above)
+ *   - `var(--sl-color-bg-nav)` → `--axm-bridge-surface` (nav surfaces)
+ *   - `var(--sl-color-text)` → `--axm-bridge-fg` (foreground text)
+ *
+ * This preserves Starlight's semantic intent while routing all color
+ * resolution through the Axiomatic bridge, ensuring continuity-safe behavior.
+ *
+ * INTENTIONAL TRANSPARENCY
+ * ------------------------
+ * Some elements are set to `transparent` intentionally when a child wrapper
+ * is responsible for painting the surface. These cases are clearly commented.
+ *
+ * NOTE ON !important IN ROUTING RULES
+ * ------------------------------------
+ * The routing rules below use higher specificity (`:root body`, `:root .page`)
+ * instead of `!important` wherever possible. The variable mappings above use
+ * `!important` (lock pattern), but rules that *consume* those variables can
+ * often rely on specificity alone.
+ */
 
 :root body {
-  background: none !important;
+  /* Route through Starlight's background variable (already mapped to --axm-bridge-surface) */
+  background-color: var(--sl-color-bg);
 }
 
-:root .page.sl-flex.axm-starlight-page {
-  background: var(--axm-bridge-surface) !important;
-  background-color: var(--axm-bridge-surface) !important;
-  color: var(--axm-bridge-fg) !important;
+:root body .page.sl-flex.axm-starlight-page {
+  /* Use Starlight vars (already mapped to bridge) for consistency */
+  background-color: var(--sl-color-bg);
+  color: var(--sl-color-text);
 }
 
-:root .page.sl-flex > .header {
-  background: none !important;
-  color: var(--axm-bridge-fg) !important;
-  border-bottom: 1px solid var(--axm-bridge-border-int) !important;
-}
-
-:root .page.sl-flex > .header.axm-starlight-header.axm-starlight-header {
-  background: none !important;
-  color: var(--axm-bridge-fg) !important;
-  border-bottom: 1px solid var(--axm-bridge-border-int) !important;
-}
-
-:root header.axm-starlight-header.axm-starlight-header {
-  background: none !important;
-  color: var(--axm-bridge-fg) !important;
-  border-bottom: 1px solid var(--axm-bridge-border-int) !important;
+/* Header: consolidated rule using selector grouping */
+:root body .page.sl-flex > .header,
+:root body header.axm-starlight-header {
+  /* Route through Starlight's nav background (already mapped to --axm-bridge-surface) */
+  background-color: var(--sl-color-bg-nav);
+  color: var(--sl-color-text);
+  border-bottom: 1px solid var(--axm-bridge-border-int);
 }
 
 /* Sidebar: the host stays transparent; the inner wrapper paints `surface-workspace`. */
-:root #starlight__sidebar.axm-starlight-sidebar-host {
-  background: none !important;
-  border-right-color: var(--axm-bridge-border-dec) !important;
+:root body #starlight__sidebar.axm-starlight-sidebar-host {
+  /* Intentionally transparent: .axm-starlight-sidebar wrapper paints surface-workspace */
+  background-color: transparent;
+  border-right-color: var(--axm-bridge-border-dec);
 }
 
-/* Sidebar section tree guides: bridge-route the left borders explicitly.
-   Starlight applies these via component-scoped selectors, so we override the
-   shorthand with `!important` at the sidebar root. */
-:root #starlight__sidebar ul ul li {
-  border-inline-start: 1px solid var(--axm-bridge-border-dec) !important;
+/* Sidebar section tree guides: bridge-route the left borders explicitly. */
+:root body #starlight__sidebar ul ul li {
+  border-inline-start: 1px solid var(--axm-bridge-border-dec);
 }
 
-:root #starlight__sidebar.axm-starlight-sidebar-host > .axm-starlight-sidebar {
+:root body #starlight__sidebar.axm-starlight-sidebar-host > .axm-starlight-sidebar {
   min-height: 100%;
 }
 
-/* Starlight chrome regions that commonly use --sl-color-* directly.
-   Force paint through public bridge exports (adapter contract). */
-:root .dialog-frame {
-  color: var(--sl-color-text) !important;
+/* Starlight chrome regions that commonly use --sl-color-* directly. */
+:root body .dialog-frame {
+  color: var(--sl-color-text);
 }
 
-:root .display-current,
-:root .link-title {
-  color: var(--sl-color-text) !important;
+:root body .display-current,
+:root body .link-title {
+  color: var(--sl-color-text);
 }
 
 /* Search: ensure the Pagefind input doesn't paint a discrete high-contrast
    color that diverges from the Axiomatic text pipeline. */
-:root #starlight__search .pagefind-ui__search-input {
-  color: var(--sl-color-text) !important;
+:root body #starlight__search .pagefind-ui__search-input {
+  color: var(--sl-color-text);
 }
 
 /* Expressive Code: the filename/title chip must not paint a discrete mode background.
    It should inherit/compose with the surrounding surface instead. */
-:root .expressive-code .frame.has-title > .header > .title {
-  background: none !important;
+:root body .expressive-code .frame.has-title > .header > .title {
+  /* Transparent: compose with code block surface, avoid theme snap */
+  background-color: transparent;
 }
 
 /* Expressive Code: copy button chrome must not snap on theme toggles while `--tau` is locked. */
-:root .expressive-code button,
-:root .expressive-code button > * {
-  background: none !important;
+:root body .expressive-code button,
+:root body .expressive-code button > * {
+  /* Transparent: compose with code block surface chrome */
+  background-color: transparent;
 }
 
 /* Landing page "Why This Matters" icons: treat as transparent chrome (no theme-dependent background). */
-:root .sl-markdown-content article svg.icon {
-  background: none !important;
+:root body .sl-markdown-content article svg.icon {
+  /* Transparent: icons compose with their container surface */
+  background-color: transparent;
 }

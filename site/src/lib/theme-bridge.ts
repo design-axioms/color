@@ -1,7 +1,7 @@
 import { ThemeManager, type ThemeMode } from "@axiomatic-design/color/browser";
 import { invertedSelectors } from "../styles/theme.generated";
 
-const STORAGE_KEY = "theme";
+const STORAGE_KEY = "starlight-theme";
 
 type ResolvedMode = "light" | "dark";
 
@@ -10,7 +10,7 @@ type Listener = () => void;
 const listeners = new Set<Listener>();
 let manager: ThemeManager | null = null;
 let initialized = false;
-let isApplying = false;
+let systemListenerAttached = false;
 
 const getRoot = (): HTMLElement | null => {
   if (typeof document === "undefined") return null;
@@ -18,35 +18,29 @@ const getRoot = (): HTMLElement | null => {
 };
 
 const parseMode = (raw: string | null): ThemeMode => {
+  // Starlight stores '' for auto, 'light' or 'dark' for explicit modes.
+  if (!raw) return "system";
   return raw === "light" || raw === "dark" ? raw : "system";
 };
 
-const readPersistedMode = (): ThemeMode | null => {
-  if (typeof localStorage === "undefined") return null;
+const readPersistedMode = (): ThemeMode => {
+  if (typeof localStorage === "undefined") return "system";
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return null;
     return parseMode(raw);
   } catch {
-    return null;
+    return "system";
   }
 };
 
 const persistMode = (mode: ThemeMode): void => {
   if (typeof localStorage === "undefined") return;
   try {
-    if (mode === "system") localStorage.removeItem(STORAGE_KEY);
-    else localStorage.setItem(STORAGE_KEY, mode);
+    // Starlight stores '' for auto, 'light' or 'dark' for explicit modes.
+    localStorage.setItem(STORAGE_KEY, mode === "system" ? "" : mode);
   } catch {
     // Ignore persistence failures.
   }
-};
-
-const applyVendorThemeSignal = (mode: ThemeMode): void => {
-  const root = getRoot();
-  if (!root) return;
-  if (mode === "system") root.removeAttribute("data-theme");
-  else root.setAttribute("data-theme", mode);
 };
 
 const notify = (): void => {
@@ -93,14 +87,8 @@ export const getResolvedThemeMode = (): ResolvedMode => {
 export const setThemeMode = (mode: ThemeMode): void => {
   const m = ensureThemeManager();
 
-  isApplying = true;
-  try {
-    applyVendorThemeSignal(mode);
-    persistMode(mode);
-    m?.setMode(mode);
-  } finally {
-    isApplying = false;
-  }
+  persistMode(mode);
+  m?.setMode(mode);
 
   notify();
 };
@@ -115,47 +103,20 @@ export const initThemeBridge = (): void => {
   const m = ensureThemeManager();
 
   // Establish an initial mode preference.
-  // Priority: localStorage (consumer examples) → Starlight's vendor signal (data-theme).
-  const persisted = readPersistedMode();
-  const vendor = parseMode(root.getAttribute("data-theme"));
-  const initial = persisted ?? vendor;
+  // Priority: Starlight localStorage (starlight-theme) → system.
+  const initial = readPersistedMode();
 
   if (m) {
     // Use ThemeManager as the single semantic writer.
     m.setMode(initial);
-    applyVendorThemeSignal(initial);
   }
 
-  // Keep in sync if Starlight or other code touches the vendor signal.
-  if (typeof MutationObserver !== "undefined") {
-    const observer = new MutationObserver((mutations) => {
-      if (isApplying) return;
-      for (const mutation of mutations) {
-        if (mutation.type !== "attributes") continue;
-
-        if (mutation.attributeName === "data-theme") {
-          const next = parseMode(root.getAttribute("data-theme"));
-          if (m) m.setMode(next);
-          persistMode(next);
-          notify();
-        }
-
-        if (
-          mutation.attributeName === "data-axm-mode" ||
-          mutation.attributeName === "data-axm-resolved-mode"
-        ) {
-          notify();
-        }
-      }
-    });
-
-    observer.observe(root, {
-      attributes: true,
-      attributeFilter: [
-        "data-theme",
-        "data-axm-mode",
-        "data-axm-resolved-mode",
-      ],
+  if (!systemListenerAttached && typeof matchMedia !== "undefined") {
+    systemListenerAttached = true;
+    const mediaQuery = matchMedia("(prefers-color-scheme: dark)");
+    mediaQuery.addEventListener("change", () => {
+      // ThemeManager updates semantic state; we only need to notify subscribers.
+      if (getThemeMode() === "system") notify();
     });
   }
 };

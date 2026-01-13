@@ -82,6 +82,7 @@
     "./inspector": "./dist/lib/inspector/index.js",
     "./style.css": "./dist/style.css",
     "./engine.css": "./css/engine.css",
+    "./bridge.css": "./css/bridge.css",
     "./theme.css": "./css/theme.css"
   },
   "bin": {
