@@ -265,6 +265,63 @@ export const STYLES = `
     box-shadow: 0 0 4px var(--source-color);
   }
 
+  /* Conditional rule indicators (container queries, etc.) */
+  .rule-conditional {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    margin-left: 8px;
+  }
+
+  .rule-conditional.conditional-active {
+    color: #888;
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .rule-conditional.conditional-inactive {
+    color: #666;
+    background: rgba(255, 68, 68, 0.1);
+    text-decoration: line-through;
+    opacity: 0.6;
+  }
+
+  .rule-conditional.conditional-unknown {
+    color: #888;
+    background: rgba(255, 204, 0, 0.1);
+    font-style: italic;
+  }
+
+  .conditional-indicator {
+    font-size: 9px;
+    padding: 1px 4px;
+    border-radius: 2px;
+    font-weight: 600;
+  }
+
+  .conditional-indicator.inactive {
+    background: rgba(255, 68, 68, 0.2);
+    color: #ff6666;
+  }
+
+  .conditional-indicator.unknown {
+    background: rgba(255, 204, 0, 0.2);
+    color: #ffcc00;
+  }
+
+  /* Rule row with inactive conditional */
+  .token-row.rule-inactive {
+    opacity: 0.5;
+  }
+
+  .token-row.rule-inactive .token-name,
+  .token-row.rule-inactive .token-value {
+    text-decoration: line-through;
+    color: #666;
+  }
+
   .advice-box {
     margin-top: 12px;
     padding: 8px;
