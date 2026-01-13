@@ -1,0 +1,82 @@
+---
+title: Alpha Limitations
+description: Known limitations and gaps in the current alpha release of Axiomatic Color.
+---
+
+Axiomatic Color is currently in **alpha**. This means the core engine is stable and production-ready, but some ecosystem features are still in development. This page documents what works, what doesn't, and what's coming next.
+
+## Known Limitations
+
+### Container Query Support
+
+The Inspector currently produces false positives and false negatives when analyzing styles inside `@container` query blocks. This is a known issue tracked for the **beta release**.
+
+**Workaround**: Test container query scenarios manually or use browser DevTools to verify contrast ratios.
+
+### VS Code Extension
+
+A VS Code extension exists in the repository (`packages/vscode-extension/`) but provides no functionality yet.
+
+**Status**: Community contributions welcome, or planned for post-beta depending on demand.
+
+### ESLint Plugin
+
+The ESLint plugin (`packages/eslint-plugin/`) currently contains only one rule (`no-browser-dialogs`) for internal use. More rules for enforcing Axiomatic patterns are planned but not yet implemented.
+
+**Future**: Will include rules like `no-engine-internals`, `no-bridge-transitions`, and `require-surface-nesting`.
+
+### Migration Guides
+
+There are currently no migration guides for upgrading between alpha versions. We'll add these based on alpha feedback once we identify common breaking change patterns.
+
+## What Works Well
+
+These features are **stable** and ready for production use:
+
+### Core Engine
+
+- **Physics solver**: Deterministic, mathematically sound anchor calculation
+- **Reactive pipeline**: CSS-only theme transitions with zero JavaScript overhead
+- **Context propagation**: Automatic polarity/mode inheritance through surface nesting
+- **Hue shifting**: Smooth chromatic adaptation for brand colors
+
+### ThemeManager Integration
+
+- **Runtime theme switching**: Instant, flicker-free transitions between themes
+- **State persistence**: localStorage integration with SSR-safe hydration
+- **Framework adapters**: React, Svelte, Ember, and vanilla HTML support
+
+### Bridge API for Adapters
+
+- **22 stable exports**: Semantic foreground, border, and accent variables
+- **Contract enforcement**: Test-time validation for chrome compliance (Starlight example included)
+- **Pay-as-you-go loading**: Adapters only load the bridge CSS they need
+
+### Inspector Diagnostics
+
+- **Contrast violation detection**: Flags WCAG failures with precise diagnosis
+- **Provenance tracking**: Shows which CSS variables contributed to a computed color
+- **Visual debugging**: Highlights affected elements in the page
+- **Exception**: Container query support (see above)
+
+### CLI Solver
+
+- **Theme generation**: Generates consistent, accessible palettes from minimal input
+- **Export formats**: Supports CSS, TypeScript, and DTCG (Design Tokens)
+- **Config validation**: Schema-backed validation with helpful error messages
+
+## Reporting Issues
+
+**Before filing an issue**, check the [Troubleshooting guide](/reference/troubleshooting) for common solutions.
+
+If you encounter a bug, have a feature request, or need clarification on intended behavior:
+
+- **File an issue**: [GitHub Issues](https://github.com/design-axioms/color/issues)
+- **Provide context**: Include your `color-config.json` and reproduction steps
+- **Check existing issues**: We may already be tracking it
+
+**Alpha feedback is critical to shaping the beta release.** We're especially interested in:
+
+- Use cases we didn't anticipate
+- Integration challenges with specific frameworks
+- Documentation gaps or confusing explanations

@@ -20,8 +20,18 @@ import "../styles/fonts.css";
     // ThemeManager will take over and keep this in sync.
     root.setAttribute("data-axm-motion", "tau");
 
-    const theme = root.getAttribute("data-theme");
-    const mode = theme === "dark" || theme === "light" ? theme : "system";
+    // Read from localStorage directly (not data-theme attribute!)
+    // This ensures we get the user's preference before Starlight's ThemeProvider runs.
+    // Starlight stores "" for auto, "light" or "dark" for explicit modes.
+    const storageKey = "starlight-theme";
+    const rawTheme = typeof localStorage !== "undefined" 
+      ? localStorage.getItem(storageKey) 
+      : null;
+    
+    const mode = rawTheme === "light" || rawTheme === "dark" 
+      ? rawTheme 
+      : "system";
+    
     const systemResolved = matchMedia("(prefers-color-scheme: dark)").matches
       ? "dark"
       : "light";
@@ -29,6 +39,11 @@ import "../styles/fonts.css";
 
     root.setAttribute("data-axm-mode", mode);
     root.setAttribute("data-axm-resolved-mode", resolved);
+    
+    // IMPORTANT: Also set data-theme here to override Starlight's SSR default of "dark".
+    // Starlight's CSS uses [data-theme="light/dark"] selectors, so we need this in sync
+    // from the very first paint to prevent FOUC. ThemeManager will take over after init.
+    root.setAttribute("data-theme", resolved);
   })();
 </script>
 <script>

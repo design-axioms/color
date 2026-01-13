@@ -46,10 +46,14 @@ export default defineConfig({
       title: "Axiomatic Color",
       components: {
         Head: "./src/components/StarlightHead.astro",
+        ThemeProvider: "./src/components/ThemeProvider.astro",
+        ThemeSelect: "./src/components/ThemeSelect.astro",
       },
       customCss: [
+        "../css/bridge.css",
         "../css/engine.css",
         "./src/styles/theme.css",
+
         "./src/styles/docs.css",
         "./src/styles/starlight-custom.css",
         "./src/styles/tufte.css",
@@ -62,6 +66,13 @@ export default defineConfig({
         },
       ],
       sidebar: [
+        {
+          label: "Start Here",
+          items: [
+            { label: "Why Axiomatic?", slug: "why-axiomatic" },
+            { label: "Quick Start", slug: "guides/quick-start" },
+          ],
+        },
         {
           label: "The Mental Model",
           items: [
@@ -80,9 +91,8 @@ export default defineConfig({
           ],
         },
         {
-          label: "Getting Started",
+          label: "Framework Integration",
           items: [
-            { label: "Quick Start", slug: "guides/quick-start" },
             { label: "React Integration", slug: "guides/frameworks/react" },
             { label: "Svelte Integration", slug: "guides/frameworks/svelte" },
             { label: "Ember Integration", slug: "guides/frameworks/ember" },
@@ -121,6 +131,8 @@ export default defineConfig({
         {
           label: "Reference",
           items: [
+            { label: "Alpha Limitations", slug: "alpha-limitations" },
+            { label: "Troubleshooting", slug: "reference/troubleshooting" },
             { label: "CLI", slug: "reference/cli" },
             { label: "JavaScript API", slug: "reference/javascript-api" },
             { label: "Tokens", slug: "reference/tokens" },

@@ -1,7 +1,8 @@
+import "@axiomatic-design/color/bridge.css";
+import "@axiomatic-design/color/engine.css";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
-import "@axiomatic-design/color/engine.css";
 import "./index.css";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(

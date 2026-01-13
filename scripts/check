@@ -6,3 +6,15 @@ pnpm test
 
 echo "Running pnpm lint..."
 pnpm lint
+
+# RFC-029: Enforce !important ceiling in Starlight adapter
+echo "Checking Starlight adapter !important count (RFC-029)..."
+# Count !important in actual CSS rules, not comments
+count=$(grep -v '^\s*/\*\|^\s*\*' site/src/styles/starlight-custom.css | grep -c '!important' || echo "0")
+ceiling=55  # Lock pattern (variable mappings) + color-scheme invariant
+if [ "$count" -gt "$ceiling" ]; then
+  echo "❌ Error: !important count ($count) in starlight-custom.css exceeds ceiling ($ceiling)"
+  echo "   See docs/rfcs/RFC-029-STARLIGHT-CSS-STRATEGY.md for guidance"
+  exit 1
+fi
+echo "✓ !important count ($count) within acceptable range (≤$ceiling)"

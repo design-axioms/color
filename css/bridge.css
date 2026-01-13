@@ -1,0 +1,267 @@
+/*
+ * AXIOMATIC BRIDGE EXPORTS
+ * 
+ * This file defines the bridge export API for integration adapters.
+ * These CSS custom properties expose engine-computed colors for frameworks
+ * that need to wire their own variables to Axiomatic values.
+ *
+ * USAGE:
+ * Adapters should wire framework variables to bridge exports:
+ *   --framework-bg: var(--axm-bridge-surface);
+ *   --framework-text: var(--axm-bridge-fg-high);
+ *
+ * CONSTRAINT:
+ * Adapters are wiring-only. No synthesis allowed:
+ *   ❌ oklch() literals
+ *   ❌ color-mix() composition
+ *   ✅ var(--axm-bridge-*) only
+ *
+ * The engine computes and sets these values. This file declares both
+ * the @property registrations AND the variable assignments, allowing
+ * consumers to "pay as you go" (only paying for bridge overhead if imported).
+ */
+
+/* --- CORE BRIDGE EXPORTS --- */
+
+/* Surface (background) */
+@property --axm-bridge-surface {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+
+/* Foreground (text) */
+@property --axm-bridge-fg {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --axm-bridge-fg-high {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --axm-bridge-fg-body {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --axm-bridge-fg-subtle {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --axm-bridge-fg-subtlest {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+
+/* Borders */
+@property --axm-bridge-border-dec {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+
+@property --axm-bridge-border-int {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+
+/* --- SEMANTIC ACCENT EXPORTS --- */
+/* Brand */
+@property --axm-bridge-accent-surface {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+@property --axm-bridge-accent {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+@property --axm-bridge-accent-fg {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+
+/* Info */
+@property --axm-bridge-info-surface {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+@property --axm-bridge-info {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+@property --axm-bridge-info-fg {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+
+/* Success */
+@property --axm-bridge-success-surface {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+@property --axm-bridge-success {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+@property --axm-bridge-success-fg {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+
+/* Warning */
+@property --axm-bridge-warning-surface {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+@property --axm-bridge-warning {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+@property --axm-bridge-warning-fg {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+
+/* Danger */
+@property --axm-bridge-danger-surface {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+@property --axm-bridge-danger {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+@property --axm-bridge-danger-fg {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: transparent;
+}
+
+/* --- BRIDGE COMPUTATION --- */
+
+:where(
+  [class^="surface-"],
+  [class*=" surface-"],
+  [class^="text-"],
+  [class*=" text-"],
+  body
+) {
+  /* Wire up core bridge variables to internal engine computations */
+  --axm-bridge-surface: var(--_axm-computed-surface);
+  --axm-bridge-fg: var(--_axm-computed-fg-color);
+
+  --axm-bridge-border-dec: var(--_axm-computed-border-dec-color);
+  --axm-bridge-border-int: var(--_axm-computed-border-int-color);
+
+  /* Compute semantic text variants */
+  /* Re-derived using the same chroma/hue as the main fg */
+  --_axm-bridge-fg-C: calc(var(--alpha-beta) * 0.5);
+
+  --axm-bridge-fg-high: oklch(
+    from var(--axm-text-high-token) calc(l + (0.05 * var(--_axm-bridge-fg-C)))
+      var(--_axm-bridge-fg-C) var(--alpha-hue)
+  );
+  --axm-bridge-fg-body: oklch(
+    from var(--axm-text-body-token) calc(l + (0.05 * var(--_axm-bridge-fg-C)))
+      var(--_axm-bridge-fg-C) var(--alpha-hue)
+  );
+  --axm-bridge-fg-subtle: oklch(
+    from var(--axm-text-subtle-token) calc(l + (0.05 * var(--_axm-bridge-fg-C)))
+      var(--_axm-bridge-fg-C) var(--alpha-hue)
+  );
+  --axm-bridge-fg-subtlest: oklch(
+    from var(--axm-text-subtlest-token)
+      calc(l + (0.05 * var(--_axm-bridge-fg-C))) var(--_axm-bridge-fg-C)
+      var(--alpha-hue)
+  );
+
+  /* --- SEMANTIC ACCENT BRIDGE EXPORTS --- */
+
+  /* Primary accent (brand) */
+  --axm-bridge-accent-surface: oklch(
+    from var(--axm-surface-token) calc(l + 0.08)
+      calc(var(--_axm-chroma-brand, 0.15) * 0.3) var(--_axm-hue-brand, 260)
+  );
+  --axm-bridge-accent: oklch(
+    0.6 var(--_axm-chroma-brand, 0.15) var(--_axm-hue-brand, 260)
+  );
+  --axm-bridge-accent-fg: oklch(
+    from var(--axm-text-high-token) l calc(var(--_axm-chroma-brand, 0.15) * 0.7)
+      var(--_axm-hue-brand, 260)
+  );
+
+  /* Info semantic (blue) */
+  --axm-bridge-info-surface: oklch(
+    from var(--axm-surface-token) calc(l + 0.06)
+      calc(var(--_axm-chroma-info, 0.15) * 0.25) var(--_axm-hue-info, 250)
+  );
+  --axm-bridge-info: oklch(
+    0.6 var(--_axm-chroma-info, 0.15) var(--_axm-hue-info, 250)
+  );
+  --axm-bridge-info-fg: oklch(
+    from var(--axm-text-high-token) l calc(var(--_axm-chroma-info, 0.15) * 0.7)
+      var(--_axm-hue-info, 250)
+  );
+
+  /* Success semantic (green) */
+  --axm-bridge-success-surface: oklch(
+    from var(--axm-surface-token) calc(l + 0.04)
+      calc(var(--_axm-chroma-success, 0.15) * 0.25) var(--_axm-hue-success, 145)
+  );
+  --axm-bridge-success: oklch(
+    0.65 var(--_axm-chroma-success, 0.15) var(--_axm-hue-success, 145)
+  );
+  --axm-bridge-success-fg: oklch(
+    from var(--axm-text-high-token) l
+      calc(var(--_axm-chroma-success, 0.15) * 0.7) var(--_axm-hue-success, 145)
+  );
+
+  /* Warning semantic (orange) */
+  --axm-bridge-warning-surface: oklch(
+    from var(--axm-surface-token) calc(l + 0.06)
+      calc(var(--_axm-chroma-warning, 0.15) * 0.3) var(--_axm-hue-warning, 55)
+  );
+  --axm-bridge-warning: oklch(
+    0.72 var(--_axm-chroma-warning, 0.15) var(--_axm-hue-warning, 55)
+  );
+  --axm-bridge-warning-fg: oklch(
+    from var(--axm-text-high-token) calc(l * 0.85)
+      calc(var(--_axm-chroma-warning, 0.15) * 0.7) var(--_axm-hue-warning, 55)
+  );
+
+  /* Danger semantic (red) */
+  --axm-bridge-danger-surface: oklch(
+    from var(--axm-surface-token) calc(l + 0.05)
+      calc(var(--_axm-chroma-danger, 0.18) * 0.3) var(--_axm-hue-danger, 25)
+  );
+  --axm-bridge-danger: oklch(
+    0.6 var(--_axm-chroma-danger, 0.18) var(--_axm-hue-danger, 25)
+  );
+  --axm-bridge-danger-fg: oklch(
+    from var(--axm-text-high-token) calc(l * 0.85)
+      calc(var(--_axm-chroma-danger, 0.18) * 0.8) var(--_axm-hue-danger, 25)
+  );
+}

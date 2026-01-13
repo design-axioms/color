@@ -1,8 +1,8 @@
-# Current Work: Epoch 44, Phase 2 — Starlight Extraction ✅ COMPLETE
+# Current Work: Epoch 45 — Alpha Polish
 
-**Updated:** 2026-01-08
+**Updated:** 2026-01-12
 
-## Previous Phase: ThemeManager Unification — ✅ COMPLETE
+## Previous Epoch: Epoch 44 — Starlight Extraction ✅ COMPLETE
 
 **PRs:**
 
@@ -12,35 +12,21 @@
 - #26: Deep partial type fix
 - #28: Prettierignore for site
 - #29: Make `invertedSelectors` required (BREAKING)
-
-**Outcome:**
-
-- ThemeManager now delegates to AxiomaticTheme for all reads
-- `invertedSelectors` is a required option, imported from generated TypeScript
-- Race condition eliminated: data available at ES module import time
-- RFC-021 and JavaScript API docs updated
-
-## Current Phase: Starlight Extraction — ✅ COMPLETE
-
-**Goal:** Extract Starlight-specific code from core inspector. Create adapter pattern for framework-specific checks.
-
-**PRs:**
-
 - #32: FrameworkContractAdapter pattern and Starlight implementation
 
 **Outcome:**
 
-- Core inspector has no Starlight-specific code
-- `FrameworkContractAdapter` interface in `inspector/types.ts`
-- `StarlightContractAdapter` in `integrations/starlight/contract-adapter.ts`
-- Generic `scanForFrameworkContractViolations()` method in engine
-- Convenience wrapper `scanForStarlightChromeContractViolations()` preserved
+- ThemeManager unified, race condition eliminated
+- Core inspector framework-agnostic
+- RFC010 compliance enforced (adapters = wiring only)
+- Bridge expanded to 22 exports (semantic accents: brand, info, success, warning, danger)
+- Bridge refactored to `css/bridge.css` for "pay as you go" loading
 
 ---
 
-## Next Phase: Epoch 45 - Alpha Polish
+## Current Epoch: Epoch 45 - Alpha Polish
 
-Based on fresh-eyes review, we're pivoting from the original Phase 3/4 work to focus on documentation gaps that affect the "Pragmatic Integrator" persona.
+Based on Kano-QFD analysis, we're focusing on documentation gaps that affect new user onboarding and set correct expectations for alpha release.
 
 ### Phase A: Quick Wins — ✅ COMPLETE
 
@@ -49,34 +35,115 @@ Based on fresh-eyes review, we're pivoting from the original Phase 3/4 work to f
 - [x] Update plan.md to reflect pivot
 - **PR**: #33
 
-### Phase B: Working Example (Current)
+### Phase B: Working Example — ✅ COMPLETE
 
 - [x] Document `examples/vercel-demo` as a reference implementation (README.md)
 - [x] Add "How It Works" walkthrough
-- [ ] Cross-link from integration guide
-- [ ] Subagent premortem review
-
-### Phase C: Troubleshooting
-
-- Common issues and solutions
-- Error code reference (when explicit errors ship in Phase 4)
+- [x] Cross-link from integration guide
+- [x] RFC010/RFC029 conflict resolved (bridge expansion)
+- [x] Bridge refactored to separate file (`css/bridge.css`)
 
 ---
 
-## Upcoming Phases (Epoch 44 Continuation)
+## Remaining Sessions to Alpha
 
-### Phase 3: Layer Separation (Deferred)
+### Session 1: Close Phase B & Known Limitations — ✅ COMPLETE
+
+**Goal:** Complete Phase B closure and set alpha expectations
+
+- [x] Add cross-link in `advanced/framework-integration.mdx` → Vercel demo
+- [x] Create `alpha-limitations.mdx` with known gaps
+- [x] Link limitations from Quick Start
+- [x] Add to sidebar navigation (Reference section)
+
+**Effort:** S (completed 2026-01-12)
+
+### Session 2: Documentation Polish — ✅ COMPLETE
+
+**Goal:** Address "Concept Overload" gap for new users
+
+- [x] Create "Why Axiomatic?" benefits-focused landing page
+- [x] Restructure sidebar with "Start Here" section (Why Axiomatic? + Quick Start)
+- [x] Rename "Getting Started" to "Framework Integration" (theory now opt-in)
+- [x] Added link to Alpha Limitations from Why Axiomatic page
+
+**Effort:** M (completed 2026-01-12)
+
+### Session 3: Troubleshooting Skeleton — ✅ COMPLETE
+
+**Goal:** Seed troubleshooting content (will expand with alpha feedback)
+
+- [x] Create `reference/troubleshooting.mdx` with skeleton sections
+- [x] Add to sidebar navigation (Reference section)
+- [x] Cross-link from alpha-limitations.mdx
+- [x] Document known issues: theme switching, color appearance, build errors, inspector, integration conflicts
+
+**Note:** Moved to `reference/` to allow explanatory code examples under RFC010.
+
+**Effort:** S (completed 2026-01-12)
+
+### Session 4: VS Code Extension Decision (Current)
+
+**Goal:** Resolve extension ambiguity
+
+**Recommendation:** Defer to post-beta, mark as "Community Welcome"
+
+- [ ] Update deferred.md with decision
+- [ ] Add to "Future Ecosystem" section in docs
+
+**Effort:** XS (1 hour)
+
+---
+
+## Alpha Release Criteria
+
+| Criterion                    | Status       |
+| ---------------------------- | ------------ |
+| All core contract items      | ✅           |
+| Static checks pass           | ✅           |
+| Working examples exist       | ✅           |
+| Known limitations documented | ⏳ Session 1 |
+| Gentle on-ramp exists        | ⏳ Session 2 |
+| Troubleshooting guide exists | ⏳ Session 3 |
+
+**Blocking Items:** Sessions 1-2  
+**Non-Blocking Polish:** Sessions 3-4
+
+---
+
+## Post-Alpha Roadmap
+
+### Epoch 46: Alpha Release
+
+- Version bump, changelog
+- npm publish
+- Announce to target community
+
+### Epoch 47: Interoperability & Ecosystem
+
+- Round-trip DTCG import
+- Native Tailwind preset with Late Binding
+
+### Epoch 48: Beta Release
+
+- Luminance Spectrum UI (Delighter)
+- Auto-Fix in Inspector (Delighter)
+- Expanded ESLint plugin rules
+
+---
+
+## Deferred Work
+
+### Phase 3: Layer Separation (Deferred to Epoch 47)
 
 - Restructure exports: Pure System / Integration / Dev Tools
 - Clear "what layer am I in?" for consumers
 
-### Phase 4: Silent Failures → Explicit Errors (Deferred)
+### Phase 4: Silent Failures → Explicit Errors (Deferred to Epoch 47)
 
 - Missing backgrounds → throw with helpful message
 - Invalid config → validation errors
 - Solver errors → actionable suggestions
-
----
 
 ## Deferred from Original Phase 2.1
 

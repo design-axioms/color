@@ -1,0 +1,75 @@
+---
+import Select from "@astrojs/starlight/components/Select.astro";
+---
+
+<starlight-theme-select>
+	<Select
+		icon="laptop"
+		label={Astro.locals.t("themeSelect.accessibleLabel")}
+		options={[
+			{ label: Astro.locals.t("themeSelect.dark"), selected: false, value: "dark" },
+			{ label: Astro.locals.t("themeSelect.light"), selected: false, value: "light" },
+			{ label: Astro.locals.t("themeSelect.auto"), selected: true, value: "auto" },
+		]}
+		width="6.25em"
+	/>
+</starlight-theme-select>
+
+{/* Inlined to avoid FOUC. Uses global scope from Starlight's ThemeProvider.astro */}
+<script is:inline>
+	StarlightThemeProvider.updatePickers();
+</script>
+
+<script>
+	// StarlightThemeProvider is a global from Starlight's ThemeProvider.astro
+	declare const StarlightThemeProvider: {
+		updatePickers(theme?: "auto" | "dark" | "light"): void;
+	};
+
+	type Theme = "auto" | "dark" | "light";
+
+	/** Key in `localStorage` to store color theme preference at (Starlight standard). */
+	const storageKey = "starlight-theme";
+
+	/** Get a typesafe theme string from any JS value (unknown values are coerced to `'auto'`). */
+	const parseTheme = (theme: unknown): Theme =>
+		theme === "auto" || theme === "dark" || theme === "light" ? theme : "auto";
+
+	/** Load the user's preference from `localStorage`. */
+	const loadTheme = (): Theme =>
+		parseTheme(typeof localStorage !== "undefined" && localStorage.getItem(storageKey));
+
+	/** Store the user's preference in `localStorage` using Starlight semantics. */
+	function storeTheme(theme: Theme): void {
+		if (typeof localStorage === "undefined") return;
+		// Starlight stores '' for auto, 'light' or 'dark' for explicit modes.
+		localStorage.setItem(storageKey, theme === "light" || theme === "dark" ? theme : "");
+	}
+
+	function publishTheme(theme: Theme): void {
+		const mode = theme === "auto" ? "system" : theme;
+		storeTheme(theme);
+
+		// Keep Starlight UI in sync (select value + icon).
+		StarlightThemeProvider.updatePickers(theme);
+
+		// Single writer: user intent → ThemeManager → AxiomaticTheme.
+		// Do not mutate data-theme here.
+		import("../lib/theme-bridge").then(({ setThemeMode }) => setThemeMode(mode));
+	}
+
+	class StarlightThemeSelect extends HTMLElement {
+		constructor() {
+			super();
+
+			publishTheme(loadTheme());
+
+			this.querySelector("select")?.addEventListener("change", (e) => {
+				if (!(e.currentTarget instanceof HTMLSelectElement)) return;
+				publishTheme(parseTheme(e.currentTarget.value));
+			});
+		}
+	}
+
+	customElements.define("starlight-theme-select", StarlightThemeSelect);
+</script>

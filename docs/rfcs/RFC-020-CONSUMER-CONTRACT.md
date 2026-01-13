@@ -170,6 +170,7 @@ Some markup is not controlled by consumers (e.g., Starlight internals, vendor co
 - Adapters consume **bridge exports** (`--axm-bridge-*`), not engine-private variables
 - Runtime may do DOM wiring (applying tokens to vendor markup) via documented APIs
 - Runtime must not reference foreign or engine variables
+- Adapters MUST NOT implement theme integration by observing vendor theme attributes (e.g., `data-theme`) with `MutationObserver` and calling `ThemeManager` in response; theme intent must be single-writer (see RFC-INTEGRATION)
 
 See RFC-INTEGRATION for the full integration adapter specification.
 

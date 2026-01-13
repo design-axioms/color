@@ -301,13 +301,13 @@ Generated CSS MUST derive internal variables (including `--tau`) from the semant
 
 **Required sources**:
 
-- **System preference**: `prefers-color-scheme`
+- **System preference**: `matchMedia('(prefers-color-scheme: dark)')` listener
 - **Manual override**: `setMode("light"|"dark"|"system")`
 
-**Optional sources**:
+**Integration constraint**:
 
-- **Attribute source**: observe a foreign theme attribute (e.g., `data-theme`)
-- **Custom source**: callback/observable that publishes mode changes
+- Integrations MUST NOT use `MutationObserver` to observe vendor theme attributes (e.g., `data-theme`) and then call `ThemeManager.setMode()`.
+- If a foreign system includes its own theme switcher, integrations MUST replace/override it so user intent routes through `ThemeManager` as the single writer.
 
 #### R5 — Precedence is deterministic
 
@@ -322,24 +322,9 @@ For vendor integration sources (e.g., Starlight), the vendor attribute may be tr
 
 Users should not need to author "observe vendor theme, write Axiomatic state" scripts.
 
-The library provides documented helpers:
+For foreign systems with built-in theme switchers (e.g., Starlight), integrations SHOULD replace/override the switcher so it delegates to `ThemeManager.setMode()` instead of mutating a vendor attribute.
 
-```javascript
-import {
-  ThemeManager,
-  createAttributeModeSource,
-} from "@axiomatic-design/color";
-
-const manager = new ThemeManager();
-manager.attachSource(
-  createAttributeModeSource({
-    root: document.documentElement,
-    attribute: "data-theme",
-    map: { dark: "dark", light: "light" },
-    systemWhenMissing: true,
-  }),
-);
-```
+**PROHIBITED**: Bidirectional sync loops (observe `data-theme` → call `ThemeManager.setMode()`), even if guarded.
 
 ### Theme Switch Transactions
 
@@ -352,6 +337,12 @@ If a foreign paint system includes its own theme switcher, integrations MUST ens
 - Integrations MUST NOT allow multiple "theme authorities" to write state in overlapping ways
 - The theme switcher must either be replaced with Axiomatic-owned control, or wrapped to delegate to `ThemeManager`
 - Vendor-observable state (`data-theme`, `color-scheme`) MAY be published for compatibility but MUST be derived output, not competing input
+
+**PROHIBITED**:
+
+- Using `MutationObserver` to observe `data-theme` and call `ThemeManager.setMode()`.
+
+This creates a competing writer and is prone to infinite loops because theme commits are multi-attribute transactions (`data-theme`, `.dark`, `--tau`, and semantic `data-axm-*` state).
 
 #### Axiom 5.1 — Theme switches are transactions
 
@@ -509,12 +500,11 @@ Starlight is the first concrete adapter instance and serves as the reference imp
 
 ### Integration Summary
 
-1. `ThemeManager` instantiated with Starlight mode source
-2. Mode source observes `data-theme` changes
-3. `ThemeManager` updates `data-axm-mode` / `data-axm-resolved-mode`
-4. Generated CSS derives `--tau` from `data-axm-resolved-mode`
-5. Adapter CSS maps `--sl-*` → bridge exports
-6. DOM wiring applies surface classes to Starlight chrome
+1. Theme switcher is intercepted/replaced so user intent calls `ThemeManager.setMode()` (single writer)
+2. `ThemeManager` updates `data-axm-mode` / `data-axm-resolved-mode`
+3. Generated CSS derives `--tau` from `data-axm-resolved-mode`
+4. Adapter CSS maps `--sl-*` → bridge exports
+5. DOM wiring applies surface classes to Starlight chrome
 
 **Key properties**:
 
@@ -548,7 +538,7 @@ export const STARLIGHT_CHROME_CONTRACT = {
 
 **Integration tests SHOULD**:
 
-- Toggle foreign theme system (mutate `data-theme`)
+- Toggle the foreign theme UI (or call the integration setter)
 - Assert Axiomatic semantic state updates
 - Assert computed paint coherence
 
@@ -622,18 +612,18 @@ class ThemeManager {
 
 Each DOM attribute or CSS variable has exactly one authoritative writer:
 
-| Target                    | Writer         | Notes               |
-| ------------------------- | -------------- | ------------------- |
-| `--tau`                   | AxiomaticTheme | Via `set()`         |
-| `--alpha-hue`             | AxiomaticTheme | Via `set()`         |
-| `--alpha-beta`            | AxiomaticTheme | Via `set()`         |
-| `color-scheme` (root)     | AxiomaticTheme | Synced with `--tau` |
-| `color-scheme` (inverted) | ThemeManager   | Opposite of root    |
-| `data-theme`              | AxiomaticTheme | Framework compat    |
-| `.dark` class             | AxiomaticTheme | Tailwind compat     |
-| `data-axm-mode`           | ThemeManager   | User preference     |
-| `data-axm-resolved-mode`  | ThemeManager   | Computed mode       |
-| `data-axm-ready`          | ThemeManager   | Init signal         |
+| Target                    | Writer         | Notes                          |
+| ------------------------- | -------------- | ------------------------------ |
+| `--tau`                   | AxiomaticTheme | Via `set()`                    |
+| `--alpha-hue`             | AxiomaticTheme | Via `set()`                    |
+| `--alpha-beta`            | AxiomaticTheme | Via `set()`                    |
+| `color-scheme` (root)     | AxiomaticTheme | Synced with `--tau`            |
+| `color-scheme` (inverted) | ThemeManager   | Opposite of root               |
+| `data-theme`              | AxiomaticTheme | Framework compat (output-only) |
+| `.dark` class             | AxiomaticTheme | Tailwind compat                |
+| `data-axm-mode`           | ThemeManager   | User preference                |
+| `data-axm-resolved-mode`  | ThemeManager   | Computed mode                  |
+| `data-axm-ready`          | ThemeManager   | Init signal                    |
 
 ---
 
