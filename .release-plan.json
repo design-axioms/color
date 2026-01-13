@@ -1,18 +1,18 @@
 {
   "solution": {
     "@axiomatic-design/color": {
-      "impact": "major",
-      "oldVersion": "0.3.0",
-      "newVersion": "1.0.0",
+      "impact": "minor",
+      "oldVersion": "1.0.0",
+      "newVersion": "1.1.0",
       "tagName": "latest",
       "constraints": [
         {
-          "impact": "major",
-          "reason": "Appears in changelog section :boom: Breaking Change"
-        },
-        {
           "impact": "minor",
           "reason": "Appears in changelog section :rocket: Enhancement"
+        },
+        {
+          "impact": "patch",
+          "reason": "Appears in changelog section :memo: Documentation"
         },
         {
           "impact": "patch",
@@ -28,5 +28,5 @@
       "oldVersion": "0.2.0"
     }
   },
-  "description": "## Release (2026-01-08)\n\n* @axiomatic-design/color 1.0.0 (major)\n\n#### :boom: Breaking Change\n* `@axiomatic-design/color`\n  * [#29](https://github.com/design-axioms/color/pull/29) refactor: make invertedSelectors required, remove CSS fallback ([@wycats](https://github.com/wycats))\n\n#### :rocket: Enhancement\n* `@axiomatic-design/color`\n  * [#25](https://github.com/design-axioms/color/pull/25) feat: add --emit-ts flag to generate TypeScript metadata ([@wycats](https://github.com/wycats))\n  * [#24](https://github.com/design-axioms/color/pull/24) feat: add invertedSelectors option and mark AxiomaticTheme internal ([@wycats](https://github.com/wycats))\n\n#### :house: Internal\n* `@axiomatic-design/color`\n  * [#28](https://github.com/design-axioms/color/pull/28) chore: add site/ to prettierignore and format CHANGELOG ([@wycats](https://github.com/wycats))\n  * [#26](https://github.com/design-axioms/color/pull/26) refactor: delegate ThemeManager CSS writes to AxiomaticTheme ([@wycats](https://github.com/wycats))\n* Other\n  * [#23](https://github.com/design-axioms/color/pull/23) docs: consolidate ThemeManager architecture in RFCs ([@wycats](https://github.com/wycats))\n\n#### Committers: 1\n- Yehuda Katz ([@wycats](https://github.com/wycats))\n"
+  "description": "## Release (2026-01-13)\n\n* @axiomatic-design/color 1.1.0 (minor)\n\n#### :rocket: Enhancement\n* `@axiomatic-design/color`\n  * [#35](https://github.com/design-axioms/color/pull/35) feat: Alpha Polish Phase B - Bridge refactor & documentation ([@wycats](https://github.com/wycats))\n  * [#32](https://github.com/design-axioms/color/pull/32) refactor: extract Starlight contract adapter from core inspector ([@wycats](https://github.com/wycats))\n\n#### :memo: Documentation\n* `@axiomatic-design/color`\n  * [#34](https://github.com/design-axioms/color/pull/34) docs: add Vercel demo README and cross-link from integration guide ([@wycats](https://github.com/wycats))\n  * [#33](https://github.com/design-axioms/color/pull/33) docs: add ThemeManager emphasis and framework integration guide ([@wycats](https://github.com/wycats))\n\n#### :house: Internal\n* `@axiomatic-design/color`\n  * [#30](https://github.com/design-axioms/color/pull/30) docs: update agent docs for completed Phase 1 ([@wycats](https://github.com/wycats))\n\n#### Committers: 1\n- Yehuda Katz ([@wycats](https://github.com/wycats))\n"
 }
