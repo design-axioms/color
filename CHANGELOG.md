@@ -1,5 +1,26 @@
 # Changelog
 
+## Release (2026-01-13)
+
+* @axiomatic-design/color 1.1.0 (minor)
+
+#### :rocket: Enhancement
+* `@axiomatic-design/color`
+  * [#35](https://github.com/design-axioms/color/pull/35) feat: Alpha Polish Phase B - Bridge refactor & documentation ([@wycats](https://github.com/wycats))
+  * [#32](https://github.com/design-axioms/color/pull/32) refactor: extract Starlight contract adapter from core inspector ([@wycats](https://github.com/wycats))
+
+#### :memo: Documentation
+* `@axiomatic-design/color`
+  * [#34](https://github.com/design-axioms/color/pull/34) docs: add Vercel demo README and cross-link from integration guide ([@wycats](https://github.com/wycats))
+  * [#33](https://github.com/design-axioms/color/pull/33) docs: add ThemeManager emphasis and framework integration guide ([@wycats](https://github.com/wycats))
+
+#### :house: Internal
+* `@axiomatic-design/color`
+  * [#30](https://github.com/design-axioms/color/pull/30) docs: update agent docs for completed Phase 1 ([@wycats](https://github.com/wycats))
+
+#### Committers: 1
+- Yehuda Katz ([@wycats](https://github.com/wycats))
+
 ## Release (2026-01-08)
 
 * @axiomatic-design/color 1.0.0 (major)
