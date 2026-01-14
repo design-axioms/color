@@ -264,6 +264,110 @@ Culprit: CSS Rule: .header (custom.css) [0,1,0]
 
 ---
 
+## Conditional Rule Evaluation
+
+**Purpose**: Distinguish between CSS rules that are _potentially applicable_ vs. _actively applied_ when wrapped in conditional at-rules (`@container`, `@media`, `@supports`).
+
+### Problem Statement
+
+The Inspector collects all CSS rules whose selectors match an element. For rules inside conditional blocks, we need to know:
+
+1. **Applies**: The selector matches the element (always true for collected rules)
+2. **Active**: The conditional block's condition currently evaluates to `true`
+
+Without this distinction, the Inspector shows rules that _could_ affect an element but don't currently—creating noise in violation diagnosis.
+
+### Data Model
+
+Extend `CollectedRule` with optional conditional context:
+
+```typescript
+interface ConditionalContext {
+  type: "container" | "media" | "supports";
+  condition: string; // e.g., "(min-width: 400px)"
+  active: boolean; // Did this condition evaluate to true?
+  evaluated: boolean; // Were we able to evaluate it? (always true with probe technique)
+}
+
+interface CollectedRule {
+  // ...existing fields (rule, specificity, layer, etc.)
+  conditional?: ConditionalContext;
+}
+```
+
+### Evaluation Algorithm: Sentinel Probe Technique
+
+Instead of parsing and evaluating condition syntax ourselves, we use the browser's own evaluation engine via a "sentinel probe":
+
+```typescript
+function isConditionalRuleActive(element: Element, rule: CSSRule): boolean {
+  // Generate a unique sentinel property
+  const sentinel = `--_axm-probe-${Math.random().toString(36).slice(2, 10)}`;
+  const sentinelValue = "active";
+
+  // Find a style rule inside the conditional to inject into
+  const styleRule = findFirstStyleRule(rule);
+  if (!styleRule) return true; // No style rule = can't probe, assume active
+
+  // Inject the sentinel property
+  styleRule.style.setProperty(sentinel, sentinelValue);
+
+  // Check if getComputedStyle sees it on the target element
+  const computed = getComputedStyle(element).getPropertyValue(sentinel).trim();
+  const isActive = computed === sentinelValue;
+
+  // Clean up
+  styleRule.style.removeProperty(sentinel);
+
+  return isActive;
+}
+```
+
+**Why this approach?**
+
+- **100% accurate**: Uses browser's native CSS evaluation
+- **Zero parsing**: Works with all condition syntax (and, or, not, style queries, future syntax)
+- **Universal**: Same code handles `@container`, `@media`, `@supports`
+- **Future-proof**: Automatically supports new CSS features we don't know about yet
+
+### Supported Conditions
+
+All conditions are supported—the probe technique doesn't parse the condition, it just asks the browser "does this rule apply?"
+
+| Condition Type   | Example                                     | Supported |
+| :--------------- | :------------------------------------------ | :-------- |
+| `min-width`      | `(min-width: 400px)`                        | ✅        |
+| `max-width`      | `(max-width: 800px)`                        | ✅        |
+| `and` combinator | `(min-width: 400px) and (max-width: 800px)` | ✅        |
+| `or` combinator  | `(min-width: 400px) or (min-height: 300px)` | ✅        |
+| `not` operator   | `not (min-width: 400px)`                    | ✅        |
+| Style queries    | `style(--theme: dark)`                      | ✅        |
+| `@media`         | `@media (prefers-color-scheme: dark)`       | ✅        |
+| `@supports`      | `@supports (display: grid)`                 | ✅        |
+
+### UI Representation
+
+In the overlay and rule list:
+
+| Rule State | Visual Treatment           | Indicator               |
+| :--------- | :------------------------- | :---------------------- |
+| Active     | Normal                     | (none)                  |
+| Inactive   | Strikethrough, 50% opacity | `@container (inactive)` |
+
+Example rendering:
+
+```
+✓ .card { color: ... }                    [0,1,0]
+✗ @container (min-width: 600px)          (inactive)
+    .card { color: ... }                  [0,1,0]
+```
+
+### Cascade Implications
+
+Rules with `active: false` are **excluded from winning rule determination**. They are still shown in the rule list for diagnostic purposes, but they cannot be the "culprit" in a violation.
+
+---
+
 ## Automation Integration
 
 The inspector publishes artifacts to `globalThis` for CI scripts.
@@ -354,12 +458,12 @@ Features that are stable, tested, and production-ready:
 
 Features that work but have known limitations:
 
-| Feature                     | Status  | Known Issues                                       |
-| :-------------------------- | :------ | :------------------------------------------------- |
-| **Container Query Support** | Partial | Container conditions not evaluated; assumes `true` |
-| **Experiment Mode**         | Working | Changes reset on reload; no undo stack             |
-| **Continuity Performance**  | Working | Slow on 10,000+ element DOMs                       |
-| **Scan Stabilization**      | Working | Heuristic timeout may miss transition violations   |
+| Feature                         | Status  | Known Issues                                                    |
+| :------------------------------ | :------ | :-------------------------------------------------------------- |
+| **Conditional Rule Evaluation** | Full    | See [Conditional Rule Evaluation](#conditional-rule-evaluation) |
+| **Experiment Mode**             | Working | Changes reset on reload; no undo stack                          |
+| **Continuity Performance**      | Working | Slow on 10,000+ element DOMs                                    |
+| **Scan Stabilization**          | Working | Heuristic timeout may miss transition violations                |
 
 ### Planned 🔮
 

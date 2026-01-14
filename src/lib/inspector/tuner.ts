@@ -1,14 +1,23 @@
 import { AxiomaticTheme, type ThemeState } from "../theme.ts";
 
+export interface TunerOptions {
+  root: HTMLElement;
+  /**
+   * An optional AxiomaticTheme instance to use for theme state management.
+   * If not provided, uses the shared singleton via `AxiomaticTheme.get()`.
+   */
+  theme?: AxiomaticTheme;
+}
+
 export class AxiomaticTuner {
   private root: HTMLElement;
   private overrideStyle: HTMLStyleElement | null = null;
   private manager: AxiomaticTheme;
   private isDirty = false;
 
-  constructor(root: HTMLElement) {
-    this.root = root;
-    this.manager = AxiomaticTheme.get();
+  constructor(options: TunerOptions) {
+    this.root = options.root;
+    this.manager = options.theme ?? AxiomaticTheme.get();
   }
 
   private unsubscribe: (() => void) | null = null;

@@ -37,6 +37,25 @@ export interface ElementDebugInfo {
   resolvedTokens: ResolvedToken[];
 }
 
+/**
+ * The type of conditional at-rule.
+ */
+export type ConditionalType = "container" | "media" | "supports";
+
+/**
+ * Context for a conditional at-rule (e.g., @container, @media, @supports).
+ */
+export interface ConditionalContext {
+  /** The type of conditional (container, media, supports) */
+  type: ConditionalType;
+  /** The condition string (e.g., "(min-width: 400px)") */
+  condition: string;
+  /** Whether the condition currently evaluates to true */
+  active: boolean;
+  /** Whether we were able to evaluate the condition (false = fallback) */
+  evaluated: boolean;
+}
+
 export interface CSSRuleMatch {
   selector: string;
   value: string;
@@ -46,6 +65,8 @@ export interface CSSRuleMatch {
   isLayered: boolean;
   scopeProximity: number;
   rule: CSSStyleRule | null;
+  /** Conditional context if rule is inside @container/@media/@supports */
+  conditional?: ConditionalContext;
 }
 
 /**

@@ -20,15 +20,17 @@ Clicking the theme toggle doesn't change colors, or changes happen inconsistentl
 
 #### ThemeManager Not Initialized
 
-The `AxiomaticTheme` singleton must be initialized before the DOM is rendered. If you're seeing console errors like `Cannot read property 'subscribe' of undefined`:
+The `ThemeManager` must be instantiated before the DOM is rendered. If you're seeing console errors like `Cannot read property 'subscribe' of undefined`:
 
 ```tsx
-// ❌ Bad: ThemeManager imported but never initialized
-import { AxiomaticTheme } from "@axiomatic-design/color";
+// ❌ Bad: ThemeManager imported but never instantiated
+import { ThemeManager } from "@axiomatic-design/color";
 
 // ✅ Good: Initialize on app startup
-import { AxiomaticTheme } from "@axiomatic-design/color";
-const themeManager = AxiomaticTheme.get(); // Initializes singleton
+import { ThemeManager } from "@axiomatic-design/color";
+import { invertedSelectors } from "./theme.generated.ts";
+
+const themeManager = new ThemeManager({ invertedSelectors });
 ```
 
 See the [React Integration](/guides/frameworks/react) guide for framework-specific patterns.

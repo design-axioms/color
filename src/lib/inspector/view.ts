@@ -1,6 +1,10 @@
-import { findWinningRule, formatSpecificity } from "./css-utils.ts";
+import {
+  findAllMatchingRules,
+  findWinningRule,
+  formatSpecificity,
+} from "./css-utils.ts";
 import type { InspectionResult } from "./engine.ts";
-import type { ResolvedToken } from "./types.ts";
+import type { ConditionalContext, ResolvedToken } from "./types.ts";
 
 function extractCssVarNames(value: string): string[] {
   // Extracts variable names from `var(--foo, fallback)` occurrences.
@@ -24,6 +28,50 @@ function findForbiddenVar(
       return { kind: "legacy-computed", name };
   }
   return null;
+}
+
+/**
+ * Render a badge indicating the conditional context state of a CSS rule.
+ *
+ * @param conditional - The conditional context (from CSSRuleMatch)
+ * @returns HTML string for the badge, or empty string if no badge needed
+ */
+export function renderConditionalBadge(
+  conditional?: ConditionalContext,
+): string {
+  if (!conditional) return "";
+
+  if (!conditional.active && conditional.evaluated) {
+    return `<span class="conditional-indicator inactive">@${conditional.type} (inactive)</span>`;
+  }
+
+  if (!conditional.evaluated) {
+    return `<span class="conditional-indicator unknown">@${conditional.type} (?)</span>`;
+  }
+
+  return ""; // Active, no badge needed
+}
+
+/**
+ * Get CSS class for a rule row based on its conditional context.
+ *
+ * @param conditional - The conditional context (from CSSRuleMatch)
+ * @returns CSS class string to add to the rule row
+ */
+export function getRuleConditionalClass(
+  conditional?: ConditionalContext,
+): string {
+  if (!conditional) return "";
+
+  if (!conditional.active && conditional.evaluated) {
+    return "rule-inactive";
+  }
+
+  if (!conditional.evaluated) {
+    return "rule-conditional conditional-unknown";
+  }
+
+  return "rule-conditional conditional-active";
 }
 
 export function renderAdvice(
@@ -170,6 +218,7 @@ export async function updateAdviceWithAnalysis(
 
   const property = adviceBox.dataset.property || "background-color";
   const winningRule = findWinningRule(element, property);
+  const allRules = findAllMatchingRules(element, property);
   let reason = "";
 
   if (winningRule) {
@@ -188,12 +237,13 @@ export async function updateAdviceWithAnalysis(
         ? winningRule.stylesheet.split("/").pop()
         : "unknown file";
       const specificity = formatSpecificity(winningRule.specificity);
+      const conditionalBadge = renderConditionalBadge(winningRule.conditional);
       if (forbidden?.kind === "starlight") {
-        reason = `Foreign token detected: <code>${forbidden.name}</code> via <code title="Specificity: ${specificity}">${winningRule.selector}</code> in ${file}.`;
+        reason = `Foreign token detected: <code>${forbidden.name}</code> via <code title="Specificity: ${specificity}">${winningRule.selector}</code> in ${file}.${conditionalBadge ? ` ${conditionalBadge}` : ""}`;
       } else if (forbidden?.kind === "legacy-computed") {
-        reason = `Legacy computed variable detected: <code>${forbidden.name}</code> via <code title="Specificity: ${specificity}">${winningRule.selector}</code> in ${file}.`;
+        reason = `Legacy computed variable detected: <code>${forbidden.name}</code> via <code title="Specificity: ${specificity}">${winningRule.selector}</code> in ${file}.${conditionalBadge ? ` ${conditionalBadge}` : ""}`;
       } else {
-        reason = `CSS Rule: <code title="Specificity: ${specificity}">${winningRule.selector}</code> (${property}) in ${file}.`;
+        reason = `CSS Rule: <code title="Specificity: ${specificity}">${winningRule.selector}</code> (${property}) in ${file}.${conditionalBadge ? ` ${conditionalBadge}` : ""}`;
       }
 
       // Store rule info for the fix button
@@ -203,6 +253,24 @@ export async function updateAdviceWithAnalysis(
   } else {
     const tagName = element.tagName.toLowerCase();
     reason = `User Agent default style (e.g. <code>&lt;${tagName}&gt;</code>) or inherited value.`;
+  }
+
+  // If there are inactive conditional rules, show them for debugging
+  const inactiveConditionalRules = allRules.filter(
+    (r) => r.conditional && !r.conditional.active,
+  );
+
+  if (inactiveConditionalRules.length > 0) {
+    const inactiveList = inactiveConditionalRules
+      .map((r) => {
+        const conditionalBadge = renderConditionalBadge(r.conditional);
+        const rowClass = getRuleConditionalClass(r.conditional);
+        return `<div class="token-row ${rowClass}" style="margin-top: 4px; padding: 4px; font-size: 10px;">
+          <code>${r.selector}</code> ${conditionalBadge}
+        </div>`;
+      })
+      .join("");
+    reason += `<div style="margin-top: 8px;"><strong>Inactive conditional rules:</strong>${inactiveList}</div>`;
   }
 
   reasonSpan.innerHTML = reason;

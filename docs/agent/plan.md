@@ -189,53 +189,86 @@
     - Solver errors → actionable suggestions
     - Add input validation to math functions (dev-mode warnings)
 
-## Epoch 45: Alpha Readiness (Planned)
+## Epoch 45: Alpha Readiness (Completed)
 
 - **Goal**: Prepare for alpha release by ensuring a clearly identified target persona can pick up the library, use it immediately, and feel the benefits.
-- **Phases**:
-  - **Phase 1: Target Persona & Documentation**
-    - **Goal**: Define the alpha target persona and ensure documentation serves them.
-    - **Tasks**:
-      - Define target persona (likely: "Frontend dev adding dark mode to existing app")
-      - Audit Quick Start guide against persona needs
-      - Write "ThemeManager Integration" guide (the "replace your handler" pattern)
-      - Clear "what's ready" vs "what's WIP" signposting
-  - **Phase 2: Inspector Feature Audit**
-    - **Goal**: Determine which inspector features are ready for alpha vs. WIP.
-    - **Tasks**:
-      - Audit each inspector capability (violations, continuity, overlay)
-      - Mark container query support as "preview" or implement
-      - Document inspector limitations clearly
-      - Ensure inspector "wow factor" features work reliably
-  - **Phase 3: Original Phase 2.1 Tasks**
-    - **Goal**: Complete the deferred polish tasks (now easier with clean architecture).
-    - **Tasks**:
-      - Transition snaps (should be simpler with unified ThemeManager)
-      - Inspector overlay UX hardening
-      - CSSOM sentinel (now as Starlight adapter, not core)
-  - **Phase 4: Fresh Eyes Test**
-    - **Goal**: Validate alpha readiness with a 0-to-1 simulation.
-    - **Tasks**:
-      - Simulate target persona adopting the system
-      - Note friction points, fix immediately
-      - Verify "dark mode just works" experience
+- **Outcome**: All alpha release criteria met. Documentation polish complete, known limitations documented, troubleshooting guide created, inspector container query evaluation refactored to sentinel probe technique.
+- **PRs**: #33, #35, #36
 
-## Epoch 46: Alpha Release (Planned)
+## Epoch 46: Alpha Release & Stabilization (Active)
 
-- **Goal**: Ship the alpha release to early adopters.
-- **Phases**:
-  - **Phase 1: Release Preparation**
-    - **Goal**: Final checks before alpha.
-    - **Tasks**:
-      - Version bump, changelog
-      - Final documentation review
-      - npm publish dry-run
-  - **Phase 2: Release & Announce**
-    - **Goal**: Ship it.
-    - **Tasks**:
-      - Publish to npm
-      - Announce to target community
-      - Set up feedback channels
+- **Goal**: Ship the alpha release (1.0.0-alpha.1) with a clean API, proper dependency injection, and verified stability.
+- **Rationale**: The codebase is in excellent shape (133 tests pass, all P0 silent failures resolved). Breaking changes must happen now before external users adopt deprecated patterns. The singleton pattern is a testing/DI obstacle that should be fixed before release.
+
+### Phase 1: Breaking Changes & Cleanup
+
+- **Goal**: Remove deprecated APIs and refactor architecture for clean DI before any users adopt the alpha.
+- **Tasks**:
+  - [ ] **Remove `lightClass`/`darkClass` from ThemeManager**
+    - Delete options from `ThemeManagerOptions` in `src/lib/browser.ts`
+    - Remove private fields, constructor assignments, and deprecation warnings
+    - Remove backwards-compatibility class manipulation in `apply()`
+    - Delete `warnDeprecationOnce` helper if no longer needed
+    - Update `site/src/content/docs/reference/javascript-api.md` to remove deprecated options
+    - Regenerate llms.txt files via `pnpm generate-llms`
+  - [ ] **Refactor ThemeManager to use Dependency Injection**
+    - Remove the singleton pattern from `AxiomaticTheme` (static `instance` and `get()`)
+    - Make `AxiomaticTheme` instantiable normally (constructor becomes public)
+    - Add `theme?: AxiomaticTheme` option to `ThemeManagerOptions`
+    - Update `ThemeManager` to accept an injected instance or create one internally
+    - Update all direct `AxiomaticTheme.get()` usages in browser.ts, inspector/overlay.ts, inspector/tuner.ts
+    - Update tests to use injected instances
+  - [ ] **Run knip to identify unused exports**
+    - Execute `pnpm exec knip` and review output
+    - Remove any dead exports/files identified
+  - [ ] **Audit PRESETS system**
+    - Verify `PRESETS` in `src/lib/presets.ts` has usages beyond the export
+    - If unused: remove the file and export from `src/lib/index.ts`
+- **Success Criteria**:
+  - No `lightClass`/`darkClass` in codebase
+  - `AxiomaticTheme` is injectable (no global singleton access required)
+  - All tests pass after refactoring
+  - knip reports no unused exports
+
+### Phase 2: Pre-Release Verification
+
+- **Goal**: Ensure the codebase is stable and documentation is current after breaking changes.
+- **Tasks**:
+  - [ ] Full test suite verification (`pnpm test`, `pnpm playwright test`)
+  - [ ] Build verification (`pnpm build`, `pnpm typecheck`, `pnpm lint`)
+  - [ ] Documentation audit (search for stale references to removed APIs)
+  - [ ] RFC updates if API surface changed
+- **Success Criteria**:
+  - All tests, build, typecheck, and lint pass
+  - No stale references to removed APIs in docs
+  - RFCs reflect current architecture
+
+### Phase 3: Release Engineering
+
+- **Goal**: Execute the release process to publish 1.0.0-alpha.1 to npm.
+- **Tasks**:
+  - [ ] Version bump to `1.0.0-alpha.1` in package.json
+  - [ ] Generate CHANGELOG via `pnpm exec release-plan prepare`
+  - [ ] npm publish dry-run to verify package contents
+  - [ ] Actual npm publish with `--tag alpha`
+  - [ ] Git tag `v1.0.0-alpha.1`
+- **Success Criteria**:
+  - Package published to npm with `alpha` tag
+  - Git tag exists on origin
+  - CHANGELOG includes all Phase 1 breaking changes
+
+### Phase 4: Community Launch
+
+- **Goal**: Announce the alpha and establish feedback channels.
+- **Tasks**:
+  - [ ] Draft and publish GitHub Release with release notes
+  - [ ] Create GitHub issue template for alpha feedback
+  - [ ] Share announcement on appropriate channels
+  - [ ] Monitor for initial feedback (48 hour window)
+- **Success Criteria**:
+  - GitHub Release published
+  - Feedback channel exists and is documented
+  - No blocking issues reported (or resolved)
 
 ## Epoch 47: Interoperability & Ecosystem (Planned)
 
