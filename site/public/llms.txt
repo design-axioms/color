@@ -60,13 +60,36 @@ We build maintainable, testable software that leverages the power of the browser
 **Static exports are snapshots.**
 Since the system is dynamic, any static export (JSON, PDF) is a lossy projection of the system's state at a specific moment. We must enumerate states explicitly in these formats.
 
+### [VII. The Law of Determinism](axioms/07-determinism.md)
+
+**Given the same configuration, the output must be bit-for-bit identical.**
+We rely on Golden Master testing to ensure that the "Physics Engine" does not drift silently.
+
+### [VIII. The Law of Lossless Interoperability](axioms/08-interoperability.md)
+
+**We export to other formats without losing semantic meaning.**
+We prioritize formats that preserve the semantics of the system (like reactive CSS variables in Tailwind) over flattened values.
+
+### [IX. The Law of "Just Enough" Configuration](axioms/09-configuration.md)
+
+**We expose knobs for _intent_, not _implementation_.**
+Users express what they want (Accessibility, Vibe), and the system handles the math.
+
+### [X. The Law of Semantic Continuity](axioms/10-semantic-continuity.md)
+
+**Transitions must preserve semantic intent, not just minimize distance.**
+We reject linear interpolation when it violates the semantic meaning of the transition (e.g., forcing a "Cool -> Warm" hue shift to go the long way around the wheel).
+
+### [XI. The Law of the Stable Spine](axioms/11-stable-spine.md)
+
+**Keep the spine generic. Push variability to the edges.**
+We prevent “glue drift” by keeping orchestrators branch-free and pushing configuration, analysis, and output policies into typed module hooks.
+
 ## Missing / Implicit Axioms (To Be Formalized)
 
 The following principles guide our work but have not yet been codified into Law:
 
-- **The Law of Determinism**: Given the same configuration, the output must be bit-for-bit identical.
-- **The Law of Lossless Interoperability**: We export to other formats (Tailwind, DTCG) without losing semantic meaning.
-- **The Law of "Just Enough" Configuration**: We expose knobs for _intent_, not _implementation_.
+- (None currently)
 
 ---
 
@@ -91,10 +114,30 @@ When you place an element on a surface, you aren't just painting pixels. You are
 Every surface acts as a "Context Provider." It automatically sets a suite of CSS variables that determine how text, borders, and other elements should look _when sitting on that specific surface_.
 
 <Diagram>
-  <div class="mb-4 text-sm text-text-subtle">
-    Click on any surface below to inspect its active tokens.
+  <div class="mb-4 text-sm text-subtle">
+    <span>Use the global Token Inspector{" "}</span>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      style="display: inline-block; vertical-align: middle; margin: 0 2px;"
+    >
+      <path d="M3 7V5a2 2 0 0 1 2-2h2" />
+      <path d="M17 3h2a2 2 0 0 1 2 2v2" />
+      <path d="M21 17v2a2 2 0 0 1-2 2h-2" />
+      <path d="M7 21H5a2 2 0 0 1-2-2v-2" />
+      <circle cx="12" cy="12" r="3" />
+      <path d="m16 16-1.9-1.9" />
+    </svg>
+    <span>{" "}to inspect these surfaces.</span>
   </div>
-  <ContextVisualizer client:load />
+  <ContextVisualizer />
 </Diagram>
 
 In the visualization above:
@@ -122,64 +165,132 @@ We categorize surfaces based on their physical role in the UI, not their color.
 
 These are the foundations. They recede into the background.
 
-<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 not-content my-4">
+<div class="docs-grid not-content my-6">
   <SurfacePreview
     surface="surface-page"
     name="Page"
     description="The infinite backdrop."
-  />
+  >
+    <div
+      class="bordered"
+      style="margin-top: 1rem; height: 6rem; border-style: dashed; border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; font-size: 0.875rem;"
+    >
+      <span class="text-subtle">Application Root</span>
+    </div>
+  </SurfacePreview>
   <SurfacePreview
     surface="surface-workspace"
     name="Workspace"
     description="A dedicated area for tools or navigation."
-  />
+  >
+    <div style="margin-top: 1rem; display: flex; gap: 0.5rem; height: 6rem;">
+      <div
+        class="surface-card bordered"
+        style="width: 33%; height: 100%; border-radius: 0.25rem;"
+      ></div>
+      <div
+        class="surface-card bordered"
+        style="width: 66%; height: 100%; border-radius: 0.25rem;"
+      ></div>
+    </div>
+  </SurfacePreview>
 </div>
 
 ### The Objects
 
 These sit _on top_ of the canvas. They hold your content.
 
-<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 not-content my-4">
+<div class="docs-grid not-content my-6">
   <SurfacePreview
     surface="surface-card"
     name="Card"
     description="The primary container for information."
-  />
+  >
+    <div style="margin-top: 1rem; display: flex; flex-direction: column; gap: 0.75rem;">
+      <div
+        class="text-subtle"
+        style="height: 0.5rem; width: 33%; box-shadow: inset 0 0 0 9999px currentColor; opacity: 0.2; border-radius: 0.125rem;"
+      ></div>
+      <div
+        class="text-subtle"
+        style="height: 0.5rem; width: 75%; box-shadow: inset 0 0 0 9999px currentColor; opacity: 0.2; border-radius: 0.125rem;"
+      ></div>
+      <div
+        class="text-subtle"
+        style="height: 0.5rem; width: 50%; box-shadow: inset 0 0 0 9999px currentColor; opacity: 0.2; border-radius: 0.125rem;"
+      ></div>
+    </div>
+  </SurfacePreview>
   <SurfacePreview
     surface="surface-card"
     tint="hue-brand"
     name="Tinted"
     description="A subtle grouping mechanism."
-  />
+  >
+    <div style="margin-top: 1rem; display: flex; flex-direction: column; gap: 0.75rem;">
+      <div
+        class="text-brand"
+        style="height: 0.5rem; width: 33%; box-shadow: inset 0 0 0 9999px currentColor; opacity: 0.4; border-radius: 0.125rem;"
+      ></div>
+      <div
+        class="text-brand"
+        style="height: 0.5rem; width: 75%; box-shadow: inset 0 0 0 9999px currentColor; opacity: 0.3; border-radius: 0.125rem;"
+      ></div>
+    </div>
+  </SurfacePreview>
 </div>
 
 ### The Interactors
 
 These are actionable. They invite touch.
 
-<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 not-content my-4">
+<div class="docs-grid not-content my-6">
   <SurfacePreview
-    surface="surface-action"
+    surface="surface-card"
     name="Action"
     description="Buttons, toggles, and controls."
-  />
+  >
+    <button
+      class="surface-action text-strong"
+      style="margin-top: 1rem; display: flex; align-items: center; justify-content: center; height: 3rem; width: 100%; border-radius: 0.25rem; font-weight: bold; font-size: 0.875rem; border: none; cursor: pointer;"
+    >
+      Click Me
+    </button>
+  </SurfacePreview>
   <SurfacePreview
-    surface="surface-action-soft"
+    surface="surface-card"
     name="Soft Action"
     description="Secondary interactive elements."
-  />
+  >
+    <button
+      class="surface-action-soft bordered"
+      style="margin-top: 1rem; display: flex; align-items: center; justify-content: center; height: 3rem; width: 100%; border-radius: 0.25rem; font-weight: 500; font-size: 0.875rem; cursor: pointer;"
+    >
+      Cancel
+    </button>
+  </SurfacePreview>
 </div>
 
 ### The Spotlights
 
 These demand attention. They often break the current polarity to stand out.
 
-<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 not-content my-4">
+<div class="docs-grid not-content my-6">
   <SurfacePreview
     surface="surface-spotlight"
     name="Spotlight"
     description="Tooltips, toasts, and primary calls-to-action."
-  />
+  >
+    <div style="margin-top: 1rem; display: flex; align-items: center; gap: 0.75rem;">
+      <div
+        class="surface-status-success"
+        style="width: 0.5rem; height: 0.5rem; border-radius: 9999px;"
+      ></div>
+      <span style="font-size: 0.875rem; font-weight: 500;">
+        Changes saved successfully
+      </span>
+    </div>
+  </SurfacePreview>
 </div>
 
 **Note on Inversion**: Spotlight surfaces perform a "Hard Flip" of the theme. If your app is in Light Mode, a Spotlight surface forces its internals into Dark Mode (and vice versa). This ensures that native browser controls (like scrollbars and checkboxes) render correctly inside the inverted area.
@@ -298,18 +409,34 @@ You don't need to write a print stylesheet. The system's "Physics" just adapt to
 
 ## Quick Start
 
+:::caution[Alpha Release]
+This is an alpha release. See [Alpha Limitations](/alpha-limitations) for current gaps and known issues.
+:::
+
 This guide will walk you through setting up the Axiomatic Color and building your first themed component.
 
 ## 1. Install & Initialize
 
 Run the following commands in your project root:
 
+`pnpm` is recommended (this repo uses pnpm). `npm` generally works as a best-effort alternative.
+
 
   
-    ```bash npm install -D @axiomatic-design/color npx axiomatic init ```
+
+    ```bash
+    npm install -D @axiomatic-design/color
+    npx axiomatic init
+    ```
+
   
   
-    ```bash pnpm add -D @axiomatic-design/color pnpm exec axiomatic init ```
+
+    ```bash
+    pnpm add -D @axiomatic-design/color
+    pnpm exec axiomatic init
+    ```
+
   
 
 
@@ -321,12 +448,20 @@ Now, generate the CSS and TypeScript definitions.
 
 
   
-    ```bash npx axiomatic build --out ./src/theme.css npx axiomatic export
-    --format typescript --out ./src/theme.ts ```
+
+    ```bash
+    npx axiomatic build --out ./src/theme.css
+    npx axiomatic export --format typescript --out ./src/theme.ts
+    ```
+
   
   
-    ```bash pnpm exec axiomatic build --out ./src/theme.css pnpm exec axiomatic
-    export --format typescript --out ./src/theme.ts ```
+
+    ```bash
+    pnpm exec axiomatic build --out ./src/theme.css
+    pnpm exec axiomatic export --format typescript --out ./src/theme.ts
+    ```
+
   
 
 
@@ -337,24 +472,23 @@ Let's build a simple "Card" component to see the system in action.
 
   
   
-  First, import the CSS in your app entry point:
+  First, import the engine and your generated theme in your app entry point:
   ```tsx
-  import './theme.css';
+  import "@axiomatic-design/color/engine.css";
+  import "./theme.css";
   ```
 
 Then, create a Card component:
 
 ```tsx
-
-
 export function Card() {
   return (
     <div
-      className={tokens.surface.card}
+      className="surface-card"
       style={{ padding: "2rem", borderRadius: "8px" }}
     >
-      <h2 style={{ color: tokens.context.text.high }}>Hello World</h2>
-      <p style={{ color: tokens.context.text.subtle }}>I am a themed card.</p>
+      <h2 className="text-strong">Hello World</h2>
+      <p className="text-subtle">I am a themed card.</p>
     </div>
   );
 }
@@ -364,10 +498,11 @@ export function Card() {
 
   
   
-  First, import the CSS in your root layout:
+  First, import the engine and your generated theme in your root layout:
   ```svelte
   <script>
-    import '../theme.css';
+    import "@axiomatic-design/color/engine.css";
+    import "../theme.css";
   </script>
   <slot />
   ```
@@ -389,12 +524,16 @@ Then, create a Card component:
 
   
   
-  Link the CSS in your `<head>`:
+  Link the engine and your generated theme in your `<head>`:
   
   > **Note**: If you are using a bundler (like Vite, Webpack, or Astro), you should import the CSS file in your JavaScript/TypeScript entry point instead (e.g. `import './theme.css'`).
 
 ```html
-<link rel="stylesheet" href="/theme.css" />
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/@axiomatic-design/color@latest/engine.css"
+/>
+<link rel="stylesheet" href="./src/theme.css" />
 ```
 
 Then, write the markup using the utility classes:
@@ -427,13 +566,18 @@ The `axiomatic` CLI is the primary tool for generating your theme tokens.
 
 ```bash
 pnpm add -D @axiomatic-design/color
-# or
+
+# Best-effort (pnpm is recommended for this repo)
 npm install -D @axiomatic-design/color
 ```
 
 ## Usage
 
 ```bash
+# Recommended when installed as a dev dependency
+pnpm exec axiomatic [command] [options]
+
+# One-off / quick try
 npx axiomatic [command] [options]
 ```
 
@@ -466,6 +610,7 @@ npx axiomatic build [options]
 - `--config <path>`: Path to your JSON configuration file. (Default: `./color-config.json`)
 - `--out <path>`: Path where the generated CSS will be written. (Default: `./theme.css`)
 - `--watch`: Watch for changes in the config file and rebuild automatically.
+- `--copy-engine`: Copy `engine.css` next to the output CSS (useful for simple integrations).
 
 **Examples:**
 
@@ -478,7 +623,17 @@ npx axiomatic build --watch
 
 # Custom paths
 npx axiomatic build --config ./design/colors.json --out ./src/variables.css
+
+# Copy engine.css next to your output
+npx axiomatic build --copy-engine
 ```
+
+**Notes:**
+
+- `build` also emits a class-token manifest alongside your CSS output:
+  - If `--out` is `theme.css`, you’ll also get `theme.class-tokens.json`.
+  - Otherwise you’ll get `<out>.class-tokens.json`.
+- If you run `axiomatic` with no command, it runs `build`.
 
 ### `export`
 
@@ -524,6 +679,22 @@ npx axiomatic audit
 - **Contrast Compliance**: Verifies that all surfaces meet APCA contrast guidelines.
 - **Polarity Logic**: Ensures "Page" surfaces are light in Light Mode, and "Inverted" surfaces are dark.
 
+**Semantics:**
+
+`audit` is designed to be **advisory**: it reports schema and logic findings, but not every finding is treated as a hard failure.
+
+### `import`
+
+Imports a DTCG token file into an Axiomatic configuration.
+
+```bash
+npx axiomatic import <file> [--out <file>] [--dry-run]
+```
+
+**Notes:**
+
+- Intended as a migration tool: it produces a `color-config.json`-compatible output.
+
 ## Output
 
 The `build` command generates a CSS file containing:
@@ -532,13 +703,26 @@ The `build` command generates a CSS file containing:
 2.  **Surface Classes**: Classes for each surface defined in your config (e.g., `.surface-card`).
 3.  **High Contrast Media Query**: A `@media (prefers-contrast: more)` block with accessible overrides.
 
+It also generates a class-token manifest (`*.class-tokens.json`) which is used for enforcement and tooling.
+
 ### Integration
 
 Import the generated file in your main CSS entry point:
 
 ```css
+@import "@axiomatic-design/color/engine.css";
 @import "./theme.css";
 ```
+
+### Legacy shorthand
+
+For compatibility, the CLI supports the legacy shorthand form:
+
+```bash
+npx axiomatic <config> <out>
+```
+
+This is treated as `build --config <config> --out <out>`.
 
 ---
 
@@ -557,17 +741,19 @@ The `ThemeManager` class is the main entry point for runtime theme control.
 ### Constructor
 
 ```typescript
-const themeManager = new ThemeManager(options?: ThemeManagerOptions);
+
+
+const themeManager = new ThemeManager({ invertedSelectors });
 ```
 
 **Options:**
 
-| Option             | Type                        | Default                    | Description                                                                 |
-| :----------------- | :-------------------------- | :------------------------- | :-------------------------------------------------------------------------- |
-| `root`             | `HTMLElement`               | `document.documentElement` | The element to apply the theme to.                                          |
-| `lightClass`       | `string`                    | `undefined`                | Class to add in light mode. If omitted, sets `style="color-scheme: light"`. |
-| `darkClass`        | `string`                    | `undefined`                | Class to add in dark mode. If omitted, sets `style="color-scheme: dark"`.   |
-| `faviconGenerator` | `(color: string) => string` | `undefined`                | Function to generate an SVG favicon based on the current theme color.       |
+| Option              | Type                        | Default                    | Description                                                                 |
+| :------------------ | :-------------------------- | :------------------------- | :-------------------------------------------------------------------------- |
+| `invertedSelectors` | `readonly string[]`         | (required)                 | Selectors for surfaces with inverted polarity. Import from generated file. |
+| `root`              | `HTMLElement`               | `document.documentElement` | The element to apply the theme to.                                          |
+| `faviconGenerator`  | `(color: string) => string` | `undefined`                | Function to generate an SVG favicon based on the current theme color.       |
+| `theme`             | `AxiomaticTheme`            | `AxiomaticTheme.get()`     | Optional theme instance for dependency injection. Useful for testing.      |
 
 ### Methods
 
@@ -700,6 +886,8 @@ updateFavicon(
   initial-value: 0;
 }
 
+/* Bridge @property declarations are in ./bridge.css (imported above) */
+
 /* --- 3. ROOT CONFIGURATION --- */
 
 :root {
@@ -714,12 +902,28 @@ updateFavicon(
   --shadow-lg: var(--axm-shadow-lg);
   --shadow-xl: var(--axm-shadow-xl);
 
-  /* Animate Time */
+  /* Animate Time (gated): avoid boot-time animate-in as CSS loads */
+  transition: none;
+}
+
+/* Enable tau transitions only after an integration marks the page as ready.
+   ThemeManager sets `data-axm-ready="true"` after the initial sync. */
+:root[data-axm-ready="true"] {
   transition: --tau 0.3s ease-in-out;
 }
 
+/* ThemeManager semantic state (steady-state driver) */
+:root[data-axm-resolved-mode="light"] {
+  --tau: 1;
+}
+
+:root[data-axm-resolved-mode="dark"] {
+  --tau: -1;
+}
+
+/* Fallback for pre-init pages (no semantic state yet) */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-axm-resolved-mode]) {
     --tau: -1; /* Night Mode */
   }
 }
@@ -787,6 +991,9 @@ updateFavicon(
       var(--alpha-hue)
   );
 
+  /* Bridge exports (public, adapter-safe) */
+  /* Moved to ./bridge.css */
+
   color: var(--_axm-computed-fg-color);
 
   /* --- BORDER RESOLUTION --- */
@@ -822,13 +1029,28 @@ updateFavicon(
      C = min(beta, limit)
   */
 
+  /*
+     NOTE: We intentionally avoid `oklch(from var(--axm-surface-token) ...)`.
+     Chromium currently fails to consistently invalidate recomputation when the
+     `var(--axm-surface-token)` value changes (e.g. theme flips via `--tau`).
+     Instead, compute the surface channels directly from the per-surface light/dark
+     endpoints which are already generated into theme CSS.
+  */
+
+  --_axm-surface-L: calc(
+    var(--_axm-local-light-l) +
+      (var(--_axm-local-dark-l) - var(--_axm-local-light-l)) *
+      var(--_axm-mode-mix)
+  );
+
   --_axm-computed-surface: oklch(
-    from var(--axm-surface-token) l
+    var(--_axm-surface-L)
       min(
         var(--alpha-beta),
-        var(--alpha-beta) * (1 - abs(2 * l - 1)) * var(--tau) * var(--tau)
+        var(--alpha-beta) * (1 - abs(2 * var(--_axm-surface-L) - 1)) *
+          var(--tau) * var(--tau)
       )
-      h
+      var(--alpha-hue)
   );
 
   background-color: var(--_axm-computed-surface);
@@ -837,22 +1059,44 @@ updateFavicon(
 
 /* --- TRANSITIONS --- */
 
-:where(
-  [class^="surface-"],
-  [class*=" surface-"],
-  [class^="state-"],
-  [class*=" state-"],
-  [class^="text-"],
-  [class*=" text-"]
-) {
+/* Motion policy:
+   - Default: allow output transitions for discrete surface/token changes.
+   - `data-axm-motion="tau"`: disable output transitions so only `--tau` drives motion.
+*/
+:root:not([data-axm-motion="tau"])
+  :where(
+    [class^="surface-"],
+    [class*=" surface-"],
+    [class^="state-"],
+    [class*=" state-"],
+    [class^="text-"],
+    [class*=" text-"]
+  ) {
   transition:
     --_axm-computed-surface 0.2s ease-in-out,
     --_axm-computed-fg-color 0.2s ease-in-out,
     --_axm-computed-border-dec-color 0.2s ease-in-out,
-    --_axm-computed-border-int-color 0.2s ease-in-out;
+    --_axm-computed-border-int-color 0.2s ease-in-out,
+    --axm-bridge-surface 0.2s ease-in-out,
+    --axm-bridge-fg 0.2s ease-in-out,
+    --axm-bridge-border-dec 0.2s ease-in-out,
+    --axm-bridge-border-int 0.2s ease-in-out;
 }
 
 /* --- UTILITIES --- */
+
+.shadow-sm {
+  box-shadow: var(--shadow-sm);
+}
+.shadow-md {
+  box-shadow: var(--shadow-md);
+}
+.shadow-lg {
+  box-shadow: var(--shadow-lg);
+}
+.shadow-xl {
+  box-shadow: var(--shadow-xl);
+}
 
 .bordered {
   border-width: 1px;
@@ -969,7 +1213,6 @@ mark,
 
 
 :root {
-  --_axm-inverted-surfaces: ".surface-action, .surface-spotlight";
   /* Key Colors */
   --axm-key-brand-color: oklch(0.6056 0.2189 292.7172);
   --_axm-hue-brand: 292.7172;
@@ -983,6 +1226,9 @@ mark,
   --axm-key-error-color: oklch(0.6368 0.2078 25.3313);
   --_axm-hue-error: 25.3313;
   --_axm-chroma-error: 0.2078;
+  --axm-key-gray-color: oklch(0.5544 0.0407 257.4166);
+  --_axm-hue-gray: 257.4166;
+  --_axm-chroma-gray: 0.0407;
   --axm-key-danger-color: oklch(0.6368 0.2078 25.3313);
   --_axm-hue-danger: 25.3313;
   --_axm-chroma-danger: 0.2078;
@@ -995,530 +1241,912 @@ mark,
   --axm-key-info-color: oklch(0.5854 0.2041 277.1173);
   --_axm-hue-info: 277.1173;
   --_axm-chroma-info: 0.2041;
+  --axm-key-indigo-color: var(--axm-key-info-color);
+  --_axm-hue-indigo: var(--_axm-hue-info);
+  --_axm-chroma-indigo: var(--_axm-chroma-info);
   /* Elevation */
-  --axm-shadow-sm: light-dark(0 1px 2px 0 oklch(0 0 0 / 0.05), 0 1px 2px 0 oklch(1 0 0 / 0.15));
-  --axm-shadow-md: light-dark(0 4px 6px -1px oklch(0 0 0 / 0.1), 0 2px 4px -1px oklch(0 0 0 / 0.06), 0 4px 6px -1px oklch(1 0 0 / 0.15), 0 2px 4px -1px oklch(1 0 0 / 0.1));
-  --axm-shadow-lg: light-dark(0 10px 15px -3px oklch(0 0 0 / 0.1), 0 4px 6px -2px oklch(0 0 0 / 0.05), 0 10px 15px -3px oklch(1 0 0 / 0.15), 0 4px 6px -2px oklch(1 0 0 / 0.1));
-  --axm-shadow-xl: light-dark(0 20px 25px -5px oklch(0 0 0 / 0.1), 0 10px 10px -5px oklch(0 0 0 / 0.04), 0 20px 25px -5px oklch(1 0 0 / 0.15), 0 10px 10px -5px oklch(1 0 0 / 0.1));
+  --axm-shadow-sm: 0 1px 2px 0 oklch(calc(0.5 + (-0.5 * var(--tau, 1))) 0 0 / calc(0.1 + (-0.05 * var(--tau, 1))));
+  --axm-shadow-md: 0 4px 6px -1px oklch(calc(0.5 + (-0.5 * var(--tau, 1))) 0 0 / calc(0.125 + (-0.025 * var(--tau, 1)))), 0 2px 4px -1px oklch(calc(0.5 + (-0.5 * var(--tau, 1))) 0 0 / calc(0.08 + (-0.02 * var(--tau, 1))));
+  --axm-shadow-lg: 0 10px 15px -3px oklch(calc(0.5 + (-0.5 * var(--tau, 1))) 0 0 / calc(0.125 + (-0.025 * var(--tau, 1)))), 0 4px 6px -2px oklch(calc(0.5 + (-0.5 * var(--tau, 1))) 0 0 / calc(0.075 + (-0.025 * var(--tau, 1))));
+  --axm-shadow-xl: 0 20px 25px -5px oklch(calc(0.5 + (-0.5 * var(--tau, 1))) 0 0 / calc(0.125 + (-0.025 * var(--tau, 1)))), 0 10px 10px -5px oklch(calc(0.5 + (-0.5 * var(--tau, 1))) 0 0 / calc(0.07 + (-0.03 * var(--tau, 1))));
   /* Focus */
-  --axm-focus-ring-color: light-dark(oklch(0.45 0.2 292.7172241670128), oklch(0.75 0.2 292.7172241670128));
+  --axm-focus-ring-color: oklch(calc(0.6 + (-0.15 * var(--tau, 1))) 0.2 292.7172 / 1);
   /* Highlight */
-  --axm-highlight-ring-color: light-dark(oklch(0.60 0.25 322.14985463672554), oklch(0.60 0.25 322.14985463672554));
-  --axm-highlight-surface-color: light-dark(oklch(0.96 0.05 322.14985463672554), oklch(0.25 0.05 322.14985463672554));
-  /* Data Visualization */
-  --axm-chart-1: light-dark(
-    oklch(0.6484 0.14 25),
-    oklch(0.7588 0.14 25)
+  --axm-highlight-ring-color: oklch(0.6 0.25 322.1499 / 1);
+  --axm-highlight-surface-color: oklch(calc(0.605 + (0.355 * var(--tau, 1))) 0.05 322.1499 / 1);
+}
+
+* {
+  /* Data Visualization (Reactive) */
+  --axm-chart-1-h: 25;
+  --axm-chart-1-c: 0.14;
+  --axm-chart-1: oklch(
+    calc(0.7036 - (0.0552 * var(--tau)))
+    calc(var(--axm-chart-1-c) + (var(--alpha-beta) * 0.5))
+    var(--axm-chart-1-h)
   );
-  --axm-chart-2: light-dark(
-    oklch(0.6484 0.14 190),
-    oklch(0.7588 0.14 190)
+  --axm-chart-2-h: 190;
+  --axm-chart-2-c: 0.14;
+  --axm-chart-2: oklch(
+    calc(0.7036 - (0.0552 * var(--tau)))
+    calc(var(--axm-chart-2-c) + (var(--alpha-beta) * 0.5))
+    var(--axm-chart-2-h)
   );
-  --axm-chart-3: light-dark(
-    oklch(0.6484 0.14 45),
-    oklch(0.7588 0.14 45)
+  --axm-chart-3-h: 45;
+  --axm-chart-3-c: 0.14;
+  --axm-chart-3: oklch(
+    calc(0.7036 - (0.0552 * var(--tau)))
+    calc(var(--axm-chart-3-c) + (var(--alpha-beta) * 0.5))
+    var(--axm-chart-3-h)
   );
-  --axm-chart-4: light-dark(
-    oklch(0.6484 0.14 250),
-    oklch(0.7588 0.14 250)
+  --axm-chart-4-h: 250;
+  --axm-chart-4-c: 0.14;
+  --axm-chart-4: oklch(
+    calc(0.7036 - (0.0552 * var(--tau)))
+    calc(var(--axm-chart-4-c) + (var(--alpha-beta) * 0.5))
+    var(--axm-chart-4-h)
   );
-  --axm-chart-5: light-dark(
-    oklch(0.6484 0.14 85),
-    oklch(0.7588 0.14 85)
+  --axm-chart-5-h: 85;
+  --axm-chart-5-c: 0.14;
+  --axm-chart-5: oklch(
+    calc(0.7036 - (0.0552 * var(--tau)))
+    calc(var(--axm-chart-5-c) + (var(--alpha-beta) * 0.5))
+    var(--axm-chart-5-h)
   );
-  --axm-chart-6: light-dark(
-    oklch(0.6484 0.14 280),
-    oklch(0.7588 0.14 280)
+  --axm-chart-6-h: 280;
+  --axm-chart-6-c: 0.14;
+  --axm-chart-6: oklch(
+    calc(0.7036 - (0.0552 * var(--tau)))
+    calc(var(--axm-chart-6-c) + (var(--alpha-beta) * 0.5))
+    var(--axm-chart-6-h)
   );
-  --axm-chart-7: light-dark(
-    oklch(0.6484 0.14 125),
-    oklch(0.7588 0.14 125)
+  --axm-chart-7-h: 125;
+  --axm-chart-7-c: 0.14;
+  --axm-chart-7: oklch(
+    calc(0.7036 - (0.0552 * var(--tau)))
+    calc(var(--axm-chart-7-c) + (var(--alpha-beta) * 0.5))
+    var(--axm-chart-7-h)
   );
-  --axm-chart-8: light-dark(
-    oklch(0.6484 0.14 320),
-    oklch(0.7588 0.14 320)
+  --axm-chart-8-h: 320;
+  --axm-chart-8-c: 0.14;
+  --axm-chart-8: oklch(
+    calc(0.7036 - (0.0552 * var(--tau)))
+    calc(var(--axm-chart-8-c) + (var(--alpha-beta) * 0.5))
+    var(--axm-chart-8-h)
   );
-  --axm-chart-9: light-dark(
-    oklch(0.6484 0.14 150),
-    oklch(0.7588 0.14 150)
+  --axm-chart-9-h: 150;
+  --axm-chart-9-c: 0.14;
+  --axm-chart-9: oklch(
+    calc(0.7036 - (0.0552 * var(--tau)))
+    calc(var(--axm-chart-9-c) + (var(--alpha-beta) * 0.5))
+    var(--axm-chart-9-h)
   );
-  --axm-chart-10: light-dark(
-    oklch(0.6484 0.14 360),
-    oklch(0.7588 0.14 360)
+  --axm-chart-10-h: 360;
+  --axm-chart-10-c: 0.14;
+  --axm-chart-10: oklch(
+    calc(0.7036 - (0.0552 * var(--tau)))
+    calc(var(--axm-chart-10-c) + (var(--alpha-beta) * 0.5))
+    var(--axm-chart-10-h)
   );
+}
+
+:root {
+  --_axm-inverted-surfaces: ".surface-action, .surface-spotlight";
 }
 
 .surface-page, body {
   --_axm-local-light-h: 297.7172;
   --_axm-local-light-c: 0;
+  --_axm-local-light-l: 1;
   --_axm-local-dark-h: 292.7918;
   --_axm-local-dark-c: 0;
-  --alpha-hue: 297.7172;
-  --alpha-beta: 0;
+  --_axm-local-dark-l: 0.1;
+  --_axm-mode-mix: calc((1 - var(--tau)) / 2);
+  --alpha-hue: calc(297.7172 + (292.7918 - 297.7172) * var(--_axm-mode-mix));
+  --alpha-beta: calc(0 + (0 - 0) * var(--_axm-mode-mix));
   --alpha-structure: 1px solid CanvasText;
-  --axm-surface-token: light-dark(
-    oklch(1 var(--alpha-beta) var(--alpha-hue)),
-    oklch(0.1 var(--alpha-beta) var(--alpha-hue))
+  --axm-surface-token: oklch(
+    calc(1 + (0.1 - 1) * var(--_axm-mode-mix))
+    var(--alpha-beta)
+    var(--alpha-hue)
   );
-  --axm-text-high-token: light-dark(
-    oklch(0 0 0),
-    oklch(1 0 0)
+  --axm-text-high-token: oklch(
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-text-subtle-token: light-dark(
-    oklch(0.4586 0 0),
-    oklch(0.893 0 0)
+  --axm-text-body-token: oklch(
+    calc(0.3619 + (0.9416 - 0.3619) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-text-subtlest-token: light-dark(
-    oklch(0.54 0 0),
-    oklch(0.8406 0 0)
+  --axm-text-subtle-token: oklch(
+    calc(0.4586 + (0.893 - 0.4586) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-text-high-hc-token: light-dark(
-    oklch(0 0 0),
-    oklch(1 0 0)
+  --axm-text-subtlest-token: oklch(
+    calc(0.54 + (0.8406 - 0.54) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-text-subtle-hc-token: light-dark(
-    oklch(0.3619 0 0),
-    oklch(0.9416 0 0)
+  --axm-text-high-hc-token: oklch(
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-text-subtlest-hc-token: light-dark(
-    oklch(0.411 0 0),
-    oklch(0.9174 0 0)
+  --axm-text-body-hc-token: oklch(
+    calc(0.1935 + (0.9866 - 0.1935) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-border-dec-token: light-dark(
-    oklch(0.1935 0 0 / 0.0799),
-    oklch(0.9866 0 0 / 0.3254)
+  --axm-text-subtle-hc-token: oklch(
+    calc(0.3619 + (0.9416 - 0.3619) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-border-int-token: light-dark(
-    oklch(0.1935 0 0 / 0.2093),
-    oklch(0.9866 0 0 / 0.5235)
+  --axm-text-subtlest-hc-token: oklch(
+    calc(0.411 + (0.9174 - 0.411) * var(--_axm-mode-mix))
+    0
+    0
+  );
+  --axm-border-dec-token: oklch(
+    calc(0.1935 + (0.9866 - 0.1935) * var(--_axm-mode-mix))
+    0
+    0
+    /
+    calc(0.0799 + (0.3254 - 0.0799) * var(--_axm-mode-mix))
+  );
+  --axm-border-int-token: oklch(
+    calc(0.1935 + (0.9866 - 0.1935) * var(--_axm-mode-mix))
+    0
+    0
+    /
+    calc(0.2093 + (0.5235 - 0.2093) * var(--_axm-mode-mix))
   );
 }
 
 .surface-workspace {
   --_axm-local-light-h: 297.7169;
   --_axm-local-light-c: 0;
+  --_axm-local-light-l: 0.9926;
   --_axm-local-dark-h: 293.015;
   --_axm-local-dark-c: 0;
-  --alpha-hue: 297.7169;
-  --alpha-beta: 0;
+  --_axm-local-dark-l: 0.1935;
+  --_axm-mode-mix: calc((1 - var(--tau)) / 2);
+  --alpha-hue: calc(297.7169 + (293.015 - 297.7169) * var(--_axm-mode-mix));
+  --alpha-beta: calc(0 + (0 - 0) * var(--_axm-mode-mix));
   --alpha-structure: 1px solid CanvasText;
-  --axm-surface-token: light-dark(
-    oklch(0.9926 var(--alpha-beta) var(--alpha-hue)),
-    oklch(0.1935 var(--alpha-beta) var(--alpha-hue))
+  --axm-surface-token: oklch(
+    calc(0.9926 + (0.1935 - 0.9926) * var(--_axm-mode-mix))
+    var(--alpha-beta)
+    var(--alpha-hue)
   );
-  --axm-text-high-token: light-dark(
-    oklch(0 0 0),
-    oklch(1 0 0)
+  --axm-text-high-token: oklch(
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-text-subtle-token: light-dark(
-    oklch(0.4477 0 0),
-    oklch(0.896 0 0)
+  --axm-text-body-token: oklch(
+    calc(0.3504 + (0.9446 - 0.3504) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-text-subtlest-token: light-dark(
-    oklch(0.5295 0 0),
-    oklch(0.8468 0 0)
+  --axm-text-subtle-token: oklch(
+    calc(0.4477 + (0.896 - 0.4477) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-text-high-hc-token: light-dark(
-    oklch(0 0 0),
-    oklch(1 0 0)
+  --axm-text-subtlest-token: oklch(
+    calc(0.5295 + (0.8468 - 0.5295) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-text-subtle-hc-token: light-dark(
-    oklch(0.3504 0 0),
-    oklch(0.9446 0 0)
+  --axm-text-high-hc-token: oklch(
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-text-subtlest-hc-token: light-dark(
-    oklch(0.3998 0 0),
-    oklch(0.9204 0 0)
+  --axm-text-body-hc-token: oklch(
+    calc(0 + (0.9896 - 0) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-border-dec-token: light-dark(
-    oklch(0 0 0 / 0.0636),
-    oklch(0.9896 0 0 / 0.2544)
+  --axm-text-subtle-hc-token: oklch(
+    calc(0.3504 + (0.9446 - 0.3504) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-border-int-token: light-dark(
-    oklch(0 0 0 / 0.1719),
-    oklch(0.9896 0 0 / 0.4742)
+  --axm-text-subtlest-hc-token: oklch(
+    calc(0.3998 + (0.9204 - 0.3998) * var(--_axm-mode-mix))
+    0
+    0
+  );
+  --axm-border-dec-token: oklch(
+    calc(0 + (0.9896 - 0) * var(--_axm-mode-mix))
+    0
+    0
+    /
+    calc(0.0636 + (0.2544 - 0.0636) * var(--_axm-mode-mix))
+  );
+  --axm-border-int-token: oklch(
+    calc(0 + (0.9896 - 0) * var(--_axm-mode-mix))
+    0
+    0
+    /
+    calc(0.1719 + (0.4742 - 0.1719) * var(--_axm-mode-mix))
   );
 }
 
 .surface-card {
   --_axm-local-light-h: 297.7104;
   --_axm-local-light-c: 0;
+  --_axm-local-light-l: 0.9687;
   --_axm-local-dark-h: 293.4658;
   --_axm-local-dark-c: 0;
-  --alpha-hue: 297.7104;
-  --alpha-beta: 0;
+  --_axm-local-dark-l: 0.2911;
+  --_axm-mode-mix: calc((1 - var(--tau)) / 2);
+  --alpha-hue: calc(297.7104 + (293.4658 - 297.7104) * var(--_axm-mode-mix));
+  --alpha-beta: calc(0 + (0 - 0) * var(--_axm-mode-mix));
   --alpha-structure: 1px solid CanvasText;
-  --axm-surface-token: light-dark(
-    oklch(0.9687 var(--alpha-beta) var(--alpha-hue)),
-    oklch(0.2911 var(--alpha-beta) var(--alpha-hue))
+  --axm-surface-token: oklch(
+    calc(0.9687 + (0.2911 - 0.9687) * var(--_axm-mode-mix))
+    var(--alpha-beta)
+    var(--alpha-hue)
   );
-  --axm-text-high-token: light-dark(
-    oklch(0 0 0),
-    oklch(1 0 0)
+  --axm-text-high-token: oklch(
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-text-subtle-token: light-dark(
-    oklch(0.4035 0 0),
-    oklch(0.9113 0 0)
+  --axm-text-body-token: oklch(
+    calc(0.2871 + (0.9596 - 0.2871) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-text-subtlest-token: light-dark(
-    oklch(0.4908 0 0),
-    oklch(0.8622 0 0)
+  --axm-text-subtle-token: oklch(
+    calc(0.4035 + (0.9113 - 0.4035) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-text-high-hc-token: light-dark(
-    oklch(0 0 0),
-    oklch(1 0 0)
+  --axm-text-subtlest-token: oklch(
+    calc(0.4908 + (0.8622 - 0.4908) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-text-subtle-hc-token: light-dark(
-    oklch(0.2871 0 0),
-    oklch(0.9596 0 0)
+  --axm-text-high-hc-token: oklch(
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-text-subtlest-hc-token: light-dark(
-    oklch(0.3504 0 0),
-    oklch(0.9355 0 0)
+  --axm-text-body-hc-token: oklch(
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-border-dec-token: light-dark(
-    oklch(0 0 0 / 0.0656),
-    oklch(1 0 0 / 0.1952)
+  --axm-text-subtle-hc-token: oklch(
+    calc(0.2871 + (0.9596 - 0.2871) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-border-int-token: light-dark(
-    oklch(0 0 0 / 0.1775),
-    oklch(1 0 0 / 0.4284)
+  --axm-text-subtlest-hc-token: oklch(
+    calc(0.3504 + (0.9355 - 0.3504) * var(--_axm-mode-mix))
+    0
+    0
+  );
+  --axm-border-dec-token: oklch(
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
+    /
+    calc(0.0656 + (0.1952 - 0.0656) * var(--_axm-mode-mix))
+  );
+  --axm-border-int-token: oklch(
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
+    /
+    calc(0.1775 + (0.4284 - 0.1775) * var(--_axm-mode-mix))
   );
 }
 .surface-card:hover {
-  --_axm-local-light-h: 297.7104;
+  --_axm-local-light-h: 297.7169;
   --_axm-local-light-c: 0;
-  --_axm-local-dark-h: 293.4658;
+  --_axm-local-light-l: 0.9926;
+  --_axm-local-dark-h: 292.7918;
   --_axm-local-dark-c: 0;
-  --axm-surface-token: light-dark(
-    oklch(0.9687 var(--alpha-beta) var(--alpha-hue)),
-    oklch(0.2911 var(--alpha-beta) var(--alpha-hue))
+  --_axm-local-dark-l: 0.1;
+  --_axm-mode-mix: calc((1 - var(--tau)) / 2);
+  --alpha-hue: calc(297.7169 + (292.7918 - 297.7169) * var(--_axm-mode-mix));
+  --alpha-beta: calc(0 + (0 - 0) * var(--_axm-mode-mix));
+  --axm-surface-token: oklch(
+    calc(0.9926 + (0.1 - 0.9926) * var(--_axm-mode-mix))
+    var(--alpha-beta)
+    var(--alpha-hue)
   );
 }
 .surface-card:active {
-  --_axm-local-light-h: 297.7104;
+  --_axm-local-light-h: 297.7172;
   --_axm-local-light-c: 0;
-  --_axm-local-dark-h: 293.4658;
+  --_axm-local-light-l: 1;
+  --_axm-local-dark-h: 292.7918;
   --_axm-local-dark-c: 0;
-  --axm-surface-token: light-dark(
-    oklch(0.9687 var(--alpha-beta) var(--alpha-hue)),
-    oklch(0.2911 var(--alpha-beta) var(--alpha-hue))
+  --_axm-local-dark-l: 0.1;
+  --_axm-mode-mix: calc((1 - var(--tau)) / 2);
+  --alpha-hue: calc(297.7172 + (292.7918 - 297.7172) * var(--_axm-mode-mix));
+  --alpha-beta: calc(0 + (0 - 0) * var(--_axm-mode-mix));
+  --axm-surface-token: oklch(
+    calc(1 + (0.1 - 1) * var(--_axm-mode-mix))
+    var(--alpha-beta)
+    var(--alpha-hue)
+  );
+}
+
+.surface-input {
+  --_axm-local-light-h: 297.7062;
+  --_axm-local-light-c: 0;
+  --_axm-local-light-l: 0.9596;
+  --_axm-local-dark-h: 293.5654;
+  --_axm-local-dark-c: 0;
+  --_axm-local-dark-l: 0.3072;
+  --_axm-mode-mix: calc((1 - var(--tau)) / 2);
+  --alpha-hue: calc(297.7062 + (293.5654 - 297.7062) * var(--_axm-mode-mix));
+  --alpha-beta: calc(0 + (0 - 0) * var(--_axm-mode-mix));
+  --alpha-structure: 1px solid CanvasText;
+  --axm-surface-token: oklch(
+    calc(0.9596 + (0.3072 - 0.9596) * var(--_axm-mode-mix))
+    var(--alpha-beta)
+    var(--alpha-hue)
+  );
+  --axm-text-high-token: oklch(
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
+  );
+  --axm-text-body-token: oklch(
+    calc(0.2414 + (0.9657 - 0.2414) * var(--_axm-mode-mix))
+    0
+    0
+  );
+  --axm-text-subtle-token: oklch(
+    calc(0.381 + (0.9174 - 0.381) * var(--_axm-mode-mix))
+    0
+    0
+  );
+  --axm-text-subtlest-token: oklch(
+    calc(0.473 + (0.8684 - 0.473) * var(--_axm-mode-mix))
+    0
+    0
+  );
+  --axm-text-high-hc-token: oklch(
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
+  );
+  --axm-text-body-hc-token: oklch(
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
+  );
+  --axm-text-subtle-hc-token: oklch(
+    calc(0.2414 + (0.9657 - 0.2414) * var(--_axm-mode-mix))
+    0
+    0
+  );
+  --axm-text-subtlest-hc-token: oklch(
+    calc(0.327 + (0.9416 - 0.327) * var(--_axm-mode-mix))
+    0
+    0
+  );
+  --axm-border-dec-token: oklch(
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
+    /
+    calc(0.0694 + (0.1923 - 0.0694) * var(--_axm-mode-mix))
+  );
+  --axm-border-int-token: oklch(
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
+    /
+    calc(0.1828 + (0.4249 - 0.1828) * var(--_axm-mode-mix))
   );
 }
 
 .surface-action {
-  --_axm-local-light-h: 292.7918;
-  --_axm-local-light-c: 0;
-  --_axm-local-dark-h: 297.6427;
-  --_axm-local-dark-c: 0;
-  --alpha-hue: 292.7918;
-  --alpha-beta: 0;
+  --_axm-local-light-h: 258.2467;
+  --_axm-local-light-c: 0.2145;
+  --_axm-local-light-l: 0.5731;
+  --_axm-local-dark-h: 258.2467;
+  --_axm-local-dark-c: 0.2145;
+  --_axm-local-dark-l: 0.5731;
+  --_axm-mode-mix: calc((1 - var(--tau)) / 2);
+  --alpha-hue: calc(258.2467 + (258.2467 - 258.2467) * var(--_axm-mode-mix));
+  --alpha-beta: calc(0.2145 + (0.2145 - 0.2145) * var(--_axm-mode-mix));
   --alpha-structure: 1px solid CanvasText;
-  --axm-surface-token: light-dark(
-    oklch(0.1 var(--alpha-beta) var(--alpha-hue)),
-    oklch(0.9 var(--alpha-beta) var(--alpha-hue))
+  --axm-surface-token: oklch(
+    calc(0.5731 + (0.5731 - 0.5731) * var(--_axm-mode-mix))
+    var(--alpha-beta)
+    var(--alpha-hue)
   );
-  --axm-text-high-token: light-dark(
-    oklch(1 0 0),
-    oklch(0 0 0)
+  --axm-text-high-token: oklch(
+    calc(1 + (1 - 1) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-text-subtle-token: light-dark(
-    oklch(0.893 0 0),
-    oklch(0.2156 0 0)
+  --axm-text-body-token: oklch(
+    calc(1 + (1 - 1) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-text-subtlest-token: light-dark(
-    oklch(0.8406 0 0),
-    oklch(0.3696 0 0)
+  --axm-text-subtle-token: oklch(
+    calc(1 + (1 - 1) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-text-high-hc-token: light-dark(
-    oklch(1 0 0),
-    oklch(0 0 0)
+  --axm-text-subtlest-token: oklch(
+    calc(0.9955 + (0.9955 - 0.9955) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-text-subtle-hc-token: light-dark(
-    oklch(0.9416 0 0),
-    oklch(0 0 0)
+  --axm-text-high-hc-token: oklch(
+    calc(1 + (1 - 1) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-text-subtlest-hc-token: light-dark(
-    oklch(0.9174 0 0),
-    oklch(0 0 0)
+  --axm-text-body-hc-token: oklch(
+    calc(1 + (1 - 1) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-border-dec-token: light-dark(
-    oklch(0.9866 0 0 / 0.3254),
-    oklch(0 0 0 / 0.0729)
+  --axm-text-subtle-hc-token: oklch(
+    calc(1 + (1 - 1) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-border-int-token: light-dark(
-    oklch(0.9866 0 0 / 0.5235),
-    oklch(0 0 0 / 0.2032)
+  --axm-text-subtlest-hc-token: oklch(
+    calc(1 + (1 - 1) * var(--_axm-mode-mix))
+    0
+    0
+  );
+  --axm-border-dec-token: oklch(
+    calc(1 + (1 - 1) * var(--_axm-mode-mix))
+    0
+    0
+    /
+    calc(0.1764 + (0.1764 - 0.1764) * var(--_axm-mode-mix))
+  );
+  --axm-border-int-token: oklch(
+    calc(1 + (1 - 1) * var(--_axm-mode-mix))
+    0
+    0
+    /
+    calc(0.4574 + (0.4574 - 0.4574) * var(--_axm-mode-mix))
   );
 }
 .surface-action:hover {
-  --_axm-local-light-h: 292.7918;
-  --_axm-local-light-c: 0;
-  --_axm-local-dark-h: 297.6427;
-  --_axm-local-dark-c: 0;
-  --axm-surface-token: light-dark(
-    oklch(0.1 var(--alpha-beta) var(--alpha-hue)),
-    oklch(0.9 var(--alpha-beta) var(--alpha-hue))
+  --_axm-local-light-h: 258.2467;
+  --_axm-local-light-c: 0.2145;
+  --_axm-local-light-l: 0.533;
+  --_axm-local-dark-h: 258.2467;
+  --_axm-local-dark-c: 0.2145;
+  --_axm-local-dark-l: 0.6083;
+  --_axm-mode-mix: calc((1 - var(--tau)) / 2);
+  --alpha-hue: calc(258.2467 + (258.2467 - 258.2467) * var(--_axm-mode-mix));
+  --alpha-beta: calc(0.2145 + (0.2145 - 0.2145) * var(--_axm-mode-mix));
+  --axm-surface-token: oklch(
+    calc(0.533 + (0.6083 - 0.533) * var(--_axm-mode-mix))
+    var(--alpha-beta)
+    var(--alpha-hue)
   );
 }
 .surface-action:active {
-  --_axm-local-light-h: 292.7918;
-  --_axm-local-light-c: 0;
-  --_axm-local-dark-h: 297.6427;
-  --_axm-local-dark-c: 0;
-  --axm-surface-token: light-dark(
-    oklch(0.1 var(--alpha-beta) var(--alpha-hue)),
-    oklch(0.9 var(--alpha-beta) var(--alpha-hue))
+  --_axm-local-light-h: 258.2467;
+  --_axm-local-light-c: 0.2145;
+  --_axm-local-light-l: 0.5085;
+  --_axm-local-dark-h: 258.2467;
+  --_axm-local-dark-c: 0.2145;
+  --_axm-local-dark-l: 0.6284;
+  --_axm-mode-mix: calc((1 - var(--tau)) / 2);
+  --alpha-hue: calc(258.2467 + (258.2467 - 258.2467) * var(--_axm-mode-mix));
+  --alpha-beta: calc(0.2145 + (0.2145 - 0.2145) * var(--_axm-mode-mix));
+  --axm-surface-token: oklch(
+    calc(0.5085 + (0.6284 - 0.5085) * var(--_axm-mode-mix))
+    var(--alpha-beta)
+    var(--alpha-hue)
   );
 }
 
 .surface-action-soft {
   --_axm-local-light-h: 297.6879;
   --_axm-local-light-c: 0;
+  --_axm-local-light-l: 0.9355;
   --_axm-local-dark-h: 293.8895;
   --_axm-local-dark-c: 0;
-  --alpha-hue: 297.6879;
-  --alpha-beta: 0;
+  --_axm-local-dark-l: 0.3543;
+  --_axm-mode-mix: calc((1 - var(--tau)) / 2);
+  --alpha-hue: calc(297.6879 + (293.8895 - 297.6879) * var(--_axm-mode-mix));
+  --alpha-beta: calc(0 + (0 - 0) * var(--_axm-mode-mix));
   --alpha-structure: 1px solid CanvasText;
-  --axm-surface-token: light-dark(
-    oklch(0.9355 var(--alpha-beta) var(--alpha-hue)),
-    oklch(0.3543 var(--alpha-beta) var(--alpha-hue))
+  --axm-surface-token: oklch(
+    calc(0.9355 + (0.3543 - 0.9355) * var(--_axm-mode-mix))
+    var(--alpha-beta)
+    var(--alpha-hue)
   );
-  --axm-text-high-token: light-dark(
-    oklch(0 0 0),
-    oklch(1 0 0)
+  --axm-text-high-token: oklch(
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-text-subtle-token: light-dark(
-    oklch(0.327 0 0),
-    oklch(0.9325 0 0)
+  --axm-text-body-token: oklch(
+    calc(0 + (0.9806 - 0) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-text-subtlest-token: light-dark(
-    oklch(0.4294 0 0),
-    oklch(0.8838 0 0)
+  --axm-text-subtle-token: oklch(
+    calc(0.327 + (0.9325 - 0.327) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-text-high-hc-token: light-dark(
-    oklch(0 0 0),
-    oklch(1 0 0)
+  --axm-text-subtlest-token: oklch(
+    calc(0.4294 + (0.8838 - 0.4294) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-text-subtle-hc-token: light-dark(
-    oklch(0 0 0),
-    oklch(0.9806 0 0)
+  --axm-text-high-hc-token: oklch(
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-text-subtlest-hc-token: light-dark(
-    oklch(0.2499 0 0),
-    oklch(0.9566 0 0)
+  --axm-text-body-hc-token: oklch(
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-border-dec-token: light-dark(
-    oklch(0 0 0 / 0.0717),
-    oklch(1 0 0 / 0.1838)
+  --axm-text-subtle-hc-token: oklch(
+    calc(0 + (0.9806 - 0) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-border-int-token: light-dark(
-    oklch(0 0 0 / 0.1923),
-    oklch(1 0 0 / 0.4194)
+  --axm-text-subtlest-hc-token: oklch(
+    calc(0.2499 + (0.9566 - 0.2499) * var(--_axm-mode-mix))
+    0
+    0
+  );
+  --axm-border-dec-token: oklch(
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
+    /
+    calc(0.0717 + (0.1838 - 0.0717) * var(--_axm-mode-mix))
+  );
+  --axm-border-int-token: oklch(
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
+    /
+    calc(0.1923 + (0.4194 - 0.1923) * var(--_axm-mode-mix))
   );
 }
 .surface-action-soft:hover {
-  --_axm-local-light-h: 297.6879;
+  --_axm-local-light-h: 297.7062;
   --_axm-local-light-c: 0;
-  --_axm-local-dark-h: 293.8895;
+  --_axm-local-light-l: 0.9596;
+  --_axm-local-dark-h: 293.3709;
   --_axm-local-dark-c: 0;
-  --axm-surface-token: light-dark(
-    oklch(0.9355 var(--alpha-beta) var(--alpha-hue)),
-    oklch(0.3543 var(--alpha-beta) var(--alpha-hue))
+  --_axm-local-dark-l: 0.2748;
+  --_axm-mode-mix: calc((1 - var(--tau)) / 2);
+  --alpha-hue: calc(297.7062 + (293.3709 - 297.7062) * var(--_axm-mode-mix));
+  --alpha-beta: calc(0 + (0 - 0) * var(--_axm-mode-mix));
+  --axm-surface-token: oklch(
+    calc(0.9596 + (0.2748 - 0.9596) * var(--_axm-mode-mix))
+    var(--alpha-beta)
+    var(--alpha-hue)
   );
 }
 .surface-action-soft:active {
-  --_axm-local-light-h: 297.6879;
+  --_axm-local-light-h: 297.7126;
   --_axm-local-light-c: 0;
-  --_axm-local-dark-h: 293.8895;
+  --_axm-local-light-l: 0.9746;
+  --_axm-local-dark-h: 292.9194;
   --_axm-local-dark-c: 0;
-  --axm-surface-token: light-dark(
-    oklch(0.9355 var(--alpha-beta) var(--alpha-hue)),
-    oklch(0.3543 var(--alpha-beta) var(--alpha-hue))
+  --_axm-local-dark-l: 0.1614;
+  --_axm-mode-mix: calc((1 - var(--tau)) / 2);
+  --alpha-hue: calc(297.7126 + (292.9194 - 297.7126) * var(--_axm-mode-mix));
+  --alpha-beta: calc(0 + (0 - 0) * var(--_axm-mode-mix));
+  --axm-surface-token: oklch(
+    calc(0.9746 + (0.1614 - 0.9746) * var(--_axm-mode-mix))
+    var(--alpha-beta)
+    var(--alpha-hue)
   );
 }
 
 .surface-spotlight {
   --_axm-local-light-h: 292.7172;
   --_axm-local-light-c: 0.2189;
+  --_axm-local-light-l: 0.6056;
   --_axm-local-dark-h: 292.7172;
   --_axm-local-dark-c: 0.2189;
-  --alpha-hue: 292.7172;
-  --alpha-beta: 0.2189;
+  --_axm-local-dark-l: 0.6056;
+  --_axm-mode-mix: calc((1 - var(--tau)) / 2);
+  --alpha-hue: calc(292.7172 + (292.7172 - 292.7172) * var(--_axm-mode-mix));
+  --alpha-beta: calc(0.2189 + (0.2189 - 0.2189) * var(--_axm-mode-mix));
   --alpha-structure: 1px solid CanvasText;
-  --axm-surface-token: light-dark(
-    oklch(0.6056 var(--alpha-beta) var(--alpha-hue)),
-    oklch(0.6056 var(--alpha-beta) var(--alpha-hue))
+  --axm-surface-token: oklch(
+    calc(0.6056 + (0.6056 - 0.6056) * var(--_axm-mode-mix))
+    var(--alpha-beta)
+    var(--alpha-hue)
   );
-  --axm-text-high-token: light-dark(
-    oklch(1 0 0),
-    oklch(1 0 0)
+  --axm-text-high-token: oklch(
+    calc(1 + (1 - 1) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-text-subtle-token: light-dark(
-    oklch(1 0 0),
-    oklch(1 0 0)
+  --axm-text-body-token: oklch(
+    calc(1 + (1 - 1) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-text-subtlest-token: light-dark(
-    oklch(1 0 0),
-    oklch(1 0 0)
+  --axm-text-subtle-token: oklch(
+    calc(1 + (1 - 1) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-text-high-hc-token: light-dark(
-    oklch(1 0 0),
-    oklch(1 0 0)
+  --axm-text-subtlest-token: oklch(
+    calc(1 + (1 - 1) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-text-subtle-hc-token: light-dark(
-    oklch(1 0 0),
-    oklch(1 0 0)
+  --axm-text-high-hc-token: oklch(
+    calc(1 + (1 - 1) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-text-subtlest-hc-token: light-dark(
-    oklch(1 0 0),
-    oklch(1 0 0)
+  --axm-text-body-hc-token: oklch(
+    calc(1 + (1 - 1) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-border-dec-token: light-dark(
-    oklch(1 0 0 / 0.1836),
-    oklch(1 0 0 / 0.1836)
+  --axm-text-subtle-hc-token: oklch(
+    calc(1 + (1 - 1) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-border-int-token: light-dark(
-    oklch(1 0 0 / 0.4847),
-    oklch(1 0 0 / 0.4847)
+  --axm-text-subtlest-hc-token: oklch(
+    calc(1 + (1 - 1) * var(--_axm-mode-mix))
+    0
+    0
+  );
+  --axm-border-dec-token: oklch(
+    calc(1 + (1 - 1) * var(--_axm-mode-mix))
+    0
+    0
+    /
+    calc(0.1836 + (0.1836 - 0.1836) * var(--_axm-mode-mix))
+  );
+  --axm-border-int-token: oklch(
+    calc(1 + (1 - 1) * var(--_axm-mode-mix))
+    0
+    0
+    /
+    calc(0.4847 + (0.4847 - 0.4847) * var(--_axm-mode-mix))
   );
 }
 
 .surface-status-success {
   --_axm-local-light-h: 167.4051;
   --_axm-local-light-c: 0.15;
+  --_axm-local-light-l: 0.9;
   --_axm-local-dark-h: 164.0206;
   --_axm-local-dark-c: 0.15;
-  --alpha-hue: 167.4051;
-  --alpha-beta: 0.15;
+  --_axm-local-dark-l: 0.4;
+  --_axm-mode-mix: calc((1 - var(--tau)) / 2);
+  --alpha-hue: calc(167.4051 + (164.0206 - 167.4051) * var(--_axm-mode-mix));
+  --alpha-beta: calc(0.15 + (0.15 - 0.15) * var(--_axm-mode-mix));
   --alpha-structure: 1px solid CanvasText;
-  --axm-surface-token: light-dark(
-    oklch(0.9 var(--alpha-beta) var(--alpha-hue)),
-    oklch(0.4 var(--alpha-beta) var(--alpha-hue))
+  --axm-surface-token: oklch(
+    calc(0.9 + (0.4 - 0.9) * var(--_axm-mode-mix))
+    var(--alpha-beta)
+    var(--alpha-hue)
   );
-  --axm-text-high-token: light-dark(
-    oklch(0 0 0),
-    oklch(1 0 0)
+  --axm-text-high-token: oklch(
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-text-subtle-token: light-dark(
-    oklch(0.2156 0 0),
-    oklch(0.9536 0 0)
+  --axm-text-body-token: oklch(
+    calc(0 + (0.9985 - 0) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-text-subtlest-token: light-dark(
-    oklch(0.3696 0 0),
-    oklch(0.9052 0 0)
+  --axm-text-subtle-token: oklch(
+    calc(0.2156 + (0.9536 - 0.2156) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-text-high-hc-token: light-dark(
-    oklch(0 0 0),
-    oklch(1 0 0)
+  --axm-text-subtlest-token: oklch(
+    calc(0.3696 + (0.9052 - 0.3696) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-text-subtle-hc-token: light-dark(
-    oklch(0 0 0),
-    oklch(0.9985 0 0)
+  --axm-text-high-hc-token: oklch(
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-text-subtlest-hc-token: light-dark(
-    oklch(0 0 0),
-    oklch(0.9746 0 0)
+  --axm-text-body-hc-token: oklch(
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-border-dec-token: light-dark(
-    oklch(0 0 0 / 0.0729),
-    oklch(1 0 0 / 0.175)
+  --axm-text-subtle-hc-token: oklch(
+    calc(0 + (0.9985 - 0) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-border-int-token: light-dark(
-    oklch(0 0 0 / 0.2032),
-    oklch(1 0 0 / 0.4195)
+  --axm-text-subtlest-hc-token: oklch(
+    calc(0 + (0.9746 - 0) * var(--_axm-mode-mix))
+    0
+    0
+  );
+  --axm-border-dec-token: oklch(
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
+    /
+    calc(0.0729 + (0.175 - 0.0729) * var(--_axm-mode-mix))
+  );
+  --axm-border-int-token: oklch(
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
+    /
+    calc(0.2032 + (0.4195 - 0.2032) * var(--_axm-mode-mix))
   );
 }
 
 .surface-status-warning {
   --_axm-local-light-h: 75.0058;
   --_axm-local-light-c: 0.15;
+  --_axm-local-light-l: 0.9;
   --_axm-local-dark-h: 71.6213;
   --_axm-local-dark-c: 0.15;
-  --alpha-hue: 75.0058;
-  --alpha-beta: 0.15;
+  --_axm-local-dark-l: 0.4;
+  --_axm-mode-mix: calc((1 - var(--tau)) / 2);
+  --alpha-hue: calc(75.0058 + (71.6213 - 75.0058) * var(--_axm-mode-mix));
+  --alpha-beta: calc(0.15 + (0.15 - 0.15) * var(--_axm-mode-mix));
   --alpha-structure: 1px solid CanvasText;
-  --axm-surface-token: light-dark(
-    oklch(0.9 var(--alpha-beta) var(--alpha-hue)),
-    oklch(0.4 var(--alpha-beta) var(--alpha-hue))
+  --axm-surface-token: oklch(
+    calc(0.9 + (0.4 - 0.9) * var(--_axm-mode-mix))
+    var(--alpha-beta)
+    var(--alpha-hue)
   );
-  --axm-text-high-token: light-dark(
-    oklch(0 0 0),
-    oklch(1 0 0)
+  --axm-text-high-token: oklch(
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-text-subtle-token: light-dark(
-    oklch(0.2156 0 0),
-    oklch(0.9536 0 0)
+  --axm-text-body-token: oklch(
+    calc(0 + (0.9985 - 0) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-text-subtlest-token: light-dark(
-    oklch(0.3696 0 0),
-    oklch(0.9052 0 0)
+  --axm-text-subtle-token: oklch(
+    calc(0.2156 + (0.9536 - 0.2156) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-text-high-hc-token: light-dark(
-    oklch(0 0 0),
-    oklch(1 0 0)
+  --axm-text-subtlest-token: oklch(
+    calc(0.3696 + (0.9052 - 0.3696) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-text-subtle-hc-token: light-dark(
-    oklch(0 0 0),
-    oklch(0.9985 0 0)
+  --axm-text-high-hc-token: oklch(
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-text-subtlest-hc-token: light-dark(
-    oklch(0 0 0),
-    oklch(0.9746 0 0)
+  --axm-text-body-hc-token: oklch(
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-border-dec-token: light-dark(
-    oklch(0 0 0 / 0.0729),
-    oklch(1 0 0 / 0.175)
+  --axm-text-subtle-hc-token: oklch(
+    calc(0 + (0.9985 - 0) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-border-int-token: light-dark(
-    oklch(0 0 0 / 0.2032),
-    oklch(1 0 0 / 0.4195)
+  --axm-text-subtlest-hc-token: oklch(
+    calc(0 + (0.9746 - 0) * var(--_axm-mode-mix))
+    0
+    0
+  );
+  --axm-border-dec-token: oklch(
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
+    /
+    calc(0.0729 + (0.175 - 0.0729) * var(--_axm-mode-mix))
+  );
+  --axm-border-int-token: oklch(
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
+    /
+    calc(0.2032 + (0.4195 - 0.2032) * var(--_axm-mode-mix))
   );
 }
 
 .surface-status-error {
   --_axm-local-light-h: 30.2568;
   --_axm-local-light-c: 0.2;
+  --_axm-local-light-l: 0.9;
   --_axm-local-dark-h: 26.8723;
   --_axm-local-dark-c: 0.2;
-  --alpha-hue: 30.2568;
-  --alpha-beta: 0.2;
+  --_axm-local-dark-l: 0.4;
+  --_axm-mode-mix: calc((1 - var(--tau)) / 2);
+  --alpha-hue: calc(30.2568 + (26.8723 - 30.2568) * var(--_axm-mode-mix));
+  --alpha-beta: calc(0.2 + (0.2 - 0.2) * var(--_axm-mode-mix));
   --alpha-structure: 1px solid CanvasText;
-  --axm-surface-token: light-dark(
-    oklch(0.9 var(--alpha-beta) var(--alpha-hue)),
-    oklch(0.4 var(--alpha-beta) var(--alpha-hue))
+  --axm-surface-token: oklch(
+    calc(0.9 + (0.4 - 0.9) * var(--_axm-mode-mix))
+    var(--alpha-beta)
+    var(--alpha-hue)
   );
-  --axm-text-high-token: light-dark(
-    oklch(0 0 0),
-    oklch(1 0 0)
+  --axm-text-high-token: oklch(
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-text-subtle-token: light-dark(
-    oklch(0.2156 0 0),
-    oklch(0.9536 0 0)
+  --axm-text-body-token: oklch(
+    calc(0 + (0.9985 - 0) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-text-subtlest-token: light-dark(
-    oklch(0.3696 0 0),
-    oklch(0.9052 0 0)
+  --axm-text-subtle-token: oklch(
+    calc(0.2156 + (0.9536 - 0.2156) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-text-high-hc-token: light-dark(
-    oklch(0 0 0),
-    oklch(1 0 0)
+  --axm-text-subtlest-token: oklch(
+    calc(0.3696 + (0.9052 - 0.3696) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-text-subtle-hc-token: light-dark(
-    oklch(0 0 0),
-    oklch(0.9985 0 0)
+  --axm-text-high-hc-token: oklch(
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-text-subtlest-hc-token: light-dark(
-    oklch(0 0 0),
-    oklch(0.9746 0 0)
+  --axm-text-body-hc-token: oklch(
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-border-dec-token: light-dark(
-    oklch(0 0 0 / 0.0729),
-    oklch(1 0 0 / 0.175)
+  --axm-text-subtle-hc-token: oklch(
+    calc(0 + (0.9985 - 0) * var(--_axm-mode-mix))
+    0
+    0
   );
-  --axm-border-int-token: light-dark(
-    oklch(0 0 0 / 0.2032),
-    oklch(1 0 0 / 0.4195)
+  --axm-text-subtlest-hc-token: oklch(
+    calc(0 + (0.9746 - 0) * var(--_axm-mode-mix))
+    0
+    0
+  );
+  --axm-border-dec-token: oklch(
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
+    /
+    calc(0.0729 + (0.175 - 0.0729) * var(--_axm-mode-mix))
+  );
+  --axm-border-int-token: oklch(
+    calc(0 + (1 - 0) * var(--_axm-mode-mix))
+    0
+    0
+    /
+    calc(0.2032 + (0.4195 - 0.2032) * var(--_axm-mode-mix))
   );
 }
 
@@ -1546,6 +2174,12 @@ mark,
   --alpha-structure: 2px solid var(--axm-key-error-color);
 }
 
+.hue-gray {
+  --alpha-hue: var(--_axm-hue-gray);
+  --alpha-beta: var(--_axm-chroma-gray);
+  --alpha-structure: 2px solid var(--axm-key-gray-color);
+}
+
 .hue-danger {
   --alpha-hue: var(--_axm-hue-danger);
   --alpha-beta: var(--_axm-chroma-danger);
@@ -1570,14 +2204,52 @@ mark,
   --alpha-structure: 2px solid var(--axm-key-info-color);
 }
 
+.hue-indigo {
+  --alpha-hue: var(--_axm-hue-indigo);
+  --alpha-beta: var(--_axm-chroma-indigo);
+  --alpha-structure: 2px solid var(--axm-key-indigo-color);
+}
+
 /* Core Utilities (Reactive Pipeline) */
+.text-high { --_axm-text-lightness-source: var(--axm-text-high-token); }
 .text-strong { --_axm-text-lightness-source: var(--axm-text-high-token); font-weight: 600; }
+.text-body { --_axm-text-lightness-source: var(--axm-text-body-token); }
 .text-subtle { --_axm-text-lightness-source: var(--axm-text-subtle-token); }
 .text-subtlest { --_axm-text-lightness-source: var(--axm-text-subtlest-token); }
+.text-content { --_axm-text-lightness-source: var(--axm-text-body-token); }
+.text-brand {
+  --alpha-hue: var(--_axm-hue-brand);
+  --alpha-beta: var(--_axm-chroma-brand);
+}
+
+.text-warning {
+  --alpha-hue: var(--_axm-hue-warning);
+  --alpha-beta: var(--_axm-chroma-warning);
+}
+
+.text-positive {
+  --alpha-hue: var(--_axm-hue-success);
+  --alpha-beta: var(--_axm-chroma-success);
+}
+
+.text-action {
+  --alpha-hue: var(--_axm-hue-brand);
+  --alpha-beta: var(--_axm-chroma-brand);
+}
+
+.bg-surface { background-color: var(--_axm-computed-surface); }
+.bg-strong { background-color: var(--_axm-computed-fg-color); }
+.text-inverse { color: var(--_axm-computed-surface); }
+
+.hue-slider {}
+
 @media (prefers-contrast: more) {
+  .text-high { --_axm-text-lightness-source: var(--axm-text-high-hc-token); }
   .text-strong { --_axm-text-lightness-source: var(--axm-text-high-hc-token); }
+  .text-body { --_axm-text-lightness-source: var(--axm-text-body-hc-token); }
   .text-subtle { --_axm-text-lightness-source: var(--axm-text-subtle-hc-token); }
   .text-subtlest { --_axm-text-lightness-source: var(--axm-text-subtlest-hc-token); }
+  .text-content { --_axm-text-lightness-source: var(--axm-text-body-hc-token); }
 }
 
 :root {
