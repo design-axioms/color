@@ -26,9 +26,8 @@ const themeManager = new ThemeManager({ invertedSelectors });
 | :------------------ | :-------------------------- | :------------------------- | :-------------------------------------------------------------------------- |
 | `invertedSelectors` | `readonly string[]`         | (required)                 | Selectors for surfaces with inverted polarity. Import from generated file. |
 | `root`              | `HTMLElement`               | `document.documentElement` | The element to apply the theme to.                                          |
-| `lightClass`        | `string`                    | `undefined`                | (deprecated) Class to add in light mode.                                    |
-| `darkClass`         | `string`                    | `undefined`                | (deprecated) Class to add in dark mode.                                     |
 | `faviconGenerator`  | `(color: string) => string` | `undefined`                | Function to generate an SVG favicon based on the current theme color.       |
+| `theme`             | `AxiomaticTheme`            | `AxiomaticTheme.get()`     | Optional theme instance for dependency injection. Useful for testing.      |
 
 ### Methods
 

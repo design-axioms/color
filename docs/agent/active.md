@@ -1,216 +1,160 @@
-# Current Work: Epoch 45 — Alpha Polish
+# Current Work: Epoch 46 — Alpha Release & Stabilization
 
-**Updated:** 2026-01-12
+**Updated:** 2026-01-13
 
-## Previous Epoch: Epoch 44 — Starlight Extraction ✅ COMPLETE
+## Previous Epoch: Epoch 45 — Alpha Polish ✅ COMPLETE
 
 **PRs:**
 
-- #23: ThemeManager delegation to AxiomaticTheme
-- #24: ThemeManager inverted selectors option
-- #25: CLI `--emit-ts` flag
-- #26: Deep partial type fix
-- #28: Prettierignore for site
-- #29: Make `invertedSelectors` required (BREAKING)
-- #32: FrameworkContractAdapter pattern and Starlight implementation
+- #33: Documentation quick wins (integration guide, framework-integration.mdx)
+- #35: Phase B working example, known limitations docs, troubleshooting guide
+- #36: Inspector sentinel probe refactor for conditional rule evaluation
 
 **Outcome:**
 
-- ThemeManager unified, race condition eliminated
-- Core inspector framework-agnostic
-- RFC010 compliance enforced (adapters = wiring only)
-- Bridge expanded to 22 exports (semantic accents: brand, info, success, warning, danger)
-- Bridge refactored to `css/bridge.css` for "pay as you go" loading
+- All alpha release criteria met
+- Documentation polish complete (Why Axiomatic, restructured sidebar, troubleshooting)
+- Known limitations documented
+- Inspector container query evaluation refactored to 100% accurate sentinel probe technique
 
 ---
 
-## Current Epoch: Epoch 45 - Alpha Polish
+## Current Epoch: Epoch 46 — Alpha Release & Stabilization
 
-Based on Kano-QFD analysis, we're focusing on documentation gaps that affect new user onboarding and set correct expectations for alpha release.
+**Goal:** Ship the alpha release (1.0.0-alpha.1) with a clean API, proper dependency injection, and verified stability.
 
-### Phase A: Quick Wins — ✅ COMPLETE
+**Key Decisions:**
 
-- [x] Update integration guide with prominent ThemeManager section
-- [x] Create `advanced/framework-integration.mdx` for framework authors
-- [x] Update plan.md to reflect pivot
-- **PR**: #33
-
-### Phase B: Working Example — ✅ COMPLETE
-
-- [x] Document `examples/vercel-demo` as a reference implementation (README.md)
-- [x] Add "How It Works" walkthrough
-- [x] Cross-link from integration guide
-- [x] RFC010/RFC029 conflict resolved (bridge expansion)
-- [x] Bridge refactored to separate file (`css/bridge.css`)
+1. **Remove lightClass/darkClass immediately** — No current users, breaking change is fine
+2. **ThemeManager DI refactor NOW** — Do before release, not defer to v2.0.0
 
 ---
 
-## Remaining Sessions to Alpha
+### Phase 1: Breaking Changes & Cleanup
 
-### Session 1: Close Phase B & Known Limitations — ✅ COMPLETE
+- [x] **Remove \`lightClass\`/\`darkClass\` from ThemeManager** ✅
+  - ~~Delete options from \`ThemeManagerOptions\` in \`src/lib/browser.ts\`~~
+  - ~~Remove private fields, constructor assignments, deprecation warnings~~
+  - ~~Remove backwards-compat class manipulation in \`apply()\`~~
+  - ~~Delete \`warnDeprecationOnce\` helper if no longer needed~~
+  - ~~Update \`site/src/content/docs/reference/javascript-api.md\`~~
+  - ~~Update \`docs/rfcs/RFC-021-INTEGRATION.md\`~~
+  - [ ] Regenerate llms.txt via \`pnpm generate-llms\`
 
-**Goal:** Complete Phase B closure and set alpha expectations
+- [x] **Refactor ThemeManager to use Dependency Injection** ✅
+  - ~~Remove singleton pattern from \`AxiomaticTheme\`~~ (kept `get()` for BC, made constructor public)
+  - ~~Make \`AxiomaticTheme\` instantiable normally (public constructor)~~
+  - ~~Add \`theme?: AxiomaticTheme\` option to \`ThemeManagerOptions\`~~
+  - ~~Update \`ThemeManager\` to accept injected instance or create one internally~~
+  - ~~Update \`AxiomaticTheme.get()\` usages in \`src/lib/browser.ts\` to use \`this.theme\`~~
+  - ~~Update \`src/lib/inspector/tuner.ts\` to accept optional theme via options~~
+  - ~~Update \`examples/vercel-demo/src/App.tsx\` to showcase DI pattern via React Context~~
+  - ~~Update javascript-api.md and RFC-021 with `theme` option~~
 
-- [x] Add cross-link in `advanced/framework-integration.mdx` → Vercel demo
-- [x] Create `alpha-limitations.mdx` with known gaps
-- [x] Link limitations from Quick Start
-- [x] Add to sidebar navigation (Reference section)
+- [x] **Run knip to identify unused exports** ✅
+  - ~~Execute \`pnpm exec knip\`~~
+  - No unused exports found!
 
-**Effort:** S (completed 2026-01-12)
+- [x] **Audit PRESETS system** ✅
+  - Knip didn't flag PRESETS as unused, so it's being used somewhere
+  - No action needed
 
-### Session 2: Documentation Polish — ✅ COMPLETE
+**Success Criteria:**
 
-**Goal:** Address "Concept Overload" gap for new users
+- ✅ No \`lightClass\`/\`darkClass\` in codebase
+- ✅ \`AxiomaticTheme\` is injectable (no global singleton required)
+- ✅ All 131 tests pass
+- ✅ knip reports no unused exports
 
-- [x] Create "Why Axiomatic?" benefits-focused landing page
-- [x] Restructure sidebar with "Start Here" section (Why Axiomatic? + Quick Start)
-- [x] Rename "Getting Started" to "Framework Integration" (theory now opt-in)
-- [x] Added link to Alpha Limitations from Why Axiomatic page
-
-**Effort:** M (completed 2026-01-12)
-
-### Session 3: Troubleshooting Skeleton — ✅ COMPLETE
-
-**Goal:** Seed troubleshooting content (will expand with alpha feedback)
-
-- [x] Create `reference/troubleshooting.mdx` with skeleton sections
-- [x] Add to sidebar navigation (Reference section)
-- [x] Cross-link from alpha-limitations.mdx
-- [x] Document known issues: theme switching, color appearance, build errors, inspector, integration conflicts
-
-**Note:** Moved to `reference/` to allow explanatory code examples under RFC010.
-
-**Effort:** S (completed 2026-01-12)
-
-### Session 4: VS Code Extension Decision (Current)
-
-**Goal:** Resolve extension ambiguity
-
-**Recommendation:** Defer to post-beta, mark as "Community Welcome"
-
-- [ ] Update deferred.md with decision
-- [ ] Add to "Future Ecosystem" section in docs
-
-**Effort:** XS (1 hour)
+**Phase 1 Status: COMPLETE** 🎉
 
 ---
 
-## Alpha Release Criteria
+### Phase 2: Pre-Release Verification
 
-| Criterion                    | Status       |
-| ---------------------------- | ------------ |
-| All core contract items      | ✅           |
-| Static checks pass           | ✅           |
-| Working examples exist       | ✅           |
-| Known limitations documented | ⏳ Session 1 |
-| Gentle on-ramp exists        | ⏳ Session 2 |
-| Troubleshooting guide exists | ⏳ Session 3 |
+- [ ] Full test suite (\`pnpm test\`, \`pnpm playwright test\`)
+- [ ] Build verification (\`pnpm build\`, \`pnpm typecheck\`, \`pnpm lint\`)
+- [ ] Documentation audit (search for stale API references)
+- [ ] RFC updates if needed
 
-**Blocking Items:** Sessions 1-2  
-**Non-Blocking Polish:** Sessions 3-4
+---
+
+### Phase 3: Release Engineering
+
+- [ ] Version bump to \`1.0.0-alpha.1\`
+- [ ] Generate CHANGELOG via \`pnpm exec release-plan prepare\`
+- [ ] \`npm publish --dry-run\`
+- [ ] \`npm publish --tag alpha\`
+- [ ] Git tag \`v1.0.0-alpha.1\`
+
+---
+
+### Phase 4: Community Launch
+
+- [ ] GitHub Release with release notes
+- [ ] Issue template for alpha feedback
+- [ ] Announcement
+- [ ] Monitor 48 hours
+
+---
+
+## DI Architecture Decision ✅ RESOLVED
+
+**Decision:** Option A — Pass theme to constructors. Inspector is already instantiated per-overlay, so threading through is natural.
+
+---
+
+## PRESETS Decision ✅ RESOLVED
+
+**Decision:** Remove `PRESETS` array if knip confirms it's unused. (Note: This is separate from the `presets` config property for typography utilities, which is actively used.)
+
+---
+
+## Vercel Demo Decision ✅ RESOLVED
+
+**Decision:** Refactor Vercel Demo to use DI pattern. The demo should serve as a showcase for the recommended design patterns.
+
+---
+
+## Files to Touch (Phase 1)
+
+### lightClass/darkClass removal:
+
+- \`src/lib/browser.ts\` — Options type, private fields, constructor, apply(), warnDeprecationOnce
+- \`site/src/content/docs/reference/javascript-api.md\` — Remove from API docs
+- Tests: \`src/lib/**tests**/browser.test.ts\` — Remove tests for deprecated behavior
+
+### DI refactor:
+
+- `src/lib/theme.ts` — Remove singleton, make constructor public
+- `src/lib/browser.ts` — Accept optional theme, create if not provided
+- `src/lib/inspector/overlay.ts` — Receive theme via constructor/options
+- `src/lib/inspector/tuner.ts` — Receive theme via constructor/options
+- `examples/vercel-demo/src/theme.tsx` — Refactor to DI pattern (showcase)
+- Tests: `src/lib/__tests__/theme.test.ts`, `src/lib/__tests__/browser.test.ts`
+
+### RFC updates:
+
+- `docs/rfcs/RFC-020-CONSUMER-CONTRACT.md` — Remove/update AxiomaticTheme singleton section
+- `docs/rfcs/RFC-021-INTEGRATION.md` — Remove lightClass/darkClass, update Layer 1 architecture
+
+### Documentation updates:
+
+- `site/src/content/docs/reference/javascript-api.md` — Remove deprecated options
+- `site/src/content/docs/guides/react.mdx` — Update AxiomaticTheme.get() example
 
 ---
 
 ## Post-Alpha Roadmap
 
-### Epoch 46: Alpha Release
-
-- Version bump, changelog
-- npm publish
-- Announce to target community
-
 ### Epoch 47: Interoperability & Ecosystem
 
 - Round-trip DTCG import
 - Native Tailwind preset with Late Binding
+- Extract Starlight adapter to separate package
 
 ### Epoch 48: Beta Release
 
 - Luminance Spectrum UI (Delighter)
 - Auto-Fix in Inspector (Delighter)
 - Expanded ESLint plugin rules
-
----
-
-## Deferred Work
-
-### Phase 3: Layer Separation (Deferred to Epoch 47)
-
-- Restructure exports: Pure System / Integration / Dev Tools
-- Clear "what layer am I in?" for consumers
-
-### Phase 4: Silent Failures → Explicit Errors (Deferred to Epoch 47)
-
-- Missing backgrounds → throw with helpful message
-- Invalid config → validation errors
-- Solver errors → actionable suggestions
-
-## Deferred from Original Phase 2.1
-
-These tasks move to Epoch 45, Phase 3 (after architecture work):
-
-- Transition snaps (will be simpler with unified ThemeManager)
-- Inspector overlay UX hardening
-- CSSOM sentinel (now as Starlight adapter, not core)
-
----
-
-## Handoff Notes
-
-- Project review documents are in `docs/research/status/`
-- Agent infrastructure epochs (40-42) moved to Exosuit—see `docs/agent-context/future/exosuit-migration-summary.md`
-- Vercel demo is no longer immediate priority (Yehuda starts at Vercel 1/26/2026!)
-
-# Implementation Plan - Epoch 44, Phase 2: RFC 011 Follow-up (Continuity Auditing v2)
-
-## Objective
-
-Turn RFC 011’s architecture into a working loop: browser measurement emits `ObservationLog` artifacts; Node analyzers can re-run from logs without Playwright.
-
-## Milestones
-
-### 1) Snapshot Probe + Log Event
-
-- Implement `Snapshot` measurement in the browser layer.
-- Decide the exact payload contract (bounded, stable, replayable):
-  - per-selector computed styles (normalized)
-  - minimal geometry (only if needed)
-  - versioned schema fields for forward compatibility
-- Record as `measure:snapshot` in `ObservationLog`.
-
-### 2) Snaps Log-only Replay
-
-- Add a `snaps` analyzer that accepts an `ObservationLog` on disk and produces the same `snaps` output.
-- Keep live behavior unchanged; log-only mode is additive.
-
-### 3) Scenario + Analyzer Modularization
-
-- Define a tiny `CheckModule` interface.
-- Port `snaps` to the new shape:
-  - scenario: uses capabilities and records measurements
-  - analyzer: pure Node logic over logs
-
-### 4) Resolve Remaining Late “Tau-stable” Snaps
-
-- Run the detector on a small, curated set of docs URLs.
-- For each remaining snap:
-  - Fix real late flips in CSS/tokens
-  - Or refine detector definition and add a regression case to keep it honest
-
-### 5) Inspector Overlay UX Hardening
-
-- Add a Playwright check ensuring continuity flashing stops immediately when the overlay is disabled mid-run.
-- Manual QA checkpoint: open overlay, run continuity, disable mid-audit, verify no further theme flips.
-- Add regression tests around overlay report schema consumed by `check:violations`.
-
-### 6) Starlight Chrome Continuity: CSSOM Sentinel Migration
-
-- Add a CSSOM-based chrome rule sentinel (Playwright) that scans rules for non-bridge-routed borders and competing transitions.
-- Prove the sentinel catches a seeded violation (then remove the seed).
-- After verification, migrate existing border “witness” tests to a selector-fed witness set (no broad DOM scanning).
-
-## Acceptance Criteria
-
-- A saved `ObservationLog` can be analyzed for `snaps` with no browser session.
-- `CheckModule` exists and at least one check (`snaps`) uses it.
-- Lint/tests remain green and the no-dialog invariant is preserved.

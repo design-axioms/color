@@ -129,28 +129,6 @@ describe("ThemeManager", () => {
     );
   });
 
-  it("should use custom classes if provided", () => {
-    const manager = new ThemeManager({
-      invertedSelectors: [],
-      lightClass: "light-theme",
-      darkClass: "dark-theme",
-    });
-
-    manager.setMode("light");
-    // Custom class should be applied (backwards compat)
-    expect(mockRoot.classList.add).toHaveBeenCalledWith("light-theme");
-    // AxiomaticTheme still sets --tau and colorScheme (delegation happens)
-    expect(mockRoot.style.setProperty).toHaveBeenCalledWith("--tau", "1");
-    expect(mockRoot.style.colorScheme).toBe("light");
-
-    manager.setMode("dark");
-    // Custom class should be applied (backwards compat)
-    expect(mockRoot.classList.add).toHaveBeenCalledWith("dark-theme");
-    // AxiomaticTheme still sets --tau and colorScheme (delegation happens)
-    expect(mockRoot.style.setProperty).toHaveBeenCalledWith("--tau", "-1");
-    expect(mockRoot.style.colorScheme).toBe("dark");
-  });
-
   it("should resolve system mode correctly", () => {
     const manager = new ThemeManager({ invertedSelectors: [] });
 

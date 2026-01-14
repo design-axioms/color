@@ -67,16 +67,6 @@ export interface ThemeManagerOptions {
    */
   root?: HTMLElement;
   /**
-   * The class to apply when the theme is 'light'.
-   * If not provided, sets style="color-scheme: light".
-   */
-  lightClass?: string;
-  /**
-   * The class to apply when the theme is 'dark'.
-   * If not provided, sets style="color-scheme: dark".
-   */
-  darkClass?: string;
-  /**
    * A function to generate the favicon SVG based on the current theme color.
    * If provided, the favicon will be updated automatically.
    */
@@ -92,14 +82,13 @@ export interface ThemeManagerOptions {
    * Generate with: `axiomatic build --emit-ts`
    */
   invertedSelectors: readonly string[];
-}
-
-const warnedDeprecations = new Set<string>();
-
-function warnDeprecationOnce(key: string, message: string): void {
-  if (warnedDeprecations.has(key)) return;
-  warnedDeprecations.add(key);
-  console.warn(`[ThemeManager] Deprecation: ${message}`);
+  /**
+   * An optional AxiomaticTheme instance to use for theme state management.
+   * If not provided, uses the shared singleton via `AxiomaticTheme.get()`.
+   *
+   * Useful for testing or when you need isolated theme instances.
+   */
+  theme?: AxiomaticTheme;
 }
 
 /**
@@ -108,9 +97,8 @@ function warnDeprecationOnce(key: string, message: string): void {
  */
 export class ThemeManager {
   private root: HTMLElement | null;
-  private lightClass?: string;
-  private darkClass?: string;
   private faviconGenerator?: (color: string) => string;
+  private theme: AxiomaticTheme;
   private _mode: ThemeMode = "system";
   private mediaQuery: MediaQueryList | null = null;
   private invertedSelectors: readonly string[];
@@ -124,28 +112,12 @@ export class ThemeManager {
   constructor(options: ThemeManagerOptions) {
     // Store inverted selectors (required)
     this.invertedSelectors = options.invertedSelectors;
+    // Use injected theme or fall back to singleton
+    this.theme = options.theme ?? AxiomaticTheme.get();
 
     if (typeof document !== "undefined") {
       this.root = options.root ?? document.documentElement;
-      this.lightClass = options.lightClass;
-      this.darkClass = options.darkClass;
       this.faviconGenerator = options.faviconGenerator;
-
-      // Deprecation warnings for lightClass/darkClass
-      if (options.lightClass) {
-        warnDeprecationOnce(
-          "lightClass",
-          "lightClass is deprecated. AxiomaticTheme now manages class/style changes. " +
-            "This option will be removed in a future version",
-        );
-      }
-      if (options.darkClass) {
-        warnDeprecationOnce(
-          "darkClass",
-          "darkClass is deprecated. AxiomaticTheme now manages class/style changes. " +
-            "This option will be removed in a future version",
-        );
-      }
 
       this.mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
       this.mediaQuery.addEventListener("change", this.handleSystemChange);
@@ -294,7 +266,7 @@ export class ThemeManager {
     if (this._mode === "system") {
       // System preference changed, delegate to AxiomaticTheme
       const tau = this.resolvedMode === "light" ? 1 : -1;
-      AxiomaticTheme.get().set({ tau });
+      this.theme.set({ tau });
       this.syncSemanticState();
       this.updateInvertedSurfaces();
       this.sync();
@@ -307,21 +279,7 @@ export class ThemeManager {
     // Delegate CSS variable writes to AxiomaticTheme
     // tau = 1 for light, -1 for dark
     const tau = this.resolvedMode === "light" ? 1 : -1;
-    AxiomaticTheme.get().set({ tau });
-
-    // Handle deprecated lightClass/darkClass for backwards compatibility
-    if (this.lightClass || this.darkClass) {
-      // Remove existing classes
-      if (this.lightClass) this.root.classList.remove(this.lightClass);
-      if (this.darkClass) this.root.classList.remove(this.darkClass);
-
-      // Apply the appropriate class based on resolved mode
-      if (this.resolvedMode === "light" && this.lightClass) {
-        this.root.classList.add(this.lightClass);
-      } else if (this.resolvedMode === "dark" && this.darkClass) {
-        this.root.classList.add(this.darkClass);
-      }
-    }
+    this.theme.set({ tau });
 
     // Keep semantic state consistent even if consumers never call setMode again.
     this.syncSemanticState();

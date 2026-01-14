@@ -1,13 +1,19 @@
-import React, { useState, useEffect, useMemo } from "react";
+import type { SolverConfig } from "@axiomatic-design/color";
 import {
-  solve,
-  generateTokensCss,
   AxiomaticDebugger,
   AxiomaticTheme,
+  generateTokensCss,
+  solve,
 } from "@axiomatic-design/color";
-import type { SolverConfig } from "@axiomatic-design/color";
-import { createVercelConfig } from "./vercel-config";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import demoConfig from "../color-config.json";
+import { createVercelConfig } from "./vercel-config";
 
 // Ensure the debugger is registered (prevent tree-shaking)
 void AxiomaticDebugger;
@@ -43,7 +49,31 @@ declare global {
   }
 }
 
-function App() {
+/**
+ * DI Pattern: Create and provide theme instance via React Context.
+ * This showcases the recommended pattern for framework integration.
+ */
+const ThemeContext = createContext<AxiomaticTheme | null>(null);
+
+function useTheme(): AxiomaticTheme {
+  const theme = useContext(ThemeContext);
+  if (!theme) {
+    throw new Error("useTheme must be used within a ThemeProvider");
+  }
+  return theme;
+}
+
+function ThemeProvider({ children }: { children: React.ReactNode }) {
+  // Create a single theme instance for the app lifetime.
+  // Using useMemo to ensure stability across re-renders.
+  const theme = useMemo(() => new AxiomaticTheme(), []);
+  return (
+    <ThemeContext.Provider value={theme}>{children}</ThemeContext.Provider>
+  );
+}
+
+function AppContent() {
+  const theme = useTheme();
   const keyColors = (demoConfig as any)?.anchors?.keyColors ?? {};
   const defaultBrandColor = keyColors.brand;
   if (typeof defaultBrandColor !== "string") {
@@ -55,12 +85,10 @@ function App() {
   const presetPurple = keyColors.violet;
 
   const [brandColor, setBrandColor] = useState(String(defaultBrandColor));
-  const [isDark, setIsDark] = useState(
-    AxiomaticTheme.get().getState().tau === -1,
-  );
+  const [isDark, setIsDark] = useState(theme.getState().tau === -1);
 
   // 1. Construct the Config
-  const config: SolverConfig = useMemo(
+  const solverConfig: SolverConfig = useMemo(
     () => createVercelConfig(brandColor),
     [brandColor],
   );
@@ -68,23 +96,28 @@ function App() {
   // 2. Run the Solver & Generator (synchronously for deterministic rendering/tests)
   const tokensCss = useMemo(() => {
     try {
-      const theme = solve(config);
-      return generateTokensCss(config.groups, theme, config.borderTargets, {
-        selector: ":root",
-        prefix: "axm",
-      });
+      const solved = solve(solverConfig);
+      return generateTokensCss(
+        solverConfig.groups,
+        solved,
+        solverConfig.borderTargets,
+        {
+          selector: ":root",
+          prefix: "axm",
+        },
+      );
     } catch (e) {
       console.error("Solver failed:", e);
       return "";
     }
-  }, [config]);
+  }, [solverConfig]);
 
-  // 3. Sync with AxiomaticTheme
+  // 3. Sync with AxiomaticTheme (DI: using injected theme instance)
   useEffect(() => {
-    return AxiomaticTheme.get().subscribe((state) => {
+    return theme.subscribe((state) => {
       setIsDark(state.tau === -1);
     });
-  }, []);
+  }, [theme]);
 
   return (
     <div className="surface-page min-h-screen p-8 transition-colors duration-200">
@@ -92,10 +125,7 @@ function App() {
       <div className="surface-card p-6 rounded-lg bordered shadow-lg max-w-md mx-auto transition-colors duration-200">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-strong text-2xl font-bold">Axiomatic Demo</h1>
-          <button
-            onClick={() => AxiomaticTheme.get().toggle()}
-            className="p-2 rounded"
-          >
+          <button onClick={() => theme.toggle()} className="p-2 rounded">
             {isDark ? "🌙" : "☀️"}
           </button>
         </div>
@@ -172,7 +202,7 @@ function App() {
 
         <div className="mt-8 -mx-6 -mb-6 px-6 py-4 rounded-b-lg">
           <div className="flex gap-2 text-xs text-subtlest font-mono">
-            <span>H: {config.anchors.keyColors.brand}</span>
+            <span>H: {solverConfig.anchors.keyColors.brand}</span>
             <span>•</span>
             <span>Mode: {isDark ? "Dark" : "Light"}</span>
           </div>
@@ -180,6 +210,19 @@ function App() {
       </div>
       <axiomatic-debugger />
     </div>
+  );
+}
+
+/**
+ * App component wrapped in ThemeProvider.
+ * This demonstrates the DI pattern: creating an AxiomaticTheme instance
+ * and providing it through React context.
+ */
+function App() {
+  return (
+    <ThemeProvider>
+      <AppContent />
+    </ThemeProvider>
   );
 }
 

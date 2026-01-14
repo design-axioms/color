@@ -217,14 +217,11 @@ interface ThemeManagerOptions {
   /** Selectors for surfaces with inverted polarity. Import from generated file. */
   invertedSelectors?: readonly string[];
 
-  /** The class to apply when the theme is 'light'. */
-  lightClass?: string;
-
-  /** The class to apply when the theme is 'dark'. */
-  darkClass?: string;
-
   /** A function to generate the favicon SVG based on the current theme color. */
   faviconGenerator?: (color: string) => string;
+
+  /** Optional AxiomaticTheme instance for dependency injection. Defaults to singleton. */
+  theme?: AxiomaticTheme;
 }
 ```
 

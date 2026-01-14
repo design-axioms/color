@@ -51,7 +51,10 @@ function readCssVarNumber(
 }
 
 /**
- * Singleton class for reading and writing theme state from CSS variables.
+ * Class for reading and writing theme state from CSS variables.
+ *
+ * Can be instantiated directly for isolated testing, or use the static
+ * `get()` method to access a shared singleton instance.
  *
  * @internal This class is an internal implementation detail and should not be
  * used directly by consumers. Use {@link ThemeManager} for runtime theme control.
@@ -62,7 +65,12 @@ export class AxiomaticTheme {
   private observer: MutationObserver | null = null;
   private lastNotifiedState: ThemeState | null = null;
 
-  private constructor() {
+  /**
+   * Creates a new AxiomaticTheme instance.
+   * For most use cases, prefer using the static `get()` method to access
+   * the shared singleton instance.
+   */
+  constructor() {
     if (typeof document !== "undefined") {
       this.observer = new MutationObserver(() => {
         this.handleMutation();
@@ -74,6 +82,10 @@ export class AxiomaticTheme {
     }
   }
 
+  /**
+   * Gets the shared singleton instance of AxiomaticTheme.
+   * Creates the instance on first access.
+   */
   public static get(): AxiomaticTheme {
     if (!AxiomaticTheme.instance) {
       AxiomaticTheme.instance = new AxiomaticTheme();

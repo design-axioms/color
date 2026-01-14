@@ -2,8 +2,8 @@
  * @vitest-environment jsdom
  */
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { AxiomaticTheme } from "../theme.js";
 import { ThemeManager } from "../browser.js";
+import { AxiomaticTheme } from "../theme.js";
 
 // Mock matchMedia for jsdom (which doesn't implement it)
 function setupMatchMediaMock(prefersDark = false) {
@@ -209,43 +209,6 @@ describe("ThemeManager → AxiomaticTheme delegation", () => {
     ).toBe("dark");
 
     manager.dispose();
-  });
-
-  it("should still apply deprecated lightClass/darkClass for backwards compat", () => {
-    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
-
-    const manager = new ThemeManager({
-      invertedSelectors: [],
-      lightClass: "theme-light",
-      darkClass: "theme-dark",
-    });
-
-    // Should have logged deprecation warnings
-    expect(warnSpy).toHaveBeenCalledWith(
-      expect.stringContaining("lightClass is deprecated"),
-    );
-    expect(warnSpy).toHaveBeenCalledWith(
-      expect.stringContaining("darkClass is deprecated"),
-    );
-
-    manager.setMode("dark");
-    expect(document.documentElement.classList.contains("theme-dark")).toBe(
-      true,
-    );
-    expect(document.documentElement.classList.contains("theme-light")).toBe(
-      false,
-    );
-
-    manager.setMode("light");
-    expect(document.documentElement.classList.contains("theme-light")).toBe(
-      true,
-    );
-    expect(document.documentElement.classList.contains("theme-dark")).toBe(
-      false,
-    );
-
-    manager.dispose();
-    warnSpy.mockRestore();
   });
 
   it("should keep AxiomaticTheme and ThemeManager in sync", () => {
